@@ -1,0 +1,35 @@
+div.box-table-aziende.box-body #pager-aziende,
+div.box-table-sedi.box-body #pager-sedi,
+div.box-table-contatti.box-body #pager-contatti{
+	text-align: left;
+}
+div.box-table-aziende.box-body #box-general-action a,
+div.box-table-sedi.box-body #box-general-action a,
+div.box-table-contatti.box-body #box-general-action a{
+	float:right;
+}
+
+#myModalAzienda label.required::after,
+#myModalSede label.required::after,
+#myModalContatto label.required::after{
+    content: " *";
+    color:red;
+}
+
+div.box-table-aziende.box-body .tablesorter thead .disabled,
+div.box-table-sedi.box-body .tablesorter thead .disabled,
+div.box-table-contatti.box-body .tablesorter thead .disabled{
+	display: none;
+}
+
+div.icon-contatti i{
+	font-size:50px;
+}
+.notes-JobsOrders-link {
+	color:black;
+	cursor: pointer;
+}
+ul.ui-autocomplete{
+	z-index:10000;
+	background-color: #FFFFFF;
+}

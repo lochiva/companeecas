@@ -1,0 +1,172 @@
+.modal-dialog{
+    transform: none !important;
+}
+
+.overlay-gdpr p{
+    margin: 0px !important;
+}
+
+.open-overlay-gdpr{
+    position: relative;
+}
+
+#disabled_background {
+    position:fixed;
+    left:0;
+    top:0;
+    width:100vw;
+    height:100vh;
+    display:none;
+    background-color:#000;
+    opacity:0.5;
+}
+
+.overlay-gdpr{
+	display: none;
+  	position: fixed;
+	padding: 10px;
+	width: 600px;
+	left: 50%;
+	margin-left: -300px;
+	top: 25%;
+    height: auto;
+	background: #FFF;
+	border: 1px solid #000;
+    text-align: left;
+	z-index: 9999;
+}
+
+.overlay-gdpr-header{
+	padding: 0px 10px 5px 10px;
+	border-bottom: 1px solid #E5E5E5;
+}
+
+.overlay-gdpr-body{
+	padding: 20px 10px 20px 10px;
+}
+
+.overlay-gdpr-footer{
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #E5E5E5;
+}
+
+#gdpr-loader{
+	position: fixed;
+	z-index: 99999;
+	height: 2em;
+	width: 2em;
+	overflow: show;
+	margin: auto;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.no-margin-bottom{
+    margin-bottom: 0;
+}
+
+.no-margin-left{
+	margin-left: 0;
+}
+
+#response_verify_email{
+    padding: 10px;
+    margin-bottom: 25px;
+	border-radius: 5px;
+	color: #000;
+}
+
+.error-message{
+    background-color: rgba(255, 0, 0, 0.3);
+}
+
+.success-message{
+    background-color: rgba(0, 190, 0, 0.5);
+}
+
+.invalid input{	
+	border-color: #FF0000 !important;
+}
+
+.invalid label{
+	color: #FF0000;
+}
+
+#invalid_email_message{
+	color: #FF0000;
+}
+
+#invalid_cf_message{
+	color: #FF0000;
+}
+
+#box-check-data, #box-check-data-success{
+	margin-bottom: 0px;
+}
+
+#box-check-data .modal-body{
+	width: 70%;
+    margin: 0 auto;
+}
+
+#formContact hr{
+	border-top: none;
+}
+
+#formContact label.required:after{
+	content: ' *';
+	color: #FF0000;
+}
+
+#modalPrivacyPolicy .modal-content{
+	width: 150%;
+	left: -25%;
+}
+
+#modalPrivacyPolicy .modal-title{
+	display: inline;
+}
+
+#modalPrivacyPolicy .modal-body{
+	height: 600px;
+	overflow-y: scroll;
+}
+
+@media (max-width: 768px) {
+	.overlay-gdpr {
+		width: 90%;
+		left: 50%;
+		margin-left: -45%;
+		top: 50%;
+		margin-top: -50%;
+	}
+
+	#verify_email {
+		width: 100%;
+	}
+
+	.verify_button {
+		margin: 15px;
+	}
+}
+
+.success-thumbsup{
+	color: rgb(0, 210, 0);
+	font-size: 256px;
+}
+
+.error-thumbsdown{
+	color: rgb(210, 0, 0);
+	font-size: 256px;
+}
+
+.div-success{
+	text-align: center;
+}
+
+#box-check-data-success{
+	height: 100%;
+}

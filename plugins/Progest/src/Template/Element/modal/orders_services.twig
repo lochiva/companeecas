@@ -1,0 +1,426 @@
+<div hidden >
+  <div class="clone-service-header service-header" data="">
+    <div class="form-group ">
+        <div class="col-md-12">
+          <hr style="border-color:#3c8dbc;">
+          <a data-id="" type="button" class="remove-service pull-right text-red pointer"><i class="fa fa-trash"></i> Elimina servizio</a>
+        </div>
+    </div>
+    <div class="form-group ">
+        <label class="col-sm-2 control-label" ><b>Tipo di servizio</b></label>
+        <div class="col-sm-10">
+              <input class="reset-id" type="hidden" value="0" name="[id_order]" />
+              <select name="[id_service]"  class="form-control" style="width:100%; font-weight:bold;"></select>
+        </div>
+    </div>
+    <div class="fields">
+
+    </div>
+  </div>
+  <!-- Intervento OSS -->
+  <div class="clone-service-1">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+    <div class="form-group">
+      <div class="input">
+        <label class="col-sm-2 control-label required" >Ore </label>
+        <div class="col-sm-4">
+            <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control required not-zero">
+        </div>
+      </div>
+      <div class="input">
+        <label class="col-sm-2 control-label" >Ore festive</label>
+        <div class="col-sm-4">
+          <input type="number" value="0" required placeholder="0" name="[ore_festive]" step="1" min="0" class=" form-control">
+        </div>
+      </div>
+    </div>
+    <div class="form-group ">
+      <div class="input">
+        <label class="col-sm-2 control-label required" >N. passaggi </label>
+        <div class="col-sm-4">
+            <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[passaggi_settimanali]" step="1" min="0" class=" form-control required not-zero">
+        </div>
+      </div>
+      <div class="input">
+        <label class="col-sm-2 control-label required" >Frequenza</label>
+        <div class="col-sm-4">
+            <select data-tab="#click_tab_order_3" name="[frequenza]" class=" form-control required servicesFrequency">
+            </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-group input">
+        <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+        <div class="col-sm-10">
+            <textarea rows="2" type="text" placeholder="Dettagli intervento OSS" name="[dettaglio]" class="form-control"></textarea>
+        </div>
+    </div>
+    <h5 class="text-center">
+      <b>Flessibilità</b>
+    </h5>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" style="margin-top:28px" ><b></b></label>
+      <div class="col-sm-10" >
+        <div class="row" >
+          <div class="col-sm-4">
+            <label class="control-label" >Orario</label>
+              <select name="[fle_orario]" class=" form-control servicesFlexibility">
+                <option value="0" ></option>
+              </select>
+          </div>
+
+            <div class="col-sm-4">
+              <label class=" control-label" >Giorni</label>
+                <select  name="[fle_giorni]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+
+            <div class="col-sm-4">
+              <label class="control-label" >Operatore</label>
+                <select name="[fle_operatore]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  </div>
+  <!-- Intervento COLF -->
+  <div class="clone-service-2">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+      <div class="form-group">
+        <div class="input">
+          <label class="col-sm-2 control-label required" >Ore </label>
+          <div class="col-sm-4">
+              <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control required not-zero">
+          </div>
+        </div>
+
+      </div>
+      <div class="form-group">
+        <div class="input">
+          <label class="col-sm-2 control-label required" for="inputNote">N. passaggi settimanali</label>
+          <div class="col-sm-4">
+              <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[passaggi_settimanali]" step="1" min="0" class=" form-control required not-zero">
+          </div>
+        </div>
+        <label class="col-sm-2 control-label required" >Frequenza</label>
+        <div class="col-sm-4">
+            <select data-tab="#click_tab_order_3" name="[frequenza]" class=" form-control required servicesFrequency">
+            </select>
+        </div>
+      </div>
+      <div class="form-group input">
+          <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+          <div class="col-sm-10">
+              <textarea rows="2" type="text" placeholder="Dettagli intervento Colf" name="[dettaglio]" class="form-control"></textarea>
+          </div>
+      </div>
+      <h5 class="text-center">
+        <b>Flessibilità</b>
+      </h5>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label" style="margin-top:28px" ><b></b></label>
+        <div class="col-sm-10" >
+          <div class="row" >
+            <div class="col-sm-4">
+              <label class="control-label" >Orario</label>
+                <select name="[fle_orario]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+
+              <div class="col-sm-4">
+                <label class=" control-label" >Giorni</label>
+                  <select  name="[fle_giorni]" class=" form-control servicesFlexibility">
+                    <option value="0" ></option>
+                  </select>
+              </div>
+
+              <div class="col-sm-4">
+                <label class="control-label" >Operatore</label>
+                  <select name="[fle_operatore]" class=" form-control servicesFlexibility">
+                    <option value="0" ></option>
+                  </select>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+  <!-- Pasti -->
+  <div class="clone-service-3">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+      <div class="form-group">
+        <label class="col-sm-2 control-label" >Pasti</label>
+        <div class="col-sm-4">
+            <input type="number" value="0" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control required not-zero">
+        </div>
+      </div>
+      <div class="form-group input">
+          <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+          <div class="col-sm-10">
+              <textarea rows="2" type="text" placeholder="Dettagli pasti" name="[dettaglio]" class="form-control"></textarea>
+          </div>
+      </div>
+      <h5 class="text-center">
+        <b>Flessibilità</b>
+      </h5>
+      <div class="form-group">
+        <label class="col-sm-2" ></label>
+        <div class="col-sm-4">
+            <label class="control-label" >Orario</label>
+            <select name="[fle_orario]" class=" form-control servicesFlexibility">
+              <option value="0" ></option>
+            </select>
+        </div>
+      </div>
+  </div>
+  <!-- Intervento Assistente -->
+  <div class="clone-service-4">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+      <div class="form-group">
+        <div class="input">
+          <label class="col-sm-2 control-label required" >Ore </label>
+          <div class="col-sm-4">
+              <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control required not-zero">
+          </div>
+        </div>
+        <div class="input">
+          <label class="col-sm-2 control-label" >Ore festive</label>
+          <div class="col-sm-4">
+            <input type="number" value="0" required placeholder="0" name="[ore_festive]" step="1" min="0" class=" form-control">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+          <div class="input">
+            <label class="col-sm-2 control-label required" for="inputNote">N. passaggi settimanali</label>
+            <div class="col-sm-4">
+                <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[passaggi_settimanali]" step="1" min="0" class=" form-control required not-zero">
+            </div>
+          </div>
+          <div class="input">
+            <label class="col-sm-2 control-label required" >Frequenza</label>
+            <div class="col-sm-4">
+                <select data-tab="#click_tab_order_3" name="[frequenza]" class=" form-control required servicesFrequency">
+                </select>
+            </div>
+          </div>
+      </div>
+      <div class="form-group input">
+          <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+          <div class="col-sm-10">
+              <textarea rows="2" type="text" placeholder="Dettagli intervento Assistente" name="[dettaglio]" class="form-control"></textarea>
+          </div>
+      </div>
+      <h5 class="text-center">
+        <b>Flessibilità</b>
+      </h5>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label" style="margin-top:28px" ><b></b></label>
+        <div class="col-sm-10" >
+          <div class="row" >
+            <div class="col-sm-4">
+              <label class="control-label" >Orario</label>
+                <select name="[fle_orario]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+
+              <div class="col-sm-4">
+                <label class=" control-label" >Giorni</label>
+                  <select  name="[fle_giorni]" class=" form-control servicesFlexibility">
+                    <option value="0" ></option>
+                  </select>
+              </div>
+
+              <div class="col-sm-4">
+                <label class="control-label" >Operatore</label>
+                  <select name="[fle_operatore]" class=" form-control servicesFlexibility">
+                    <option value="0" ></option>
+                  </select>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+  <!-- Intervento A.F. -->
+  <div class="clone-service-5">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+      <div class="form-group">
+        <div class="input">
+          <label class="col-sm-2 control-label required" >Ore </label>
+          <div class="col-sm-4">
+              <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control required not-zero">
+          </div>
+        </div>
+          <label class="col-sm-2 control-label" >APL</label>
+          <div class="col-sm-4">
+            <select name="[ore_festive]" class=" form-control servicesApl">
+              <option value="0" ></option>
+            </select>
+          </div>
+      </div>
+      <div class="form-group">
+          <div class="input">
+            <label class="col-sm-2 control-label required" for="inputNote">N. passaggi settimanali</label>
+            <div class="col-sm-4">
+                <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[passaggi_settimanali]" step="1" min="0" class=" form-control required not-zero">
+            </div>
+          </div>
+          <div class="input">
+            <label class="col-sm-2 control-label required" >Frequenza</label>
+            <div class="col-sm-4">
+                <select data-tab="#click_tab_order_3" name="[frequenza]" class=" form-control required servicesFrequency">
+                </select>
+            </div>
+          </div>
+      </div>
+      <div class="form-group input">
+          <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+          <div class="col-sm-10">
+              <textarea rows="2" type="text" placeholder="Dettagli intervento A.F." name="[dettaglio]" class="form-control"></textarea>
+          </div>
+      </div>
+      <h5 class="text-center">
+        <b>Flessibilità</b>
+      </h5>
+
+      <div class="form-group">
+      <label class="col-sm-2 control-label"></label>
+      <div class="col-sm-10" >
+        <div class="row" >
+          <div class="col-sm-4">
+            <label class="control-label" >Orario</label>
+              <select name="[fle_orario]" class=" form-control servicesFlexibility">
+                <option value="0" ></option>
+              </select>
+          </div>
+
+            <div class="col-sm-4">
+              <label class=" control-label" >Giorni</label>
+                <select  name="[fle_giorni]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+
+            <div class="col-sm-4">
+              <label class="control-label" >Operatore</label>
+                <select name="[fle_operatore]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- Telesoccorso -->
+  <div class="clone-service-6">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+    <div class="form-group">
+      <label class="col-sm-2 control-label" >Telesocorso</label>
+      <div class="col-sm-2">
+          <input type="number" value="0" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control">
+      </div>
+      <label class="col-sm-2 control-label" >Cellulare</label>
+      <div class="col-sm-2">
+          <select name="[cell]" class=" form-control ">
+            <option value="0" >NO</option>
+            <option value="1" >SI</option>
+          </select>
+      </div>
+      <label class="col-sm-2 control-label" >Custodia Chiavi</label>
+      <div class="col-sm-2">
+          <select name="[chiavi]" class=" form-control ">
+            <option value="0" >NO</option>
+            <option value="1" >SI</option>
+          </select>
+      </div>
+    </div>
+    <div class="form-group input">
+        <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+        <div class="col-sm-10">
+            <textarea rows="2" type="text" placeholder="Dettagli Telesoccorso" name="[dettaglio]" class="form-control"></textarea>
+        </div>
+    </div>
+  </div>
+  <!-- Intervento reception -->
+  <div class="clone-service-32">
+    <input class="reset-id" type="hidden" value="" name="[id]" />
+    <div class="form-group">
+      <div class="input">
+        <label class="col-sm-2 control-label required" >Ore </label>
+        <div class="col-sm-4">
+            <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[ore_num]" step="1" min="0" class=" form-control required not-zero">
+        </div>
+      </div>
+      <div class="input">
+        <label class="col-sm-2 control-label" >Ore festive</label>
+        <div class="col-sm-4">
+          <input type="number" value="0" required placeholder="0" name="[ore_festive]" step="1" min="0" class=" form-control">
+        </div>
+      </div>
+    </div>
+    <div class="form-group ">
+      <div class="input">
+        <label class="col-sm-2 control-label required" >N. passaggi </label>
+        <div class="col-sm-4">
+            <input data-tab="#click_tab_order_3" type="number" required placeholder="0" name="[passaggi_settimanali]" step="1" min="0" class=" form-control required not-zero">
+        </div>
+      </div>
+      <div class="input">
+        <label class="col-sm-2 control-label required" >Frequenza</label>
+        <div class="col-sm-4">
+            <select data-tab="#click_tab_order_3" name="[frequenza]" class=" form-control required servicesFrequency">
+            </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-group input">
+        <label class="col-sm-2 control-label" for="inputNote">Dettagli</label>
+        <div class="col-sm-10">
+            <textarea rows="2" type="text" placeholder="Dettagli intervento reception" name="[dettaglio]" class="form-control"></textarea>
+        </div>
+    </div>
+    <h5 class="text-center">
+      <b>Flessibilità</b>
+    </h5>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" style="margin-top:28px" ><b></b></label>
+      <div class="col-sm-10" >
+        <div class="row" >
+          <div class="col-sm-4">
+            <label class="control-label" >Orario</label>
+              <select name="[fle_orario]" class=" form-control servicesFlexibility">
+                <option value="0" ></option>
+              </select>
+          </div>
+
+            <div class="col-sm-4">
+              <label class=" control-label" >Giorni</label>
+                <select  name="[fle_giorni]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+
+            <div class="col-sm-4">
+              <label class="control-label" >Operatore</label>
+                <select name="[fle_operatore]" class=" form-control servicesFlexibility">
+                  <option value="0" ></option>
+                </select>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  </div>
+
+
+
+</div>

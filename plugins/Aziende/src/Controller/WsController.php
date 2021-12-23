@@ -1,0 +1,1573 @@
+<?php
+namespace Aziende\Controller;
+
+use Cake\Routing\Router;
+use Aziende\Controller\AppController;
+use Cake\Event\Event;
+use Cake\ORM\TableRegistry;
+use Cake\Http\Client;
+use Cake\Core\Configure;
+
+/**
+ * Aziende Controller
+ *
+ * @property \Aziende\Model\Table\AziendeTable $Aziende
+ */
+class WsController extends AppController
+{
+
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('Aziende.Azienda');
+        $this->loadComponent('Aziende.Sedi');
+        $this->loadComponent('Aziende.Contatti');
+        $this->loadComponent('Aziende.Order');
+        $this->loadComponent('Aziende.Fornitori');
+        $this->loadComponent('Aziende.Clienti');
+        //$this->loadComponent('Csrf');
+    }
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        /*$this->Auth->allow(['getAziende','saveAzienda','deleteAzienda','loadAzienda','getSedi','saveSede','deleteSede','loadSede','getContatti','saveContatto',
+                            'deleteContatto','loadContatto']);*/
+
+        $this->viewBuilder()->layout('ajax');
+        $this->viewBuilder()->templatePath('Async');
+        $this->viewBuilder()->template('default');
+        $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore");
+
+        $user = $this->Auth->user();
+
+        if(isset($user['role']) && $user['role'] == 'companee_admin'){
+            $this->Auth->allow(['loadAzienda', 'verifyDatiPiva', 'saveAziendaJson', 'sendNoticeCompaneeAdminEdit']);
+        }
+
+    }
+
+    public function beforeRender(Event $event) {
+        parent::beforeFilter($event);
+        $this->set('result', json_encode($this -> _result));
+    }
+
+    /**
+     * Index method
+     *
+     * @return void
+     */
+    public function getAziende()
+    {
+
+        //echo "<pre>"; print_r($this->request->query); echo "</pre>";
+
+        $pass['query'] = $this->request->query;
+
+        $res = $this->Azienda->getAziende($pass);
+        //debug($res);die;
+        $out['total_rows'] = $res['tot'];
+
+        if(!empty($res['res'])){
+
+            foreach ($res['res'] as $key => $azienda) {
+
+                $button = "";
+                $button.= '<div class="btn-group">';
+                $button.= '<a class="btn btn-xs btn-default view" data-toggle="tooltip" title="Visualizza" href="' . Router::url('/aziende/home/info/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" ><i class="fa fa-eye"></i></a>';
+                $button.= '<a class="btn btn-xs btn-default edit" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" data-toggle="modal" data-target="#myModalAzienda"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
+
+                /*$ficGtwUid = Configure::read('dbconfig.ficgtw.API_UID');
+                if ($ficGtwUid != "") { // Il pulsante di fatture in cloud lo mostro solo se effettivamente è configurato, altrimenti non serve...
+                    if($azienda->id_cliente_fattureincloud != 0 || $azienda->id_fornitore_fattureincloud != 0){
+                        $button.= '<span data-toggle="tooltip" title="Anagrafica già inviata a Fatture in Cloud"><a class="btn btn-xs btn-default send-anagrafica-disabled anagrafica-sent" data-id="' . $azienda->id . '" ><i class="fa fa-link"></i></a></span>';
+                    }else{
+                        if($azienda->interno == true){
+                            $button.= '<span data-toggle="tooltip" title="Gli interni non possono inviare l\'anagrafica"><a class="btn btn-xs btn-default send-anagrafica-disabled" data-id="' . $azienda->id . '" ><i class="fa fa-link"></i></a></span>';
+                        }elseif($azienda->cliente == false && $azienda->fornitore == false){
+                            $button.= '<span data-toggle="tooltip" title="Ruolo cliente/fornitore non definito."><a class="btn btn-xs btn-default send-anagrafica-disabled" data-id="' . $azienda->id . '" ><i class="fa fa-link"></i></a></span>';
+                        }else{
+                            $button.= '<a class="btn btn-xs btn-default send-anagrafica" data-id="' . $azienda->id . '" ><i data-toggle="tooltip" title="Invia anagrafica a Fatture in Cloud" href="#" class="fa fa-link"></i></a>';
+                        }
+                    }
+                }*/
+                
+				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+                $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-map-marker"></i> Sedi </a></li>';
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-users"></i> Contatti</a></li>';
+                $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+                $button.= '</ul>';
+                $button.= '</div>';
+                $button.= '</div>';
+
+
+
+                $out['rows'][] = array(
+                    htmlspecialchars($azienda->denominazione),
+                    //htmlspecialchars($azienda->nome_cognome),
+                    htmlspecialchars($azienda->telefono),
+                    htmlspecialchars($azienda->email_info),
+                    htmlspecialchars($azienda->sito_web),
+                    //htmlspecialchars($azienda->piva),
+					//htmlspecialchars($azienda->pa_codice),
+                    $button
+                );
+            }
+
+            //$out['rows'] = $rows;
+
+            $this->_result = $out;
+
+        }else{
+
+            $this->_result = array();
+        }
+
+
+    }
+
+    public function saveAzienda($id = 0){
+
+        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+
+        if($id == 0){
+            unset($this->request->data['id']);
+        }
+
+        $azienda = $this->Azienda->_newEntity();
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+
+        $azienda = $this->Azienda->_patchEntity($azienda, $this->request->data);
+
+        if ($this->Azienda->_save($azienda)) {
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+        }
+
+    }
+
+    public function deleteAzienda($id = 0){
+
+        if($id != 0){
+
+            $azienda = $this->Azienda->_get($id);
+
+            if($this->Azienda->_delete($azienda)){
+                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            }
+
+        }else{
+             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+        }
+
+    }
+
+    public function loadAzienda($id = 0){
+
+        if($id != 0){
+
+            $azienda = $this->Azienda->_get($id);
+
+            if($this->request->session()->read('Auth.User.role') == 'companee_admin'){
+                unset($azienda->contatti);
+            }
+
+            if($azienda->logo){
+                $path = ROOT.DS.Configure::read('dbconfig.aziende.LOGO_PATH').$azienda->logo;
+                $type = pathinfo($path, PATHINFO_EXTENSION);
+                $dataImg = file_get_contents($path);
+                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($dataImg);
+                $azienda->logo = $base64;
+            }
+
+            $data['azienda'] = $azienda;
+
+			$sedi = $this->Sedi->getSedi(['idAzienda' => $id]);
+			if($sedi){
+				$data['sede'] = $sedi[0];
+			}
+
+			$http = new Client();
+
+			if($azienda->id_cliente_fattureincloud != 0){
+
+				$url = Router::url([
+					'plugin' => 'ficgtw',
+				    'controller' => 'ws',
+				    'action' => 'getcliente',
+					'_full' => true,
+					'_ssl' => Configure::read('localconfig.HttpsEnabled')
+				]);
+
+				$res = $http->post(
+					$url,
+					[
+						'id' => $azienda->id_cliente_fattureincloud,
+					]
+				);
+
+				$cliente = json_decode($res->body());
+
+				$data['cliente'] = $cliente->data;
+
+			}
+
+			if($azienda->id_fornitore_fattureincloud != 0){
+
+				$url = Router::url([
+					'plugin' => 'ficgtw',
+				    'controller' => 'ws',
+				    'action' => 'getfornitore',
+					'_full' => true,
+					'_ssl' => Configure::read('localconfig.HttpsEnabled')
+				]);
+
+				$res = $http->post(
+					$url,
+					[
+						'id' => $azienda->id_fornitore_fattureincloud,
+					]
+				);
+
+				$fornitore = json_decode($res->body());
+
+				$data['fornitore'] = $fornitore->data;
+
+			}
+
+            $this->_result = array('response' => 'OK', 'data' => $data, 'msg' => "Azienda trovata");
+
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+        }
+
+    }
+
+    public function getSedi($idAzienda = 0, $for = "table"){
+
+        //echo "<pre>"; print_r($this->request->query); echo "</pre>";
+
+        $pass['query'] = $this->request->query;
+
+        $pass['idAzienda'] = $idAzienda;
+
+        $sedi = $this->Sedi->getSedi($pass);
+
+        if($for == "table"){
+
+            $totSedi = $this->Sedi->getTotSedi($pass);
+
+            $out['total_rows'] = $totSedi;
+
+            if(!empty($sedi)){
+
+                foreach ($sedi as $key => $sede) {
+
+                    $button = "";
+                    $button.= '<div class="btn-group">';
+                    $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
+                    $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+                    $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+                    $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                    $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-users"></i> Contatti</a></li>';
+                    $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+                    $button.= '</ul>';
+                    $button.= '</div>';
+                    $button.= '</div>';
+
+
+                    $rows[] = array(
+                        htmlspecialchars($sede['st']['tipo']),
+                        htmlspecialchars($sede->indirizzo),
+                        htmlspecialchars($sede->num_civico),
+                        htmlspecialchars($sede->cap),
+                        htmlspecialchars($sede->c['des_luo']),
+                        htmlspecialchars($sede->p['des_luo']),
+                        $button
+                    );
+                }
+
+                $out['rows'] = $rows;
+
+                $this->_result = $out;
+
+            }else{
+
+                $this->_result = array();
+            }
+
+        }else{
+
+            $this->_result = array('response' => 'OK', 'data' => $sedi, 'msg' => "ok");
+
+        }
+    }
+
+    public function saveSede($idSede = 0){
+
+        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+
+        if($idSede == 0){
+            unset($this->request->data['id']);
+        }
+
+        $sede = $this->Sedi->_newEntity(); 
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+
+        $sede = $this->Sedi->_patchEntity($sede, $this->request->data);
+
+        $sede->comune =  $this->request->data['comune'];
+        $sede->provincia =  $this->request->data['provincia'];
+
+        if ($this->Sedi->_save($sede)) {
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+        }
+
+    }
+
+    public function deleteSede($id = 0){
+
+        if($id != 0){
+
+            $sede = $this->Sedi->_get($id);
+
+            if($this->Sedi->_delete($sede)){
+                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            }
+
+        }else{
+             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+        }
+
+    }
+
+    public function loadSede($id = 0){
+
+        if($id != 0){
+
+            $sede = $this->Sedi->_get($id);
+
+            $this->_result = array('response' => 'OK', 'data' => $sede, 'msg' => "Sede trovata");
+
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+        }
+
+    }
+
+    public function getContatti($tipo = "", $id = 0){
+
+        $pass['query'] = $this->request->query;
+
+        $pass['id'] = $id;
+        $pass['tipo'] = $tipo;
+
+        $contatti = $this->Contatti->getContattiTable($pass);
+
+        $out['total_rows'] = $contatti['tot'];
+
+        if(!empty($contatti['res'])){
+
+            $user = $this->Auth->user();
+
+            foreach ($contatti['res'] as $key => $contatto) {
+
+                $button = "";
+                $button.= '<div class="btn-group">';
+                $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $contatto->id . '" data-toggle="modal" data-target="#myModalContatto"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
+                $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+                $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                $button.= '<li><a class="delete" href="#" data-id="' . $contatto->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+                $button.= '</ul>';
+                $button.= '</div>';
+                $button.= '</div>';
+
+                $login = "";
+                if($contatto->userName){
+                    if($user['role'] == 'admin'){
+                        $login.= '<a class="contact-login" href="'.Router::url('/admin/registration/users/changeUser/' . $contatto->id_user).'" title="'.__('Prendi l\'identità').'">';
+                        //$login.= '<i class="fa fa-sign-in"><i/> ';
+                        $login.= $contatto->userName . ' [' . $contatto->userRole . ']';
+                        $login.= '</a>';
+                    }else{
+                        $login .= $contatto->userName . ' [' . $contatto->userRole . ']';
+                    }
+                }
+
+                $out['rows'][] = array(
+                    htmlspecialchars($contatto->cognome),
+                    htmlspecialchars($contatto->nome),
+                    htmlspecialchars($contatto->azienda),
+                    htmlspecialchars($contatto->ruolo),
+                    $login,
+                    htmlspecialchars($contatto->telefono),
+                    htmlspecialchars($contatto->cellulare),
+                    htmlspecialchars($contatto->email),
+                    $button
+                );
+            }
+
+            //debug($out);die;
+
+            $this->_result = $out;
+
+        }else{
+
+            $this->_result = array();
+        }
+
+    }
+
+    public function saveContatto($idContatto = 0){
+
+        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+        $data = $this->request->data;
+
+        $contatto = $this->Contatti->_newEntity();
+
+        if($idContatto == 0){
+            unset($data['id']);
+
+            $contatti = TableRegistry::get('Aziende.Contatti');
+
+            $lastContatto = $contatti->find()
+                ->where(['id_azienda' => $data['id_azienda'], 'deleted' => '0'])
+                ->order(['ordering DESC'])
+                ->first();
+            
+            if($lastContatto){
+                $contatto->ordering = $lastContatto->ordering + 1;
+            }
+        }
+
+        if(!empty($data['skills'])){
+            foreach ($data['skills'] as $skill) {
+                $data['Skills'][] = array('id' => $skill);
+            }
+        }else{
+            $data['Skills'] = array();
+        }
+        unset($data['skills']);
+        $contatto = $this->Contatti->_patchEntity($contatto, $data);
+
+        if ($this->Contatti->_save($contatto)) {
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+        }
+
+    }
+
+    public function deleteContatto($id = 0){
+
+        if($id != 0){
+
+            $contatto = $this->Contatti->_get($id);
+
+            if($this->Contatti->_delete($contatto)){
+                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            }
+
+        }else{
+             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+        }
+
+    }
+
+    public function loadContatto($id = 0){
+
+        if($id != 0){
+
+            $contatto = $this->Contatti->_get($id);
+
+            $this->_result = array('response' => 'OK', 'data' => $contatto, 'msg' => "Contatto trovato");
+
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+        }
+
+    }
+
+    public function getContattiAzienda($id = 0, $role = 0)
+    {
+      if($id != 0){
+
+          $res = $this->Contatti->getContattiAzienda($id,$role);
+
+          $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Contatti trovati");
+
+      }else{
+          $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+      }
+
+
+    }
+
+    public function getOrders($idOrAction = 0){
+
+        //echo "<pre>"; print_r($this->request->query); echo "</pre>";
+
+        $pass['query'] = $this->request->query;
+        $orders = $this->Order->getOrders($pass,$idOrAction);
+
+        //debug($orders);
+        $out = array('rows'=>[], 'total_rows'=>$orders['tot'] );
+        if(!empty($orders['res'])){
+          foreach($orders['res'] as $key => $order){
+
+            $button = "";
+            $button.= '<div class="btn-group">';
+            $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $order['id'] . '" data-toggle="modal" data-target="#myModalOrder"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
+            $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+            $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+            $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+            $button.= '<li><a class="delete" href="#" data-id="' . $order['id'] . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+            $button.= '</ul>';
+            $button.= '</div>';
+            $button.= '</div>';
+            $out['rows'][$key] = [
+              htmlspecialchars($order['name']),
+              htmlspecialchars($order['note']),
+              htmlspecialchars($order['contatto']),
+              $order['created']->i18nFormat('yyyy-MM-dd HH:mm:ss'),
+              ($order['id_status'] == 2 ?  $order['closed']->i18nFormat('yyyy-MM-dd HH:mm:ss') : ''),
+              '<span class="badge orderStatusBG-'.$order['id_status'].'">'.htmlspecialchars($order['status']).'</span>',
+              $button
+            ];
+            if($idOrAction === 'all'){
+              array_unshift($out['rows'][$key], '<a href="'.Router::url('/aziende/home/info/'.$order['id_azienda']).'">'.$order['azienda'].'</a>');
+            }
+          }
+        }
+
+
+        $this->_result = $out;
+
+    }
+
+    public function loadOrder($id = 0){
+
+        if($id != 0){
+
+            $order = $this->Order->_get($id);
+
+            $this->_result = array('response' => 'OK', 'data' => $order, 'msg' => "Order trovato");
+
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+        }
+
+    }
+
+    public function saveOrder($idOrder = 0){
+
+        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+
+        if($idOrder == 0){
+            unset($this->request->data['id']);
+        }
+
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+        $order = $this->Order->saveOrder($this->request->data);
+
+        if ($order) {
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+        }
+
+    }
+
+    public function deleteOrder($id = 0){
+
+        if($id != 0){
+
+            $order = $this->Order->_get($id);
+
+            if($this->Order->_delete($order)){
+                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            }
+
+        }else{
+             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+        }
+
+    }
+
+    public function getOrdersAzienda($id = 0, $selectedId = '')
+    {
+      if($id != 0){
+
+          $res = $this->Order->getOrdersAzienda($id, 1000, $selectedId);
+
+          $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Ordini trovati");
+
+      }else{
+          $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+      }
+
+
+    }
+
+    public function startOrdersStatus()
+    {
+        if($this->Auth->user('role') != 'admin'){
+              $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Non hai i permessi sufficienti.");
+              return;
+        }
+        $orders = TableRegistry::get('Aziende.Orders')->find()->toArray();
+        $res = TableRegistry::get('Aziende.OrdersHistory')->initializeHistory($orders);
+        TableRegistry::get('Aziende.Orders')->updateAll(['id_status' => 1],['id' > 0]);
+
+        $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Sono stati initializzati ".$res." ordini");
+    }
+
+    public function autocompleteAziende($type = 'all')
+    {
+        $nome = $this->request->query['q'];
+        $res = array();
+
+        if(strlen($nome) < 3){
+          $this->_result = array('response' => 'KO', 'data' => $res, 'msg' => "Devi inserire almeno tre lettere.");
+        }else{
+          $res = $this->Azienda->getAziendaAutocomplete($nome,$type);
+          $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Elenco risultati.");
+        }
+    }
+
+    public function autocompleteOrders($idAzienda = 0)
+    {
+        $nome = $this->request->query['q'];
+        $res = array();
+
+        if(strlen($nome) < 3){
+          $this->_result = array('response' => 'KO', 'data' => $res, 'msg' => "Devi inserire almeno tre lettere.");
+        }else{
+          $res = $this->Order->getOrdersAutocomplete($nome,$idAzienda);
+          $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Elenco risultati.");
+        }
+    }
+
+    public function getFornitoriFatture($idOrAction=0)
+    {
+
+        $pass['query'] = $this->request->query;
+        $fatture = $this->Fornitori->getFatture($pass,$idOrAction);
+
+        $out = array('rows'=>[], 'total_rows'=>$fatture['tot'] );
+        if(!empty($fatture['res'])){
+          foreach($fatture['res'] as $key => $fattura){
+
+            $button = "";
+            $button.= '<div class="btn-group">';
+            $button.= '<a class="btn btn-xs btn-default edit-passive-invoice" href="#" data-id="' . $fattura['id'] . '" data-toggle="modal" data-target="#myModalFatturaPassiva"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
+            if($fattura->id_fattureincloud != 0){
+                $button.= '<div data-toggle="tooltip" title="Dati fattura già inviati a Fatture in Cloud" style="display:inline;"><a class="btn btn-xs btn-default send-invoice-disabled" href="#" data-id="' . $fattura['id'] . '" style="background-color:#54ce85;" ><i class="fa fa-link"></i></a></div>';
+			}else{
+                if($fattura->issuer_id_fattureincloud != 0){
+                    $button.= '<a class="btn btn-xs btn-default send-invoice" href="#" data-id="' . $fattura['id'] . '" data-toggle="tooltip" title="Invia dati fattura a Fatture in Cloud"><i class="fa fa-link"></i></a>';
+                }else{
+                    $button.= '<div data-toggle="tooltip" title="Anagrafica azienda non presente su fatture in cloud" style="display:inline;"><a class="btn btn-xs btn-default send-invoice-disabled" href="#" data-id="' . $fattura['id'] . '" style="background-color:#e8e8e8;" ><i class="fa fa-link" style="color:#9b9b9b;"></i></a></div>';
+                }
+			}
+            $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+            $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+            $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+            $button.= '<li><a class="clone" href="#" data-id="' . $fattura['id'] . '" data-toggle="modal" data-target="#myModalFatturaPassiva"><i style="margin-right: 7px;" href="#" class="fa fa-clone"></i> Duplica</a></li>';
+            $button.= '<li><a class="delete-passive-invoice" href="#" data-id="' . $fattura['id'] . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+            $button.= '</ul>';
+            $button.= '</div>';
+            $button.= '</div>';
+
+            $out['rows'][$key] = [
+              htmlspecialchars($fattura['payer']),
+              htmlspecialchars($fattura['num']),
+              (!empty($fattura['emission_date'])? $fattura['emission_date']->i18nFormat('dd/MM/yyyy') : '' ),
+              htmlspecialchars($fattura['description']),
+              htmlspecialchars($fattura['purpose']),
+              htmlspecialchars($fattura['amount_topay']),
+              (!empty($fattura['due_date'])? $fattura['due_date']->i18nFormat('dd/MM/yyyy') : '' ),
+              (!empty($fattura['attachment']) ?
+              '<a href="'.Router::url('/aziende/fornitori/getAttachment/'.htmlspecialchars($fattura['attachment'])).'" target="_blank">Allegato</a>'  : ''),
+              '<span class="badge invoicePaid-'.$fattura['is_paid'].'">'.$fattura['is_paid']."</span>",
+              $button
+            ];
+            if($idOrAction === 'all'){
+              array_unshift($out['rows'][$key], htmlspecialchars($fattura['issuer']).'</a>');
+            }
+          }
+        }
+
+
+        $this->_result = $out;
+
+    }
+
+    public function getClientiFatture($idOrAction=0)
+    {
+
+        $pass['query'] = $this->request->query;
+        $fatture = $this->Clienti->getFatture($pass,$idOrAction);
+
+        $out = array('rows'=>[], 'total_rows'=>$fatture['tot'] );
+        if(!empty($fatture['res'])){
+          foreach($fatture['res'] as $key => $fattura){
+
+            $button = "";
+            $button.= '<div class="btn-group">';
+            $button.= '<a class="btn btn-xs btn-default edit-active-invoice" href="#" data-id="' . $fattura['id'] . '" data-toggle="modal" data-target="#myModalFatturaAttiva"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
+            if($fattura->id_fattureincloud != 0){
+                $button.= '<div data-toggle="tooltip" title="Fattura già generata" style="display:inline;"><a class="btn btn-xs btn-default send-invoice-disabled" href="#" data-id="' . $fattura['id'] . '" style="background-color:#54ce85;" ><i class="fa fa-link"></i></a></div>';
+			}else{
+                if($fattura->payer_id_fattureincloud != 0){
+                    $button.= '<a class="btn btn-xs btn-default send-invoice" href="#" data-id="' . $fattura['id'] . '" data-toggle="tooltip" title="Genera fattura"><i class="fa fa-link"></i></a>';
+                }else{
+                    $button.= '<div data-toggle="tooltip" title="Anagrafica azienda non presente su fatture in cloud" style="display:inline;"><a class="btn btn-xs btn-default send-invoice-disabled" href="#" data-id="' . $fattura['id'] . '" style="background-color:#e8e8e8;" ><i class="fa fa-link" style="color:#9b9b9b;"></i></a></div>';
+                }
+			}
+            $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+            $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+            $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+            $button.= '<li><a class="clone" href="#" data-id="' . $fattura['id'] . '" data-toggle="modal" data-target="#myModalFatturaAttiva"><i style="margin-right: 7px;" href="#" class="fa fa-clone"></i> Duplica</a></li>';
+            $button.= '<li><a class="delete-active-invoice" href="#" data-id="' . $fattura['id'] . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+            $button.= '</ul>';
+            $button.= '</div>';
+            $button.= '</div>';
+
+            $out['rows'][$key] = [
+              htmlspecialchars($fattura['issuer']),
+              htmlspecialchars($fattura['num']),
+              (!empty($fattura['emission_date'])? $fattura['emission_date']->i18nFormat('dd/MM/yyyy') : '' ),
+              htmlspecialchars($fattura['amount_topay']),
+              (!empty($fattura['due_date'])? $fattura['due_date']->i18nFormat('dd/MM/yyyy') : '' ),
+              (!empty($fattura['attachment']) ?
+              '<a href="'.Router::url('/aziende/fornitori/getAttachment/'.htmlspecialchars($fattura['attachment'])).'" target="_blank">Allegato</a>'  : ''),
+              '<span class="badge invoicePaid-'.$fattura['is_paid'].'">'.$fattura['is_paid']."</span>",
+              $button
+            ];
+            if($idOrAction === 'all'){
+                array_splice($out['rows'][$key], 1, 0, htmlspecialchars($fattura['payer']).'</a>');
+            }
+          }
+        }
+
+
+        $this->_result = $out;
+
+    }
+
+    public function loadFattura($id = 0){
+
+        if($id != 0){
+
+            $fattura = TableRegistry::get('Aziende.Invoices')->get($id,['contain' => ['Issuer','Orders']]);
+
+            if($fattura['metodo'] == 'not'){
+				$fattura['metodo'] = '';
+			}
+
+            $this->_result = array('response' => 'OK', 'data' => $fattura, 'msg' => "Order trovato");
+
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+        }
+
+    }
+
+    public function loadFatturaAttiva($id = 0){
+
+        if($id != 0){
+
+            $fattura = TableRegistry::get('Aziende.Invoices')->get($id,['contain' => ['Payer','Orders', 'InvoicesArticles']]);
+
+            if($fattura['metodo'] == 'not'){
+				$fattura['metodo'] = '';
+			}
+
+            $this->_result = array('response' => 'OK', 'data' => $fattura, 'msg' => "Order trovato");
+
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
+        }
+
+    }
+
+    public function saveFatturaFornitore(){
+
+        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+        if(empty($this->request->data['id'])){
+            unset($this->request->data['id']);
+        }
+        $msg = '';
+
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+        if(!empty($this->request->data['attachment_file']['tmp_name'])){
+            $attachment = $this->Fornitori->uploadAttachment($this->request->data['attachment_file']);
+            if($attachment){
+              $this->request->data['attachment']= $attachment;
+            }else{
+              $msg = "Errore durante il salvataggio dell'allegato";
+            }
+        }
+        if(!empty($this->request->data['xml_file']['tmp_name'])){
+            $xml = $this->Fornitori->uploadAttachment($this->request->data['xml_file']);
+            if($xml){
+              $this->request->data['xml']= $xml;
+            }else{
+              $msg = "Errore durante il salvataggio del file xml.";
+            }
+        }
+        $invoice = $this->Fornitori->saveInvoice($this->request->data);
+
+        if ($invoice) {
+            if(!empty($invoice->id_fattureincloud)){
+                $this->sendInvoice($invoice->id, true);
+            }
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => $msg);
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+        }
+
+    }
+
+    public function saveFatturaCliente(){
+
+        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+        if(empty($this->request->data['id'])){
+            unset($this->request->data['id']);
+        }
+        $msg = '';
+
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+        if(!empty($this->request->data['attachment_file']['tmp_name'])){
+            $attachment = $this->Clienti->uploadAttachment($this->request->data['attachment_file']);
+            if($attachment){
+              $this->request->data['attachment']= $attachment;
+            }else{
+              $msg = "Errore durante il salvataggio dell'allegato";
+            }
+        }
+        $invoice = $this->Clienti->saveInvoice($this->request->data);
+
+        if ($invoice) {
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => $msg);
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+        }
+
+    }
+
+    public function deleteFattura($id = 0)
+    {
+
+        if($id != 0){
+
+            if($this->Fornitori->deleteInvoice($id)){
+                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            }
+
+        }else{
+             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+        }
+
+    }
+
+    public function deleteFatturaAttiva($id = 0)
+    {
+
+        if($id != 0){
+
+            if($this->Clienti->deleteInvoice($id)){
+                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            }
+
+        }else{
+             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+        }
+
+    }
+
+    public function deleteArticleInvoice()
+    {
+        $id_articolo = $this->request->data['article_id'];
+        $articles = TableRegistry::get('Aziende.invoicesArticles');
+        $article = $articles->get($id_articolo);
+        $article->deleted = 1;
+
+        if($articles->save($article)){
+            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Articolo cancellato con successo.");
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione dell'articolo.");
+        }
+    }
+
+    public function fattureCausaliChart($year=1 ,$month = 0)
+    {
+        $data = $this->Fornitori->getFattureChartPerCausale($year,$month);
+
+        $this->_result = array('response' => 'OK', 'data' => $data, 'msg' => "");
+
+    }
+
+    public function saveAziendaJson()
+    {
+        $data = $this->request->data;
+
+        if(empty($data['id'])){
+            unset($data['id']);
+        }
+
+        if ($this->Azienda->saveAziendaJson($data)) {
+			if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
+				$msg = false;
+				//Aggiorno o creo cliente su fattureincloud
+				$dataC = $data;
+				$dataC['fornitore'] = false;
+				if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
+					$msg = $this->sendEditAnagrafica($dataC);
+				}elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
+					$msg = $this->sendAnagrafica($dataC['id']);
+				}
+				//Aggiorno o creo fornitore su fattureincloud
+				$dataF = $data;
+				$dataF['cliente'] = false;
+				if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
+					$msg = $this->sendEditAnagrafica($dataF);
+				}elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
+					$msg = $this->sendAnagrafica($dataF['id']);
+				}
+				if(!$msg){
+					$this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+				}else{
+					$this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
+				}
+			}else{
+				$this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+			}
+        }else{
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
+        }
+
+    }
+
+	public function sendAnagrafica($idAzienda){
+
+		$aziende = TableRegistry::get('Aziende.Aziende');
+		$azienda = $aziende->get($idAzienda);
+		//debug($azienda);die;
+		$data = array();
+
+		$sedi = TableRegistry::get('Aziende.Sedi');
+		$sede = $sedi->getSedeFatturaincloud($idAzienda);
+
+		if($sede){
+            
+			$indirizzoVia = $sede->indirizzo.', '.$sede->num_civico;
+			$indirizzoCap = $sede->cap;
+			$indirizzoCitta = $sede->comune;
+			$indirizzoProvincia = $sede->provincia;
+		}else{
+			$indirizzoVia = '';
+			$indirizzoCap = '';
+			$indirizzoCitta = '';
+			$indirizzoProvincia = '';
+		}
+
+		$data = [
+			'nome' => $azienda->denominazione,
+			'referente' => $azienda->cognome.' '.$azienda->nome,
+			'piva' => $azienda->piva,
+			'cf' => $azienda->cf,
+			'paese_iso' => $azienda->cod_paese,
+			'mail' => $azienda->email_info,
+			'tel' => $azienda->telefono,
+			'indirizzo_via' => $indirizzoVia,
+			'indirizzo_cap' => $indirizzoCap,
+			'indirizzo_citta' => $indirizzoCitta,
+			'indirizzo_provincia' => $indirizzoProvincia,
+		];
+
+		$http = new Client();
+
+		//Verifico se anagrafica gia presente su fatture in cloud
+
+		if($azienda->cf != '' || $azienda->piva != ''){
+
+			$url = Router::url([
+				'plugin' => 'ficgtw',
+				'controller' => 'ws',
+				'action' => 'getidclientefornitore',
+				'_full' => true,
+				'_ssl' => Configure::read('localconfig.HttpsEnabled')
+			]);
+
+			$res = $http->post(
+				$url,
+				[
+					'cf' => $azienda->cf,
+					'piva' => $azienda->piva
+				]
+			);
+
+			$clienteFornitoreId = json_decode($res->body());
+		}
+
+		$message = '';
+
+		if($azienda->cliente){
+			if(!isset($clienteFornitoreId) || $clienteFornitoreId->data->clienteId == ''){
+				$url = Router::url([
+					'plugin' => 'ficgtw',
+				    'controller' => 'ws',
+				    'action' => 'addclientefornitore',
+				    'cliente',
+					'_full' => true,
+					'_ssl' => Configure::read('localconfig.HttpsEnabled')
+				]);
+
+				$response = $http->post(
+		            $url,
+		            $data
+		        );
+
+				$response = json_decode($response->body());
+
+				if(isset($response->data->success) && $response->data->success){
+
+					$azienda->id_cliente_fattureincloud = $response->data->id;
+
+					if($aziende->save($azienda)){
+						$message .= 'Anagrafica cliente salvata.';
+					}else{
+						$message .= 'Errore nel salvataggio dell\'anagrafica cliente.';
+					}
+
+				}else{
+					$msg = $response->msg;
+				}
+			}else{
+				$azienda->id_cliente_fattureincloud = $clienteFornitoreId->data->clienteId;
+				$message .= 'Anagrafica cliente remota già esistente. ';
+				if($aziende->save($azienda)){
+					$message .= 'Id salvato in locale. ';
+				}else{
+					$message .= 'Errore nel salvataggio dell\'id in locale. ';
+				}
+			}
+
+		}
+
+		if(!isset($msg) && $azienda->fornitore){
+
+			if(!isset($clienteFornitoreId) || $clienteFornitoreId->data->fornitoreId == ''){
+
+				$url = Router::url([
+					'plugin' => 'ficgtw',
+				    'controller' => 'ws',
+				    'action' => 'addclientefornitore',
+				    'fornitore',
+					'_full' => true,
+					'_ssl' => Configure::read('localconfig.HttpsEnabled')
+				]);
+
+			$response2 = $http->post(
+	            $url,
+	            $data
+	        );
+
+				$response2 = json_decode($response2->body());
+
+				if(isset($response2->data->success) && $response2->data->success){
+
+					$azienda->id_fornitore_fattureincloud = $response2->data->id;
+
+					if($aziende->save($azienda)){
+						$message .= 'Anagrafica fornitore salvata. ';
+					}else{
+						$message .= 'Errore nel salvataggio dell\'anagrafica fornitore. ';
+					}
+
+				}else{
+					$msg = $response2->msg;
+				}
+
+			}else{
+				$azienda->id_fornitore_fattureincloud = $clienteFornitoreId->data->fornitoreId;
+				$message .= 'Anagrafica fornitore remota già esistente. ';
+				if($aziende->save($azienda)){
+					$message .= 'Id salvato in locale. ';
+				}else{
+					$message .= 'Errore nel salvataggio dell\'id in locale. ';
+				}
+			}
+
+		}
+
+		if(isset($msg)){
+			$this->_result['response'] = 'KO';
+			$this->_result['data'] = -1;
+			$this->_result['msg'] = $msg;
+		}else{
+			if($azienda->cliente == 0 && $azienda->fornitore == 0){
+				$this->_result['response'] = 'KO';
+				$this->_result['data'] = -1;
+				$this->_result['msg'] = 'L\'azienda non è nè un cliente nè un fornitore.';
+			}else{
+				$this->_result['response'] = 'OK';
+				$this->_result['data'] = -1;
+				$this->_result['msg'] = $message;
+			}
+		}
+
+	}
+
+	public function sendEditAnagrafica($data){
+
+		$sedi = TableRegistry::get('Aziende.Sedi');
+		$sede = $sedi->getSedeFatturaincloud($data['id']);
+
+		$sendData = [
+			'nome' => $data['denominazione'],
+			'referente' => $data['cognome'].' '.$data['nome'],
+			'piva' => $data['piva'],
+			'cf' => $data['cf'],
+			'paese_iso' => $data['cod_paese'],
+			'mail' => $data['email_info'],
+			'tel' => $data['telefono'],
+			'indirizzo_via' => !empty($sede) ? $sede->indirizzo.', '.$sede->num_civico : '', 
+			'indirizzo_cap' => !empty($sede) ? $sede->cap : '',
+			'indirizzo_citta' => !empty($sede) ? $sede->comune : '',
+			'indirizzo_provincia' => !empty($sede) ? $sede->provincia : '',
+		];
+
+		$http = new Client();
+		$msg = false;
+		if($data['cliente']){
+
+			$sendData['id'] = $data['id_cliente_fattureincloud'];
+
+			$url = Router::url([
+				'plugin' => 'ficgtw',
+				'controller' => 'ws',
+				'action' => 'editclientefornitore',
+				'cliente',
+				'_full' => true,
+				'_ssl' => Configure::read('localconfig.HttpsEnabled')
+			]);;
+
+			$response = $http->post(
+	            $url,
+	            $sendData
+	        );
+
+			$response = json_decode($response->body());
+
+			if(isset($response->data->success) && $response->data->success){
+			}else{
+				$msg = $response->msg;
+			}
+
+		}
+
+		if(!$msg && $data['fornitore']){
+
+			$sendData['id'] = $data['id_fornitore_fattureincloud'];
+
+			$url = Router::url([
+				'plugin' => 'ficgtw',
+				'controller' => 'ws',
+				'action' => 'editclientefornitore',
+				'fornitore',
+				'_full' => true,
+				'_ssl' => Configure::read('localconfig.HttpsEnabled')
+			]);
+
+			$response2 = $http->post(
+	            $url,
+	            $sendData
+	        );
+
+			$response2 = json_decode($response2->body());
+
+			if(isset($response2->data->success) && $response2->data->success){
+			}else{
+				$msg = $response2->msg;
+			}
+
+		}
+
+		if(!$msg){
+			if(!isset($response) && !isset($response2)){
+				$msg = 'L\'azienda non è nè un cliente nè un fornitore.';
+			}
+		}
+
+		return $msg;
+	}
+
+
+    public function sendInvoice($idFattura, $edit = false){
+
+		$fatture = TableRegistry::get('Aziende.Invoices');
+		$fattura = $fatture->get($idFattura);
+
+        $aziende = TableRegistry::get('Aziende.Aziende');
+		$azienda = $aziende->get($fattura['id_issuer']);
+
+        $invoicesPurposes = TableRegistry::get('Aziende.InvoicesPurposes');
+		$invPurp = $invoicesPurposes->get($fattura['id_purpose']);
+
+		$sendData = [
+            'tipo' => 'spesa',
+			'id_fornitore' => $azienda['id_fornitore_fattureincloud'],
+			'autocompila_anagrafica' => true,
+			'salva_anagrafica' => false,
+            'data' => isset($fattura['emission_date']) ? $fattura['emission_date']->format('d/m/Y') : '',
+			'descrizione' => $fattura['description'],
+      		'categoria' => $invPurp['name'],
+            'importo_netto' => $fattura['amount_noiva'],
+			'importo_iva' => $fattura['amount_iva'],
+			'valuta' => 'EUR',
+			'valuta_cambio' => 1,
+			'ritenuta_acconto' => $fattura['ritenuta_acconto'],
+			'deducibilita_tasse' => 100,
+            'detraibilita_iva' => 100,
+            'ammortamento' => 1,
+            'numero_fattura' => $fattura['num'],
+			'lista_pagamenti' => [
+				[
+				'data_scadenza' => isset($fattura['due_date']) ? $fattura['due_date']->format('d/m/Y') : '',
+				'importo' => $fattura['amount_topay'],
+                'metodo' => $fattura['metodo'],
+				'data_saldo' => isset($fattura['paid_date']) ? $fattura['paid_date']->format('d/m/Y') : '',
+				]
+			],
+		];
+
+		$http = new Client();
+        $msg = false;
+
+        if(!empty($fattura['id_fattureincloud'])){
+            $sendData['id'] = $fattura['id_fattureincloud'];
+
+            $url = Router::url([
+                'plugin' => 'ficgtw',
+                'controller' => 'ws',
+                'action' => 'editfatturapassiva',
+                'cliente',
+                '_full' => true,
+                '_ssl' => Configure::read('localconfig.HttpsEnabled')
+            ]);
+        }else{  
+            $url = Router::url([
+                'plugin' => 'ficgtw',
+                'controller' => 'ws',
+                'action' => 'addfatturapassiva',
+                'cliente',
+                '_full' => true,
+                '_ssl' => Configure::read('localconfig.HttpsEnabled')
+            ]);
+        }
+        
+		$response = $http->post(
+            $url,
+            $sendData
+        );
+
+		$response = json_decode($response->body());
+
+		if(isset($response->data->success) && $response->data->success){
+            $fattura->id_fattureincloud = $response->data->new_id;
+            $fatture->save($fattura);
+		}else{
+			$msg = $response->msg;
+		}
+
+        if($msg){
+			$this->_result['response'] = 'KO';
+			$this->_result['data'] = -1;
+			$this->_result['msg'] = $msg;
+		}else{
+			$this->_result['response'] = 'OK';
+			$this->_result['data'] = -1;
+			$this->_result['msg'] = 'Fattura generata correttamente.';
+		}
+    }
+    
+    public function sendInvoiceAttiva($idFattura){
+
+		$fatture = TableRegistry::get('Aziende.Invoices');
+		$fattura = $fatture->get($idFattura, ['contain' => ['InvoicesArticles']]);
+
+        $aziende = TableRegistry::get('Aziende.Aziende');
+		$azienda = $aziende->get($fattura['id_payer']);
+
+        $invoicesPurposes = TableRegistry::get('Aziende.InvoicesPurposes');
+
+		$sendData = [
+            'id_cliente' => $azienda['id_cliente_fattureincloud'],
+            'nome' => $azienda['denominazione'],
+			'autocompila_anagrafica' => true,
+			'salva_anagrafica' => false,
+            'data' => isset($fattura['emission_date']) ? $fattura['emission_date']->format('d/m/Y') : '',
+			'valuta' => 'EUR',
+			'valuta_cambio' => 1,
+			'rit_acconto' => $fattura['ritenuta_acconto'],
+            'numero' => $fattura['num'],
+			'lista_pagamenti' => [
+				[
+				'data_scadenza' => isset($fattura['due_date']) ? $fattura['due_date']->format('d/m/Y') : '',
+				'importo' => $fattura['amount_topay'],
+                'metodo' => $fattura['metodo'],
+				'data_saldo' => isset($fattura['paid_date']) ? $fattura['paid_date']->format('d/m/Y') : '',
+				]
+            ],
+            'lista_articoli'=> []
+        ];
+        
+        foreach($fattura['invoices_articles'] as $articolo){
+            $invPurp = $invoicesPurposes->get($articolo['id_purpose']);
+
+            $sendData['lista_articoli'][] = [
+                'nome' => $articolo['name'],
+                'prezzo_netto' => $articolo['amount_noiva'],
+				'prezzo_lordo' => $articolo['amount'],
+                'cod_iva' => $articolo['cod_iva'],
+                'quantita' => $articolo['quantity'],
+                'categoria' => $invPurp['name'],
+                'descrizione' => $articolo['description']
+			];
+        }
+
+		$http = new Client();
+        $msg = false;
+        $url = Router::url([
+            'plugin' => 'ficgtw',
+            'controller' => 'ws',
+            'action' => 'addfattura',
+            'cliente',
+            '_full' => true,
+            '_ssl' => Configure::read('localconfig.HttpsEnabled')
+        ]);
+
+		$response = $http->post(
+            $url,
+            $sendData
+        );
+
+		$response = json_decode($response->body());
+
+		if(isset($response->data->success) && $response->data->success){
+            $fattura->id_fattureincloud = $response->data->new_id;
+            $fatture->save($fattura);
+		}else{
+			$msg = $response->msg;
+		}
+
+        if($msg){
+			$this->_result['response'] = 'KO';
+			$this->_result['data'] = -1;
+			$this->_result['msg'] = $msg;
+		}else{
+			$this->_result['response'] = 'OK';
+			$this->_result['data'] = -1;
+			$this->_result['msg'] = 'Fattura generata correttamente.';
+		}
+	}
+
+    public function verifyDatiPiva($piva){
+        $client = new \SoapClient("http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl");
+        $response = $client->checkVat(
+            array(
+                'countryCode' => 'IT',
+                'vatNumber' => $piva
+            )
+        );
+
+        if($response){
+			$this->_result = ['response' => 'OK', 'data' => $response, 'msg' => ''];
+		}else{
+			$this->_result = ['response' => 'KO', 'data' => '', 'msg' => 'Errore'];
+		}
+    }
+
+
+    public function sendNoticeCompaneeAdminEdit()
+    {
+        $companeeAdminId = $this->request->session()->read('Auth.User.id');
+        $contact = TableRegistry::get('Aziende.Contatti')->find()->where(['id_user' => $companeeAdminId])->first(); 
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($contact->id_azienda);
+
+        $users999 = TableRegistry::get('Users')->find()->where(['level' => '999'])->toArray();
+
+        $noticeTable = TableRegistry::get('Notifications');
+        
+        foreach($users999 as $user){ 
+            if($companeeAdminId != $user->id){
+                $noticeData = [
+                    'id_creator' => $companeeAdminId,
+                    'id_dest' => $user->id,
+                    'message' => "Modificati dati dell'azienda ".$azienda->denominazione." (id: ".$azienda->id.")."
+                ];
+
+                $noticeTable->sendNotice($noticeData);
+            }
+        }
+    }
+
+    public function saveOrderContatti()
+    {
+        $data = $this->request->data;
+
+        $contatti = TableRegistry::get('Aziende.Contatti');
+
+        foreach($data['subtabcontatto'] as $order => $id){ 
+            $contatto = $contatti->get($id);
+            $contatto->ordering = $order;
+
+            $contatti->save($contatto);
+        }
+
+        $this->_result = ['response' => 'OK', 'data' => '', 'msg' => 'Ordine contatti salvato correttamente.'];
+    }
+
+    public function saveOrderSedi()
+    {
+        $data = $this->request->data;
+
+        $sedi = TableRegistry::get('Aziende.Sedi');
+
+        foreach($data['subtabsede'] as $order => $id){
+            $sede = $sedi->get($id);
+            $sede->ordering = $order;
+
+            $sedi->save($sede);
+        }
+
+        $this->_result = ['response' => 'OK', 'data' => '', 'msg' => 'Ordine sedi salvato correttamente.'];
+    }
+
+    public function importXmlPassiveInvoice()
+    {
+        $xml = $this->request->data['xml_file'];
+
+        //check file type
+        $type = finfo_file(finfo_open(FILEINFO_MIME_TYPE),$xml['tmp_name']); 
+        $type = explode('/', $type)[1];
+
+        $data = [];
+
+        if($type != 'xml'){
+            $this->_result['msg'] = "Formato del file non valido. Il file caricato deve essere di tipo XML.";
+            return;
+	  	}else{
+            $get = file_get_contents($xml['tmp_name']);
+            $xmlArr = simplexml_load_string($get);      
+
+            if(!empty($xmlArr->FatturaElettronicaHeader) && !empty($xmlArr->FatturaElettronicaBody)){
+                $aziende = TableRegistry::get('Aziende.Aziende');
+
+                $state = (string)$xmlArr->FatturaElettronicaHeader->CedentePrestatore->DatiAnagrafici->IdFiscaleIVA->IdPaese;
+                $piva = (string)$xmlArr->FatturaElettronicaHeader->CedentePrestatore->DatiAnagrafici->IdFiscaleIVA->IdCodice;
+                $cf = (string)$xmlArr->FatturaElettronicaHeader->CedentePrestatore->DatiAnagrafici->CodiceFiscale;
+
+                $where = [];
+
+                if(!empty($piva)){
+                    $where['OR']['piva'] = $piva;
+                    $where['OR']['CONCAT("'.$state.'", piva) ='] = $piva;
+                }
+                if(!empty($cf)){
+                    $where['OR']['cf'] = $cf;
+                }
+                
+                $fornitore = $aziende->find()
+                                ->where([$where])
+                                ->first(); 
+
+                $data['id_issuer'] = '';
+                
+                if($fornitore){
+                    $data['id_issuer'] = $fornitore->id;
+                    $data['denominazione_issuer'] = $fornitore->denominazione;
+                }
+
+                $emissionDate = explode('-', (string)$xmlArr->FatturaElettronicaBody->DatiGenerali->DatiGeneraliDocumento->Data);
+                $dueDate = explode('-', (string)$xmlArr->FatturaElettronicaBody->DatiPagamento->DettaglioPagamento->DataScadenzaPagamento);
+
+                $data['emission_date'] = !empty($emissionDate) ? $emissionDate[2].'/'.$emissionDate[1].'/'.$emissionDate[0] : '';
+                $data['num'] = (string)$xmlArr->FatturaElettronicaBody->DatiGenerali->DatiGeneraliDocumento->Numero;
+                $data['amount_noiva'] = number_format((string)$xmlArr->FatturaElettronicaBody->DatiBeniServizi->DatiRiepilogo->ImponibileImporto, 2, ',', '');
+                $data['amount_iva'] = number_format((string)$xmlArr->FatturaElettronicaBody->DatiBeniServizi->DatiRiepilogo->Imposta, 2, ',', '');
+                $data['amount'] = number_format((string)$xmlArr->FatturaElettronicaBody->DatiGenerali->DatiGeneraliDocumento->ImportoTotaleDocumento, 2, ',', '');
+                $data['amount_topay'] = number_format((string)$xmlArr->FatturaElettronicaBody->DatiPagamento->DettaglioPagamento->ImportoPagamento, 2, ',', '');
+                $data['description'] = (string)$xmlArr->FatturaElettronicaBody->DatiGenerali->DatiGeneraliDocumento->Causale;
+                $data['due_date'] = !empty($dueDate) ? $dueDate[2].'/'.$dueDate[1].'/'.$dueDate[0] : '';
+
+                $this->_result['result'] = 'OK';
+                $this->_result['data'] = $data;
+                $this->_result['msg'] = "Xml caricato correttamente.";
+                return;
+            }else{
+                $this->_result['msg'] = "File XML non valido.";
+                return;
+            }
+        }
+    }
+
+    public function convertProvincia($provincia)
+    {
+        $luoghi = TableRegistry::get('Luoghi');
+
+        $codProv = $luoghi->find()
+            ->where(['c_cat' => '', 'des_luo' => $provincia])
+            ->first();
+
+        if($codProv){
+            $this->_result['response'] = 'OK';
+            $this->_result['data'] = $codProv['c_luo'];
+        }else{
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = "Nessuna provincia trovata.";
+        }
+    }
+
+    public function convertComune($comune)
+    {
+        $luoghi = TableRegistry::get('Luoghi');
+
+        $codCom = $luoghi->find()
+            ->where(['c_cat !=' => '', 'des_luo' => $comune])
+            ->first();
+
+        if($codCom){
+            $this->_result['response'] = 'OK';
+            $this->_result['data'] = $codCom['c_luo'];
+        }else{
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = "Nessun comune trovata.";
+        }
+    }
+
+
+}

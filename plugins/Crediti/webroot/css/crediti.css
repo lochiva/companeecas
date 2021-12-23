@@ -1,0 +1,90 @@
+.pager-left{
+  text-align: left;
+}
+.sum-crediti{
+  text-align: right;
+  margin-right:20px;
+}
+/*******************   CSS MODALE COMUNIZAIONE           *************/
+.head-credits{
+  color:white;
+  background-color: #222d32;
+}
+.email-box{
+  border: 1px solid #d2d6de;
+  padding:10px;
+  margin-top: 10px;
+}
+.email-box:active{
+
+  border: 1px solid #F7BF65;
+}
+.notifica-tab-footer{
+  margin-top:15px;
+}
+
+.email-table table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.email-table th {
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.email-table td{
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.table-credits-azienda-footer{
+  text-align: right;
+  font-weight: bold;
+  font-size: 16;
+}
+.label-radio{
+  font-weight: normal;
+  margin-right: 20px;
+  margin-left: 5px;
+}
+.notifica-testo{
+  margin-left:0px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.expand-info{
+  text-align: right;
+}
+/***********  FINE CSS MODALE    *********/
+
+/***********  COLORAZIONE RATING    *********/
+.OK1{
+  color:#333;
+  background-color: #00cc70 !important;
+}
+.OK2{
+  color:#333;
+  background-color: #00cc70 !important;
+}
+.NOTICE1{
+  color:#333;
+  background-color:#FFF033 !important;
+}
+.NOTICE2{
+  color:#333;
+  background-color:#FFF033 !important;
+}
+.NOTICE3{
+  color:#333;
+  background-color:#FFF033 !important;
+}
+.WARNING{
+  color:#333;
+  background-color: #f39c12 !important;
+}
+.CRIT{
+  color:#333;
+  background-color: #e16151 !important;
+}

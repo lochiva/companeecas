@@ -1,0 +1,74 @@
+div.box-table-cespiti.box-body #pager-cespiti{
+	text-align: left;
+}
+div.box-table-scadenzario.box-body #box-general-action a{
+	float:right;
+}
+
+#myModalCespite label.required::after{
+    content: " *";
+    color: red;
+}
+
+div.box-table-cespiti.box-body .tablesorter thead .disabled{
+	display: none;
+}
+
+div#box-cespiti
+{
+	border-top: 3px solid #37BF1C !important;
+}
+
+#num-risultati
+{
+	display: inline;
+	width: 65px;
+}
+
+.header-tabella th
+{
+	background-color: white;
+}
+
+#box-general-action
+{
+	text-align: right;
+}
+
+.btn-app
+{
+	margin-top: -13px;
+}
+
+.tablesorter-filter
+{
+	border: 1px solid #d2d6de;
+	border-radius: 2px;
+	padding: 4px;
+}
+
+.btn-group-cespiti{
+	display: flex;
+}
+
+.btn-group-cespiti .delete{
+	margin-left: 5px;
+}
+
+div.box-table-cespiti .box-body{
+	padding-left: 40px !important;
+	padding-right: 40px !important;
+}
+
+#note{
+	resize: none;
+}
+
+.centrato{
+	text-align: center;
+}
+
+.select2{
+	position: relative !important;
+	width: 100% !important;
+}

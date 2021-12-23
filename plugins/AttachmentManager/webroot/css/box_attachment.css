@@ -1,0 +1,12 @@
+#boxAttachments .box-body{
+    max-height: 463px;
+    overflow-x: hidden;
+}
+
+.icon-attachment{
+    font-size: 40px;
+}
+
+.icon-attachment-actions{
+    font-size: 16px;
+}

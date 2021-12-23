@@ -1,0 +1,68 @@
+{{ _view.Element('Aziende.include') | raw }}
+{{ Html.script('Aziende.clienti') |raw }}
+<section class="content-header">
+    <h1>
+        Fatture attive
+        <small>Elenco gestione fatture attive dei clienti</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ _view.Url.build('/') }}"><i class="fa fa-home"></i> Home</a></li>
+        <li><a href="{{ _view.Url.build('/aziende/home') }}">Aziende</a></li>
+        <li class="active">Gestione Fatture Attiva</li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="box-invoice" class="box box-success">
+            	<div class="box-header with-border">
+	              <i class="fa fa-list-ul"></i>
+	              <h3 class="box-title">Elenco Fatture Attive</h3>
+	              <a class="btn btn-info btn-xs pull-right new-active-invoice" data-toggle="modal" data-target="#myModalFatturaAttiva"  style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                <a href="{{ _view.request.env('HTTP_REFERER') }}" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
+	            </div>
+
+                <div class="box-table-invoice box-body">
+    	            <div id="pager-invoice" class="pager col-sm-6">
+                        <form>
+                            <i class="first glyphicon glyphicon-step-backward"></i>
+                            <i class="prev glyphicon glyphicon-backward"></i>
+                            <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+                            <i class="next glyphicon glyphicon-forward"></i>
+                            <i class="last glyphicon glyphicon-step-forward"/></i>
+                            <select class="pagesize">
+                                <option selected="selected" value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="table-content">
+
+                        <table id="table-invoicepayable-attiva" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Emesso da</th>
+                                    {% if idCliente == 'all' %}
+                                        <th>Cliente</th>
+                                    {% endif %}
+                                    <th>Numero</th>
+                                    <th>Data</th>
+                                    <th>Importo da pagare</th>
+                                    <th>Scadenza</th>
+                                    <th data-filter="false">Allegato</th>
+                                    <th>Pagato</th>
+                                    <th style="min-width: 110px" data-sorter="false" data-filter="false" ></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{ _view.Element('Aziende.modale_nuova_invoicepayable_attiva') | raw }}

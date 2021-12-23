@@ -1,0 +1,279 @@
+{{ Html.script('Progest.modal/order') |raw }}
+<div class="modal fade" id="myModalOrder" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Buono d'ordine</h4>
+            </div>
+            <div class="modal-body">
+              <form class="form-horizontal" id="myFormOrder">
+              <div class="nav-tabs-custom">
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a id="click_tab_order_1" href="#tab_order_1" data-toggle="tab"><b>Buono</b></a></li>
+                    <li><a id="click_tab_order_2" href="#tab_order_2" data-toggle="tab"><b>Dati per fatturazione</b></a></li>
+                    <li><a id="click_tab_order_3" href="#tab_order_3" data-toggle="tab"><b>Servizi</b></a></li>
+                    {#<li><a id="click_tab_order_4" href="#tab_order_4" data-toggle="tab"><b>Referenti committenza e sanitari</b></a></li>#}
+                  </ul>
+                  <div class="tab-content">
+                    <!-- TAB BUONO -->
+                    <div class="tab-pane active" id="tab_order_1">
+
+                        <input type="hidden" name="id" value="" />
+                        {% if idAzienda == 'all' %}
+                          <div class="form-group" id="idAziendaParent">
+                              <label class="col-sm-2 control-label required" for="idAzienda">Committente</label>
+                              <div class="col-sm-10">
+                                  <select data-tab="#click_tab_order_1" name="id_azienda" id="idAzienda" class="select2 form-control required"></select>
+                              </div>
+                          </div>
+                        {% else %}
+                          <input type="hidden" name="id_azienda" id="idAzienda" value="{{ idAzienda }}">
+                        {% endif %}
+                        {#<div class="form-group ">
+                            <label class="col-sm-2 control-label" for="idContatto">Contatto di riferimento</label>
+                            <div class="col-sm-10">
+                                <input type="hidden" name="id" id="idOrder" value="">
+                                <select name="id_contatto" id="idContatto" class="form-control select-placeholder" >
+                                        <option style="color: graytext;" value="0">Seleziona contatto</option>
+                                    {% for contatto in contatti %}
+                                        <option value="{{ contatto.id }}">{{ contatto.nome~' '~contatto.cognome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>#}
+                        <div class="form-group">
+                          <div class="input">
+                            <label class="col-sm-2 control-label required" >Numero buono</label>
+                            <div class="col-sm-4">
+                                <input data-tab="#click_tab_order_1" type="text" placeholder="Numero" name="protocol_number" id="inputNome" class="form-control required">
+                            </div>
+                          </div>
+                          <div class="input">
+                            <label class="col-sm-2 control-label required" >Data buono</label>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                  <div class="input-group-addon">
+                                      <i class="fa fa-calendar"></i>
+                                  </div>
+                                  <input data-tab="#click_tab_order_1" type="text" placeholder="Data protocollo" name="protocol_date" class="form-control datepicker-ready required" readonly>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required" >Oggetto</label>
+                            <div class="col-sm-10">
+                                <input data-tab="#click_tab_order_1" type="text" placeholder="Oggetto" name="name" id="inputNome" class="form-control required">
+                            </div>
+                        </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 control-label required" for="idPerson">Persona</label>
+                              <div class="col-sm-10" id="idPersonParent">
+                                  <div class="input-group margin" style="padding:0px;margin:0px;">
+                                      <select data-tab="#click_tab_order_1" name="id_person" id="idPerson" class="select2 form-control required"></select>
+                                          <span class="input-group-btn">
+                                            <a data-toggle="modal" data-target="#myModalPerson" type="button" class="btn btn-info btn-flat">Nuova</a>
+                                            <a data-toggle="modal" data-target="#myModalPerson" type="button" class="edit-person btn btn-info btn-flat"><i class="fa fa-pencil"></i></a>
+                                          </span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 control-label" for="idRichiedente">Richiedente</label>
+                              <div class="col-sm-10">
+                                  <select id="idRichiedente" name="id_richiedente" class="form-control add-placeholder">
+                                    <option style="color:#999;" value="" selected >Seleziona un richiedente</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div class="form-group" id="idPersonTypeParent">
+                              <label class="col-sm-2 control-label" for="idPersonType">Tipologia</label>
+                              <div class="col-sm-10">
+                                  <select value="" name="id_person_type" id="idPersonType" class="form-control add-placeholder">
+                                    <option style="color:#999;" value="0" selected >Seleziona un tipo</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div class="form-group" id="idInvoiceTypeParent">
+                              <label class="col-sm-2 control-label" for="idInvoiceType">Tipologia per fattura</label>
+                              <div class="col-sm-10">
+                                  <select value="" name="id_invoice_type" id="idInvoiceType" class="form-control add-placeholder">
+                                    <option style="color:#999;" value="0" selected >Seleziona un tipo</option>
+                                  </select>
+                              </div>
+                          </div>
+
+                          <div class="form-group">
+                            <div class="input">
+                              <label class="col-sm-2 control-label required" >Inizio</label>
+                              <div class="col-sm-4">
+                                  <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input data-tab="#click_tab_order_1" type="text" placeholder="Data inizio" name="start_date"  class="form-control datepicker-ready required" readonly>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="input">
+                              <label class="col-sm-2 control-label required" >Fine</label>
+                              <div class="col-sm-4">
+                                  <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input data-tab="#click_tab_order_1" type="text" placeholder="Data fine" name="end_date"  class="form-control datepicker-ready required" readonly>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 control-label" >Data attivazione</label>
+                              <div class="col-sm-4">
+                                  <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" placeholder="Data attivazione" name="activation_date"  class="form-control datepicker-ready" readonly>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="form-group input">
+                              <label class="col-sm-2 control-label" for="inputNote">Note</label>
+                              <div class="col-sm-10">
+                                  <textarea rows="5" type="text" placeholder="Note" name="note" id="inputNote" class="form-control"></textarea>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 control-label" >Autosufficiente</label>
+                              <div class="col-sm-4">
+                                <select name="self_sufficient" class="form-control">
+                                  <option value="1">Si</option>
+                                  <option value="0">No</option>
+                                </select>
+                              </div>
+                              <label class="col-sm-2 control-label" >Percentuale di invalidit&agrave;</label>
+                              <div class="col-sm-4">
+                                  <input type="number" placeholder="0"  name="self_percent" min="0" max="100" step="10" class=" form-control">
+                              </div>
+                          </div>
+                          <hr />
+                          <div class="form-group ">
+                              <label class="col-sm-2 control-label required" >Stato Ordine</label>
+                              <div class="col-sm-10">
+                                  <select data-tab="#click_tab_order_1" name="id_status" id="idStatus" class="form-control required"  >
+                                      {% for status in ordersStatus %}
+                                          <option value="{{ status.id }}">{{ status.name }}</option>
+                                      {% endfor %}
+                                  </select>
+                              </div>
+                          </div>
+                    </div>
+                    <!-- TAB FATTURAZIONE  -->
+                    <div class="tab-pane tab-secondo-livello" id="tab_order_2">
+                      <div class="form-group">
+                          <label class="col-sm-2 control-label " >Nominativo</label>
+                          <div class="col-sm-4">
+                              <input type="text" placeholder="Nominativo" name="fatturazione_nominativo" class="form-control">
+                          </div>
+                          <div class="input">
+                            <label class="col-sm-2 control-label " >Codice fiscale</label>
+                            <div class="col-sm-4">
+                                <input type="text" placeholder="Codice fiscale" name="fatturazione_cf" class="form-control check-cf">
+                            </div>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <label class="col-sm-2 control-label ">Indirizzo</label>
+                          <div class="col-sm-6">
+                              <input type="text" placeholder="Indirizzo" name="fatturazione_indirizzo" class="form-control">
+                          </div>
+                          <div class="input">
+                            <label class="col-sm-2 control-label ">Provincia</label>
+                            <div class="col-sm-2">
+                                <select type="text" placeholder="Provincia" name="fatturazione_provincia" class="form-control ">
+                                </select>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="input">
+                          <label class="col-sm-2 control-label ">Comune</label>
+                          <div class="col-sm-4">
+                              <select type="text" placeholder="Comune" name="fatturazione_comune" class="form-control ">
+                              </select>
+                          </div>
+                        </div>
+                        <div class="input">
+                          <label class="col-sm-2 control-label " >Cap</label>
+                          <div class="col-sm-4">
+                              <select type="text" placeholder="Cap" name="fatturazione_cap" class="form-control ">
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                          <label class="col-sm-2 control-label ">A carico ASL</label>
+                          <div class="col-sm-2">
+                            <input type="number" placeholder="0"  name="paid_by_asl_percent" min="0" max="100" step="0.01" class=" form-control ">
+                          </div>
+                          <label class="col-sm-2 control-label " >A carico Committente</label>
+                          <div class="col-sm-2">
+                              <input type="number" placeholder="0"  name="paid_by_azienda_percent" min="0" max="100" step="0.01" class=" form-control">
+                          </div>
+                          <label class="col-sm-2 control-label " >A carico Persona</label>
+                          <div class="col-sm-2">
+                              <input type="number" placeholder="0"  name="paid_by_person_percent" min="0" max="100" step="0.01" class=" form-control">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label" >Costo mensile presunto</label>
+                        <div class="col-sm-4">
+                            <input type="text" placeholder="0" name="costo_mensile" class="inputNumber form-control">
+                        </div>
+                          <label class="col-sm-2 control-label" >Costo per la Persona</label>
+                          <div class="col-sm-4">
+                              <input type="text" placeholder="0" name="paid_by_person_amount" class="inputNumber form-control">
+                          </div>
+                      </div>
+                    </div>
+                    <!-- TAB SERVIZI -->
+                    <div class="tab-pane tab-secondo-livello" id="tab_order_3">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <span class="add-service btn btn-xs btn-info pull-right">Aggiungi Servizio</span>
+                        </div>
+                        <hr />
+                        <div class="services-list">
+                        </div>
+                      </div>
+                    </div>
+                    {#
+                    <div class="tab-pane tab-secondo-livello" id="tab_order_4">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <span class="add-contacts btn btn-xs btn-info pull-right">Aggiungi Referente</span>
+                        </div>
+                        <hr />
+                        <div class="contacts-list">
+                        </div>
+                      </div>
+                    </div> #}
+                    <!-- /.tab-pane -->
+                  </div>
+                  <!-- /.tab-content -->
+              </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+                <button type="button" class="btn btn-primary" id="salvaNuovoOrder" >Salva</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{{ _view.Element('Progest.modal/orders_services') |raw }}
+{{ _view.Element('Progest.modal/orders_contacts') |raw }}

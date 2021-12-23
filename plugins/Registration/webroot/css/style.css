@@ -1,0 +1,20 @@
+div.recovery-password-sended,
+div.auth-email-sended{
+	text-align:center;
+}
+div.recovery-password-sended .email-sended,
+div.auth-email-sended .email-sended{
+	padding:10px;
+	background-color:#F5F5F5;
+}
+
+div.recovery-password-sended .msg1,
+div.auth-email-sended .msg1{
+	margin-top:20px;
+	font-weight: bold;
+}
+
+div.recovery-password-sended .msg2,
+div.auth-email-sended .msg2{
+	color:grey;
+}

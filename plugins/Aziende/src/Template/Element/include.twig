@@ -1,0 +1,72 @@
+{{ Html.css('Aziende.jquery.tablesorter.pager') |raw }}
+{{ Html.css('Aziende.aziende') |raw }}
+{{ Html.script('Aziende.jquery.tablesorter.js') |raw }}
+{{ Html.script('Aziende.jquery.tablesorter.metadata.js') |raw }}
+{{ Html.script('Aziende.jquery.tablesorter.pager.js') |raw }}
+{{ Html.script('Aziende.jquery.tablesorter.widgets.js') |raw }}
+{{ Html.script('Aziende.angular/modaleApp.js') |raw }}
+
+<style>
+  {% if sediTipi is not empty %}
+    {% for sedi in sediTipi %}
+        .sediTipiColor-{{ sedi.id }}{
+            color:{{ sedi.color }};
+        }
+        .sediTipiBG-{{ sedi.id }}{
+            background-color:{{ sedi.color }};
+        }
+    {% endfor %}
+  {% endif %}
+  {% if ruoli is not empty %}
+    {% for ruolo in ruoli %}
+        .ruoliColor-{{ ruolo.id }}{
+            color:{{ ruolo.color }};
+        }
+        .ruoliBG-{{ ruolo.id }}{
+            background-color:{{ ruolo.color }};
+        }
+    {% endfor %}
+  {% endif %}
+  {% if ordersStatus is not empty %}
+    {% for status in ordersStatus %}
+        .orderStatusColor-{{ status.id }}{
+            color:{{ status.color }};
+        }
+        .orderStatusBG-{{ status.id }}{
+            background-color:{{ status.color }};
+        }
+    {% endfor %}
+  {% endif %}
+</style>
+<script>
+
+    var pathServer = '{{ Url.build('/') }}';
+    {% if _view.request.controller == 'Sedi' %}
+        var idAzienda = {{ idAzienda }};
+    {% endif %}
+
+    {% if _view.request.controller == 'Contatti' %}
+        var id = {{ id }};
+        var tipo = '{{ tipo }}';
+        var idAzienda = '{{ idAzienda }}';
+    {% endif %}
+
+    {% if _view.request.controller == 'Orders' %}
+        var idAzienda = '{{ idAzienda }}';
+    {% endif %}
+
+    {% if _view.request.controller == 'Fornitori' %}
+        var idFornitore = '{{ idFornitore }}';
+    {% endif %}
+
+    {% if _view.request.controller == 'Clienti' %}
+        var idCliente = '{{ idCliente }}';
+    {% endif %}
+
+    {% if _view.request.controller == 'Home' %}
+        var idFornitore = '{{ idAzienda }}';
+        var idCliente = '{{ idAzienda }}';
+    {% endif %}
+
+</script>
+{{ Html.script('Aziende.function') |raw }}

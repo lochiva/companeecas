@@ -1,0 +1,137 @@
+#pager-ensembles,
+#pager-interviews{
+    text-align: initial;
+}
+
+#modalEnsemble .modal-dialog{
+    width: 800px;
+}
+
+#modalEnsemble .modal-title,
+#modalQuestions .modal-title,
+#modalInterview .modal-title{
+    display: initial;
+}
+
+#modalEnsemble label.required::after,
+#modalQuestions label.required::after,
+#modalInterview label.required::after{
+    content: " *";
+    color:red;
+}
+
+#modalEnsemble .input-checkbox{
+    margin-top: 10px;
+}
+
+#modalEnsemble #inputDescription{
+    height: 100px;
+    resize: none;
+}
+
+.manage-questions,
+.delete-ensemble,
+.edit-interview,
+.delete-interview{
+    margin-left: 5px;
+}
+
+.edit-ensemble,
+.manage-questions,
+.delete-ensemble{
+    width: 22px;
+}
+
+#modalQuestions .modal-dialog{
+    width: 800px;
+    max-height: 100vh;
+}
+
+#modalQuestions #inputInfo,
+#modalQuestions #inputOptions{
+    height: 70px;
+    resize: none;
+}
+
+#questionsList{
+    max-height: calc(100vh - 360px);
+    overflow-y: auto;
+}
+
+#questionsList .question{
+    display: flex;
+    padding: 10px 0px;
+}
+
+#questionsList .question:hover{
+    background-color: #EEE;
+    cursor: move;
+}
+
+.edit-question,
+.delete-question{
+    color: #B2B2B2;
+    font-size: 18px;
+}
+
+.edit-question:visited,
+.delete-question:visited{
+    color: #B2B2B2;
+}
+
+.edit-question:hover{
+    color: #F39C12;
+}
+
+.delete-question:hover{
+    color: #FF0000;
+}
+
+.delete-question{
+    margin-left: 10px;
+}
+
+#cancelEditQuestion{
+    display: none;
+}
+
+.displayinline{
+    display: inline;
+}
+
+.info-question{
+    color: #0077FF;
+    font-size: 18px;
+}
+
+.info-question:hover{
+    color: #0099FF;
+    cursor: pointer;
+}
+
+#formAnswers{
+    padding: 15px;
+}
+
+.form-horizontal .control-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.input-radio{
+    margin-top: 10px;
+}
+
+.radio-no{
+    margin-left: 20px !important;
+}
+
+.padding15{
+    padding: 15px;
+}
+
+.answers-textarea{
+    resize: none;
+    height: 75px !important;
+}

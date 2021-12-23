@@ -1,0 +1,13 @@
+div.box-table-offers.box-body #pager-offers{
+	text-align: left;
+}
+div.box-table-offers.box-body #box-general-action a{
+	float:right;
+}
+#myModalOffer label.required::after{
+    content: " *";
+    color:red;
+}
+div.box-table-offers.box-body .tablesorter thead .disabled{
+	display: none;
+}

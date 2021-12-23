@@ -1,0 +1,13 @@
+<?php
+return [
+    /*
+     * Plugin configuration
+     */
+    'reminderConfig' => [
+        'PluginName'   =>  'Reminder',
+        'path_file_to_manage' => '/var/www/html/PDF/Schedini/',
+        'path_file_for_schedini' => '/var/www/html/PDF/SchediniPerClienti/',
+ 	      'path_file_uploaded' => '/var/www/html/PDF/Uploaded/' 
+
+    ],
+];

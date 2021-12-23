@@ -1,0 +1,1 @@
+<i id="loading-spinner-table" class="fa fa-spinner fa-pulse fa-3x fa-fw"  hidden></i>

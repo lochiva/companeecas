@@ -1,0 +1,151 @@
+
+{{ _view.Html.script('Crm.modale_nuova_offers') | raw }}
+<div class="modal fade" id="myModalOffer" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Nuova Offerta</h4>
+            </div>
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a id="click_tab_1" href="#tab_1_offer" data-toggle="tab"><b>Dati offerta</b></a></li>
+                    <li><a id="click_tab_2" href="#tab_2_offer" data-toggle="tab"><b>Storico stati offerta</b></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1_offer">
+                        <form class="form-horizontal" id="myFormOffer">
+                            <div class="box-body">
+                                <input type="hidden" name="id" value="" />
+                                <div id="numOffer" class="form-group" hidden>
+                                    <label class="col-sm-3 control-label " style="padding-bottom: 7px;" >Numero </label>
+                                    <div class="col-sm-9">
+                                        <label class="control-label labelIdOffer" ></label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="id_azienda_emitParent">
+                                    <label class="col-sm-3 control-label required">Azienda emittente</label>
+                                    <div class="col-sm-9">
+                                        <select name="id_azienda_emit" class="select2-3 required">
+                                            <option disabled selected value> Seleziona un azienda </option>
+                                            {% for azienda in aziendeList %}
+                                            {% if aziendeList|length == 1 %}
+                                            <option selected value="{{ azienda.id }}">{{ azienda.denominazione }}</option>
+                                            {% else %}
+                                            <option value="{{ azienda.id }}">{{ azienda.denominazione }}</option>
+                                            {% endif %} 
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group " id="id_contatto_emitParent">
+                                    <label class="col-sm-3 control-label required">Utente emittente</label>
+                                    <div class="col-sm-9">
+                                        <select name="id_contatto_emit" class="select2-3 required">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label required" >Nome Offerta</label>
+                                    <div class="col-sm-9">
+                                        <input name="name" type="text" placeholder="Inserisci il nome dell'offerta" class="form-control required">
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-3 control-label required" for="inputDenominazione">Data di emissione</label>
+                                    <div class="col-sm-9">
+                                        <input name="emission_date" value="{{ "now"|date("d/m/Y") }}"  type="text" placeholder="gg/mm/aaaa" class="form-control datepicker required" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" >Descrizione</label>
+                                    <div class="col-sm-9">
+                                        <textarea rows="5" name="description" type="text" placeholder="Inserisci la descrizione dell'offerta" class="form-control"></textarea>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="form-group" id="id_azienda_destParent">
+                                    <label class="col-sm-3 control-label required" >Azienda Destinataria</label>
+                                    <div class="col-sm-9">
+                                        <input type="hidden" name="id_azienda_dest" class="select2-3 required" >
+                                    </div>
+                                </div>
+                                <div class="form-group" id="id_sede_destParent">
+                                    <label class="col-sm-3 control-label" >Sede Destinataria</label>
+                                    <div class="col-sm-9">
+                                        <select name="id_sede_dest" class="select2-3">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="id_contatto_destParent">
+                                    <label class="col-sm-3 control-label" >Contatto Destinatario</label>
+                                    <div class="col-sm-9">
+                                        <select name="id_contatto_dest" class="select2-3">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Budget</label>
+                                    <div class="col-sm-9">
+                                        <input name="budget" type="text" placeholder="Budget a disposizione del cliente" class="form-control inputNumber">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="inputNome">Importo</label>
+                                    <div class="col-sm-9">
+                                        <input name="amount"  type="text" placeholder="Inserisci l'importo" class="form-control inputNumber">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="inputNome">Stato</label>
+                                    <div class="col-sm-9">
+                                    <select name="id_status" class="form-control required">
+                                        {% for status in statusList %}
+                                            <option value="{{ status.id }}">{{ status.name }}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="inputNome">Allegato</label>
+                                    <div class="col-sm-9">
+                                        <input name="attachment_file" type="file" placeholder="sfoglia" class="form-control">
+                                        <span class="attachment"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="tab_2_offer">
+                        <table id="table-storico-stati" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="35%">Stato</th>
+                                    <th width="55%">Data</th>
+                                    <th width="10%">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="div-remarks" style="float: left;">
+                        <span hidden id="reference_for_remarks"></span>
+                        <span hidden id="reference_id_for_remarks"></span>
+                        <span hidden id="label_notification"></span>
+                        {{ _view.Element('Remarks.button_remarks') | raw }}
+                    </div>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+                    <button type="button" class="btn btn-primary" id="saveOffer" >Salva</button>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

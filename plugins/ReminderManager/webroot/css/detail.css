@@ -1,0 +1,148 @@
+#box-table-clients span.error-msg{
+  margin-left:15px;
+  color:#d33724;
+  font-style: italic;
+  display: none;
+}
+
+#box-table-clients span.error-msg i{
+  margin-right:5px;
+}
+
+div.form-group .help-block{
+  display: none;
+}
+
+div.form-group.has-error .help-block{
+  display: block;
+}
+
+.has-success .select2-container--default .select2-selection--single, .select2-selection .select2-selection--single{
+  border-color: #00a65a;
+}
+
+.has-success > .mce-container{
+  border-color: #00a65a;
+}
+
+.has-error > .mce-container{
+  border-color: #dd4b39 !important;
+}
+.callout{
+  display:none;
+}
+
+.callout.callout-purple{
+  background-color: #605ca8 !important;
+  color: #fff !important;
+  border-color: #555299 ;
+}
+.callout.callout-maroon{
+  background-color: #D81B60 !important;
+  color: #fff !important;
+  border-color: #ca195a ;
+}
+.btn-purple{
+  background-color: #605ca8 !important;
+  color: #fff !important;
+}
+
+.btn-purple:hover{
+  background-color: #555299 !important;
+}
+.btn-stop{
+  background-color: #D81B60 !important;
+  color:white;
+}
+.btn-stop:hover{
+  background-color: #ca195a !important;
+  color:white;
+}
+.btn-action-mailer .btn{
+  display:none;
+}
+
+div.box-row-one{
+  min-height: 300px;
+  max-height: 300px;
+}
+
+div.box-row-one-scroll{
+  overflow-y: scroll;
+}
+
+div.box-row-one-filter p{
+  top: 50%;
+  left: 50%;
+  font-size: 16px;
+  margin-top: -8px;
+  margin-left: -110px;
+  position: absolute;
+  color:grey;
+}
+
+div.overlay-filter{
+  display:none;
+  cursor: not-allowed;
+}
+
+div.box-row-one-filter.disabled div.overlay-filter{
+  display:block;
+}
+
+div#box-table-clients .box-body{
+  max-height:300px;
+  overflow:auto;
+}
+
+.badge.bg-info{
+  background-color: #00c0ef;
+  color:#fff;
+}
+
+#table-recipent-saved .badge{
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.btn-action-recipient{
+  display:none;
+}
+
+.btn-select-mail-recipient:hover,
+.btn-delete-email-to-send:hover,
+.btn-delete-attachment:hover,
+.btn-select-all-mail:hover,
+.btn-delete-all-email-to-send:hover,
+.btn-find-error:hover{
+  cursor: pointer;
+}
+
+.help-info{
+  padding:5px;
+  color:grey;
+  font-style:italic;
+}
+
+.attachment-name{
+  display:none;
+}
+
+.btn-delete-attachment{
+  margin-right:10px;
+}
+tr.select-all-mail{
+  background-color: rgba(0, 192, 239, .5) !important;
+}
+
+.btn-find-error{
+  display:none;
+}
+
+div.radio{
+  margin-top:0px;
+}
+
+div.radio img{
+  border: 1px #cacaca solid;
+}

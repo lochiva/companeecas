@@ -1,0 +1,276 @@
+div.box-table-aziende.box-body #pager-aziende,
+div.box-table-sedi.box-body #pager-sedi,
+div.box-table-contatti.box-body #pager-contatti,
+div.box-table-orders.box-body #pager-orders,
+div.box-table-invoice.box-body #pager-invoice{
+	text-align: left;
+}
+div.box-table-aziende.box-body #box-general-action a,
+div.box-table-sedi.box-body #box-general-action a,
+div.box-table-contatti.box-body #box-general-action a,
+div.box-table-orders.box-body #box-general-action a,
+div.box-table-invoice.box-body #box-general-action a{
+	float:right;
+}
+
+#myModalAzienda label.required::after,
+#myModalSede label.required::after,
+#myModalContatto label.required::after,
+#myModalOrder label.required::after,
+#myModalFatturaPassiva label.required::after,
+#myModalFatturaAttiva label.required::after{
+    content: " *";
+    color:red;
+}
+
+div.box-table-aziende.box-body .tablesorter thead .disabled,
+div.box-table-sedi.box-body .tablesorter thead .disabled,
+div.box-table-contatti.box-body .tablesorter thead .disabled,
+div.box-table-orders.box-body .tablesorter thead .disabled,
+div.box-table-invoice.box-body .tablesorter thead .disabled{
+	display: none;
+}
+
+div.icon-contatti i{
+	font-size:50px;
+}
+
+.invoicePaid-SI{
+	background-color: #00a65a !important;
+}
+.invoicePaid-NO{
+	background-color: #dd4b39 !important;
+}
+
+.send-anagrafica-disabled{
+	cursor: default;
+	pointer-events: none;
+}
+
+.anagrafica-sent{
+	background-color: #17ea00;
+}
+
+#myModalAzienda .modal-content{
+	width: 110%;
+	left: -5%
+}
+
+.table-fic-data{
+	width: 80%;
+	margin-left: 20px;
+}
+
+.table-fic-data th{
+	height: 40px;
+	text-align: center;
+}
+
+.table-fic-data td{
+	height: 40px;
+}
+
+.hidden{
+	display: none;
+}
+
+.save-warning{
+	border: 1px solid black;
+	padding: 10px;
+	margin: 10px;
+}
+
+.send-invoice-disabled{
+	cursor: default;
+	pointer-events: none;
+}
+
+.draggable{
+	cursor: grab;
+}
+
+.draggable:active{
+	cursor: grabbing;
+}
+
+.overlay{
+	display: none;
+  	position: fixed;
+	padding: 10px;
+	width: 400px;
+	left: 50%;
+	margin-left: -150px;
+	top: 50%;
+	margin-top: -100px;
+	background: #FFF;
+	border: 2px solid #000;
+	z-index: 2000;
+}
+
+.overlay-header{
+	padding: 10px 10px 5px 10px;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.overlay-body{
+	padding: 10px;
+}
+
+.overlay-footer{
+	padding: 10px 10px 10px;
+    margin-top: 15px;
+    text-align: right;
+}
+
+.article-accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 10px 20px 10px 20px;
+    width: 97%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+.article-accordion.active, .article-accordion:hover {
+    background-color: #ccc;
+}
+
+.article-accordion-panel {
+    margin: 20px 40px 0px 20px;
+    background-color: white;
+	max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.article-accordion:after {
+	font-family: 'Glyphicons Halflings';
+    content: '\E079';
+    font-size: 13px;
+    color: #777;
+    float: right;
+}
+
+.article-accordion.active:after {
+    content: '\E114';
+}
+
+.delete-article{
+	color: #FF0000;
+	font-size: 1.3em;
+	float: right;
+	margin-top: 10px;
+}
+
+.delete-article:hover, .delete-article:visited{
+	color: #FF0000;
+}
+
+#myFormContatto .nav-tabs-custom{
+	margin-bottom: 0px;
+	box-shadow: none;
+}
+
+#modalPrivacyPolicy .modal-content{
+	width: 150%;
+	left: -25%;
+}
+
+#modalPrivacyPolicy .modal-title{
+	display: inline;
+}
+
+#modalPrivacyPolicy .modal-body{
+	height: 600px;
+	overflow-y: scroll;
+}
+
+.text-violet{
+	color: #9900FF;
+}
+
+.box-violet{
+	border-color: #9900FF;
+}
+
+.text-x11yellow{
+	color: #FFEE00;
+}
+
+.box-x11yellow{
+	border-color: #FFEE00;
+}
+
+.print-cover{
+	text-align: center;
+	margin-top: 100px;
+}
+
+.print-cover h1{
+	font-weight: 600;
+}
+
+.print-cover p{
+	font-size: 20px;
+	margin: 20px;
+}
+
+.box-dati-aziendali{
+	border-top-color: #3c8dbc;
+}
+
+.products-list .product-description{
+    max-width: 100%;
+	padding-right: 40px;
+}
+
+.products-list .product-title {
+	display: block;
+    overflow: hidden;
+    white-space: nowrap;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}
+
+a.contact-login{
+	color:#333;
+	font-size: 14px;
+	font-family: "proxima-nova", "Helvetica Neue", "Helvetica", Arial, sans-serif;
+}
+
+a.contact-login:hover{
+	color:#3c8dbc;
+	font-size: 14px;
+	font-family: "proxima-nova", "Helvetica Neue", "Helvetica", Arial, sans-serif;
+}
+
+.delete-contatto,
+.delete-sede{
+	font-size: 16px !important;
+	cursor: pointer;
+}
+
+.add-tab-sede,
+.add-tab-contatto{
+	position: relative;
+    top: -10px;
+}
+
+#div-remarks{
+	display: inline-block;
+}
+#div-attachments{
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.btn-remove-logo{
+	vertical-align: top;
+}
+
+.preview-nodo-logo{
+	max-height: 150px;
+}

@@ -1,0 +1,15 @@
+<div id="pager" class="pager col-sm-6">
+    <form>
+        <i class="first glyphicon glyphicon-step-backward"></i>
+        <i class="prev glyphicon glyphicon-backward"></i>
+        <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+        <i class="next glyphicon glyphicon-forward"></i>
+        <i class="last glyphicon glyphicon-step-forward"/></i>
+        <select class="pagesize">
+            <option selected="selected" value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+        </select>
+    </form>
+</div>

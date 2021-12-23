@@ -1,0 +1,134 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2017-03-27 11:43+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: Controller/Admin/OffersStatusController.php:72;98
+msgid "The offers status has been saved."
+msgstr "Lo stato è stato salvato."
+
+#: Controller/Admin/OffersStatusController.php:76;102
+msgid "The offers status could not be saved. Please, try again."
+msgstr "Lo stato non puà essere salvato. Si prega di riprovare più tardi."
+
+#: Controller/Admin/OffersStatusController.php:121
+msgid "The offers status has been deleted."
+msgstr "Lo stato è stato cancellato."
+
+#: Controller/Admin/OffersStatusController.php:123
+msgid "The offers status could not be deleted. Please, try again."
+msgstr "Lo stato non può essere cancellato. Si prega di riprovare più tardi."
+
+#: Template/Admin/OffersStatus/add.ctp:4
+#: Template/Admin/OffersStatus/edit.ctp:4
+#: Template/Admin/OffersStatus/index.ctp:3;18
+#: Template/Admin/OffersStatus/view.ctp:3
+msgid "Azioni"
+msgstr ""
+
+#: Template/Admin/OffersStatus/add.ctp:5
+#: Template/Admin/OffersStatus/edit.ctp:11
+#: Template/Admin/OffersStatus/view.ctp:6
+msgid "List Offers Status"
+msgstr "Lista degli stati delle offerte"
+
+#: Template/Admin/OffersStatus/add.ctp:11
+msgid "Add Offers Status"
+msgstr "Aggiungi uno Stato"
+
+#: Template/Admin/OffersStatus/add.ctp:20
+#: Template/Admin/OffersStatus/edit.ctp:26
+msgid "Save"
+msgstr "Salva"
+
+#: Template/Admin/OffersStatus/edit.ctp:6
+#: Template/Admin/OffersStatus/index.ctp:33
+msgid "Delete"
+msgstr "Cancella"
+
+#: Template/Admin/OffersStatus/edit.ctp:8
+#: Template/Admin/OffersStatus/index.ctp:33
+#: Template/Admin/OffersStatus/view.ctp:5
+msgid "Are you sure you want to delete # {0}?"
+msgstr "Sei sicuro di voler eliminare lo stato #{0}?"
+
+#: Template/Admin/OffersStatus/edit.ctp:17
+#: Template/Admin/OffersStatus/view.ctp:4
+msgid "Edit Offers Status"
+msgstr "Edita lo Stato"
+
+#: Template/Admin/OffersStatus/index.ctp:4
+#: Template/Admin/OffersStatus/view.ctp:7
+msgid "New Offers Status"
+msgstr "Nuovo Stato"
+
+#: Template/Admin/OffersStatus/index.ctp:8
+msgid "Offers Status"
+msgstr "Stati delle Offerte"
+
+#: Template/Admin/OffersStatus/index.ctp:31
+msgid "View"
+msgstr "Vedi"
+
+#: Template/Admin/OffersStatus/index.ctp:32
+msgid "Edit"
+msgstr "Edita"
+
+#: Template/Admin/OffersStatus/index.ctp:41
+msgid "first"
+msgstr "primo"
+
+#: Template/Admin/OffersStatus/index.ctp:42
+msgid "previous"
+msgstr ""
+
+#: Template/Admin/OffersStatus/index.ctp:44
+msgid "next"
+msgstr ""
+
+#: Template/Admin/OffersStatus/index.ctp:45
+msgid "last"
+msgstr ""
+
+#: Template/Admin/OffersStatus/index.ctp:47
+msgid "Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total"
+msgstr ""
+
+#: Template/Admin/OffersStatus/view.ctp:5
+msgid "Delete Offers Status"
+msgstr "Cancella Stato"
+
+#: Template/Admin/OffersStatus/view.ctp:14
+msgid "Name"
+msgstr "Nome"
+
+#: Template/Admin/OffersStatus/view.ctp:18
+msgid "Color"
+msgstr "Colore"
+
+#: Template/Admin/OffersStatus/view.ctp:22
+msgid "Id"
+msgstr "Numero"
+
+#: Template/Admin/OffersStatus/view.ctp:26
+msgid "Ordering"
+msgstr "Ordinamento"
+
+#: Template/Admin/OffersStatus/view.ctp:30
+msgid "Created"
+msgstr "Creato"
+
+#: Template/Admin/OffersStatus/view.ctp:34
+msgid "Modified"
+msgstr "Modificato"

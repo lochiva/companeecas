@@ -1,0 +1,88 @@
+<?php
+use Cake\Routing\Router;
+?>
+<?php echo $this->Element('Aziende.include'); ?>
+<?= $this->Html->script('Aziende.contatti'); ?>
+
+<section class="content-header">
+    <h1>
+        Contatti
+        <?php if(is_object($sede)){ ?>
+            <small>gestione contatti <?php echo $sede->azienda->denominazione . " - " . $sede->indirizzo . " " . $sede->num_civico; ?></small>
+        <?php }else{ ?>
+            <?php if(is_object($azienda)){ ?>
+                <small>gestione contatti <?=$azienda->denominazione?></small>
+            <?php }else{ ?>
+                <small>gestione contatti aziendali</small>
+            <?php } ?>
+        <?php } ?>
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
+        <li><a href="<?=Router::url('/aziende/home');?>">Committenti</a></li>
+        <li class="active">Gestione Contatti</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="box-sedi" class="box box-primary">
+                <div class="box-header with-border">
+                  <i class="fa fa-list-ul"></i>
+                  <h3 class="box-title">Elenco dei Contatti</h3>
+                  <div id="box-general-action"  class=" pull-right">
+                    <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalContatto" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                    <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
+                  </div>
+                </div>
+                <div class="box-table-contatti box-body">
+
+                        <div id="pager-contatti" class="pager col-sm-6">
+                            <form>
+                                <i class="first glyphicon glyphicon-step-backward"></i>
+                                <i class="prev glyphicon glyphicon-backward"></i>
+                                <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+                                <i class="next glyphicon glyphicon-forward"></i>
+                                <i class="last glyphicon glyphicon-step-forward"/></i>
+                                <select class="pagesize">
+                                    <option selected="selected" value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <div class="table-content">
+
+                        <table id="table-contatti" class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="14%">Cognome</th>
+                                    <th width="14%">Nome</th>
+                                    <th width="14%">Nodo</th>
+                                    <th width="10%">Ruolo</th>
+                                    <th width="10%">Login</th>
+                                    <th width="10%">Telefono</th>
+                                    <th width="10%">Cellulare</th>
+                                    <th width="14%">Email</th>
+                                    <th style="min-width: 84px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7">Non ci sono dati</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<?= $this->element('Remarks.modal_remarks_by_id'); ?>
+<?php echo $this->Element('modale_nuovo_contatto'); ?>

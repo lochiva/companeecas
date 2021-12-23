@@ -1,0 +1,32 @@
+table .badge-list-submissions{
+  width:100%;
+  padding-top:10px;
+  padding-bottom: 10px;
+  font-weight: bold;
+}
+
+.legend{
+  padding:5px;
+}
+
+.legend .badge-list-submissions{
+  padding:5px;
+  font-weight: bold;
+}
+.btn-stop{
+  background-color: #D81B60 !important;
+  color:white;
+}
+.btn-stop:hover{
+  background-color: #ca195a !important;
+  color:white;
+}
+
+.badge-list-submissions i{
+  padding-left:10px;
+  padding-right:10Px;
+}
+
+p.destinatari{
+  text-align: center;
+}

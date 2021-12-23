@@ -1,0 +1,166 @@
+.pager{
+    text-align: left;
+}
+
+.box-surveys{
+    border-top-color: #FFD400;
+}
+
+.delete-survey,
+.survey-interviews,
+.survey-clone,
+.interview-clone,
+.edit-chapter,
+.delete-chapter{
+    margin-left: 5px;
+}
+
+.button-group{
+    text-align: center;
+}
+
+.status-pubblicato, .status-frozen, .status-bozza, .status-annullato,
+.interview-valid, .interview-not-valid{
+    padding: 5px;
+    color: #FFF;
+    font-weight: 600;
+    border-radius: 7px;
+}
+
+.status-pubblicato,
+.interview-valid{
+    background-color: #00B500;
+}
+
+.status-frozen{
+    background-color: #00C7FF;
+}
+
+.status-bozza{
+    background-color: #0072FF;
+}
+
+.status-annullato{
+    background-color: #FF9B00;
+}
+
+.interview-not-valid{
+    background-color: #FF0000;
+}
+
+#formSurvey label.required:after,
+#formChapter label.required:after{
+	content: ' *';
+	color: #FF0000;
+}
+
+.box-surveys-title{
+    display: inline-block;
+    margin: 0;
+    line-height: 1;
+}
+
+.title-inline{
+    display: inline;
+}
+
+.button-margin{
+    margin-left: 5px;
+}
+
+.interview-pdf{
+    color: #FF0000;
+    background-color: #FFF;
+    border-color: #BABABA;
+    margin-left: 5px;
+}
+
+.interview-pdf:hover{
+    color: #FF0000;
+}
+
+.section-div-pdf{
+    margin-left: 20px;
+}
+
+.question-text-pdf{
+    font-weight: 600;
+}
+
+.text-tooltip-pdf{
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.element-image-pdf{
+    max-width: 100%;
+    max-height: 720px;
+}
+
+.radio-no{
+    margin-left: 15px !important;
+}
+
+.table-question-table-pdf{
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.table-question-table-pdf > thead > tr > th,
+.table-question-table-pdf > tbody > tr > td{
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #000;
+    border-left: 0;
+}
+
+.table-question-table-pdf > thead > tr > th:first-child,
+.table-question-table-pdf > tbody > tr > td:first-child{
+    border-left: 1px solid #000;
+}
+
+.table-question-table-pdf > thead > tr > th{
+    font-weight: 600;
+}
+
+.table-question-table-pdf > tbody > tr > td{
+    border-top: 0;
+}
+
+.fab-icon{
+    font-size: 20px;
+}
+
+#modalChapter .modal-dialog{
+    width: 900px;
+}
+
+.preview-chapter,
+.edit-chapter,
+.delete-chapter,
+.btn-new{
+    font-size: 1em;
+}
+
+.btn-back{
+	font-size: 1.3em;
+	margin-top: 3px;
+}
+
+.form-editor-image-upload{
+    width: 0px;
+    height: 0px;
+    overflow: hidden;
+}
+
+.no-padding-left{
+    padding-left: 0px;
+}
+
+.no-padding-right{
+    padding-right: 0px;
+}
+
+.question-div-pdf{
+    margin-bottom: 15px;
+}

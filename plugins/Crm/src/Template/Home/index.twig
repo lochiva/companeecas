@@ -1,0 +1,22 @@
+{{ _view.assign('title', title) }}
+<section class="content-header">
+    <h1>
+        Crm
+        <small>Report del crm</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ Url.build('/') }}"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active"><a href="{{ Url.build('/crm/home') }}">Crm</a></li>
+    </ol>
+</section>
+<section class="content">
+  <div class="row">
+    <div class="col-md-7 col-xs-12">
+      {{ _view.element('pieChart_widget',{'id':'offersStatusChart','label' : 'Stati delle offerte',
+        'boxClass' : 'box-warning','icon' :'ion ion-pie-graph','chartData' : offersPieChart }) | raw }}
+    </div>
+    <div class="col-md-5 col-xs-12">
+      {{ _view.element('lineChart_widget',{'id':'offersLineChart','label' : 'Andamento delle offerte', 'point':'true','fill':'true',
+        'boxClass' : 'box-info','icon' :'ion ion-arrow-graph-up-right','chartData' : offersLineChart }) | raw }}
+    </div>
+</section>

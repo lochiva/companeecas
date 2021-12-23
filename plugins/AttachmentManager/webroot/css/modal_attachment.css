@@ -1,0 +1,173 @@
+.modal-dialog{
+    transform: none !important;
+}
+
+.open-overlay-attachment{
+    position: relative;
+}
+
+#disabled_background_attachment {
+    position:fixed;
+    left:0;
+    top:0;
+    width:100vw;
+    height:100vh;
+    display:none;
+    background-color:#000;
+    opacity:0.5;
+    z-index: 1999;
+}
+
+#overlay_attachment_background{
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 2000;
+}
+
+.overlay-attachment{
+	display: none;
+  	position: relative;
+	padding: 10px;
+	width: 520px;
+    left: 50%;
+    margin-left: -250px;
+    top: 100px;
+	background: #FFF;
+	border: 1px solid #000;
+    text-align: left;
+	z-index: 2001;
+}
+
+.overlay-attachment-header{
+	padding: 0px 10px 5px 10px;
+	border-bottom: 1px solid #E5E5E5;
+}
+
+.overlay-attachment-body{
+	padding: 10px;
+}
+
+.overlay-attachment-footer{
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+
+#attachment-loader{
+	position: fixed;
+	z-index: 99999;
+	height: 2em;
+	width: 2em;
+	overflow: show;
+	margin: auto;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.box-brown{
+    border-color: #A52A2A;
+}
+
+.text-brown{
+    color: #A52A2A;
+}
+
+#dropZone {
+    width: 300px;
+    height: 150px;
+    position:absolute;
+    left:50%;
+    margin-left:-150px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 5px dashed #3B85C3;
+    border-radius: 20px;
+    font-family: Arial;
+    text-align: center;
+    position: relative;
+    line-height: 100px;
+    font-size: 20px;
+    color: #3B85C3;
+    font-weight: 600;
+}
+
+#clickZone {
+    position: absolute;
+    cursor: pointer;
+    left: 50%;
+    top: 50%;
+    margin-left: -60px;
+    margin-top: 20px;
+    line-height: 26px;
+    color: white;
+    font-size: 12px;
+    width: 120px;
+    height: 26px;
+    border-radius: 4px;
+    background-color: #3B85C3;
+
+}
+
+#dropZone #inputAttachment {
+    position: absolute;
+    cursor: pointer;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+
+#dropZone.mouse-over {
+    font-weight: 700;
+    background-color: rgba(76, 164, 232, 0.2);
+}
+
+#clickZone:hover {
+    background-color: #4ca4e8;
+}
+
+#displayUploadedAttachments
+#displaySavedAttachments{
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.attachment-icon{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.attachment-icon i {
+    font-size: 30px;
+}
+
+.attachment-details{
+    margin-top: 10px;
+}
+
+.open-overlay-attachment .badge{
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    font-size: 10px;
+    font-weight: 400;
+}
+
+#displayUploadedAttachments, 
+#displaySavedAttachments{
+    overflow-wrap: break-word;
+}
+
+#displaySavedAttachments{
+    max-height: 250px;
+    overflow-x: hidden;
+}

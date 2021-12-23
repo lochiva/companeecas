@@ -1,0 +1,226 @@
+body {
+	background-color: #222d32;
+}
+.col-md-4.border-div{
+    border-right: 1px solid #eee;
+}
+::-moz-selection{
+	background-color:#F7BF65;
+	color:#ffffff;
+	text-shadow:none;
+}
+::selection{
+	background-color:#F7BF65;
+	color:#ffffff;
+	text-shadow:none;
+}
+.box-table{
+	overflow: auto;
+}
+.btn-group > .tooltip + .btn,
+.btn-group > .popover + .btn{
+    margin-left:-1px;
+}
+.users .margin-bottom{
+    margin-bottom:10px;
+}
+.clear{
+    clear:both;
+}
+/* CALENDARIO - style task */
+.color-border .bg-white, .color-border .bg-green, .color-border .bg-yellow{
+ 	background-color: #ffffff!important;
+ 	color:#333333!important;
+}
+.color-border .bg-white:hover, .color-border .bg-green:hover, .color-border .bg-yellow:hover{
+ 	background-color: #ffffff!important;
+}
+.color-border .bg-white{
+ 	border:3px solid #d2d6de;
+}
+.color-border .bg-green{
+ 	border:3px solid #00a65a;
+}
+.color-border .bg-yellow{
+ 	border:3px solid #f39c12 ;
+}
+.task-calendar{
+
+}
+#container-tasks div {
+    overflow-x: hidden;
+}
+#container-tasks{
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+@media (min-width: 992px) {
+  .task-calendar{
+    height: 460px;
+    }
+}
+@media (min-width: 1200px) {
+  .task-calendar{
+    height: 660px;
+    }
+}
+#external-events{
+
+}
+
+/* FINE calendario*/
+
+/* CONTROLLO - style task */
+.task-consulenza ul.todo-list .label.pull-right, .color-border .label.pull-right{
+	margin-top: 2px;
+    padding: 4px 5px;
+}
+.task-consulenza .todo-list > li > span.handle{
+	cursor:default;
+}
+.task-consulenza .todo-list > li.green{
+	border-left: 2px solid #00a65a;
+}
+.task-consulenza .todo-list > li.green span.handle{
+	color: #00a65a;
+}
+.task-consulenza .todo-list > li.yellow{
+	border-left: 2px solid #f39c12;
+}
+.task-consulenza .todo-list > li.yellow span.handle{
+	color: #f39c12;
+}
+/* FINE controllo  */
+
+/* NOTIFICHE */
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li{
+    color: #444444;
+    overflow: hidden;
+    padding: 10px;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #f4f4f4;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li:hover{
+    background: #f4f4f4;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a{
+    color:#f7bf65;
+    overflow: hidden;
+    padding: 0px;
+    text-overflow: ellipsis;
+    border-bottom: 0px ;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a:hover{
+    color:#72afd2;
+}
+.notifications-page ul{
+    padding-left:0;
+    margin-bottom: 0;
+}
+.notifications-page ul > li {
+	border-bottom: 1px solid #f4f4f4;
+    list-style: outside none none;
+    padding: 10px 0;
+}
+.notifications-page ul > li:first-child {
+    padding-top:0;
+}
+.notifications-page ul > li:last-child {
+    border-bottom: 0px;
+    padding-bottom:0;
+}
+.txt-gray{
+	color:#b1b5bd;
+}
+.notifications-page ul > li > p{
+	margin-bottom:5px;
+}
+.notifications-menu ul > li > p{
+	margin-bottom:0px;
+}
+/* FINE notifiche */
+
+/* AUTOCOMPLETE */
+.ui-autocomplete{
+	border: 1px solid #ccc;
+    max-height: 300px;
+    overflow: auto;
+    width: 18%;
+    list-style: outside none none;
+    padding:0px;
+}
+.ui-autocomplete li{
+	padding: 0px 10px;
+}
+.ui-autocomplete li:hover{
+	background-color:rgba(0, 0, 0, 0.1);
+}
+/* FINE autocomplete */
+
+
+/* CALENDARIO */
+#calendar .fc-event-container a.fc-event{
+    border-width:4px;
+}
+
+/* CALENDARIO */
+#calendar .fc-event-container a.fc-event{
+    font-size:0.75em;
+}
+
+.task-consulenza .todo-list li{
+    border:2px solid;
+}
+
+
+.disabled_fieldset{
+    background-color: #eee;
+}
+
+/* filtri */
+.filter{
+    background-color:#F4F4F4;
+    padding:10px;
+}
+.filter label{
+    margin-bottom:0px;
+}
+
+/* SELECT2 */
+.select2-container--open .select2-dropdown, .select2-container--open .select2-selection{
+    border-color: #f7bf65!important;
+
+}
+table.tab_invii tr td{
+    height:51px;
+    vertical-align: middle;
+}
+th.vertical-th{
+
+}
+
+/* Styles for rotateTableCellContent plugin*/
+table div.rotated {
+  /*-webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);*/
+  writing-mode:tb-rl;
+  white-space: nowrap;
+}
+
+thead th {
+  vertical-align: top;
+}
+
+table .vertical {
+  white-space: nowrap;
+}
+
+.tablesorter-filter{
+  width: 100%;
+}
+
+.border-purple{
+	
+	border-color: #605ca8 !important;
+}

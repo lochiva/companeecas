@@ -1,0 +1,100 @@
+CREATE TABLE IF NOT EXISTS `aziende` (
+`id` int(11) NOT NULL,
+  `denominazione` varchar(255) NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `cognome` varchar(255) NOT NULL,
+  `cod_paese` varchar(10) NOT NULL,
+  `piva` varchar(11) NOT NULL,
+  `cf` varchar(50) NOT NULL,
+  `cod_eori` varchar(50) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
+  `email_info` varchar(50) NOT NULL,
+  `email_contabilita` varchar(50) NOT NULL,
+  `email_solleciti` varchar(50) NOT NULL,
+  `fax` varchar(50) NOT NULL,
+  `cliente` int(1) NOT NULL,
+  `fornitore` int(1) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `aziende`
+ ADD PRIMARY KEY (`id`);
+
+CREATE TABLE IF NOT EXISTS `sedi` (
+`id` int(11) NOT NULL,
+  `id_azienda` int(11) NOT NULL,
+  `id_tipo` int(11) NOT NULL,
+  `indirizzo` varchar(255) NOT NULL,
+  `num_civico` varchar(50) NOT NULL,
+  `cap` int(5) NOT NULL,
+  `comune` varchar(255) NOT NULL,
+  `provincia` varchar(255) NOT NULL,
+  `nazione` varchar(255) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `cellulare` varchar(50) NOT NULL,
+  `fax` varchar(50) NOT NULL,
+  `skype` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `sedi`
+ ADD PRIMARY KEY (`id`);
+ 
+CREATE TABLE IF NOT EXISTS `sedi_tipi` (
+`id` int(11) NOT NULL,
+  `tipo` varchar(255) NOT NULL,
+  `order` int(11) NOT NULL,
+  `created` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `sedi_tipi`
+ ADD PRIMARY KEY (`id`);
+ 
+ 
+CREATE TABLE IF NOT EXISTS `contatti` (
+`id` int(11) NOT NULL,
+  `id_azienda` int(11) NOT NULL,
+  `id_sede` int(11) NOT NULL,
+  `id_ruolo` int(11) NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `cognome` varchar(255) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
+  `cellulare` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `fax` varchar(50) NOT NULL,
+  `skype` varchar(50) NOT NULL,
+  `indirizzo` varchar(255) NOT NULL,
+  `num_civico` varchar(50) NOT NULL,
+  `cap` int(5) NOT NULL,
+  `comune` varchar(255) NOT NULL,
+  `provincia` varchar(255) NOT NULL,
+  `nazione` varchar(255) NOT NULL,
+  `cf` varchar(50) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `contatti`
+ ADD PRIMARY KEY (`id`);
+
+CREATE TABLE IF NOT EXISTS `contatti_ruoli` (
+`id` int(11) NOT NULL,
+  `ruolo` varchar(255) NOT NULL,
+  `order` int(11) NOT NULL,
+  `created` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `contatti_ruoli`
+ ADD PRIMARY KEY (`id`);
+ 
+INSERT INTO `sedi_tipi` (`id`, `tipo`, `order`, `created`) VALUES
+(1, 'Sede Legale', 10, '0000-00-00 00:00:00'),
+(2, 'Sede Operativa', 20, '0000-00-00 00:00:00');
+
+INSERT INTO `contatti_ruoli` (`id`, `ruolo`, `order`, `created`) VALUES
+(1, 'Direttore', 10, '0000-00-00 00:00:00'),
+(2, 'Impiegato', 20, '0000-00-00 00:00:00');
