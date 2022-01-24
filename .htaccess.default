@@ -1,5 +1,14 @@
 <IfModule mod_rewrite.c>
     RewriteEngine on
+
+    # se accedi ad http allora vai su https
+    #RewriteCond %{HTTPS} off
+    #RewriteRule ^ https://applicativocas.iresgestionaleprogetti.it [END,QSA,R=permanent]
+
+    # se accedi all'host principale con la sottocartella redirigi al terzo livello
+    #RewriteCond %{SERVER_NAME} =iresgestionaleprogetti.it
+    #RewriteRule ^ https://applicativocas.iresgestionaleprogetti.it [END,QSA,R=permanent]
+
     RewriteRule ^(app) - [L]
     RewriteRule    ^$    webroot/    [L]
     RewriteRule    (.*) webroot/$1    [L]
