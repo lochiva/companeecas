@@ -14,7 +14,7 @@ body.login-page{
 <?= $this->Flash->render('auth') ?>
 <?= $this->Form->create() ?>
   <div class="login-logo" >
-    <a href="<?= Router::url('/') ?>"><img src="<?=Router::url('/img/logo_rete.png');?>" width="300" /></a>
+    <a href="<?= Router::url('/') ?>"><img src="<?=Router::url('/img/logo_cover.png');?>" width="300" /></a>
   </div><!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg">Accedi per iniziare la sessione</p>

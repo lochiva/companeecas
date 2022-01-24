@@ -1,1 +1,1 @@
-<strong>Powered by <a href="https://www.newebsolutions.com/">New Web Solutions</a>.</strong>
+<strong>Powered by <a href="https://www.alex.it/">Alex.it</a>.</strong>

@@ -24,7 +24,7 @@ use Cake\Core\Configure;
 	<div class="row" style="margin:0;">    
 		<!-- Messaggio di benvenuto -->
 		<div id="box-benvenuto" class="box box-warning" style="text-align:center; padding:15px;">
-			<img src="<?=Router::url('/img/logo_centro.png');?>" class="logo_centro" />
+			<img src="<?=Router::url('/img/logo_homepage.png');?>" class="logo_centro" />
 			<h2>Benvenuta/o!</h2>
 			<br />
 			<p>Ti diamo il benvenuto su Companee.

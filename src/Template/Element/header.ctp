@@ -30,7 +30,7 @@ $user = $this->request->session()->read('Auth.User');
 			<img class="logo-nodo-header logo-lg" src="<?=$base64?>" />
 		<?php }else{ ?>
 			<img class="logo-mini text-center" src="<?php echo Router::url('/');?>img/logo_xs.png" />
-			<img class="logo-lg" src="<?php echo Router::url('/');?>img/logo_rete_header.png" />
+			<img class="logo-lg" src="<?php echo Router::url('/');?>img/logo_header.png" />
 		<?php } ?>	
   </a>
   <!-- Header Navbar: style can be found in header.less -->
