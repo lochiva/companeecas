@@ -42,3 +42,5 @@ plugins/AttachmentManager/config/attachmentConfig\.php
 files
 
 plugins/Aziende/webroot/images
+
+/.htaccess
