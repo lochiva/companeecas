@@ -108,8 +108,7 @@ use Cake\Routing\Router;
         </div>
     </div>
     <div class="row">
-        <!--
-        <div class="col-md-7 ">
+        <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
                     <h3 class="box-title"><i class="fa fa-industry text-aqua"></i> Sedi</h3>
@@ -171,7 +170,6 @@ use Cake\Routing\Router;
                 </div>
             </div>
         </div>
-        -->
 
         <div class="col-md-6">
             <div class="box box-info">

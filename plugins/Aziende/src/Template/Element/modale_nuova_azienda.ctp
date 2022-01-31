@@ -12,7 +12,7 @@ use Cake\Routing\Router;
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                   <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab">{{ vm.azienda.id ? '' : '<?=__c('Nuovo')?>'}} <b><?=__c('Nodo')?></b></a></li>
-                  <!--<li><a id="click_tab_2" href="#tab_2" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuove'}} <b>Sedi</b></a></li>-->
+                  <li><a id="click_tab_2" href="#tab_2" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuove'}} <b>Sedi</b></a></li>
                   <li><a id="click_tab_3" href="#tab_3" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuovi'}} <b>Contatti</b></a></li>
 				  <li ng-if="vm.azienda.id && (vm.azienda.id_cliente_fattureincloud != 0 || vm.azienda.id_fornitore_fattureincloud != 0)"><a id="click_tab_4" href="#tab_4" data-toggle="tab"><b>Verifica dati</b></a></li>
 				  <li class="pull-right"><button type="button" class="close" style="padding: 10px 15px;" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>

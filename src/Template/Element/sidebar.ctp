@@ -19,7 +19,7 @@ $menu = [
     'children' => []
   ],
   [
-    'name' => 'Gestione Nodi',
+    'name' => 'Gestione Coop',
     'plugin' => ['Aziende'],
     'controller' => ['Home'],
     'action' => ['index'],
@@ -29,7 +29,7 @@ $menu = [
     'icon-class' => 'fa fa-industry',
     'children' => []
   ],
-  [
+  /*[
     'name' => 'Gestione Scheda',
     'plugin' => ['Diary'],
     'controller' => ['Diary'],
@@ -51,7 +51,7 @@ $menu = [
     'icon-class' => 'fa fa-list-alt',
     'children' => []
   ],
-  /*[
+  [
     'name' => 'Dati aziendali',
     'plugin' => ['Aziende'],
     'controller' => ['Clienti'],
