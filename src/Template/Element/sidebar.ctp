@@ -19,7 +19,7 @@ $menu = [
     'children' => []
   ],
   [
-    'name' => 'Gestione Coop',
+    'name' => 'Gestione Enti',
     'plugin' => ['Aziende'],
     'controller' => ['Home'],
     'action' => ['index'],
