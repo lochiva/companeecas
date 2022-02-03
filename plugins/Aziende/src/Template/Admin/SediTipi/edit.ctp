@@ -8,13 +8,13 @@
                 ['confirm' => __('Are you sure you want to delete # {0}?', $sediTipi->id)]
             )
         ?></li>
-        <li><?= $this->Html->link(__('List Sedi Tipi'), ['action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('List Strutture Tipi'), ['action' => 'index']) ?></li>
     </ul>
 </nav>
 <div class="sediTipi form col-lg-9 col-md-8 columns content">
     <?= $this->Form->create($sediTipi,['class' => 'admin-form']) ?>
     <fieldset>
-        <legend><?= __('Edit Sedi Tipi') ?></legend>
+        <legend><?= __('Edit Strutture Tipi') ?></legend>
         <?php
             echo $this->Form->input('tipo');
             echo $this->Form->input('ordering');

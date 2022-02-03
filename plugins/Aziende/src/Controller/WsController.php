@@ -95,7 +95,7 @@ class WsController extends AppController
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-map-marker"></i> Sedi </a></li>';
+                $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-map-marker"></i> Strutture </a></li>';
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-users"></i> Contatti</a></li>';
                 $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
@@ -356,7 +356,7 @@ class WsController extends AppController
 
             $sede = $this->Sedi->_get($id);
 
-            $this->_result = array('response' => 'OK', 'data' => $sede, 'msg' => "Sede trovata");
+            $this->_result = array('response' => 'OK', 'data' => $sede, 'msg' => "Struttura trovata");
 
         }else{
             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");

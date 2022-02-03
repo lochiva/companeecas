@@ -1,10 +1,10 @@
 <nav class="col-lg-12 col-md-12 columns" id="actions-sidebar">
     <ul class="nav nav-tabs">
         <li class="active" ><a href="#"><?= __('Azioni') ?></a></li>
-        <li><?= $this->Html->link(__('Edit Sedi Tipi'), ['action' => 'edit', $sediTipi->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Sedi Tipi'), ['action' => 'delete', $sediTipi->id], ['confirm' => __('Are you sure you want to delete # {0}?', $sediTipi->id)]) ?> </li>
-        <li><?= $this->Html->link(__('List Sedi Tipi'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Sedi Tipi'), ['action' => 'add']) ?> </li>
+        <li><?= $this->Html->link(__('Edit Strutture Tipi'), ['action' => 'edit', $sediTipi->id]) ?> </li>
+        <li><?= $this->Form->postLink(__('Delete Strutture Tipi'), ['action' => 'delete', $sediTipi->id], ['confirm' => __('Are you sure you want to delete # {0}?', $sediTipi->id)]) ?> </li>
+        <li><?= $this->Html->link(__('List Strutture Tipi'), ['action' => 'index']) ?> </li>
+        <li><?= $this->Html->link(__('New Strutture Tipi'), ['action' => 'add']) ?> </li>
     </ul>
 </nav>
 <div class="sediTipi view large-9 medium-8 columns content">

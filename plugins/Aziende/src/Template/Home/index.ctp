@@ -6,13 +6,13 @@ use Cake\Routing\Router;
 <?= $this->Html->script( 'Aziende.aziende' ); ?>
 <section class="content-header">
     <h1>
-        <?=__c('Nodi')?>
-        <small>Gestione <?=__c('nodi')?></small>
+        <?=__c('Enti')?>
+        <small>Gestione <?=__c('enti')?></small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>"><?=__c('Nodi')?></a></li>
-        <li class="active">Gestione <?=__c('Nodi')?></li>
+        <li><a href="<?=Router::url('/aziende/home');?>"><?=__c('Enti')?></a></li>
+        <li class="active">Gestione <?=__c('Enti')?></li>
     </ol>
 </section>
 
@@ -22,7 +22,7 @@ use Cake\Routing\Router;
             <div id="box-aziende" class="box box-info">
                 <div class="box-header with-border">
                   <i class="fa fa-list-ul"></i>
-                  <h3 class="box-title"><?=__c('Elenco dei Nodi')?></h3>
+                  <h3 class="box-title"><?=__c('Elenco degli Enti')?></h3>
                   <a id="box-general-action" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalAzienda" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>

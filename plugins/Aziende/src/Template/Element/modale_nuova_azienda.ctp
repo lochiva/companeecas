@@ -11,8 +11,8 @@ use Cake\Routing\Router;
         <div class="modal-content">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                  <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab">{{ vm.azienda.id ? '' : '<?=__c('Nuovo')?>'}} <b><?=__c('Nodo')?></b></a></li>
-                  <li><a id="click_tab_2" href="#tab_2" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuove'}} <b>Sedi</b></a></li>
+                  <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab">{{ vm.azienda.id ? '' : '<?=__c('Nuovo')?>'}} <b><?=__c('Ente')?></b></a></li>
+                  <li><a id="click_tab_2" href="#tab_2" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuove'}} <b>Strutture</b></a></li>
                   <li><a id="click_tab_3" href="#tab_3" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuovi'}} <b>Contatti</b></a></li>
 				  <li ng-if="vm.azienda.id && (vm.azienda.id_cliente_fattureincloud != 0 || vm.azienda.id_fornitore_fattureincloud != 0)"><a id="click_tab_4" href="#tab_4" data-toggle="tab"><b>Verifica dati</b></a></li>
 				  <li class="pull-right"><button type="button" class="close" style="padding: 10px 15px;" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>
@@ -27,12 +27,6 @@ use Cake\Routing\Router;
                                 <div class="col-sm-10">
                                     <input ng-model="vm.azienda.id" type="hidden" name="idAzienda" id="idAzienda" >
                                     <input required ng-model="vm.azienda.denominazione" type="text" placeholder="Denominazione" name="Denominazione" id="inputDenominazione" class="form-control required" >
-                                </div>
-                            </div>
-                            <div class="form-group ">
-                                <label class="col-sm-2 control-label required" for="inputCodiceProvincia">Codice provincia</label>
-                                <div class="col-sm-10">
-                                    <input required ng-model="vm.azienda.codice_provincia" type="text" maxlength="5" placeholder="Codice provincia" name="codice_provincia" id="inputCodiceProvincia" class="form-control required" >
                                 </div>
                             </div>
 
@@ -88,9 +82,16 @@ use Cake\Routing\Router;
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label" for="inputEmailInfo">Pec</label>
+                                <label class="col-sm-2 control-label" for="inputEmailInfo">Pec amministrativa</label>
                                 <div class="col-sm-10">
-                                    <input ng-model="vm.azienda.pec" type="email" placeholder="Indirizzo pec" name="pec" id="inputPec" class="form-control">
+                                    <input ng-model="vm.azienda.pec" type="email" placeholder="Indirizzo pec amministrativa" name="pec" id="inputPec" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="inputEmailInfo">Pec atti commissione</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="vm.azienda.pec_commissione" type="email" placeholder="Indirizzo pec atti commissione" name="pec_commissione" id="inputPecCommissione" class="form-control">
                                 </div>
                             </div>
 
@@ -100,7 +101,7 @@ use Cake\Routing\Router;
                                     <input ng-model="vm.azienda.email_info" type="email" placeholder="Email Info" name="emailInfo" id="inputEmailInfo" class="form-control check-email">
                                 </div>
                             </div>
-
+                            
                             <!--
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="inputEmailContabilita">Email Contabilità</label>
@@ -115,6 +116,7 @@ use Cake\Routing\Router;
                                     <input ng-model="vm.azienda.email_solleciti" type="email" placeholder="Email Solleciti" name="emailSolleciti" id="inputEmailSolleciti" class="form-control check-email">
                                 </div>
                             </div>
+                            -->
 
                             <hr>
 
@@ -149,6 +151,7 @@ use Cake\Routing\Router;
                                 </div>
                             </div>
 
+                            <!--
                             <hr>
 
                             <div class="form-group">
@@ -167,7 +170,9 @@ use Cake\Routing\Router;
                                 </div>
                             </div>
                             -->
+
                             <hr>
+
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="inputTelefono">Logo</label>
                                 <div ng-show="vm.azienda.logo" class="col-sm-10">
@@ -185,12 +190,12 @@ use Cake\Routing\Router;
 
                   <!-- /.tab-pane -->
                   <div class="tab-pane tab-secondo-livello" id="tab_2">
-                    <a ng-click="vm.addSede()" class="new-tab add-tab-sede"><span class=" btn btn-xs btn-info">Aggiungi sede</span></a>
+                    <a ng-click="vm.addSede()" class="new-tab add-tab-sede"><span class=" btn btn-xs btn-info">Aggiungi struttura</span></a>
                     <ul class="nav nav-tabs tabs-sedi" >
                       <li ng-repeat="sede in vm.azienda.sedi track by $index"  ng-class="{'active': ($first && !vm.editing) }" id="subtabsede_{{sede.id}}" >
                         <a id="click_subtab_sede_{{sede.id}}" href="#subtab_sede_{{ $index }}" data-toggle="tab">
-                          <i class="fa fa-circle-o sediTipiColor-{{sede.id_tipo}}"></i> {{ !sede.indirizzo ? 'nuova sede' : sede.comune_des+' - '+sede.indirizzo }} 
-                          <i ng-if="sede.indirizzo" class="fa fa-times-circle text-red delete-sede" data-id="{{ sede.id }}" title="Cancella sede"></i>
+                          <i class="fa fa-circle-o sediTipiColor-{{sede.id_tipo}}"></i> {{ !sede.indirizzo ? 'nuova struttura' : sede.comune_des+' - '+sede.indirizzo }} 
+                          <i ng-if="sede.indirizzo" class="fa fa-times-circle text-red delete-sede" data-id="{{ sede.id }}" title="Cancella struttura"></i>
                         </a>
                       </li>
                     </ul>
@@ -359,15 +364,15 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <!--
+
                                     <div class="form-group ">
-                                      <label class="col-sm-2 control-label" for="idSede">Sede</label>
+                                      <label class="col-sm-2 control-label" for="idSede">Struttura</label>
                                       <div class="col-sm-10">
                                         <select name="sede" class="form-control" ng-options="sede.id as sede.comune_des+' - '+sede.indirizzo for sede in vm.azienda.sedi" ng-model="contatto.id_sede"  >
                                         </select>
                                       </div>
                                     </div>
-                                    -->
+
                                     <div class="form-group ">
                                         <label class="col-sm-2 control-label" for="inputTipo">Ruolo</label>
                                         <div class="col-sm-10">

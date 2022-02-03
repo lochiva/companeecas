@@ -24,7 +24,7 @@ use Cake\Routing\Router;
         <?= $this->Form->input('confirm_password', array('id'=>'confirmPassword', 'value' => '', 'required' => false, 'type' => 'password', 'autocomplete' => 'new-password')) ?>
         <div class="col-md-12" id="divCheckPasswordMatch"></div>
         <?= $this->Form->input('role', [
-            'options' => ['admin' => 'Admin', 'centro' => 'Centro', 'nodo' => 'Nodo']
+            'options' => ['admin' => 'Admin', 'ente' => 'Ente']
         ]) ?>
         <?= $this->Form->input('level',['type' => 'number', 'value' => 0]) ?>
         <?= $this->Form->input('auth_email', ['type' => 'checkbox', 'checked' => 'checked', 'label' => ['text' => "Autenticato"]]) ?>

@@ -177,7 +177,7 @@ $(document).on('click','.delete',function(e){
 
 	e.preventDefault();
 
-	if(confirm('Si è sicuri di voler eliminare la sede?')){
+	if(confirm('Si è sicuri di voler eliminare il contatto?')){
 		deleteContatto($(this).attr('data-id'));
 	}
 

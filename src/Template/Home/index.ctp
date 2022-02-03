@@ -19,7 +19,7 @@ use Cake\Core\Configure;
 	<!-- Main content -->
 	<section class="content">
 
-	<?php if($this->request->session()->read('Auth.User.role') == 'admin' || $this->request->session()->read('Auth.User.role') == 'centro'){ ?>
+	<?php if($this->request->session()->read('Auth.User.role') == 'admin'){ ?>
 
 	<div class="row" style="margin:0;">    
 		<!-- Messaggio di benvenuto -->
@@ -31,7 +31,7 @@ use Cake\Core\Configure;
 		</div>
 	</div>
 
-	<?php }elseif($this->request->session()->read('Auth.User.role') == 'nodo'){ ?>
+	<?php }elseif($this->request->session()->read('Auth.User.role') == 'ente'){ ?>
 	<div class="row" style="margin:0;">    
 		<!-- Messaggio di benvenuto -->
 		<div id="box-benvenuto" class="box box-warning" style="text-align:center; padding:15px;">

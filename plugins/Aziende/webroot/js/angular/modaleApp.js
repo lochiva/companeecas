@@ -44,7 +44,7 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
         function aziendaModel(){
             this.azienda = {
                 denominazione:'', codice_provincia:'', nome:'',cognome:'',cod_paese:'IT',piva:'',cf:'',cod_eori:'',
-                telefono:'', pec:'', email_info:'', email_contabilita:'',email_solleciti:'', pa_codice:'',
+                telefono:'', pec:'', pec_commissione:'', email_info:'', email_contabilita:'',email_solleciti:'', pa_codice:'',
                 sito_web:'', fax:'', cliente:false, fornitore:false, interno:false, logo:'', logo_to_save:'',
                 sedi:[],contatti:[],gruppi:[]
             };

@@ -16,11 +16,11 @@ return [
     ],
     'localconfig' => [
         'PluginUsed' =>[
-            'Aziende' => ['label' => 'Nodi' , 'icon' => 'fa fa-industry', 'controllers' => [
+            'Aziende' => ['label' => 'Enti' , 'icon' => 'fa fa-industry', 'controllers' => [
               //'orders_status' => 'Stati degli ordini',
               'contatti_ruoli' => 'Ruoli dei contatti',
-              'sedi_tipi' => 'Tipi di sedi',
-              'aziende_gruppi' => 'Gruppi Nodi'
+              'sedi_tipi' => 'Tipi di strutture',
+              'aziende_gruppi' => 'Gruppi Enti'
               ]]
         ]
     ]

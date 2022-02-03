@@ -10,9 +10,9 @@ return [
         ],
         'report_invii_actions' => ['inviiUnico','inviiCausali','inviiUnicoEnc','inviiUnicoSc'],
         'nammingEntity' => [
-          'aziende'=>'un\'azienda', 'calendar_events' => 'un evento', 'configurations' => 'una configurazione',
+          'aziende'=>'un\'ente', 'calendar_events' => 'un evento', 'configurations' => 'una configurazione',
           'documents' => 'un documento', 'contatti' => 'un contatto', 'groups' => 'un gruppo', 'orders' => 'un ordine',
-          'sedi' => 'una sede', 'users' => 'un utente', 'tags' => 'un tag', 'scadenzario' => 'una scadenza',
+          'sedi' => 'una struttura', 'users' => 'un utente', 'tags' => 'un tag', 'scadenzario' => 'una scadenza',
           'documents_to_tags' => 'un tag di un documento' ,'notifications' => 'una notifica', 'invoices' => 'una fattura',
           'offers' => 'un offerta' , 'orders_status' => 'uno stato degli ordini', 'skills' => 'una competenza',
           'progest_people' => 'una persona', 'aziende_gruppi' => 'azienda gruppo', 'cespiti' => 'un cespite', 

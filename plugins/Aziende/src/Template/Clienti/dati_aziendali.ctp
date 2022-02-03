@@ -23,7 +23,7 @@ use Cake\Routing\Router;
                 <div class="nav-tabs-custom" id="myModalAzienda">
                     <ul class="nav nav-tabs">
                         <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab"><b>Dati azienda</b></b></a></li>
-                        <li><a id="click_tab_2" href="#tab_2" data-toggle="tab"><b>Sedi</b></a></li>
+                        <li><a id="click_tab_2" href="#tab_2" data-toggle="tab"><b>Strutture</b></a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
@@ -149,7 +149,7 @@ use Cake\Routing\Router;
                                 <i class="fa fa-circle-o sediTipiColor-{{sede.id_tipo}}"></i> {{ !sede.indirizzo ? 'nuova sede' : sede.comune+' - '+sede.indirizzo }}
                                 </a>
                             </li>
-                            <li><a ng-click="vm.addSede()" class="new-tab add-tab-sede"><span class=" btn btn-xs btn-info">Aggiungi sede</span></a></li>
+                            <li><a ng-click="vm.addSede()" class="new-tab add-tab-sede"><span class=" btn btn-xs btn-info">Aggiungi struttura</span></a></li>
                             </ul>
                             <div class="tab-content">
                                 <div repeat-push-form ng-repeat="sede in vm.azienda.sedi track by $index" class="tab-pane" id="subtab_sede_{{$index}}" ng-class="{'active': ($first && !vm.editing) }" >

@@ -44,9 +44,8 @@ use Cake\Routing\Router;
 
                                 <?php if($tipo == "azienda"){ ?>
 
-                                    <!--
                                     <div class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="idSede">Sede</label>
+                                        <label class="col-sm-2 control-label required" for="idSede">Struttura</label>
                                         <div class="col-sm-10">
                                             <select name="id_sede" id="idSede" class="form-control required" >
                                                 <?php foreach ($sedi as $key => $sede) { ?>
@@ -55,22 +54,22 @@ use Cake\Routing\Router;
                                             </select>
                                         </div>
                                     </div>
-                                    -->
 
                                 <?php } ?>
 
                                 <?php if($tipo == "all"){ ?>
 
+                                <!--
                                 <div class="form-group" id="idAziendaSelectParent">
-                                    <label class="col-sm-2 control-label required" for="idAziendaSelect">Nodo</label>
+                                    <label class="col-sm-2 control-label required" for="idAziendaSelect">Ente</label>
                                     <div class="col-sm-10">
                                         <select name="id_azienda" id="idAziendaSelect" class="select2 form-control required"></select>
                                     </div>
                                 </div>
+                                -->
 
-                                    <!--
                                     <div class="form-group ">
-                                        <label class="col-sm-2 control-label" for="idSede">Sede</label>
+                                        <label class="col-sm-2 control-label" for="idSede">Struttura</label>
                                         <div class="col-sm-10">
                                             <select name="id_sede" id="idSede" class="form-control" >
                                                 <option></option>
@@ -80,7 +79,6 @@ use Cake\Routing\Router;
                                             </select>
                                         </div>
                                     </div>
-                                    -->
 
                                 <?php } ?>
 

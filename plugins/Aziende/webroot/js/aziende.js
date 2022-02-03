@@ -557,7 +557,7 @@ $(document).on('click','.delete-contatto',function(e){
 $(document).on('click','.delete-sede',function(e){	
 	e.preventDefault();
 	
-	if(confirm('Si è sicuri di voler eliminare la sede?')){
+	if(confirm('Si è sicuri di voler eliminare la struttura?')){
 		deleteSede($(this).attr('data-id'));
 	}
 });

@@ -31,8 +31,7 @@ class UsersController extends AppController
             $users = $this->Users->find()
                 ->where([
                     'OR' => [
-                        ['role' => 'centro'], 
-                        ['role' => 'nodo'], 
+                        ['role' => 'ente'],
                         'AND' => [
                             'role' => 'admin',
                             'level <=' => $level
@@ -40,21 +39,9 @@ class UsersController extends AppController
                     ]
                 ])
                 ->toArray();
-        }elseif($role == 'centro'){
+        }elseif($role == 'ente'){
             $users = $this->Users->find()
-            ->where([
-                'OR' => [
-                    'role' => 'nodo', 
-                    'AND' => [
-                        'role' => 'centro',
-                        'level <=' => $level
-                    ]
-                ]
-            ])
-            ->toArray();
-        }elseif($role == 'nodo'){
-            $users = $this->Users->find()
-            ->where(['role' => 'nodo', 'level <=' => $level])
+            ->where(['role' => 'user', 'level <=' => $level])
             ->toArray();
         }
 

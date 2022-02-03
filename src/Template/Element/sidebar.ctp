@@ -12,19 +12,30 @@ $menu = [
     'plugin' => [],
     'controller' => ['Home'],
     'action' => [],
-    'levels' => ['admin', 'centro', 'nodo'],
+    'levels' => ['admin', 'ente'],
     'url' => Router::url('/'),
     'target' => '',
     'icon-class' => 'fa fa-home',
     'children' => []
   ],
   [
-    'name' => 'Gestione Enti',
+    'name' => 'Enti',
     'plugin' => ['Aziende'],
     'controller' => ['Home'],
     'action' => ['index'],
     'levels' => ['admin'],
     'url' => Router::url('/aziende'),
+    'target' => '',
+    'icon-class' => 'fa fa-industry',
+    'children' => []
+  ],
+  [
+    'name' => 'Sedi',
+    'plugin' => ['Aziende'],
+    'controller' => ['Sedi'],
+    'action' => ['index'],
+    'levels' => ['ente'],
+    'url' => Router::url('/aziende/sedi/index/'),
     'target' => '',
     'icon-class' => 'fa fa-industry',
     'children' => []

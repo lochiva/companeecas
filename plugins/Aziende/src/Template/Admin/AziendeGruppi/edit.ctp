@@ -14,7 +14,7 @@
 <div class="aziendeGruppi form col-lg-9 col-md-8 columns content">
     <?= $this->Form->create($aziendeGruppi,['class' => 'admin-form']) ?>
     <fieldset>
-        <legend><?= __('Edit Nodi Gruppi') ?></legend>
+        <legend><?= __('Edit Enti Gruppi') ?></legend>
         <?php
             echo $this->Form->input('name');
             echo $this->Form->input('ordering');

@@ -6,18 +6,18 @@ use Cake\Routing\Router;
 <?= $this->Html->script( 'Aziende.sedi' ); ?>
 <section class="content-header">
     <h1>
-        Committenti
+        Strutture
         <?php if(is_object($azienda)){ ?>
-            <small>gestione sedi <?php echo $azienda->denominazione; ?></small>
+            <small>gestione strutture <?php echo $azienda->denominazione; ?></small>
         <?php }else{ ?>
-            <small>gestione sedi aziendali</small>
+            <small>gestione strutture</small>
         <?php } ?>
 
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>">Committenti</a></li>
-        <li class="active">Gestione Sedi</li>
+        <li><a href="<?=Router::url('/aziende/home');?>">Strutture</a></li>
+        <li class="active">Gestione Strutture</li>
     </ol>
 </section>
 
@@ -27,7 +27,7 @@ use Cake\Routing\Router;
             <div id="box-sedi" class="box box-primary">
                 <div class="box-header with-border">
                   <i class="fa fa-list-ul"></i>
-                  <h3 class="box-title">Elenco dele sedi</h3>
+                  <h3 class="box-title">Elenco delle strutture</h3>
                   <div id="box-general-action"  class=" pull-right">
                     <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>

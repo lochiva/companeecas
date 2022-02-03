@@ -14,13 +14,13 @@ use Cake\Routing\Router;
 </script>
 <section class="content-header">
     <h1>
-        <?=__c('Nodi')?>
-        <small>Gestione <?=__c('nodi')?></small>
+        <?=__c('Enti')?>
+        <small>Gestione <?=__c('enti')?></small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>"><?=__c('Nodi')?></a></li>
-        <li class="active">Gestione <?=__c('Nodi')?></li>
+        <li><a href="<?=Router::url('/aziende/home');?>"><?=__c('Enti')?></a></li>
+        <li class="active">Gestione <?=__c('Enti')?></li>
     </ol>
 </section>
 
@@ -111,7 +111,7 @@ use Cake\Routing\Router;
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-industry text-aqua"></i> Sedi</h3>
+                    <h3 class="box-title"><i class="fa fa-industry text-aqua"></i> Strutture</h3>
                     <div class="box-tools pull-right">
                         <button data-widget="collapse" class="btn btn-box-tool"><i class="fa fa-minus"></i></button>
                     </div>
@@ -143,16 +143,16 @@ use Cake\Routing\Router;
                                             <td width="50px" style="padding-left: 0px; padding-right: 0px">
                                               <div class="tools-hover">
                                                 <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_2" data-childTab="#click_subtab_sede_<?=$sede->id?>"
-                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda"><i data-toggle="tooltip" data-placement="left" title="Modifica sede" class="glyphicon glyphicon-pencil text-red"></i></a>
+                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
                                                 &nbsp;
-                                                <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella sede"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
+                                                <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella struttura"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
                                               </div>
                                             </td>
                                         </tr>
                                     <?php } ?>
                                 <?php }else{ ?>
                                     <tr>
-                                        <td colspan="6">Non ci sono sedi inserite.</td>
+                                        <td colspan="6">Non ci sono strutture inserite.</td>
                                     </tr>
                                 <?php } ?>
 
@@ -165,7 +165,7 @@ use Cake\Routing\Router;
                 <div class="box-footer clearfix">
 
                     <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_2" data-childTab=".add-tab-sede"
-                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda">Inserisci nuova Sede</a>
+                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda">Inserisci nuova struttura</a>
 
                 </div>
             </div>
@@ -204,9 +204,9 @@ use Cake\Routing\Router;
                                         </a>
                                         <span class="product-description">
                                             <?php if(!empty($contatto->sede)): ?>
-                                              Sede di: <?=h($contatto->sede->indirizzo . " " . $contatto->sede->num_civico)?>
+                                              Struttura di: <?=h($contatto->sede->indirizzo . " " . $contatto->sede->num_civico)?>
                                             <?php else: ?>
-                                              Sede non impostata.
+                                              Struttura non impostata.
                                             <?php endif ?>
                                         </span>
                                         <div class="tools-hover " style="margin-top:-20px">

@@ -24,7 +24,7 @@ class UsersController extends AppController
 
         $user = $this->Auth->user();
 
-        if(isset($user['role']) && ($user['role'] == 'centro' || $user['role'] == 'nodo')){
+        if(isset($user['role']) && ($user['role'] == 'ente')){
             $this->Auth->allow(['view', 'unlikGoogle', 'edit']);
         }
     }

@@ -20,7 +20,7 @@ use Cake\Routing\Router;
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>">Committenti</a></li>
+        <li><a href="<?=Router::url('/aziende/home');?>">Contatti</a></li>
         <li class="active">Gestione Contatti</li>
     </ol>
 </section>
@@ -62,7 +62,7 @@ use Cake\Routing\Router;
                                 <tr>
                                     <th width="14%">Cognome</th>
                                     <th width="14%">Nome</th>
-                                    <th width="14%">Nodo</th>
+                                    <th width="14%">Ente</th>
                                     <th width="10%">Ruolo</th>
                                     <th width="10%">Login</th>
                                     <th width="10%">Telefono</th>

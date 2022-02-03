@@ -1,11 +1,11 @@
 <nav class="col-lg-12 col-md-12 columns" id="actions-sidebar">
     <ul class="nav nav-tabs">
         <li class="active" ><a href="#"><?= __('Azioni') ?></a></li>
-        <li><?= $this->Html->link(__('New Sedi Tipi'), ['action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('New Strutture Tipi'), ['action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="sediTipi index large-9 medium-8 columns content">
-    <h3><?= __('Sedi Tipi') ?></h3>
+    <h3><?= __('Strutture Tipi') ?></h3>
     <table class="table" cellpadding="0" cellspacing="0">
         <thead>
             <tr>
