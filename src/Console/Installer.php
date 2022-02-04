@@ -43,6 +43,15 @@ class Installer
         $io->write('Creating localconfig.php if not exists...' );
         static::createLocalConfig($rootDir, $io);
 
+        $io->write('Creating attachmentConfig.php if not exists...' );
+        static::createAttachmentConfig($rootDir, $io);
+
+        $io->write('Creating reminderConfig.php if not exists...' );
+        static::createReminderConfig($rootDir, $io);
+ 
+        $io->write('Creating .htaccess if not exists...' );
+        static::createHtaccess($rootDir, $io);
+
         $io->write('Creating directory if needed...' );
         static::createWritableDirectories($rootDir, $io);
 
@@ -105,6 +114,33 @@ class Installer
         if (!file_exists($appConfig)) {
             copy($defaultConfig, $appConfig);
             $io->write('Created `config/localconfig.php` file');
+        }
+    }
+    public static function createAttachmentConfig($dir, $io)
+    {
+        $appConfig = $dir . '/plugins/AttachmentManager/config/attachmentConfig.php';
+        $defaultConfig = $dir . '/plugins/AttachmentManager/config/attachmentConfig.default.php';
+        if (!file_exists($appConfig)) {
+            copy($defaultConfig, $appConfig);
+            $io->write('Created `config/attachmentConfig.php` file');
+        }
+    }
+    public static function createReminderConfig($dir, $io)
+    {
+        $appConfig = $dir . '/plugins/ReminderManager/config/reminderConfig.php';
+        $defaultConfig = $dir . '/plugins/ReminderManager/config/reminderConfig.php.def';
+        if (!file_exists($appConfig)) {
+            copy($defaultConfig, $appConfig);
+            $io->write('Created `config/reminderConfig.php` file');
+        }
+    }
+    public static function createHtaccess($dir, $io)
+    {
+        $appConfig = $dir . '/.htaccess';
+        $defaultConfig = $dir . '/.htaccess.default';
+        if (!file_exists($appConfig)) {
+            copy($defaultConfig, $appConfig);
+            $io->write('Created .htaccess file` file');
         }
     }
     /**
