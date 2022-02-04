@@ -20,6 +20,17 @@ class SediController extends AppController
         $this->loadComponent('Aziende.Sedi');
     }
 
+    public function isAuthorized($user)
+    {
+        if($user['role'] == 'admin' || $user['role'] == 'ente'){
+            return true;
+        }else{
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return true;
+        }
+    }
+
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
@@ -45,10 +56,13 @@ class SediController extends AppController
         
         $province = TableRegistry::get('Luoghi')->getProvince();
 
+        $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
+
         $this->set('idAzienda',$idAzienda);
         $this->set('azienda',$azienda);
         $this->set('sediTipi',$sediTipi);
         $this->set('province',$province);
+        $this->set('tipologieOspiti',$tipologieOspiti);
     }
 
 }

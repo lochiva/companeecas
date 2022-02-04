@@ -285,19 +285,28 @@ function loadInputModale(idSede){
 	        if(data.response == "OK"){
 
 	        	$('[name="id"]').val(idSede);
-				$('[name="id_azienda"]').val(idAzienda);
-				$('[name="id_tipo"]').val(data.data.id_tipo);
-				$('[name="indirizzo"]').val(data.data.indirizzo);
-				$('[name="num_civico"]').val(data.data.num_civico);
-        $('[name="cap"]').val(data.data.cap);
-        $('#comuneValue').val(data.data.comune);
-				$('[name="provincia"]').val(data.data.provincia).trigger('change');
-				$('[name="nazione"]').val(data.data.nazione);
-				$('[name="Telefono"]').val(data.data.telefono);
-				$('[name="cellulare"]').val(data.data.cellulare);
-				$('[name="Fax"]').val(data.data.fax);
-				$('[name="email"]').val(data.data.email);
-				$('[name="skype"]').val(data.data.skype);
+            $('[name="id_azienda"]').val(idAzienda);
+            $('[name="id_tipo"]').val(data.data.id_tipo);
+            $('[name="indirizzo"]').val(data.data.indirizzo);
+            $('[name="num_civico"]').val(data.data.num_civico);
+            $('[name="cap"]').val(data.data.cap);
+            $('#comuneValue').val(data.data.comune);
+            $('[name="provincia"]').val(data.data.provincia).trigger('change');
+            $('[name="nazione"]').val(data.data.nazione);
+            $('[name="Telefono"]').val(data.data.telefono);
+            $('[name="cellulare"]').val(data.data.cellulare);
+            $('[name="Fax"]').val(data.data.fax);
+            $('[name="email"]').val(data.data.email);
+            $('[name="skype"]').val(data.data.skype);
+            $('[name="n_posti"]').val(data.data.n_posti);
+
+            if(data.data.TipologieOspiti.length > 0){
+              var tipologie_ospiti = [];
+              $.each(data.data.TipologieOspiti, function(index, tipologia){
+                tipologie_ospiti.push(tipologia.id);
+              });
+              $('[name="tipologie_ospiti"]').val(tipologie_ospiti).trigger('change');
+            }
 
 	        }else{
 	        	alert(data.msg);
@@ -339,5 +348,6 @@ function clearModale(){
 	$('[name="Fax"]').val("");
 	$('[name="email"]').val("");
 	$('[name="skype"]').val("");
-
+  $('[name="n_posti"]').val("");
+  $('[name="tipologie_ospiti"]').val('').trigger('change');
 }

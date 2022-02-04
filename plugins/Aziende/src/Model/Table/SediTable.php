@@ -20,10 +20,18 @@ class SediTable extends AppTable
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda', 'propertyName' => 'azienda']);
         $this->belongsTo('Comuni',['className' => 'Luoghi','foreignKey' => 'comune', 'propertyName' => 'comune']);
         $this->belongsTo('Province',['className' => 'Luoghi','foreignKey' => 'provincia', 'propertyName' => 'provincia']);
+        $this->hasMany('Aziende.SediSediToTipologieOspiti',['foreignKey' => 'sede_id', 'propertyName' => 'TipologieOspiti']);
+        $this->belongsToMany('TipologieOspiti', [
+            'foreignKey' => 'sede_id',
+            'targetForeignKey' => 'tipologia_ospite_id',
+            'through' => 'Aziende.SediSediToTipologieOspiti',
+            'className' => 'Aziende.SediTipologieOspiti',
+            'propertyName' => 'TipologieOspiti'
+        ]);
     }
 
     public function saveSede($data)
-    { 
+    {
         if(!empty($data['id']) && is_int($data['id'])){
             $entity = $this->get($data['id']);
         }else{
@@ -38,6 +46,14 @@ class SediTable extends AppTable
                 $entity->ordering = $lastSede->ordering + 1;
             }
         }
+        if(!empty($data['tipologie_ospiti'])){
+            foreach ($data['tipologie_ospiti'] as $tipologia) {
+                $data['TipologieOspiti'][] = array('id' => $tipologia);
+            }
+        }else{
+            $data['TipologieOspiti'] = array();
+        }
+        unset($data['tipologie_ospiti']);
         $entity = $this->patchEntity($entity, $data);
 
         $entity->comune = $data['comune'];

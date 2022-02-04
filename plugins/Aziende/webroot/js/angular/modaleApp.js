@@ -53,7 +53,8 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
         function sedeModel(){
             this.sede = {
                 id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'',
-                provincia:'', nazione:'', telefono:'', email:'', cellulare:'', fax:'', skype:'',id: 'sede-'+vm.azienda.sedi.length,
+                provincia:'', nazione:'', telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti:0, tipologie_ospiti:[],
+                id: 'sede-'+vm.azienda.sedi.length,
             };
         }
 
@@ -151,6 +152,11 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
 				}
 
                 $timeout(function(){
+                    $('[name="tipologie_ospiti"]').select2({
+                        language: 'it',
+                        width: '100%'
+                    });
+
                     $("[name='skills']").select2({
                           language: 'it',
                           width: '100%'
@@ -223,6 +229,10 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
             vm.azienda.sedi.push(nuovaSede);
             $timeout(function(){
                 $('#click_subtab_sede_'+nuovaSede.id).trigger("click");
+                $('[name="tipologie_ospiti"]').select2({
+                    language: 'it',
+                    width: '100%'
+                });
                 var select_provincia = $('#subtab_sede_'+(vm.azienda.sedi.length - 1)).find('.select-provincia');
                 select_provincia.select2({
                     language: 'it',

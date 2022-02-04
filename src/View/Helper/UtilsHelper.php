@@ -232,9 +232,9 @@ class UtilsHelper extends Helper
       return $html;
     }
 
-    public function isValidUserNodo($userId)
+    public function isValidEnte($userId)
     {
-      return TableRegistry::get('Aziende.Contatti')->isValidUserNodo($userId);
+      return TableRegistry::get('Aziende.Contatti')->isValidEnte($userId);
     }
 
     public function hasNodoLogo($userId)
@@ -251,5 +251,12 @@ class UtilsHelper extends Helper
       	}
 
       	return false;
+    }
+
+    public function getEnteIDByUserLoggedIn()
+    {
+        $userId = $this->request->session()->read('Auth.User.id');
+        $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($userId);
+      	return empty($contatto) ? '' : $contatto['id_azienda'];
     }
 }

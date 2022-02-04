@@ -28,6 +28,17 @@ class WsController extends AppController
         //$this->loadComponent('Csrf');
     }
 
+    public function isAuthorized($user)
+    {
+        if($user['role'] == 'admin' || $user['role'] == 'ente'){
+            return true;
+        }else{
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return true;
+        }
+    }
+
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
@@ -318,11 +329,21 @@ class WsController extends AppController
 
         $sede = $this->Sedi->_newEntity(); 
         array_walk_recursive($this->request->data, array($this,'trimByReference') );
+        $data = $this->request->data;
 
-        $sede = $this->Sedi->_patchEntity($sede, $this->request->data);
+        if(!empty($data['tipologie_ospiti'])){
+            foreach ($data['tipologie_ospiti'] as $tipologia) {
+                $data['TipologieOspiti'][] = array('id' => $tipologia);
+            }
+        }else{
+            $data['TipologieOspiti'] = array();
+        }
+        unset($data['tipologie_ospiti']);
 
-        $sede->comune =  $this->request->data['comune'];
-        $sede->provincia =  $this->request->data['provincia'];
+        $sede = $this->Sedi->_patchEntity($sede, $data);
+
+        $sede->comune =  $data['comune'];
+        $sede->provincia =  $data['provincia'];
 
         if ($this->Sedi->_save($sede)) {
             $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");

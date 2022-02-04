@@ -78,7 +78,7 @@ class AziendaComponent extends Component
     public function _get($id)
     {
         $az = TableRegistry::get('Aziende.Aziende');
-        $res = $az->get($id, ['contain' => ['Sedi' => ['sort' => ['ordering' => 'ASC']], 'Gruppi', 'Contatti' => ['sort' => ['ordering' => 'ASC'], 'Users', 'Skills']]]);
+        $res = $az->get($id, ['contain' => ['Sedi' => ['sort' => ['ordering' => 'ASC'], 'TipologieOspiti'], 'Gruppi', 'Contatti' => ['sort' => ['ordering' => 'ASC'], 'Users', 'Skills']]]);
         if(!empty($res['contatti'])){
           foreach ($res['contatti'] as $key => $contatto) {
             $res['contatti'][$key]['skills'] = array();
@@ -91,6 +91,10 @@ class AziendaComponent extends Component
         }
         if(!empty($res['sedi'])){
             foreach ($res['sedi'] as $key => $sede) {
+                $res['sedi'][$key]['tipologie_ospiti'] = array();
+                foreach ($sede['TipologieOspiti'] as $key2 => $tipologia) {
+                    $res['sedi'][$key]['tipologie_ospiti'][] = (string)$tipologia['id'];
+                }
                 if(!empty($sede['comune'])){
                     $comune = TableRegistry::get('Luoghi')->get($sede['comune']);
                     $res['sedi'][$key]['comune_des'] = $comune['des_luo'];

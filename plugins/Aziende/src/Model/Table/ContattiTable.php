@@ -61,7 +61,8 @@ class ContattiTable extends AppTable
             }
         }
         $sameSkills = true;
-        if(count($data['skills']) !== count($entity['Skills'])){
+        $countSkills = empty($entity['Skills']) ? 0 : count($entity['Skills']);
+        if(count($data['skills']) !== $countSkills){
             $sameSkills = false;
         }
         if(!empty($data['skills'])){
@@ -147,7 +148,7 @@ class ContattiTable extends AppTable
         return $contatto;
     }
 
-    public function isValidUserNodo($userId = null) 
+    public function isValidEnte($userId = null) 
     {
         if ($userId) {
             $contatto = $this->find()

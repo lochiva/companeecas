@@ -304,6 +304,26 @@ use Cake\Routing\Router;
                                             <input ng-model="sede.skype" type="text" placeholder="Contatto Skype" name="skype" id="inputSkype" class="form-control" >
                                         </div>
                                     </div>
+
+                                    <hr>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="inputCapienza">Capienza</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="sede.n_posti" type="text" placeholder="Capienza" name="n_posti" id="inputCapienza" class="form-control number-integer" >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Tipologie ospiti</label>
+                                        <div class="col-sm-10">
+                                            <select name="tipologie_ospiti" ng-model="sede.tipologie_ospiti" multiple="multiple" class="form-control" >
+                                              <?php foreach ($tipologieOspiti as $tipologia): ?>
+                                                <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
+                                              <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -247,7 +247,7 @@ class SediComponent extends Component
 
     public function _get($id){
         $az = TableRegistry::get('Aziende.Sedi');
-        return $az->get($id);
+        return $az->get($id, ['contain' => ['TipologieOspiti']]);
 
     }
 

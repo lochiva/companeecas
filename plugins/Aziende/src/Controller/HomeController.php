@@ -47,6 +47,7 @@ class HomeController extends AppController
         $ruoli = $this->Contatti->getRuoli();
         $skills = TableRegistry::get('Aziende.Skills')->getList();
         $gruppi = TableRegistry::get('Aziende.AziendeGruppi')->getList();
+        $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
 
         $province = TableRegistry::get('Luoghi')->getProvince();
 
@@ -55,6 +56,7 @@ class HomeController extends AppController
         $this->set('sediTipi',$sediTipi);
         $this->set('ruoli',$ruoli);
         $this->set('province',$province);
+        $this->set('tipologieOspiti',$tipologieOspiti);
     }
 
     public function info($idAzienda = 0){

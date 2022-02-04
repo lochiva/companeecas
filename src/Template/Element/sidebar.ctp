@@ -35,7 +35,7 @@ $menu = [
     'controller' => ['Sedi'],
     'action' => ['index'],
     'levels' => ['ente'],
-    'url' => Router::url('/aziende/sedi/index/'),
+    'url' => Router::url('/aziende/sedi/index/').$this->Utils->getEnteIDByUserLoggedIn(),
     'target' => '',
     'icon-class' => 'fa fa-industry',
     'children' => []
@@ -365,7 +365,7 @@ $user = $this->request->session()->read('Auth.User');
       <?php if(in_array($user['role'], $item['levels'])){ ?>
 
         <?php if(!(empty($item['plugin']) && count($item['controller']) == 1 && $item['controller'][0] == 'Home')) {
-          if($user['role'] == 'nodo' && !$this->Utils->isValidUserNodo($user['id'])) {
+          if($user['role'] == 'ente' && !$this->Utils->isValidEnte($user['id'])) {
             continue;
           }
         } ?>
