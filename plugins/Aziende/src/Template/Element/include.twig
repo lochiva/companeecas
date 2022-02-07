@@ -10,20 +10,20 @@
   {% if sediTipi is not empty %}
     {% for sedi in sediTipi %}
         .sediTipiColor-{{ sedi.id }}{
-            color:{{ sedi.color }};
+            color:{{ (sedi.color is not empty) ? sedi.color : '#000000' }};
         }
         .sediTipiBG-{{ sedi.id }}{
-            background-color:{{ sedi.color }};
+            background-color:{{ (sedi.color is not empty) ? sedi.color : '#000000' }};
         }
     {% endfor %}
   {% endif %}
   {% if ruoli is not empty %}
     {% for ruolo in ruoli %}
         .ruoliColor-{{ ruolo.id }}{
-            color:{{ ruolo.color }};
+            color:{{ (ruolo.color is not empty) ? ruolo.color : '#000000' }};
         }
         .ruoliBG-{{ ruolo.id }}{
-            background-color:{{ ruolo.color }};
+            background-color:{{ (ruolo.color is not empty) ? ruolo.color : '#000000' }};
         }
     {% endfor %}
   {% endif %}

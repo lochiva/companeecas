@@ -15,20 +15,20 @@ echo $this->Html->script( 'Aziende.angular/modaleApp.js' );
 <?php if (!empty($sediTipi)): ?>
   <?php foreach ($sediTipi as $value): ?>
       .sediTipiColor-<?= $value['id'] ?>{
-          color:<?= $value['color'] ?>;
+          color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
       }
       .sediTipiBG-<?= $value['id'] ?>{
-          background-color:<?= $value['color'] ?>;
+          background-color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
       }
   <?php endforeach; ?>
 <?php endif; ?>
 <?php if (!empty($ruoli)): ?>
   <?php foreach ($ruoli as $value): ?>
       .ruoliColor-<?= $value['id'] ?>{
-          color:<?= $value['color'] ?>;
+          color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
       }
       .ruoliBG-<?= $value['id'] ?>{
-          background-color:<?= $value['color'] ?>;
+          background-color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
       }
   <?php endforeach; ?>
 <?php endif; ?>
