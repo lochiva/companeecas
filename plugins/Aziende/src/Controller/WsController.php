@@ -106,9 +106,9 @@ class WsController extends AppController
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-map-marker"></i> Strutture </a></li>';
-                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-users"></i> Contatti</a></li>';
-                $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+                $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i> Strutture </a></li>';
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-users"></i> Contatti</a></li>';
+                $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
                 $button.= '</div>';
                 $button.= '</div>';

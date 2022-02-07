@@ -5,7 +5,6 @@ $(document).ready(function(){
         var context = $(this).parent().find('#contextForAttachment').html();
         var id_item = $(this).parent().find('#idItemForAttachment').html();
         $('#disabled_background_attachment').fadeIn('200');
-        $('#overlay_attachment_background').fadeIn('200');
         $('#overlay_attachment').fadeIn('200');
         $('#contextAttachment').val(context);
         $('#idItemAttachment').val(id_item);
@@ -17,7 +16,6 @@ $(document).ready(function(){
     //chiusura overlay attachment
     $('.close-overlay-attachment').click(function(){
         $('#disabled_background_attachment').fadeOut('200');
-        $('#overlay_attachment_background').fadeOut('200');
         $('#overlay_attachment').fadeOut('200');
         $('#dropZone #inputAttachment').val('');
         $('#contextAttachment').val('');
@@ -29,9 +27,8 @@ $(document).ready(function(){
     });
 
     //chiusura overlay attachment al click background
-    $('#overlay_attachment_background').click(function(e){
+    $('#disabled_background_attachment').click(function(e){
         $('#disabled_background_attachment').fadeOut('200');
-        $('#overlay_attachment_background').fadeOut('200');
         $('#overlay_attachment').fadeOut('200');
         $('#dropZone #inputAttachment').val('');
         $('#contextAttachment').val('');
@@ -113,9 +110,10 @@ $(document).ready(function(){
                 if($('#boxAttachments').length > 0){
                     location.reload();
                 }else{
-                    var id = $('.open-overlay-attachment.button-attachment-opened').attr('id');    
+                    var id = $('.open-overlay-attachment.button-attachment-opened').attr('id'); 
+                    $('#displayUploadedAttachments').html('');
+                    getUploadedAttachments($('#contextAttachment').val(), $('#idItemAttachment').val());
                     attachmentsNumberForBadge($('#contextAttachment').val(), $('#idItemAttachment').val(), id); 
-                    $('.close-overlay-attachment').trigger('click');
                     $('#saveAttachment').prop('disable', false);
                 }
             }else{

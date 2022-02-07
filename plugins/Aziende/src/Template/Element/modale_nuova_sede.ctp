@@ -36,9 +36,9 @@ use Cake\Routing\Router;
                         </div>
                         
                         <div class="form-group">
-                            <label class="col-sm-2 control-label required" for="inputNumCivico">Numero Civico</label>
+                            <label class="col-sm-2 control-label" for="inputNumCivico">Numero Civico</label>
                             <div class="col-sm-10">
-                                <input type="text" placeholder="Numero Civico" name="num_civico" id="inputNumCivico" class="form-control required">
+                                <input type="text" placeholder="Numero Civico" name="num_civico" id="inputNumCivico" class="form-control">
                             </div>
                         </div>
                         

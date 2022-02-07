@@ -15,6 +15,17 @@ class WsController extends AppController
 		$this->loadComponent('Trading');
 	}
 
+    public function isAuthorized($user)
+    {
+        if($user['role'] == 'admin' || $user['role'] == 'ente'){
+            return true;
+        }else{
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return true;
+        }
+    }
+
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);

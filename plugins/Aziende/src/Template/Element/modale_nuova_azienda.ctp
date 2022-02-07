@@ -227,9 +227,9 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputNumCivico">Numero Civico</label>
+                                        <label class="col-sm-2 control-label" for="inputNumCivico">Numero Civico</label>
                                         <div class="col-sm-10">
-                                            <input required ng-model="sede.num_civico" type="text" placeholder="Numero Civico" name="numero civico" id="inputNumCivico" class="form-control required">
+                                            <input ng-model="sede.num_civico" type="text" placeholder="Numero Civico" name="numero civico" id="inputNumCivico" class="form-control">
                                         </div>
                                     </div>
 

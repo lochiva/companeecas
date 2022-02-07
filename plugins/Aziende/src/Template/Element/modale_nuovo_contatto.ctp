@@ -45,9 +45,9 @@ use Cake\Routing\Router;
                                 <?php if($tipo == "azienda"){ ?>
 
                                     <div class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="idSede">Struttura</label>
+                                        <label class="col-sm-2 control-label" for="idSede">Struttura</label>
                                         <div class="col-sm-10">
-                                            <select name="id_sede" id="idSede" class="form-control required" >
+                                            <select name="id_sede" id="idSede" class="form-control" >
                                                 <?php foreach ($sedi as $key => $sede) { ?>
                                                     <option value="<?=$sede->id?>"><?=$sede->indirizzo . " " . $sede->num_civico?></option>
                                                 <?php } ?>
@@ -83,7 +83,7 @@ use Cake\Routing\Router;
                                 <?php } ?>
 
                                 <div class="form-group ">
-                                    <label class="col-sm-2 control-label required" for="inputTipo">Ruolo</label>
+                                    <label class="col-sm-2 control-label" for="inputTipo">Ruolo</label>
                                     <div class="col-sm-10">
                                         <input type="hidden" name="id" id="idContatto" value="">
 
@@ -94,7 +94,7 @@ use Cake\Routing\Router;
                                             <?php } ?>
                                         <?php } ?>
 
-                                        <select name="id_ruolo" id="inputRuolo" class="form-control required" >
+                                        <select name="id_ruolo" id="inputRuolo" class="form-control" >
                                             <?php foreach ($ruoli as $key => $ruolo) { ?>
                                                 <option value="<?=$ruolo->id?>"><?=$ruolo->ruolo?></option>
                                             <?php } ?>

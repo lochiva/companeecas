@@ -26,18 +26,18 @@ $menu = [
     'levels' => ['admin'],
     'url' => Router::url('/aziende'),
     'target' => '',
-    'icon-class' => 'fa fa-industry',
+    'icon-class' => 'fa fa-building',
     'children' => []
   ],
   [
-    'name' => 'Sedi',
+    'name' => 'Strutture',
     'plugin' => ['Aziende'],
     'controller' => ['Sedi'],
     'action' => ['index'],
     'levels' => ['ente'],
     'url' => Router::url('/aziende/sedi/index/').$this->Utils->getEnteIDByUserLoggedIn(),
     'target' => '',
-    'icon-class' => 'fa fa-industry',
+    'icon-class' => 'fa fa-home',
     'children' => []
   ],
   /*[

@@ -35,7 +35,7 @@ use Cake\Routing\Router;
             <div class="box box-info">
 
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-industry text-aqua"></i> <?=$azienda->denominazione?></h3>
+                    <h3 class="box-title"><i class="fa fa-building text-aqua"></i> <?=$azienda->denominazione?></h3>
                     <div class="box-tools pull-right">
                         <button data-widget="collapse" class="btn btn-box-tool"><i class="fa fa-minus"></i></button>
                         <!--<button data-widget="remove" class="btn btn-box-tool"><i class="fa fa-times"></i></button>-->
@@ -49,7 +49,7 @@ use Cake\Routing\Router;
                     <div class="col-md-4">
                         <dl>
 
-                            <dd><i class="fa fa-industry"></i> <b>Denominazione:</b> <?=$azienda->denominazione?></dd>
+                            <dd><i class="fa fa-building"></i> <b>Denominazione:</b> <?=$azienda->denominazione?></dd>
 
                             <!--<dd><i class="fa fa-user"></i> <b>Nome:</b> <?php if($azienda->nome){echo h($azienda->nome);}else{echo "-";}?> </dd>-->
 
@@ -111,7 +111,7 @@ use Cake\Routing\Router;
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-industry text-aqua"></i> Strutture</h3>
+                    <h3 class="box-title"><i class="fa fa-home text-aqua"></i> Strutture</h3>
                     <div class="box-tools pull-right">
                         <button data-widget="collapse" class="btn btn-box-tool"><i class="fa fa-minus"></i></button>
                     </div>
