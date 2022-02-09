@@ -44,6 +44,13 @@ class SediController extends AppController
      */
     public function index($idAzienda = 0)
     {
+        $user = $this->request->session()->read('Auth.User');
+        
+        if(!$this->Azienda->verifyUser($user, $idAzienda)){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
 
         //Carico i dati dell'azienda se mi è stata passata
         $azienda = array();

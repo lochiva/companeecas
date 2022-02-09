@@ -292,4 +292,24 @@ class AziendaComponent extends Component
 
         return true;
     }
+
+    public function verifyUser($user, $idAzienda)
+    {
+        if (!empty($user) && !empty($idAzienda)) {
+
+            if($user['role'] == 'admin'){
+                return true;
+            }
+
+            $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
+    
+            if(!empty($contatto) && $contatto['id_azienda'] == $idAzienda){
+                return true;
+            }
+    
+            return false;
+        } else {
+            return false;
+        }
+    }
 }
