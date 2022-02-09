@@ -1,0 +1,320 @@
+.pager{
+    text-align: left;
+}
+
+label.required:after{
+	content: ' *';
+	color: #FF0000;
+}
+
+.modal-title{
+	display: inline;
+}
+
+.box-diary{
+    border-top-color: #00EA94;
+}
+
+.button-group{
+    text-align: center;
+}
+
+.view-history-sede,
+.delete-guest,
+.view-guests{
+    margin-left: 5px;
+}
+
+/* STYLE SEARCH INPUT FOR GUESTS */
+.search-guest-btn,
+.add-guest-family,
+#downloadExitDocument{
+    margin-right: 5px;
+}
+
+.search-guest-select{
+    width: 400px;
+    margin-right: -2px;
+}
+
+.search-guest-select input{
+    height: 24px;
+}
+
+.search-guest-select .vs__dropdown-toggle{
+    border-right: none;
+    border-radius: 0px;
+    border-color: #ddd;
+}
+
+.search-guest-select .vs__actions{
+    margin-right: 5px;
+}
+/**********************************/
+
+.status{
+    padding: 5px;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 7px;
+}
+
+.status-struttura{
+    background-color: #00B500;
+}
+
+.status-scadenza{
+    background-color: #FF9B00;
+}
+
+.status-scaduto{
+    background-color: #FF0000;
+}
+
+.status-no-ospiti{
+    background-color: #BCBCBC;
+}
+
+.status-no-trasferimenti{
+    background-color: #BCBCBC;
+}
+
+.status-trasferimenti{
+    background-color: #CA2C92;
+}
+
+.fab-position{
+    bottom: 50px;
+    left: 214px;
+    z-index: 999;
+}
+
+.fab-main{
+    background-color: #00C0EF;
+    color: #FFF;
+    width: 45px;
+    height: 45px;
+}
+
+.fab-primary{
+    color: #FFF;
+    background-color: #3C8DBC;
+    width: 35px;
+    height: 35px;
+}
+
+.fab-success{
+    color: #FFF;
+    background-color: #00A65A;
+    width: 35px;
+    height: 35px;
+}
+
+.fab-default{
+    color: #333;
+    background-color: #E0E0E0;
+    width: 35px;
+    height: 35px;
+}
+
+#modalNewGuest .modal-dialog{
+    width: 800px;
+}
+
+.message-status-scadenza,
+.message-dimesso,
+.message-authorize-transfer,
+.message-confirm-transfer,
+.message-accept-transfer,
+.message-transfered{
+    margin: 15px 15px 0px 15px;
+    color: #FFF;
+}
+
+.message-dimesso{
+    background-color: #845BFF;
+}
+
+.message-authorize-transfer{
+    background-color: #FF00FF;
+}
+
+.message-confirm-transfer{
+    background-color: #F400A1;
+}
+
+.message-accept-transfer{
+    background-color: #CA2C92;
+}
+
+.message-transfered{
+    background-color: #B55489;
+}
+
+.message-expired-surveys{
+    margin: 15px 15px 0px 15px;
+}
+
+.message-expired-surveys{
+    background-color: #FFE100;
+}
+
+.box-scadenza{
+    background-color: rgba(255, 155, 0, 0.6);
+}
+
+.box-scadenza .box-header, .box-scadenza label{
+    color: #000;
+}
+
+.box-scaduto{
+    background-color: rgba(255, 0, 0, 0.4);
+}
+
+.box-scaduto .box-header, .box-scaduto label{
+    color: #000;
+}
+
+.no-min-height{
+    min-height: unset;
+}
+
+.btn-violet{
+    color: #FFF;
+    background-color: #845BFF;
+}
+
+.btn-violet:hover{
+    color: #FFF;
+    background-color: #6F4DD6;
+}
+
+.radio-no{
+    margin-left: 15px !important;
+}
+
+.exit-note,
+.absence-note{
+    height: 130px !important;
+    resize: none;
+}
+
+.warning-out-of-spots{
+    color: #FF0000;
+    margin-left: 20px;
+}
+
+.btn-absence-action{
+    display: inline;
+    margin-left: 20px;
+}
+
+.timeline{
+    margin-bottom: 25px;
+}
+
+.exit-icon{
+    margin-left: 15px;
+    font-size: 1.3em;
+    color: #845BFF;
+}
+
+#confirmExitFamily .modal-dialog{
+    width: 450px;
+}
+
+.text-confirm{
+    margin-top: 10px;
+}
+
+.confirm-no,
+.confirm-si{
+    width: 80px;
+}
+
+.box-absences .box-body{
+    max-height: 505px;
+    overflow-y: auto;
+}
+
+.div-pregnant-check{
+    margin-top: 30px;
+}
+
+.pregnant-check{
+    margin-left: 10px !important;
+}
+
+.fab-icon{
+    font-size: 20px;
+}
+
+.btn-view-old-guest{
+    color: #fff;
+    background-color: #c67913;
+    border-color: #af6a0f;
+}
+
+.btn-view-old-guest:hover{
+    color: #fff;
+    background-color: #af6a0f;
+}
+
+.btn-authorize-transfer{
+    color: #FFF;
+    background-color: #FF00FF;
+}
+.btn-authorize-transfer:hover{
+    color: #FFF;
+    background-color: #F200F2;
+}
+
+.btn-confirm-transfer{
+    color: #FFF;
+    background-color: #F400A1;
+    border-color: #B2257E;
+}
+.btn-confirm-transfer:hover{
+    color: #FFF;
+    background-color: #DD0090;
+    border-color: #B2257E;
+}
+
+.btn-accept-transfer{
+    color: #FFF;
+    background-color: #B2257E;
+    border-color: #661446;
+}
+.btn-accept-transfer:hover{
+    color: #FFF;
+    background-color: #991E6A;
+    border-color: #661446;
+}
+
+.transfer-buttons{
+    margin-top: 10px;
+}
+
+#modalGuestSelection .modal-dialog{
+    width: 800px;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+.guest-text-area{
+    resize: none;
+    height: 110px !important;
+}
+
+#formGuest .vdp-datepicker__clear-button{
+    position: absolute;
+    top: 7px;
+    left: 95%;
+    font-size: 20px;
+}

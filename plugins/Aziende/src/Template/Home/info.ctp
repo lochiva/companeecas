@@ -173,7 +173,7 @@ use Cake\Routing\Router;
         <div class="col-md-6">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-users text-blue"></i> Contatti</h3>
+                    <h3 class="box-title"><i class="fa fa-address-book-o text-blue"></i> Contatti</h3>
                         <div class="box-tools pull-right">
                             <button data-widget="collapse" class="btn btn-box-tool"><i class="fa fa-minus"></i></button>
                             <!--<button data-widget="remove" class="btn btn-box-tool"><i class="fa fa-times"></i></button>-->

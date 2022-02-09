@@ -107,7 +107,7 @@ class WsController extends AppController
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
                 $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i> Strutture </a></li>';
-                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-users"></i> Contatti</a></li>';
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                 $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
                 $button.= '</div>';
@@ -282,10 +282,11 @@ class WsController extends AppController
                     $button = "";
                     $button.= '<div class="btn-group">';
                     $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
+                    $button.= '<a class="btn btn-xs btn-default guests" href="' . Router::url('/aziende/guests/index/' . $sede->id) . '"><i data-toggle="tooltip" title="Ospiti" href="#" class="fa fa-users"></i></a>';
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                    $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-users"></i> Contatti</a></li>';
+                    $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                     $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
                     $button.= '</ul>';
                     $button.= '</div>';
@@ -1578,6 +1579,148 @@ class WsController extends AppController
         }else{
             $this->_result['response'] = 'KO';
             $this->_result['msg'] = "Nessun comune trovata.";
+        }
+    }
+
+    public function getGuests($sedeId)
+    {
+        $user = $this->request->session()->read('Auth.User');
+        $sede = TableRegistry::get('Aziende.Sedi')->get($sedeId);
+
+        if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+        $pass['query'] = $this->request->query;
+
+        $res = $this->Guest->getGuests($sedeId, $pass);
+        
+        $out['total_rows'] = $res['tot'];
+
+        if(!empty($res['res'])){
+
+            foreach ($res['res'] as $key => $guest) {  
+
+                $today = date('Y-m-d');
+                $status = '';
+                if($guest['status'] == '1'){
+                    if($today > $guest['due_date']->format('Y-m-d')){
+                        $status = '<span class="status status-scaduto">Scaduto</span>';
+                    }elseif($today >= $guest['notice_date']->format('Y-m-d')){
+                        $status = '<span class="status status-scadenza">In scadenza</span>';
+                    }else{
+                        $status = '<span class="status status-struttura">In struttura</span>';
+                    }
+                }else{
+                    $status = '<span class="status" style="background-color: '.$guest['gs']['color'].'">'.$guest['gs']['name'].'</span>';
+                }   
+
+                $buttons = "";
+				$buttons .= '<div class="button-group">';
+                $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
+                $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
+				$buttons .= '</div>';
+
+				$out['rows'][] = [
+                    $guest['code'],
+                    $guest['name'],
+                    $guest['surname']
+					$buttons
+				];
+
+            }
+
+        }
+
+        $this->_result = $out;
+    }
+
+    public function autocompleteGuests($aziendaId = '')
+    { 
+        $search = $this->request->query['q'];
+        $guests = [];
+
+        $where['CONCAT(code, " - ", name, " ", surname) LIKE'] =  '%'.$search.'%';
+
+        if(!empty($aziendaId)){
+            $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
+            $sediIds = [];
+            foreach($sedi as $s){
+                $sediIds[] = $s['id'];
+            } 
+            if(count($sediIds) > 1){
+                $where['sede_id IN'] = $sediIds;
+            }else{
+                $where['sede_id'] = $sediIds[0];
+            }
+        }
+
+        $guestsTable = TableRegistry::get('Aziende.Guests');
+        $res = $guestsTable->find()
+            ->select(['id', 'text' => 'CONCAT(code, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")'])
+            ->where($where)
+            ->order(['CONCAT(name, " ", surname)' => 'ASC'])
+            ->group(['code'])
+            ->toArray();
+
+        $guests = [];
+        foreach($res as $g){
+            $guests[] = [
+                'id' => $g['sede'].'|'.$g['id'],
+                'text' => $g['text']
+            ];
+        }
+
+        $this->_result['response'] = 'OK';
+        $this->_result['data'] = $guests;
+        $this->_result['msg'] = "Elenco risultati.";
+    }
+
+    public function getSediForSearchGuest($guestId)
+    {
+        $guests = TableRegistry::get('Aziende.Guests');
+
+        $guest = $guests->get($guestId);
+
+        $res =  $guests->find()
+            ->where(['code' => $guest['code']])
+            ->contain(['Sedi.Aziende'])  
+            ->toArray();
+
+        if($res){
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $res;
+            $this->_result['msg'] = "";
+        }else{
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = "Errore nel recupero dei dati.";
+        }
+    }
+
+    public function deleteGuest()
+    {
+        $id = $this->request->data['id'];
+
+        if($id){
+
+            $guests = TableRegistry::get('Aziende.Guests');
+
+            $guest = $guests->get($id);
+
+            $guest->deleted = '1';
+
+            if($guests->save($guest)){
+                $this->_result['response'] = "OK";
+                $this->_result['msg'] = "Eliminazione dell'ospite avvenuta con successo";
+            }else{
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = "Errore nell'eliminazione dell'ospite";
+            }
+        }else{
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = "Errore nell'eliminazione dell'ospite: id mancante.";
         }
     }
 
