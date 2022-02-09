@@ -1,5 +1,7 @@
 <?php
 use Cake\Routing\Router;
+
+$user = $this->request->session()->read('Auth.User');
 ?>
 <?php echo $this->Element('Aziende.include'); ?>
 <?= $this->Html->script('Aziende.contatti'); ?>
@@ -20,7 +22,11 @@ use Cake\Routing\Router;
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>">Contatti</a></li>
+        <?php if ($user['role'] == 'admin') { ?>
+        <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
+        <?php } else { ?>
+            <li><a href="<?=Router::url('/aziende/sedi/index/').$idAzienda;?>">Strutture</a></li>
+        <?php } ?>
         <li class="active">Gestione Contatti</li>
     </ol>
 </section>

@@ -1,5 +1,7 @@
 <?php
 use Cake\Routing\Router;
+
+$user = $this->request->session()->read('Auth.User');
 ?>
 <?php echo $this->Element('Aziende.include'); ?>
 <?php //echo "<pre>"; print_r($azienda); echo "</pre>"; ?>
@@ -16,7 +18,9 @@ use Cake\Routing\Router;
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>">Strutture</a></li>
+        <?php if ($user['role'] == 'admin') { ?>
+        <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
+        <?php } ?>
         <li class="active">Gestione Strutture</li>
     </ol>
 </section>
