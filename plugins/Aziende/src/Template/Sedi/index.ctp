@@ -29,7 +29,7 @@ use Cake\Routing\Router;
                   <i class="fa fa-list-ul"></i>
                   <h3 class="box-title">Elenco delle strutture</h3>
                   <div id="box-general-action"  class=" pull-right">
-                    <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                    <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" onclick="clearModale()" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                   </div>
                 </div>

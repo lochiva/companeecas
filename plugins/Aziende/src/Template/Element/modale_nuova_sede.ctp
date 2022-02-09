@@ -14,16 +14,42 @@ use Cake\Routing\Router;
             <div class="modal-body">
                 <form class="form-horizontal" id="formSede">
                     <div class="box-body">
+
+                        <input type="hidden" name="id" id="idSede" value="">
+                        <input type="hidden" name="id_azienda" id="idAzienda" value="<?=$idAzienda?>">
                         
                         <div class="form-group ">
-                            <label class="col-sm-2 control-label required" for="inputTipo">Tipo</label>
+                            <label class="col-sm-2 control-label required" for="inputTipo">Tipologia struttura</label>
                             <div class="col-sm-10">
-                                <input type="hidden" name="id" id="idSede" value="">
-                                <input type="hidden" name="id_azienda" id="idAzienda" value="<?=$idAzienda?>">
                                 <select name="id_tipo" id="inputTipo" class="form-control required" >
+                                    <option value="">-- Seleziona una tipologia struttura --</option>
                                     <?php foreach ($sediTipi as $key => $tipo) { ?>
                                         <option value="<?=$tipo->id?>"><?=$tipo->tipo?></option>
                                     <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required" for="inputTipologieCentro">Tipologia centro</label>
+                            <div class="col-sm-10">
+                                <select name="id_tipologia_centro" id="inputTipologieCentro" class="form-control required">
+                                    <option value="">-- Seleziona una tipologia centro --</option>
+                                    <?php foreach ($tipologieCentro as $tipologia): ?>
+                                        <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required" for="inputTipologieOspiti">Tipologia ospiti</label>
+                            <div class="col-sm-10">
+                                <select name="id_tipologia_ospiti" id="inputTipologieOspiti" class="form-control required">
+                                    <option value="">-- Seleziona una tipologia ospiti --</option>
+                                    <?php foreach ($tipologieOspiti as $tipologia): ?>
+                                        <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -85,9 +111,9 @@ use Cake\Routing\Router;
                         </div>
                         
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="inputCell">Cellulare</label>
+                            <label class="col-sm-2 control-label required" for="inputCell">Cellulare</label>
                             <div class="col-sm-10">
-                                <input type="text" placeholder="Cellulare" name="cellulare" id="inputCellulare" class="form-control">
+                                <input type="text" placeholder="Cellulare" name="cellulare" id="inputCellulare" class="form-control required">
                             </div>
                         </div>
                         
@@ -99,9 +125,9 @@ use Cake\Routing\Router;
                         </div>
                         
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="inputEmail">Email</label>
+                            <label class="col-sm-2 control-label required" for="inputEmail">Email</label>
                             <div class="col-sm-10">
-                                <input type="text" placeholder="Email" name="email" id="inputEmail" class="form-control check-email">
+                                <input type="text" placeholder="Email" name="email" id="inputEmail" class="form-control check-email required">
                             </div>
                         </div>
                         
@@ -115,19 +141,36 @@ use Cake\Routing\Router;
                         <hr>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="inputCapienza">Capienza</label>
+                            <label class="col-sm-2 control-label required" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                             <div class="col-sm-10">
-                                <input ng-model="sede.n_posti" type="text" placeholder="Capienza" name="n_posti" id="inputCapienza" class="form-control number-integer" >
+                                <input type="text" placeholder="Capienza (da convenzione)" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer required" >
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Tipologie ospiti</label>
+                            <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
                             <div class="col-sm-10">
-                                <select name="tipologie_ospiti" id="inputTipologieOspiti" multiple="multiple">
-                                <?php foreach ($tipologieOspiti as $tipologia): ?>
-                                    <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
-                                <?php endforeach; ?>
+                                <input type="text" placeholder="Capienza (effettiva)" name="n_posti_effettivi" id="inputCapienzaEffettiva" class="form-control number-integer required" >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required" for="inputProceduraAffidamento">Procedura di affidamento</label>
+                            <div class="col-sm-10">
+                                <select name="id_procedura_affidamento" id="inputProceduraAffidamento" class="form-control required" >
+                                    <?php foreach ($procedureAffidamento as $procedura): ?>
+                                    <option value="<?= $procedura->id ?>"><?= h($procedura->name) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required" for="inputOperativita">Operatività</label>
+                            <div class="col-sm-10">
+                                <select name="operativita" id="inputOperativita" class="form-control required" >
+                                    <option value="1">Attivo</option>
+                                    <option value="0">Chiuso</option>
                                 </select>
                             </div>
                         </div>

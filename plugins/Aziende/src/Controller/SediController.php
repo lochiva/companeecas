@@ -56,13 +56,17 @@ class SediController extends AppController
         
         $province = TableRegistry::get('Luoghi')->getProvince();
 
+        $tipologieCentro = TableRegistry::get('Aziende.SediTipologieCentro')->getList();
         $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
+        $procedureAffidamento = TableRegistry::get('Aziende.SediProcedureAffidamento')->getList();
 
         $this->set('idAzienda',$idAzienda);
         $this->set('azienda',$azienda);
         $this->set('sediTipi',$sediTipi);
         $this->set('province',$province);
+        $this->set('tipologieCentro',$tipologieCentro);
         $this->set('tipologieOspiti',$tipologieOspiti);
+        $this->set('procedureAffidamento',$procedureAffidamento);
     }
 
 }

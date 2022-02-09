@@ -44,16 +44,17 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
         function aziendaModel(){
             this.azienda = {
                 denominazione:'', codice_provincia:'', nome:'',cognome:'',cod_paese:'IT',piva:'',cf:'',cod_eori:'',
-                telefono:'', pec:'', pec_commissione:'', email_info:'', email_contabilita:'',email_solleciti:'', pa_codice:'',
-                sito_web:'', fax:'', cliente:false, fornitore:false, interno:false, logo:'', logo_to_save:'',
-                sedi:[],contatti:[],gruppi:[]
+                telefono:'', pec:'', pec_commissione:'', email_info:'', referente_1: '', referente_2: '', email_contabilita:'',
+                email_solleciti:'', pa_codice:'', sito_web:'', fax:'', cliente:false, fornitore:false, interno:false, logo:'', 
+                logo_to_save:'', sedi:[],contatti:[],gruppi:[]
             };
         }
 
         function sedeModel(){
             this.sede = {
-                id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'',
-                provincia:'', nazione:'', telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti:0, tipologie_ospiti:[],
+                id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo:'', id_tipologia_centro:1, id_tipologia_ospiti:'', 
+                indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', telefono:'', email:'', 
+                cellulare:'', fax:'', skype:'', n_posti_convenzione:'', n_posti_effettivi:'', id_procedura_affidamento:1, operativita:1,
                 id: 'sede-'+vm.azienda.sedi.length,
             };
         }
@@ -152,10 +153,6 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
 				}
 
                 $timeout(function(){
-                    $('[name="tipologie_ospiti"]').select2({
-                        language: 'it',
-                        width: '100%'
-                    });
 
                     $("[name='skills']").select2({
                           language: 'it',
@@ -229,10 +226,6 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
             vm.azienda.sedi.push(nuovaSede);
             $timeout(function(){
                 $('#click_subtab_sede_'+nuovaSede.id).trigger("click");
-                $('[name="tipologie_ospiti"]').select2({
-                    language: 'it',
-                    width: '100%'
-                });
                 var select_provincia = $('#subtab_sede_'+(vm.azienda.sedi.length - 1)).find('.select-provincia');
                 select_provincia.select2({
                     language: 'it',

@@ -75,30 +75,44 @@ use Cake\Routing\Router;
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label" for="inputCellulare">Cellulare</label>
+                                <label class="col-sm-2 control-label required" for="inputCellulare">Cellulare</label>
                                 <div class="col-sm-10">
-                                    <input ng-model="vm.azienda.fax" type="text" placeholder="Cellulare" name="Cellulare" id="inputCellulare" class="form-control">
+                                    <input required ng-model="vm.azienda.fax" type="text" placeholder="Cellulare" name="Cellulare" id="inputCellulare" class="form-control">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label" for="inputEmailInfo">Pec amministrativa</label>
+                                <label class="col-sm-2 control-label required" for="inputPec">Pec amministrativa</label>
                                 <div class="col-sm-10">
-                                    <input ng-model="vm.azienda.pec" type="email" placeholder="Indirizzo pec amministrativa" name="pec" id="inputPec" class="form-control">
+                                    <input required ng-model="vm.azienda.pec" type="email" placeholder="Indirizzo pec amministrativa" name="Pec amministrativa" id="inputPec" class="form-control">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label" for="inputEmailInfo">Pec atti commissione</label>
+                                <label class="col-sm-2 control-label required" for="inputPecCommissione">Pec atti commissione</label>
                                 <div class="col-sm-10">
-                                    <input ng-model="vm.azienda.pec_commissione" type="email" placeholder="Indirizzo pec atti commissione" name="pec_commissione" id="inputPecCommissione" class="form-control">
+                                    <input required ng-model="vm.azienda.pec_commissione" type="email" placeholder="Indirizzo pec atti commissione" name="Pec commissione" id="inputPecCommissione" class="form-control">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label" for="inputEmailInfo">Email Info</label>
+                                <label class="col-sm-2 control-label required" for="inputReferente1">Referente 1</label>
                                 <div class="col-sm-10">
-                                    <input ng-model="vm.azienda.email_info" type="email" placeholder="Email Info" name="emailInfo" id="inputEmailInfo" class="form-control check-email">
+                                    <input required ng-model="vm.azienda.referente_1" type="text" placeholder="Referente 1" name="Referente 1" id="inputReferente1" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="inputReferente2">Referente 2</label>
+                                <div class="col-sm-10">
+                                    <input ng-model="vm.azienda.referente_2" type="text" placeholder="Referente 2" name="Referente 2" id="inputReferente2" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label required" for="inputEmailInfo">Email Info</label>
+                                <div class="col-sm-10">
+                                    <input required ng-model="vm.azienda.email_info" type="email" placeholder="Email Info" name="Email info" id="inputEmailInfo" class="form-control check-email">
                                 </div>
                             </div>
                             
@@ -205,16 +219,41 @@ use Cake\Routing\Router;
                                 <div class="box-body">
                                     <input ng-model="parentTab" type="hidden" name="parentTab" value="#click_tab_2" />
                                     <input ng-model="childTab" type="hidden" name="childTab" value="#click_subtab_sede_{{sede.id}}" />
+                                    <input ng-model="sede.id" type="hidden" name="id" id="idSede" value="">
+                                    <input type="hidden" name="id_azienda" id="idAzienda" value="">
+
                                     <div class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="tipo">Tipo</label>
+                                        <label class="col-sm-2 control-label required" for="inputTipoStruttura">Tipologia struttura</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="sede.id" type="hidden" name="id" id="idSede" value="">
-                                            <input type="hidden" name="id_azienda" id="idAzienda" value="">
-                                            <select required ng-model="sede.id_tipo" convert-to-number name="tipo" id="inputTipo" data-prova="ccc" class="form-control required" >
-                                                <option value="" >-- Seleziona un tipo --</option>
+                                            <select required ng-model="sede.id_tipo" convert-to-number name="tipo" id="inputTipoStruttura" data-prova="ccc" class="form-control required" >
+                                                <option value="">-- Seleziona una tipologia struttura --</option>
                                                 <?php foreach ($sediTipi as $key => $tipo): ?>
                                                     <option value="<?=$tipo->id?>"><?=$tipo->tipo?></option>
                                                 <?php endforeach ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label required" for="inputTipoCentro">Tipologia centro</label>
+                                        <div class="col-sm-10">
+                                            <select required ng-model="sede.id_tipologia_centro" convert-to-number name="tipologia centro" id="inputTipoCentro" class="form-control" >
+                                                <option value="">-- Seleziona una tipologia centro --</option>
+                                                <?php foreach ($tipologieCentro as $key => $tipologia): ?>
+                                                    <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required" for="inputTipoOspite">Tipologia ospiti</label>
+                                        <div class="col-sm-10">
+                                            <select required ng-model="sede.id_tipologia_ospiti" convert-to-number name="tipologia ospiti" id="inputTipoOspite" class="form-control" >
+                                              <option value="">-- Seleziona una tipologia ospiti --</option>
+                                              <?php foreach ($tipologieOspiti as $tipologia): ?>
+                                                <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
+                                              <?php endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
@@ -278,9 +317,9 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputCell">Cellulare</label>
+                                        <label class="col-sm-2 control-label required" for="inputCell">Cellulare</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="sede.cellulare" type="text" placeholder="Cellulare" name="cellulare" id="inputCellulare" class="form-control">
+                                            <input required ng-model="sede.cellulare" type="text" placeholder="Cellulare" name="cellulare" id="inputCellulare" class="form-control">
                                         </div>
                                     </div>
 
@@ -292,9 +331,9 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputEmail">Email</label>
+                                        <label class="col-sm-2 control-label required" for="inputEmail">Email</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="sede.email" type="email" placeholder="Email" name="email" id="inputEmail" class="form-control check-email">
+                                            <input required ng-model="sede.email" type="email" placeholder="Email" name="email" id="inputEmail" class="form-control check-email">
                                         </div>
                                     </div>
 
@@ -308,22 +347,40 @@ use Cake\Routing\Router;
                                     <hr>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputCapienza">Capienza</label>
+                                        <label class="col-sm-2 control-label required" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="sede.n_posti" type="text" placeholder="Capienza" name="n_posti" id="inputCapienza" class="form-control number-integer" >
+                                            <input required ng-model="sede.n_posti_convenzione" type="text" placeholder="Capienza (da convenzione)" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">Tipologie ospiti</label>
+                                        <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
                                         <div class="col-sm-10">
-                                            <select name="tipologie_ospiti" ng-model="sede.tipologie_ospiti" multiple="multiple" class="form-control" >
-                                              <?php foreach ($tipologieOspiti as $tipologia): ?>
-                                                <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
+                                            <input required ng-model="sede.n_posti_effettivi" type="text" placeholder="Capienza (effettiva)" name="capienza (effettiva)" id="inputCapienzaEffettiva" class="form-control number-integer" >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required" for="inputProceduraAffidamento">Procedura di affidamento</label>
+                                        <div class="col-sm-10">
+                                            <select requried ng-model="sede.id_procedura_affidamento" convert-to-number name="procedura di affidamento" id="inputProceduraAffidamento" class="form-control" >
+                                              <?php foreach ($procedureAffidamento as $procedura): ?>
+                                                <option value="<?= $procedura->id ?>"><?= h($procedura->name) ?></option>
                                               <?php endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required" for="inputOperativita">Operatività</label>
+                                        <div class="col-sm-10">
+                                            <select required ng-model="sede.operativita" convert-to-number name="operatività" id="inputOperativita" class="form-control" >
+                                              <option value="1">Attivo</option>
+                                              <option value="0">Chiuso</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

@@ -50,14 +50,12 @@ use Cake\Routing\Router;
                         <dl>
 
                             <dd><i class="fa fa-building"></i> <b>Denominazione:</b> <?=$azienda->denominazione?></dd>
-
                             <!--<dd><i class="fa fa-user"></i> <b>Nome:</b> <?php if($azienda->nome){echo h($azienda->nome);}else{echo "-";}?> </dd>-->
-
                             <!--<dd><i class="fa fa-user"></i> <b>Cognome:</b> <?php if($azienda->cognome){echo h($azienda->cognome);}else{echo "-";}?></dd>-->
-
-                            <dd><i class="fa fa-envelope"></i> <b>Pec:</b> <?php if($azienda->pec){echo h($azienda->pec);}else{echo "-";}?></dd>
-
-                            <dd><i class="fa fa-globe"></i> <b>Sito:</b> <?php if($azienda->sito_web){echo '<a target="_blank" href="http://'.h($azienda->sito_web).'">'.h($azienda->sito_web).'</a>';}else{echo "-";}?></dd>
+                            <dd><i class="fa fa-envelope"></i> <b>Pec amministrativa:</b> <?php if($azienda->pec){echo h($azienda->pec);}else{echo "-";}?></dd>
+                            <dd><i class="fa fa-envelope"></i> <b>Pec atti commissione:</b> <?php if($azienda->pec){echo h($azienda->pec_commissione);}else{echo "-";}?></dd>
+                            <dd><i class="fa fa-user"></i> <b>Referente 1:</b> <?php if($azienda->referente_1){echo h($azienda->referente_1);}else{echo "-";}?> </dd>
+                            <dd><i class="fa fa-user"></i> <b>Referente 2:</b> <?php if($azienda->referente_2){echo h($azienda->referente_2);}else{echo "-";}?> </dd>
                         </dl>
                     </div>
                     <div class="col-md-4">
@@ -65,6 +63,7 @@ use Cake\Routing\Router;
                             <dd><i class="fa fa-phone"></i> <b>Telefono:</b> <?php if($azienda->telefono){echo h($azienda->telefono);}else{echo "-";}?></dd>
                             <dd><i class="fa fa-mobile"></i> <b>Cellulare:</b> <?php if($azienda->fax){echo h($azienda->fax);}else{echo "-";}?></dd>
                             <dd><i class="fa fa-envelope"></i> <b>Email Info:</b> <?php if($azienda->email_info){echo h($azienda->email_info);}else{echo "-";}?></dd>
+                            <dd><i class="fa fa-globe"></i> <b>Sito:</b> <?php if($azienda->sito_web){echo '<a target="_blank" href="http://'.h($azienda->sito_web).'">'.h($azienda->sito_web).'</a>';}else{echo "-";}?></dd>
                             <!--<dd><i class="fa fa-envelope"></i> <b>Contabilità:</b> <?php if($azienda->email_contabilita){echo h($azienda->email_contabilita);}else{echo "-";}?></dd>-->
                             <!--<dd><i class="fa fa-envelope"></i> <b>Solleciti:</b> <?php if($azienda->email_solleciti){echo h($azienda->email_solleciti);}else{echo "-";}?></dd>-->
                         </dl>

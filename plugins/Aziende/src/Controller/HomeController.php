@@ -47,7 +47,9 @@ class HomeController extends AppController
         $ruoli = $this->Contatti->getRuoli();
         $skills = TableRegistry::get('Aziende.Skills')->getList();
         $gruppi = TableRegistry::get('Aziende.AziendeGruppi')->getList();
+        $tipologieCentro = TableRegistry::get('Aziende.SediTipologieCentro')->getList();
         $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
+        $procedureAffidamento = TableRegistry::get('Aziende.SediProcedureAffidamento')->getList();
 
         $province = TableRegistry::get('Luoghi')->getProvince();
 
@@ -56,7 +58,9 @@ class HomeController extends AppController
         $this->set('sediTipi',$sediTipi);
         $this->set('ruoli',$ruoli);
         $this->set('province',$province);
+        $this->set('tipologieCentro',$tipologieCentro);
         $this->set('tipologieOspiti',$tipologieOspiti);
+        $this->set('procedureAffidamento',$procedureAffidamento);
     }
 
     public function info($idAzienda = 0){
@@ -126,6 +130,9 @@ class HomeController extends AppController
             //recupero le province
             $province = TableRegistry::get('Luoghi')->getProvince();
 
+            $tipologieCentro = TableRegistry::get('Aziende.SediTipologieCentro')->getList();
+            $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
+            $procedureAffidamento = TableRegistry::get('Aziende.SediProcedureAffidamento')->getList();
 
             $this->set('history',$history);
             $this->set('azienda',$azienda);
@@ -152,6 +159,9 @@ class HomeController extends AppController
             $this->set('aziendeList',$aziendeList);
             $this->set('interviews', $interviews);
             $this->set('province',$province);
+            $this->set('tipologieCentro',$tipologieCentro);
+            $this->set('tipologieOspiti',$tipologieOspiti);
+            $this->set('procedureAffidamento',$procedureAffidamento);
 
         }else{
             $this->redirect('/aziende');

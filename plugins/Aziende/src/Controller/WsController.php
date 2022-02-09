@@ -331,15 +331,6 @@ class WsController extends AppController
         array_walk_recursive($this->request->data, array($this,'trimByReference') );
         $data = $this->request->data;
 
-        if(!empty($data['tipologie_ospiti'])){
-            foreach ($data['tipologie_ospiti'] as $tipologia) {
-                $data['TipologieOspiti'][] = array('id' => $tipologia);
-            }
-        }else{
-            $data['TipologieOspiti'] = array();
-        }
-        unset($data['tipologie_ospiti']);
-
         $sede = $this->Sedi->_patchEntity($sede, $data);
 
         $sede->comune =  $data['comune'];

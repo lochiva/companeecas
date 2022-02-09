@@ -287,6 +287,8 @@ function loadInputModale(idSede){
 	        	$('[name="id"]').val(idSede);
             $('[name="id_azienda"]').val(idAzienda);
             $('[name="id_tipo"]').val(data.data.id_tipo);
+            $('[name="id_tipologia_centro"]').val(data.data.id_tipologia_centro);
+            $('[name="id_tipologia_ospiti"]').val(data.data.id_tipologia_ospiti);
             $('[name="indirizzo"]').val(data.data.indirizzo);
             $('[name="num_civico"]').val(data.data.num_civico);
             $('[name="cap"]').val(data.data.cap);
@@ -298,15 +300,10 @@ function loadInputModale(idSede){
             $('[name="Fax"]').val(data.data.fax);
             $('[name="email"]').val(data.data.email);
             $('[name="skype"]').val(data.data.skype);
-            $('[name="n_posti"]').val(data.data.n_posti);
-
-            if(data.data.TipologieOspiti.length > 0){
-              var tipologie_ospiti = [];
-              $.each(data.data.TipologieOspiti, function(index, tipologia){
-                tipologie_ospiti.push(tipologia.id);
-              });
-              $('[name="tipologie_ospiti"]').val(tipologie_ospiti).trigger('change');
-            }
+            $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
+            $('[name="n_posti_effettivi"]').val(data.data.n_posti_effettivi);
+            $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
+            $('[name="operativita"]').val(data.data.operativita);
 
 	        }else{
 	        	alert(data.msg);
@@ -335,7 +332,9 @@ function clearModale(){
 
 	$('[name="id"]').val("");
 	$('[name="id_azienda"]').val(idAzienda);
-	$('[name="id_tipo"]').val(1);
+	$('[name="id_tipo"]').val("");
+  $('[name="id_tipologia_centro"]').val(1);
+  $('[name="id_tipologia_ospiti"]').val("");
 	$('[name="indirizzo"]').val("");
 	$('[name="num_civico"]').val("");
 	$('[name="cap"]').val("");
@@ -348,6 +347,8 @@ function clearModale(){
 	$('[name="Fax"]').val("");
 	$('[name="email"]').val("");
 	$('[name="skype"]').val("");
-  $('[name="n_posti"]').val("");
-  $('[name="tipologie_ospiti"]').val('').trigger('change');
+  $('[name="n_posti_convenzione"]').val("");
+  $('[name="n_posti_effettivi"]').val("");
+  $('[name="id_procedura_affidamento"]').val(1);
+  $('[name="operativita"]').val(1);
 }
