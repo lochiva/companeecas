@@ -59,7 +59,7 @@ $(document).ready(function(){
             filter_selectSource: {}
         },
     }).tablesorterPager({
-        container: $("#pager-guests-diary"),
+        container: $("#pager-guests"),
 
         ajaxUrl: pathServer + 'aziende/ws/getGuests/'+sede_id+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
 
