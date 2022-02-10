@@ -11,8 +11,7 @@ use Cake\Routing\Router;
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="<?=Router::url('/aziende/home');?>"><?=__c('Enti')?></a></li>
-        <li class="active">Gestione <?=__c('Enti')?></li>
+        <li class="active">Gestione enti</li>
     </ol>
 </section>
 

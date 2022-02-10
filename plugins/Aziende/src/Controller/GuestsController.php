@@ -1,7 +1,7 @@
 <?php
-namespace Diary\Controller;
+namespace Aziende\Controller;
 
-use Diary\Controller\AppController;
+use Aziende\Controller\AppController;
 use Cake\ORM\TableRegistry;
 
 /**
@@ -35,7 +35,7 @@ class GuestsController extends AppController
     public function index($sedeId)
     {
         $user = $this->request->session()->read('Auth.User');
-        $sede = TableRegistry::get('Aziende.Sedi')->get($sedeId);
+        $sede = TableRegistry::get('Aziende.Sedi')->get($sedeId, ['contain' => ['Comuni', 'Province']]);
 
         if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
             $this->Flash->error('Accesso negato. Non sei autorizzato.');
@@ -53,7 +53,7 @@ class GuestsController extends AppController
     {
         $sedeId = $this->request->query('sede');
         $user = $this->request->session()->read('Auth.User');
-        $sede = TableRegistry::get('Aziende.Sedi')->get($sedeId);
+        $sede = TableRegistry::get('Aziende.Sedi')->get($sedeId, ['contain' => ['Comuni', 'Province']]);
 
         if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
             $this->Flash->error('Accesso negato. Non sei autorizzato.');

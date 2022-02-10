@@ -25,7 +25,7 @@ class WsController extends AppController
         $this->loadComponent('Aziende.Order');
         $this->loadComponent('Aziende.Fornitori');
         $this->loadComponent('Aziende.Clienti');
-        //$this->loadComponent('Csrf');
+        $this->loadComponent('Aziende.Guest');
     }
 
     public function isAuthorized($user)
@@ -1595,27 +1595,29 @@ class WsController extends AppController
 
         $pass['query'] = $this->request->query;
 
+        if(isset($pass['query']['filter'][6])){
+			if($pass['query']['filter'][6] == 'No'){
+				$pass['query']['filter'][6] = 0;
+			}elseif($pass['query']['filter'][6] == 'Sì'){
+				$pass['query']['filter'][6] = 1;
+			}
+		}
+
+        if(isset($pass['query']['filter'][8])){
+			if($pass['query']['filter'][8] == 'No'){
+				$pass['query']['filter'][8] = 0;
+			}elseif($pass['query']['filter'][8] == 'Sì'){
+				$pass['query']['filter'][8] = 1;
+			}
+		}
+
         $res = $this->Guest->getGuests($sedeId, $pass);
-        
+
         $out['total_rows'] = $res['tot'];
 
         if(!empty($res['res'])){
 
             foreach ($res['res'] as $key => $guest) {  
-
-                $today = date('Y-m-d');
-                $status = '';
-                if($guest['status'] == '1'){
-                    if($today > $guest['due_date']->format('Y-m-d')){
-                        $status = '<span class="status status-scaduto">Scaduto</span>';
-                    }elseif($today >= $guest['notice_date']->format('Y-m-d')){
-                        $status = '<span class="status status-scadenza">In scadenza</span>';
-                    }else{
-                        $status = '<span class="status status-struttura">In struttura</span>';
-                    }
-                }else{
-                    $status = '<span class="status" style="background-color: '.$guest['gs']['color'].'">'.$guest['gs']['name'].'</span>';
-                }   
 
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
@@ -1624,9 +1626,15 @@ class WsController extends AppController
 				$buttons .= '</div>';
 
 				$out['rows'][] = [
-                    $guest['code'],
+                    $guest['cui'],
+                    $guest['vestanet_id'],
                     $guest['name'],
-                    $guest['surname']
+                    $guest['surname'],
+                    empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y'),
+                    $guest['sex'],
+                    $guest['draft'] ? 'Sì' : 'No',
+                    empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y'),
+                    $guest['suspended'] ? 'Sì' : 'No',
 					$buttons
 				];
 
@@ -1642,7 +1650,7 @@ class WsController extends AppController
         $search = $this->request->query['q'];
         $guests = [];
 
-        $where['CONCAT(code, " - ", name, " ", surname) LIKE'] =  '%'.$search.'%';
+        $where['CONCAT(cui, " - ", name, " ", surname) LIKE'] =  '%'.$search.'%';
 
         if(!empty($aziendaId)){
             $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
@@ -1659,10 +1667,10 @@ class WsController extends AppController
 
         $guestsTable = TableRegistry::get('Aziende.Guests');
         $res = $guestsTable->find()
-            ->select(['id', 'text' => 'CONCAT(code, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")'])
+            ->select(['id', 'text' => 'CONCAT(cui, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")'])
             ->where($where)
             ->order(['CONCAT(name, " ", surname)' => 'ASC'])
-            ->group(['code'])
+            ->group(['cui'])
             ->toArray();
 
         $guests = [];
@@ -1685,7 +1693,7 @@ class WsController extends AppController
         $guest = $guests->get($guestId);
 
         $res =  $guests->find()
-            ->where(['code' => $guest['code']])
+            ->where(['cui' => $guest['cui']])
             ->contain(['Sedi.Aziende'])  
             ->toArray();
 

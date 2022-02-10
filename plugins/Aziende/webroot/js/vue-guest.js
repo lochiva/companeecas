@@ -114,9 +114,6 @@ var app = new Vue({
         var url = new URL(window.location.href);
 
         this.guestData.sede_id = url.searchParams.get("sede");
-
-        this.setServiceType(this.guestData.sede_id);
-
         this.guestData.id = url.searchParams.get("guest");
 
         if(this.guestData.id){

@@ -16,51 +16,23 @@ $role = $this->request->session()->read('Auth.User.role');
 
     <section class="content-header">
         <h1>
-            <?=__c('Diario '.$azienda['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune'].' ('.$sede['provincia'].')')?>
+            <?=__c('Ente '.$azienda['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['provincia']['s_prv'].')')?>
             <small v-if="guestData.id"><?=__c('Modifica ospite')?></small>
             <small v-else><?=__c('Nuovo ospite')?></small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-            <li><?=__c('Diario di Bordo')?></li>
-            <li><a href="<?=Router::url('/diary/home/index');?>"> <?=__c('Partner')?></a></li>
-            <li><a href="<?=Router::url('/diary/home/partnerSedi/'.$azienda['id'].($role == 'admin' ? '/'.$sede['id_progetto'] : ''));?>"> <?=__c('Sedi')?></a></li>
-            <li><a href="<?=Router::url('/diary/guests/index/'.$sede['id']);?>"> <?=__c('Ospiti')?></a></li>
-            <li v-if="guestData.id" class="active"><?=__c('Modifica ospite')?></li>
-            <li v-else class="active"><?=__c('Nuovo ospite')?></li>
+            <?php if ($role == 'admin') { ?>
+            <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
+            <?php } ?>
+            <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
+            <li><a href="<?=Router::url('/aziende/guests/index/'.$sede['id']);?>">Ospiti</a></li>
+            <li v-if="guestData.id" class="active">Modifica ospite</li>
+            <li v-else class="active">Nuovo ospite</li>
         </ol>
     </section>
 
     <?= $this->Flash->render() ?>
-
-    <div v-clock>
-        <div v-if="guestData.status.value == 1 && statusScadenza == 1" class="message-status-scadenza alert status-scadenza">Attenzione! L'ospite risulta in scadenza.</div>
-        <div v-if="guestData.status.value == 1 && statusScadenza == 2" class="message-status-scadenza alert status-scaduto">Attenzione! L'ospite risulta scaduto.</div>
-        <div v-if="guestData.status.value == 2" class="message-dimesso alert">L'ospite è stato dimesso in data {{guestData.exit_date}} con motivazione {{guestData.exit_type}}.</div>
-        <div v-if="guestData.status.value == 3" class="message-authorize-transfer alert">
-            <div>L'ospite è in stato "Trasferimento autorizzato" con destinazione {{transferDestination}}.</div>
-            <div class="transfer-buttons">
-                <button type="button" class="btn btn-confirm-transfer" @click="confirmTransfer">Conferma trasferimento</button>
-                <button v-if="role == 'admin'" type="button" class="btn btn-default" @click="cancelTransfer">Annulla trasferimento</button>
-            </div>
-        </div>
-        <div v-if="guestData.status.value == 4" class="message-confirm-transfer alert">L'ospite è in stato "Trasferimento in uscita" con destinazione {{guestData.exit_destination}}.</div>
-        <div v-if="guestData.status.value == 5" class="message-accept-transfer alert">
-            <div>L'ospite è in stato "Trasferimento in ingresso" con provenienza {{transferProvenance}}.</div>
-            <div><b>Note trasferimento:</b> {{transferNote}}</div>
-            <div class="transfer-buttons">
-                <button type="button" class="btn btn-accept-transfer" @click="checkAcceptTransferFamily">Conferma ingresso</button>
-            </div>
-        </div>
-        <div v-if="guestData.status.value == 6" class="message-transfered alert">L'ospite è stato trasferito in {{guestData.exit_destination}}.</div>
-        <div v-if="expiredSurveys.length > 0" class="message-expired-surveys alert">
-            Il periodo limite di compilazione dei diari
-            <ul>
-                <li v-for="expiredSurvey in expiredSurveys">{{expiredSurvey.title}}</li>
-            </ul>
-            è scaduto.
-        </div>
-    </div>
 
     <section class="content">
         <div class="row">
@@ -152,29 +124,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-4" :class="{'has-error': guestData.guest_type_id.hasError}">
-                                    <label class="required" for="guestType"><?= __('Tipologia ospite') ?></label>
-                                    <select :disabled="guestData.locked" class="form-control" name="guest_type_id" id="guestType" v-model="guestData.guest_type_id.value">
-                                        <option value=""></option>
-                                        <option v-for="type in guestsTypes" :value="type.id">{{type.name}}</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.service_type_id.hasError}">
-                                    <label class="required" for="serviceType"><?= __('Tipologia servizio') ?></label>
-                                    <select disabled class="form-control" name="service_type_id" id="serviceType" v-model="guestData.service_type_id.value" 
-                                        @change="newGuestData.service_type_id.value = guestData.service_type_id.value">
-                                        <option value=""></option>
-                                        <option v-for="service in services" :value="service.id">{{service.name}}</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.status.hasError}">
-                                    <label class="required" for="status"><?= __('Status') ?></label>
-                                    <select disabled class="form-control" name="status" id="status" v-model="guestData.status.value">
-                                        <option v-for="status in statuses" :value="status.id">{{status.name}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <div class="col-md-6" :class="{'has-error': guestData.arrival_date.hasError}">
                                     <label class="required" for="arrivalDate"><?= __('Data di arrivo') ?></label>
                                     <datepicker :disabled="guestData.locked" :language="datepickerItalian" format="dd/MM/yyyy" :monday-first="true" input-class="form-control" v-model="guestData.arrival_date.value"></datepicker>
@@ -194,8 +143,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <datepicker disabled :language="datepickerItalian" format="dd/MM/yyyy" :monday-first="true" input-class="form-control" v-model="guestData.notice_date"></datepicker>
                                 </div>
                             </div>
-                            <button :disabled="guestData.id == '' || guestData.locked || guestData.status.value == 3" type="button" class="btn btn-violet pull-right" data-target="#modalGuestExit" @click="openExitModal">Procedura di uscita</button>
-                            <button :disabled="guestData.status.value != 2 && guestData.status.value != 6" type="button" class="btn btn-default pull-right" :data-id="guestData.id" id="downloadExitDocument">Documento di dimissione</button>
                         </form>
                     </div>
                 </div>

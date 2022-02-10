@@ -40,15 +40,23 @@ $(document).ready(function(){
         theme: 'bootstrap',
         headerTemplate: '{content} {icon}',
         widthFixed: false,
-        widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
+        widgets: ['zebra', 'cssStickyHeaders' , 'columns', 'filter', 'uitheme'],
         widgetOptions: {
-            filter_selectSource: {
-                '.guests-types-filter': typesList,  
-                '.status-guests-filter': statusesList        
-            },
             filter_functions:{
-                
-            }
+                '.filter-sex': {
+                    'F': function(e,n,f,i,$r){return e===f},
+                    'M': function(e,n,f,i,$r){return e===f}
+                },
+                '.filter-draft': {
+                    'Sì': function(e,n,f,i,$r){return e===f},
+                    'No': function(e,n,f,i,$r){return e===f}
+                },
+                '.filter-suspended': {
+                    'Sì': function(e,n,f,i,$r){return e===f},
+                    'No': function(e,n,f,i,$r){return e===f}
+                }
+            },
+            filter_selectSource: {}
         },
     }).tablesorterPager({
         container: $("#pager-guests-diary"),
@@ -74,13 +82,13 @@ $(document).ready(function(){
         // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
         ajaxProcessing: function(data){
 
-            if(data.creation_enabled){
+            /*if(data.creation_enabled){
                 $('.warning-out-of-spots').hide();
                 $('#newGuest').removeClass('disabled');
             }else{
                 $('.warning-out-of-spots').show();
                 $('#newGuest').addClass('disabled');
-            }
+            }*/
 
             if (data && data.hasOwnProperty('rows')) {
                 var r, row, c, d = data.rows,
@@ -150,7 +158,7 @@ $(document).ready(function(){
             }).done(function(res) {
                 if(res.response == 'OK'){
                     alert(res.msg);
-                    $('#table-guests-diary').trigger('update');
+                    $('#table-guests').trigger('update');
                 }else{
                     alert(res.msg);
                 }

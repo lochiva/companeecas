@@ -21,7 +21,7 @@ $user = $this->request->session()->read('Auth.User');
         <?php if ($user['role'] == 'admin') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
-        <li class="active">Gestione Strutture</li>
+        <li class="active">Gestione strutture</li>
     </ol>
 </section>
 

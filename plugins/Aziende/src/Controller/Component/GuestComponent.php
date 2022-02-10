@@ -6,45 +6,38 @@ use Cake\ORM\TableRegistry;
 
 class GuestComponent extends Component
 {
-
-
     public function getGuests($sedeId, $pass = array()){
 
         $guests = TableRegistry::get('Aziende.Guests');
 		
 		$columns = [
-			0 => ['val' => 'SediGuests.code', 'type' => 'text'],
-			1 => ['val' => 'SediGuests.name', 'type' => 'text'],
-			2 => ['val' => 'SediGuests.surname', 'type' => 'text']
+			0 => ['val' => 'Guests.cui', 'type' => 'text'],
+			1 => ['val' => 'Guests.vestanet_id', 'type' => 'text'],
+			2 => ['val' => 'Guests.name', 'type' => 'text'],
+			3 => ['val' => 'Guests.surname', 'type' => 'text'],
+			4 => ['val' => 'Guests.birthdate', 'type' => 'date'],
+			5 => ['val' => 'Guests.sex', 'type' => 'text'],
+			6 => ['val' => 'Guests.draft', 'type' => 'number'],
+			7 => ['val' => 'Guests.draft_expiration', 'type' => 'date'],
+			8 => ['val' => 'Guests.suspended', 'type' => 'number']
         ];
         
         $opt['fields'] = [
-			'SediGuests.id', 
-			'SediGuests.code', 
-			'SediGuests.name', 
-			'SediGuests.surname'
+			'Guests.id', 
+			'Guests.cui', 
+			'Guests.vestanet_id', 
+			'Guests.name',
+			'Guests.surname', 
+			'Guests.birthdate', 
+			'Guests.sex', 
+			'Guests.draft',
+			'Guests.draft_expiration', 
+			'Guests.suspended'
 		];
 
 		$opt['join'] = [];
         
-		$opt['conditions'] = ['SediGuests.sede_id' => $sedeId];
-		
-		if(isset($pass['query']['filter'][5])){
-			$today = date('Y-m-d');
-			if($pass['query']['filter'][5] == 'Scaduto'){
-				$opt['conditions']['SediGuests.status'] = 1;
-				$opt['conditions']['SediGuests.due_date <'] = $today;
-			}elseif($pass['query']['filter'][5] == 'In scadenza'){
-				$opt['conditions']['SediGuests.status'] = 1;
-				$opt['conditions']['SediGuests.notice_date <='] = $today;
-				$opt['conditions']['SediGuests.due_date >='] = $today;
-			}elseif($pass['query']['filter'][5] == 'In struttura'){
-				$opt['conditions']['SediGuests.status'] = 1;
-				$opt['conditions']['SediGuests.notice_date >'] = $today;
-			}else{
-				$opt['conditions']['gs.name'] = $pass['query']['filter'][0];
-			}
-		}
+		$opt['conditions'] = ['Guests.sede_id' => $sedeId];
 
         $toRet['res'] = $guests->queryForTableSorter($columns, $opt, $pass); 
         $toRet['tot'] = $guests->queryForTableSorter($columns, $opt, $pass, true);
