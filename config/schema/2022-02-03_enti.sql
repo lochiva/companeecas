@@ -92,10 +92,10 @@ INSERT INTO `sedi_tipologie_centro` (`id`, `name`, `ordering`, `deleted`, `creat
 (3, 'Hot spot', 30, 0, NOW(), NOW()),
 (4, 'CAS minori', 40, 0, NOW(), NOW());
 
-ALTER TABLE `sedi_tipologie_centro`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-COMMIT;
 
+
+
+ALTER TABLE `sedi_tipologie_centro` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
 
 --
 -- Cancellazione tabella di relazione struttura-tipologia ospiti
