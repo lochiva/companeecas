@@ -31,3 +31,10 @@ ALTER TABLE `guests`
 ALTER TABLE `guests`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
+
+
+ALTER TABLE `guests` 
+ADD `minor_family` BOOLEAN NOT NULL AFTER `minor`,
+ADD `family_guest_id` INT NOT NULL AFTER `minor_family`, 
+ADD `minor_alone` BOOLEAN NOT NULL AFTER `family_guest_id`,
+ADD INDEX (`family_guest_id`);
