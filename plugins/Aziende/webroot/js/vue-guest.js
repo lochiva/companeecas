@@ -6,97 +6,89 @@ var app = new Vue({
     data: {
         role: role,
         guestData: {
-            id: '',
-            code: '',
-            sede_id: '',
+            id: {
+                hasError: false,
+                value: '',
+                required: false
+            },
+            sede_id: {
+                hasError: false,
+                value: '',
+                required: true
+            },
+            cui: {
+                hasError: false,
+                value: '',
+                required: false
+            },
+            vestanet_id: {
+                hasError: false,
+                value: '',
+                required: false
+            },
             name: {
                 hasError: false,
-                value: ''
+                value: '',
+                required: true
             },
             surname: {
                 hasError: false,
-                value: ''
+                value: '',
+                required: true
             },
-            guest_type_id: {
-                hasError: false,
-                value: ''
-            },
-            service_type_id: {
-                hasError: false,
-                value: ''
-            },
-            pregnant: '',
-            cf: {
-                hasError: false,
-                value: ''
-            },
-            tel: {
-                hasError: false,
-                value: ''
-            },
-            email: {
-                hasError: false,
-                value: ''
-            },
-            birth_date: {
-                hasError: false,
-                value: ''
-            },
-            citizenship: {
-                hasError: false,
-                value: ''
-            },
-            ethnicity: {
-                hasError: false,
-                value: ''
-            },
-            native_language: {
-                hasError: false,
-                value: ''
-            },
-            other_languages: {
-                hasError: false,
-                value: ''
-            },
-            legal_situation: {
-                hasError: false,
-                value: ''
-            },
-            iban: {
-                hasError: false,
-                value: ''
-            },
-            opening_date: {
-                hasError: false,
-                value: ''
-            },
-            reference_bank: {
-                hasError: false,
-                value: ''
-            },
-            biography: {
-                hasError: false,
-                value: ''
-            },
-            arrival_date: {
+            minor: {
                 hasError: false,
                 value: '',
-                text: ''
+                required: false
             },
-            extension: '',
-            status: {
+            minor_family: {
                 hasError: false,
-                value: '1'
+                value: '',
+                required: false
             },
-            due_date: '',
-            notice_date: '',
-            family: [],
-            exit_type: '',
-            exit_date: '',
-            exit_note: '',
-            absences: [],
-            locked: false
+            family_guest: {
+                hasError: false,
+                value: '',
+                required: false
+            },
+            minor_alone: {
+                hasError: false,
+                value: '',
+                required: false
+            },
+            birthdate: {
+                hasError: false,
+                value: '',
+                required: true
+            },
+            country_birth: {
+                hasError: false,
+                value: '',
+                required: true
+            },
+            sex: {
+                hasError: false,
+                value: '',
+                required: false
+            },
+            draft: {
+                hasError: false,
+                value: true,
+                required: false
+            },
+            draft_expiration: {
+                hasError: false,
+                value: new Date((new Date()).getTime()+(60*24*60*60*1000)),
+                required: false
+            },
+            suspended: {
+                hasError: false,
+                value: '',
+                required: false
+            },
         },
+        countries: [],
+        familyGuests: [],
         datepickerItalian: vdp_translation_it.js,
         loadedData: ''
     },
@@ -113,11 +105,11 @@ var app = new Vue({
 
         var url = new URL(window.location.href);
 
-        this.guestData.sede_id = url.searchParams.get("sede");
-        this.guestData.id = url.searchParams.get("guest");
+        this.guestData.sede_id.value = url.searchParams.get("sede");
+        this.guestData.id.value = url.searchParams.get("guest");
 
-        if(this.guestData.id){
-            this.loadGuest(this.guestData.id);
+        if(this.guestData.id.value){
+            this.loadGuest(this.guestData.id.value);
         }
 
     },
@@ -125,63 +117,36 @@ var app = new Vue({
     methods: {
 
         loadGuest: function(id){
-            axios.get(pathServer + 'diary/ws/getGuest/' + id)
+            axios.get(pathServer + 'aziende/ws/getGuest/' + id)
                 .then(res => {  
                     if (res.data.response == 'OK') { 
-                        this.guestData.code = res.data.data.code;
+                        this.guestData.sede_id.value = res.data.data.sede_id;
+                        this.guestData.cui.value = res.data.data.cui;
+                        this.guestData.vestanet_id.value = res.data.data.vestanet_id;
                         this.guestData.name.value = res.data.data.name;
                         this.guestData.surname.value = res.data.data.surname;
-                        this.guestData.guest_type_id.value = res.data.data.guest_type_id;
-                        this.guestData.service_type_id.value = res.data.data.service_type_id.toString(); 
-                        this.guestData.pregnant = res.data.data.pregnant;
-                        this.guestData.arrival_date.value = new Date(res.data.data.arrival_date);
-                        this.guestData.arrival_date.text = new Date(res.data.data.arrival_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'});
-                        this.guestData.extension = res.data.data.extension;
-                        this.guestData.status.value = res.data.data.status;
-                        this.guestData.cf.value = res.data.data.cf;
-                        this.guestData.tel.value = res.data.data.tel;
-                        this.guestData.email.value = res.data.data.email;
-                        this.guestData.birth_date.value = res.data.data.birth_date;
-                        this.guestData.citizenship.value = res.data.data.citizenship;
-                        this.guestData.ethnicity.value = res.data.data.ethnicity;
-                        this.guestData.native_language.value = res.data.data.native_language;
-                        this.guestData.other_languages.value = res.data.data.other_languages;
-                        this.guestData.legal_situation.value = res.data.data.legal_situation;
-                        this.guestData.iban.value = res.data.data.iban;
-                        this.guestData.opening_date.value = res.data.data.opening_date;
-                        this.guestData.reference_bank.value = res.data.data.reference_bank;
-                        this.guestData.biography.value = res.data.data.biography;
-                        this.guestData.due_date = res.data.data.due_date;
-                        this.guestData.notice_date = res.data.data.notice_date;
-                        this.guestData.family = res.data.data.family; 
-                        if([2, 4, 6].includes(res.data.data.status)){
-                            this.guestData.exit_type = res.data.data.exit_type.name;
-                            this.guestData.exit_date = res.data.data.exit_date;
-                            this.guestData.exit_note = res.data.data.exit_note;
-                            this.guestData.exit_destination = res.data.data.exit_destination;
-                        }else{
-                            this.guestData.exit_type = '';
-                            this.guestData.exit_date = '';
-                            this.guestData.exit_note = '';
-                            this.guestData.exit_destination = '';
+                        this.guestData.minor.value = res.data.data.minor;
+                        this.guestData.minor_family.value = res.data.data.minor_family;
+                        if (res.data.data.family_guest) {
+                            this.guestData.family_guest.value = {
+                                'id': res.data.data.family_guest.id,
+                                'label': res.data.data.family_guest.cui + ' - ' + res.data.data.family_guest.name + ' ' + res.data.data.family_guest.surname
+                            };
                         }
-                        this.guestData.absences = res.data.data.absences;
-                        this.familyId = res.data.data.family_id;
-                        this.statusScadenza = res.data.data.status_scadenza;                         
-                        this.guestData.locked = res.data.data.locked;
-                        if(res.data.data.status == '3'){
-                            this.transferDestination = res.data.data.transfer_destination;
+                        this.guestData.minor_alone.value = res.data.data.minor_alone;
+                        this.guestData.birthdate.value = res.data.data.birthdate;
+                        if (res.data.data.country) {
+                            this.guestData.country_birth.value = {
+                                'id': res.data.data.country.c_luo,
+                                'label': res.data.data.country.des_luo
+                            };
                         }
-                        if(res.data.data.status == '5'){
-                            this.transferProvenance = res.data.data.transfer_provenance;
-                            this.transferNote = res.data.data.transfer_note;
-                            this.transferOriginalGuest = res.data.data.transfer_original_guest;
-                        }
+                        this.guestData.sex.value = res.data.data.sex;
+                        this.guestData.draft.value = res.data.data.draft;
+                        this.guestData.draft_expiration.value = res.data.data.draft_expiration;
+                        this.guestData.suspended.value = res.data.data.suspended;
 
                         this.loadedData = JSON.stringify(this.guestData);
-
-                        this.loadSurveys(this.guestData.sede_id, this.guestData.id);
-                        this.loadGuestHistory(this.guestData.id);
 
                     } else {
                         alert(res.data.msg);
@@ -196,48 +161,34 @@ var app = new Vue({
             var errors = false;
             var msg = '';
 
-            let excludedProp = ['id', 'sede_id', 'due_date', 'notice_date', 'family', 'code', 'exit_type', 
-                                'exit_date', 'exit_destination', 'exit_note', 'absences', 'pregnant', 'extension', 'locked',
-                                'tel', 'birth_date', 'citizenship', 'ethnicity', 'native_language', 'other_languages',
-                                'legal_situation', 'opening_date', 'reference_bank', 'biography'];
-
             Object.keys(this.guestData).forEach((prop) => {
-                if(!excludedProp.includes(prop)){
-                    if(prop == 'cf'){
-                        if(this.guestData[prop].value != "" && !this.checkCf(this.guestData[prop].value)){
-                            errors = true;
-                            msg += 'Codice fiscale non valido.\n';
-                            this.guestData[prop].hasError = true;
-                        }else{
-                            this.guestData[prop].hasError = false;
-                        }
-                    }else if(prop == 'email'){
-                        var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-                        if(this.guestData[prop].value != "" && !regex.test(this.guestData[prop].value)){
-                            errors = true;
-                            msg += 'Email non valida.\n';
-                            this.guestData[prop].hasError = true;
-                        }else{
-                            this.guestData[prop].hasError = false;
-                        }
-                    }else if(prop == 'iban'){
-                        if(this.guestData[prop].value != "" && this.guestData[prop].value.length != 27){
-                            errors = true;
-                            msg += 'L\'IBAN deve essere lungo esattamente 27 caratteri.\n';
-                            this.guestData[prop].hasError = true;
-                        }else{
-                            this.guestData[prop].hasError = false;
-                        }
+                if (this.guestData[prop].required) {
+                    if(this.guestData[prop].value == "" || this.guestData[prop].value == null){
+                        errors = true;
+                        msg += 'Si prega di compilare tutti i campi obbligatori.\n'
+                        this.guestData[prop].hasError = true;
                     }else{
-                        if(this.guestData[prop].value == "" || this.guestData[prop].value == null){
-                            errors = true;
-                            msg += 'Si prega di compilare tutti i campi obbligatori.\n'
-                            this.guestData[prop].hasError = true;
-                        }else{
-                            this.guestData[prop].hasError = false;
-                        }
+                        this.guestData[prop].hasError = false;
                     }
-                } 
+                }
+
+                if(prop == 'cui'){
+                    if(this.guestData[prop].value != "" && this.guestData[prop].value.length != 7){
+                        errors = true;
+                        msg += 'CUI non valido.\n';
+                        this.guestData[prop].hasError = true;
+                    }else{
+                        this.guestData[prop].hasError = false;
+                    }
+                }else if(prop == 'vestanet_id'){
+                    if(this.guestData[prop].value != "" && (this.guestData[prop].value.length < 9 || this.guestData[prop].value.length > 10)){
+                        errors = true;
+                        msg += 'ID Vestanet non valida.\n';
+                        this.guestData[prop].hasError = true;
+                    }else{
+                        this.guestData[prop].hasError = false;
+                    }
+                }
             });
 
             if(errors){
@@ -253,29 +204,26 @@ var app = new Vue({
 
             let params = new URLSearchParams();
 
-            let readonlyProp = ['exit_type', 'exit_date', 'exit_destination', 'exit_note'];
-            let excludedProp = ['id', 'sede_id', 'due_date', 'notice_date', 'code', 'pregnant', 'extension', 'locked'];
-
             Object.keys(this.guestData).forEach((prop) => {
-                if(!readonlyProp.includes(prop)){
-                    if(excludedProp.includes(prop)){
-                        params.append(prop, this.guestData[prop]);
-                    }else if(prop == 'family' || prop == 'absences'){
-                        params.append(prop, JSON.stringify(this.guestData[prop]));
-                    }else{
-                        params.append(prop, this.guestData[prop].value);
+                if (prop == 'country_birth' || prop == 'family_guest') {
+                    if (this.guestData[prop] == '' || this.guestData[prop] == null) {
+                        params.append(prop, '');
+                    } else {
+                        params.append(prop, this.guestData[prop].value.id);
                     }
+                } else {
+                    params.append(prop, this.guestData[prop].value);
                 }
             });
 
-            axios.post(pathServer + 'diary/ws/saveGuest', params)
+            axios.post(pathServer + 'aziende/ws/saveGuest', params)
                 .then(res => {
                     if (res.data.response == 'OK') {
                         if(exit){
-                            window.location = pathServer + 'diary/guests/index/'+this.guestData.sede_id;
+                            window.location = pathServer + 'aziende/guests/index/'+this.guestData.sede_id.value;
                         }else{ 
                             alert(res.data.msg);
-                            window.location = pathServer + 'diary/guests/guest?sede='+this.guestData.sede_id+'&guest='+res.data.data;
+                            window.location = pathServer + 'aziende/guests/guest?sede='+this.guestData.sede_id.value+'&guest='+res.data.data;
                         }
                     } else {
                         alert(res.data.msg);
@@ -296,12 +244,12 @@ var app = new Vue({
                     let params = new URLSearchParams();
                     params.append('id', this.guestData.family[index].id);
 
-                    axios.post(pathServer + 'diary/ws/deleteGuest', params)
+                    axios.post(pathServer + 'aziende/ws/deleteGuest', params)
                     .then(res => {
                         if (res.data.response == 'OK') {
                             alert(res.data.msg);
                             this.guestData.family.splice(index, 1);
-                            this.isServiceFreeForSede(this.guestData.sede_id);
+                            this.isServiceFreeForSede(this.guestData.sede_id.value);
                         } else {
                             alert(res.data.msg);
                         }
@@ -313,33 +261,56 @@ var app = new Vue({
             }
         },
 
-        checkCf: function(cfins){
-            var cf = cfins.toUpperCase();
-            var cfReg = /^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/;
-
-            if (!cfReg.test(cf)){
-                return false;
+        searchCountry: function(search, loading){
+            if(search != ''){
+                loading(true);
+                axios.get(pathServer + 'aziende/ws/searchCountry/'+search)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.countries = res.data.data;
+                        loading(false);
+                    } else {
+                        this.countries = [];
+                        loading(false);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    loading(false);
+                });
+            }else{
+                this.countries = [];
             }
-            
-            var set1 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var set2 = "ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var setpari = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var setdisp = "BAKPLCQDREVOSFTGUHMINJWZYX";
-            var s = 0;
+        },
 
-            for( i = 1; i <= 13; i += 2 ){
-                s += setpari.indexOf( set2.charAt( set1.indexOf( cf.charAt(i) )));
+        searchGuest: function(search, loading){
+            if(search != ''){
+                loading(true);
+                axios.get(pathServer + 'aziende/ws/searchGuest/'+search+'/'+this.guestData.id.value)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.familyGuests = res.data.data;
+                        loading(false);
+                    } else {
+                        this.familyGuests = [];
+                        loading(false);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    loading(false);
+                });
+            }else{
+                this.familyGuests = [];
             }
+        },
 
-            for( i = 0; i <= 14; i += 2 ){
-                s += setdisp.indexOf( set2.charAt( set1.indexOf( cf.charAt(i) )));
+        setDraft: function() {
+            if (this.guestData.cui.value != '' || this.guestData.vestanet_id.value != '') {
+                this.guestData.draft.value = false;
+                this.guestData.draft_expiration.value = '';
+            } else {
+                this.guestData.draft.value = true;
+                this.guestData.draft_expiration.value = new Date((new Date()).getTime()+(60*24*60*60*1000));
             }
-
-            if ( s%26 != cf.charCodeAt(15)-'A'.charCodeAt(0) ){
-                return false;
-            }
-
-            return true;
         }
         
     }
@@ -348,7 +319,7 @@ var app = new Vue({
 
 var beforeunload = true; 
 window.addEventListener('beforeunload', function (e) { 
-    if(beforeunload && (app.guestData.id === null || JSON.stringify(app.guestData) !== app.loadedData)){
+    if(beforeunload && (app.guestData.id.value === null || JSON.stringify(app.guestData) !== app.loadedData)){
         // Cancel the event
         e.preventDefault();
         // Chrome requires returnValue to be set

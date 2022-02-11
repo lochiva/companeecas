@@ -17,7 +17,7 @@ $role = $this->request->session()->read('Auth.User.role');
     <section class="content-header">
         <h1>
             <?=__c('Ente '.$azienda['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['provincia']['s_prv'].')')?>
-            <small v-if="guestData.id"><?=__c('Modifica ospite')?></small>
+            <small v-if="guestData.id.value"><?=__c('Modifica ospite')?></small>
             <small v-else><?=__c('Nuovo ospite')?></small>
         </h1>
         <ol class="breadcrumb">
@@ -27,7 +27,7 @@ $role = $this->request->session()->read('Auth.User.role');
             <?php } ?>
             <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
             <li><a href="<?=Router::url('/aziende/guests/index/'.$sede['id']);?>">Ospiti</a></li>
-            <li v-if="guestData.id" class="active">Modifica ospite</li>
+            <li v-if="guestData.id.value" class="active">Modifica ospite</li>
             <li v-else class="active">Nuovo ospite</li>
         </ol>
     </section>
@@ -40,107 +40,100 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div id="box-guests-diary" class="box box-diary">
                     <div class="box-header with-border">
                     <i class="fa fa-list-alt"></i>
-                    <h3 class="box-title">Dati intestazione ospite {{guestData.code}}</h3>
+                    <h3 class="box-title">Dati ospite {{guestData.cui.value}}</h3>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
                     <div class="box-body">
                         <form class="form-horizontal" id="formGuest">
                             <div class="form-group">
-                                <div class="col-md-5" :class="{'has-error': guestData.name.hasError}">
-                                    <label class="required" for="guestName"><?= __('Nome') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="255" class="form-control" name="name" id="guestName" v-model="guestData.name.value" />
+                                <div class="col-md-4" :class="{'has-error': guestData.cui.hasError}">
+                                    <label :class="{'required': guestData.cui.required}" for="guestCui"><?= __('CUI') ?></label>
+                                    <input type="text" maxlength="7" class="form-control" name="cui" id="guestCui" v-model="guestData.cui.value" @change="setDraft()" />
                                 </div>
-                                <div class="col-md-5" :class="{'has-error': guestData.surname.hasError}">
-                                    <label class="required" for="guestSurname"><?= __('Cognome') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="255" class="form-control" name="surname" id="guestSurname" v-model="guestData.surname.value" />
-                                </div>
-                                <div class="col-md-2 div-pregnant-check">
-                                    <label for="guestPregnant"><?= __('Incinta') ?></label>
-                                    <input :disabled="guestData.locked" type="checkbox" class="pregnant-check" name="pregnant" id="guestPregnant" v-model="guestData.pregnant" />
+                                <div class="col-md-4" :class="{'has-error': guestData.vestanet_id.hasError}">
+                                    <label :class="{'required': guestData.vestanet_id.required}" for="guestVestanetId"><?= __('ID Vestanet') ?></label>
+                                    <input type="text" maxlength="10" class="form-control" name="vestanet_id" id="guestVestanetId" v-model="guestData.vestanet_id.value" @change="setDraft()" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-4" :class="{'has-error': guestData.cf.hasError}">
-                                    <label for="guestCf"><?= __('Codice fiscale') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="16" class="form-control" name="cf" id="guestCf" v-model="guestData.cf.value" />
+                                <div class="col-md-4" :class="{'has-error': guestData.name.hasError}">
+                                    <label :class="{'required': guestData.name.required}" for="guestName"><?= __('Nome') ?></label>
+                                    <input type="text" maxlength="255" class="form-control" name="name" id="guestName" v-model="guestData.name.value" />
                                 </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.tel.hasError}">
-                                    <label for="guestTel"><?= __('Telefono') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="16" class="form-control" name="tel" id="guestTel" v-model="guestData.tel.value" />
-                                </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.email.hasError}">
-                                    <label for="guestEmail"><?= __('Email') ?></label>
-                                    <input :disabled="guestData.locked" type="email" maxlength="64" class="form-control" name="email" id="guestEmail" v-model="guestData.email.value" />
+                                <div class="col-md-4" :class="{'has-error': guestData.surname.hasError}">
+                                    <label :class="{'required': guestData.surname.required}" for="guestSurname"><?= __('Cognome') ?></label>
+                                    <input type="text" maxlength="255" class="form-control" name="surname" id="guestSurname" v-model="guestData.surname.value" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-4" :class="{'has-error': guestData.birth_date.hasError}">
-                                    <label for="guestBirthDate"><?= __('Data di nascita') ?></label>
-                                    <datepicker :disabled="guestData.locked" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" id="guestBirthDate" v-model="guestData.birth_date.value"></datepicker>
+                                <div class="col-md-2 div-input-check" :class="{'has-error': guestData.minor.hasError}">
+                                    <label :class="{'required': guestData.minor.required}" for="guestMinor"><?= __('Minore') ?></label>
+                                    <input type="checkbox" class="input-check" name="minor" id="guestMinor" v-model="guestData.minor.value" />
                                 </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.citizenship.hasError}">
-                                    <label for="guestCitizenship"><?= __('Cittadinanza') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="64" class="form-control" name="citizenship" id="guestCitizenship" v-model="guestData.citizenship.value" />
+                                <div class="col-md-4">
+                                    <div v-show="guestData.minor.value" class="div-input-check" :class="{'has-error': guestData.minor_family.hasError}">
+                                        <label :class="{'required': guestData.minor_family.required}" for="guestMinorFamily"><?= __('Con riferimento al nucleo familiare') ?></label>
+                                        <input type="checkbox" class="input-check" name="minor_family" id="guestMinorFamily" v-model="guestData.minor_family.value" 
+                                            @change="guestData.family_guest.value = ''; familyGuests = []; guestData.minor_alone.value = '';" />
+                                    </div>
+                                    <div v-show="guestData.minor.value"  :class="{'has-error': guestData.family_guest.hasError}">
+                                        <v-select :disabled="!guestData.minor_family.value" name="family_guest" id="guestFamilyGuest" :options="familyGuests" v-model="guestData.family_guest.value"
+                                            @search="searchGuest" placeholder="Seleziona un ospite" :filterable="false">
+                                            <template #no-options="{ search, searching }">
+                                                <template v-if="searching">
+                                                    Nessun ospite trovato per <em>{{ search }}</em>.
+                                                </template>
+                                                <em style="opacity: 0.5;" v-else>Inizia a scrivere per cercare un ospite.</em>
+                                            </template>
+                                        </v-select>
+                                    </div>
                                 </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.ethnicity.hasError}">
-                                    <label for="guestEthnicity"><?= __('Etnia') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="64" class="form-control" name="ethnicity" id="guestEthnicity" v-model="guestData.ethnicity.value" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-4" :class="{'has-error': guestData.native_language.hasError}">
-                                    <label for="guestNativeLanguage"><?= __('Lingua madre') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="64" class="form-control" name="native_language" id="guestNativeLanguage" v-model="guestData.native_language.value" />
-                                </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.other_languages.hasError}">
-                                    <label for="guestOtherLanguages"><?= __('Altre lingue conosciute') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="255" class="form-control" name="other_languages" id="guestOtherLanguages" v-model="guestData.other_languages.value" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12" :class="{'has-error': guestData.legal_situation.hasError}">
-                                    <label for="guestLegalSituation"><?= __('Situazione giuridica all\'ingresso') ?></label>
-                                    <textarea :disabled="guestData.locked" class="form-control guest-text-area" name="legal_situation" id="guestLegalSituation" v-model="guestData.legal_situation.value"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-4" :class="{'has-error': guestData.iban.hasError}">
-                                    <label for="guestIban"><?= __('IBAN') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="64" class="form-control" name="iban" id="guestIban" v-model="guestData.iban.value" />
-                                </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.opening_date.hasError}">
-                                    <label for="guestOpeningDate"><?= __('Data apertura') ?></label>
-                                    <datepicker :disabled="guestData.locked" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" id="guestOpeningDate" v-model="guestData.opening_date.value"></datepicker>
-                                </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.reference_bank.hasError}">
-                                    <label for="guestReferenceBank"><?= __('Banca di riferimento') ?></label>
-                                    <input :disabled="guestData.locked" type="text" maxlength="255" class="form-control" name="reference_bank" id="guestReferenceBank" v-model="guestData.reference_bank.value" />
+                                <div v-show="guestData.minor.value"  class="col-md-3 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
+                                    <label :class="{'required': guestData.minor_alone.required}" for="guestMinorAlone"><?= __('Si dichiara minore solo') ?></label>
+                                    <input type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
+                                        @change="guestData.family_guest.value = ''; familyGuests = []; guestData.minor_family.value = '';" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-12" :class="{'has-error': guestData.biography.hasError}">
-                                    <label for="guestBiography"><?= __('Biografia sintetica') ?></label>
-                                    <textarea :disabled="guestData.locked" class="form-control guest-text-area" name="biography" id="guestBiography" v-model="guestData.biography.value"></textarea>
+                                <div class="col-md-4" :class="{'has-error': guestData.birthdate.hasError}">
+                                    <label :class="{'required': guestData.birthdate.required}" for="guestBirthdate"><?= __('Data di nascita') ?></label>
+                                    <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
+                                        id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
+                                </div>
+                                <div class="col-md-4" :class="{'has-error': guestData.country_birth.hasError}">
+                                    <label :class="{'required': guestData.country_birth.required}" for="guestCountryBirth"><?= __('Paese di nascita') ?></label>
+                                    <v-select name="country_birth" id="guestCountryBirth" :options="countries" v-model="guestData.country_birth.value"
+                                        @search="searchCountry" placeholder="Seleziona una nazione" :filterable="false">
+                                        <template #no-options="{ search, searching }">
+                                            <template v-if="searching">
+                                                Nessuna nazione trovata per <em>{{ search }}</em>.
+                                            </template>
+                                            <em style="opacity: 0.5;" v-else>Inizia a scrivere per cercare una nazione.</em>
+                                        </template>
+                                    </v-select>
+                                </div>
+                                <div class="col-md-4" :class="{'has-error': guestData.sex.hasError}">
+                                    <label :class="{'required': guestData.sex.required}" for="guestSex"><?= __('Sesso') ?></label>
+                                    <select class="form-control" name="sex" id="guestSex" v-model="guestData.sex.value">
+                                        <option value=""></option>
+                                        <option value="F">F</option>
+                                        <option value="M">M</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-6" :class="{'has-error': guestData.arrival_date.hasError}">
-                                    <label class="required" for="arrivalDate"><?= __('Data di arrivo') ?></label>
-                                    <datepicker :disabled="guestData.locked" :language="datepickerItalian" format="dd/MM/yyyy" :monday-first="true" input-class="form-control" v-model="guestData.arrival_date.value"></datepicker>
+                                <div class="col-md-4 div-input-check" :class="{'has-error': guestData.draft.hasError}">
+                                    <label :class="{'required': guestData.draft.required}" for="guestDraft"><?= __('Stato anagrafica in bozza') ?></label>
+                                    <input disabled type="checkbox" class="input-check" name="draft" id="guestDraft" v-model="guestData.draft.value" />
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="guestExtension"><?= __('Proroga (gg)') ?></label>
-                                    <input :disabled="role != 'admin' || guestData.locked" type="text" class="form-control number-integer" name="extension" id="guestExtension" v-model="guestData.extension" />
+                                <div v-show="guestData.draft_expiration.value" class="col-md-4" :class="{'has-error': guestData.draft_expiration.hasError}">
+                                    <label :class="{'required': guestData.draft_expiration.required}" for="guestDraftExpiration"><?= __('Scadenza stato bozza') ?></label>
+                                    <datepicker disabled :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" 
+                                        id="guestDraftExpiration" v-model="guestData.draft_expiration.value"></datepicker>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-6">
-                                    <label class="" for="dueDate"><?= __('Data di scadenza') ?></label>
-                                    <datepicker disabled :language="datepickerItalian" format="dd/MM/yyyy" :monday-first="true" input-class="form-control" v-model="guestData.due_date"></datepicker>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="" for="noticeDate"><?= __('Data preavviso') ?></label>
-                                    <datepicker disabled :language="datepickerItalian" format="dd/MM/yyyy" :monday-first="true" input-class="form-control" v-model="guestData.notice_date"></datepicker>
+                                <div class="col-md-4 div-input-check" :class="{'has-error': guestData.suspended.hasError}">
+                                    <label :class="{'required': guestData.suspended.required}" for="guestSuspended"><?= __('Sospeso') ?></label>
+                                    <input type="checkbox" class="input-check" name="suspended" id="guestSuspended" v-model="guestData.suspended.value" />
                                 </div>
                             </div>
                         </form>
@@ -159,7 +152,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </md-speed-dial-target>
 
         <md-speed-dial-content>
-            <a :href="'<?=Router::url('/diary/guests/index/');?>'+guestData.sede_id">
+            <a :href="'<?=Router::url('/aziende/guests/index/');?>'+guestData.sede_id.value">
                 <md-button class="md-fab fab-default" title="Annulla">
                     <md-icon>arrow_back</md-icon>
                 </md-button>

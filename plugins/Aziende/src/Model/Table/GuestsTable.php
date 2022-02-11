@@ -49,6 +49,18 @@ class GuestsTable extends AppTable
             'joinType' => 'INNER',
             'className' => 'Aziende.Sedi'
         ]);
+
+        $this->belongsTo('FamilyGuests', [
+            'foreignKey' => 'family_guest_id',
+            'joinType' => 'LEFT',
+            'className' => 'Aziende.Guests'
+        ]);
+
+        $this->belongsTo('Countries', [
+            'foreignKey' => 'country_birth',
+            'joinType' => 'LEFT',
+            'className' => 'Luoghi'
+        ]);
     }
 
     /**
@@ -132,6 +144,7 @@ class GuestsTable extends AppTable
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
+        $rules->add($rules->existsIn(['country_birth'], 'Countries'));
 
         return $rules;
     }

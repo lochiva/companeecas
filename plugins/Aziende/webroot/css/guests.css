@@ -237,11 +237,11 @@ label.required:after{
     overflow-y: auto;
 }
 
-.div-pregnant-check{
-    margin-top: 30px;
+.div-input-check{
+    margin-top: 15px;
 }
 
-.pregnant-check{
+.input-check{
     margin-left: 10px !important;
 }
 
@@ -316,5 +316,10 @@ label.required:after{
     position: absolute;
     top: 7px;
     left: 95%;
+    font-size: 20px;
+}
+
+.alert-draft {
+    color: #ffc400;
     font-size: 20px;
 }

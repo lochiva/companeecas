@@ -7,6 +7,7 @@ use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Http\Client;
 use Cake\Core\Configure;
+use Cake\I18n\Time;
 
 /**
  * Aziende Controller
@@ -87,7 +88,7 @@ class WsController extends AppController
                 $button.= '<div class="btn-group">';
                 $button.= '<a class="btn btn-xs btn-default view" data-toggle="tooltip" title="Visualizza" href="' . Router::url('/aziende/home/info/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" ><i class="fa fa-eye"></i></a>';
                 $button.= '<a class="btn btn-xs btn-default edit" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" data-toggle="modal" data-target="#myModalAzienda"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
-
+                $button.= '<a class="btn btn-xs btn-default sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i></a>';
                 /*$ficGtwUid = Configure::read('dbconfig.ficgtw.API_UID');
                 if ($ficGtwUid != "") { // Il pulsante di fatture in cloud lo mostro solo se effettivamente è configurato, altrimenti non serve...
                     if($azienda->id_cliente_fattureincloud != 0 || $azienda->id_fornitore_fattureincloud != 0){
@@ -106,7 +107,6 @@ class WsController extends AppController
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                $button.= '<li><a class="sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i> Strutture </a></li>';
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                 $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
@@ -1625,6 +1625,11 @@ class WsController extends AppController
                 $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
 				$buttons .= '</div>';
 
+                $alertDraftIcon = '';
+                if ($guest['draft'] && date('Y-m-d') > $guest['draft_expiration']) {
+                    $alertDraftIcon = '<span class="alert-draft" title="Inserire il  CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
+                }
+
 				$out['rows'][] = [
                     $guest['cui'],
                     $guest['vestanet_id'],
@@ -1633,7 +1638,7 @@ class WsController extends AppController
                     empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y'),
                     $guest['sex'],
                     $guest['draft'] ? 'Sì' : 'No',
-                    empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y'),
+                    $alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')),
                     $guest['suspended'] ? 'Sì' : 'No',
 					$buttons
 				];
@@ -1645,45 +1650,45 @@ class WsController extends AppController
         $this->_result = $out;
     }
 
-    public function autocompleteGuests($aziendaId = '')
-    { 
-        $search = $this->request->query['q'];
-        $guests = [];
+    public function saveGuest()
+    {
+        $data = $this->request->data;
 
-        $where['CONCAT(cui, " - ", name, " ", surname) LIKE'] =  '%'.$search.'%';
+        $guests = TableRegistry::get('Aziende.Guests');
 
-        if(!empty($aziendaId)){
-            $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
-            $sediIds = [];
-            foreach($sedi as $s){
-                $sediIds[] = $s['id'];
-            } 
-            if(count($sediIds) > 1){
-                $where['sede_id IN'] = $sediIds;
-            }else{
-                $where['sede_id'] = $sediIds[0];
-            }
+		if(empty($data['id'])){
+            $entity = $guests->newEntity();
+		}else{
+			$entity = $guests->get($data['id']); 
+        } 
+
+        $data['minor'] = filter_var($data['minor'], FILTER_VALIDATE_BOOLEAN);
+        $data['minor_family'] = filter_var($data['minor_family'], FILTER_VALIDATE_BOOLEAN);
+        $data['minor_alone'] = filter_var($data['minor_alone'], FILTER_VALIDATE_BOOLEAN);
+        $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
+        $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
+
+        $data['family_guest_id'] =  $data['family_guest'];
+
+        $data['birthdate'] =  new Time(substr($data['birthdate'], 0, 33));
+        $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '0000-00-00' : new Time(substr($data['draft_expiration'], 0, 33));
+
+        $guests->patchEntity($entity, $data);
+
+		if($guests->save($entity)){
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $entity->id;
+            $this->_result['msg'] = "Ospite salvato con successo.";
+        }else{
+            $message = "Errore nel salvataggio dell'ospite."; 
+            foreach($entity->errors() as $field => $errors){ 
+                foreach($errors as $rule => $msg){ 
+                    $message .= "\n" . $field.': '.$msg;
+                }
+            }  
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = $message;
         }
-
-        $guestsTable = TableRegistry::get('Aziende.Guests');
-        $res = $guestsTable->find()
-            ->select(['id', 'text' => 'CONCAT(cui, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")'])
-            ->where($where)
-            ->order(['CONCAT(name, " ", surname)' => 'ASC'])
-            ->group(['cui'])
-            ->toArray();
-
-        $guests = [];
-        foreach($res as $g){
-            $guests[] = [
-                'id' => $g['sede'].'|'.$g['id'],
-                'text' => $g['text']
-            ];
-        }
-
-        $this->_result['response'] = 'OK';
-        $this->_result['data'] = $guests;
-        $this->_result['msg'] = "Elenco risultati.";
     }
 
     public function getSediForSearchGuest($guestId)
@@ -1732,5 +1737,78 @@ class WsController extends AppController
         }
     }
 
+    public function getGuest($id)
+	{
+        $user = $this->request->session()->read('Auth.User');
+        $guest = TableRegistry::get('Aziende.Guests')->get($id, ['contain' => ['FamilyGuests', 'Countries']]);
+        $sede = TableRegistry::get('Aziende.Sedi')->get($guest['sede_id']);
 
+        if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+		if($guest){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $guest;
+			$this->_result['msg'] = 'Ospite recuperato correttamente.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore nel recupero dell\'ospite.';
+		}		
+    }
+
+    public function searchCountry($search) 
+    {
+        $countries = TableRegistry::get('Luoghi')->find()
+			->select(['id' => 'Luoghi.c_luo', 'label' => 'Luoghi.des_luo'])
+			->where([
+				'Luoghi.in_luo' => 1,
+				'Luoghi.des_luo LIKE' => '%'.$search.'%',
+			])
+			->order('Luoghi.des_luo ASC')
+			->toArray();
+
+		if($countries){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $countries;
+			$this->_result['msg'] = 'Nazioni recuperate con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessuna nazione trovata.';
+		}		
+	}
+
+    public function searchGuest($search, $guestId = '') 
+    {
+        $where = [
+            'OR' => [
+                'CONCAT(cui, " - ", name, " ", surname) LIKE' => '%'.$search.'%',
+                'CONCAT(cui, " ", name, " ", surname) LIKE' => '%'.$search.'%',
+                'CONCAT(cui, " ", surname, " ", name) LIKE' => '%'.$search.'%',
+                'CONCAT(name, " ", cui, " ", surname) LIKE' => '%'.$search.'%',
+                'CONCAT(name, " ", surname, " ", cui) LIKE' => '%'.$search.'%',
+                'CONCAT(surname, " ", cui, " ", name) LIKE' => '%'.$search.'%',
+                'CONCAT(surname, " ", name, " ", cui) LIKE' => '%'.$search.'%'
+            ]
+        ];
+        if (!empty($guestId)) {
+            $where['id !='] = $guestId;
+        }
+        $guests = TableRegistry::get('Aziende.Guests')->find()
+			->select(['id', 'label' => 'CONCAT(cui, " - ", name, " ", surname)'])
+			->where($where)
+			->order('label ASC')
+			->toArray();
+
+		if($guests){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $guests;
+			$this->_result['msg'] = 'Ospiti recuperati con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ospite trovato.';
+		}
+	}
 }
