@@ -88,7 +88,7 @@ class WsController extends AppController
                 $button.= '<div class="btn-group">';
                 $button.= '<a class="btn btn-xs btn-default view" data-toggle="tooltip" title="Visualizza" href="' . Router::url('/aziende/home/info/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" ><i class="fa fa-eye"></i></a>';
                 $button.= '<a class="btn btn-xs btn-default edit" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" data-toggle="modal" data-target="#myModalAzienda"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
-                $button.= '<a class="btn btn-xs btn-default sedi" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i></a>';
+                $button.= '<a class="btn btn-xs btn-default sedi" data-toggle="tooltip" title="Strutture" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i></a>';
                 /*$ficGtwUid = Configure::read('dbconfig.ficgtw.API_UID');
                 if ($ficGtwUid != "") { // Il pulsante di fatture in cloud lo mostro solo se effettivamente è configurato, altrimenti non serve...
                     if($azienda->id_cliente_fattureincloud != 0 || $azienda->id_fornitore_fattureincloud != 0){
@@ -281,8 +281,8 @@ class WsController extends AppController
 
                     $button = "";
                     $button.= '<div class="btn-group">';
-                    $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
-                    $button.= '<a class="btn btn-xs btn-default guests" href="' . Router::url('/aziende/guests/index/' . $sede->id) . '"><i data-toggle="tooltip" title="Ospiti" href="#" class="fa fa-users"></i></a>';
+                    $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
+                    $button.= '<a class="btn btn-xs btn-default guests" data-toggle="tooltip" title="Ospiti" href="' . Router::url('/aziende/guests/index/' . $sede->id) . '"><i class="fa fa-users"></i></a>';
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
@@ -1621,13 +1621,15 @@ class WsController extends AppController
 
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
-                $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
-                $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
+                $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
+                $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
 				$buttons .= '</div>';
 
                 $alertDraftIcon = '';
-                if ($guest['draft'] && date('Y-m-d') > $guest['draft_expiration']) {
-                    $alertDraftIcon = '<span class="alert-draft" title="Inserire il  CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
+                $today = date('Y-m-d');
+                $draftExpiration = empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('Y-m-d');
+                if ($guest['draft'] && $today > $draftExpiration) {
+                    $alertDraftIcon = '<span class="alert-draft" data-toggle="tooltip" title="Inserire il  CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
                 }
 
 				$out['rows'][] = [
@@ -1671,7 +1673,7 @@ class WsController extends AppController
         $data['family_guest_id'] =  $data['family_guest'];
 
         $data['birthdate'] =  new Time(substr($data['birthdate'], 0, 33));
-        $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '0000-00-00' : new Time(substr($data['draft_expiration'], 0, 33));
+        $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '' : new Time(substr($data['draft_expiration'], 0, 33));
 
         $guests->patchEntity($entity, $data);
 
@@ -1681,9 +1683,10 @@ class WsController extends AppController
             $this->_result['msg'] = "Ospite salvato con successo.";
         }else{
             $message = "Errore nel salvataggio dell'ospite."; 
+            $fieldLabelsList = $guests->getFieldLabelsList();
             foreach($entity->errors() as $field => $errors){ 
                 foreach($errors as $rule => $msg){ 
-                    $message .= "\n" . $field.': '.$msg;
+                    $message .= "\n" . $fieldLabelsList[$field].': '.$msg;
                 }
             }  
             $this->_result['response'] = "KO";

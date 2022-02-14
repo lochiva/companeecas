@@ -68,13 +68,13 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-2 div-input-check" :class="{'has-error': guestData.minor.hasError}">
                                     <label :class="{'required': guestData.minor.required}" for="guestMinor"><?= __('Minore') ?></label>
-                                    <input type="checkbox" class="input-check" name="minor" id="guestMinor" v-model="guestData.minor.value" />
+                                    <input type="checkbox" class="input-check" name="minor" id="guestMinor" v-model="guestData.minor.value" @change="resetMinor()" />
                                 </div>
                                 <div class="col-md-4">
                                     <div v-show="guestData.minor.value" class="div-input-check" :class="{'has-error': guestData.minor_family.hasError}">
                                         <label :class="{'required': guestData.minor_family.required}" for="guestMinorFamily"><?= __('Con riferimento al nucleo familiare') ?></label>
                                         <input type="checkbox" class="input-check" name="minor_family" id="guestMinorFamily" v-model="guestData.minor_family.value" 
-                                            @change="guestData.family_guest.value = ''; familyGuests = []; guestData.minor_alone.value = '';" />
+                                            @change="changeMinorFamily(true)" />
                                     </div>
                                     <div v-show="guestData.minor.value"  :class="{'has-error': guestData.family_guest.hasError}">
                                         <v-select :disabled="!guestData.minor_family.value" name="family_guest" id="guestFamilyGuest" :options="familyGuests" v-model="guestData.family_guest.value"
@@ -91,7 +91,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <div v-show="guestData.minor.value"  class="col-md-3 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
                                     <label :class="{'required': guestData.minor_alone.required}" for="guestMinorAlone"><?= __('Si dichiara minore solo') ?></label>
                                     <input type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
-                                        @change="guestData.family_guest.value = ''; familyGuests = []; guestData.minor_family.value = '';" />
+                                        @change="changeMinorFamily(false)" />
                                 </div>
                             </div>
                             <div class="form-group">

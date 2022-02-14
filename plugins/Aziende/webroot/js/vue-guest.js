@@ -69,7 +69,7 @@ var app = new Vue({
             sex: {
                 hasError: false,
                 value: '',
-                required: false
+                required: true
             },
             draft: {
                 hasError: false,
@@ -160,12 +160,16 @@ var app = new Vue({
 
             var errors = false;
             var msg = '';
+            var errorRequired = false;
 
             Object.keys(this.guestData).forEach((prop) => {
                 if (this.guestData[prop].required) {
                     if(this.guestData[prop].value == "" || this.guestData[prop].value == null){
                         errors = true;
-                        msg += 'Si prega di compilare tutti i campi obbligatori.\n'
+                        if (!errorRequired) {
+                            errorRequired = true;
+                            msg += 'Si prega di compilare tutti i campi obbligatori.\n'
+                        }
                         this.guestData[prop].hasError = true;
                     }else{
                         this.guestData[prop].hasError = false;
@@ -180,13 +184,20 @@ var app = new Vue({
                     }else{
                         this.guestData[prop].hasError = false;
                     }
-                }else if(prop == 'vestanet_id'){
+                }
+                if(prop == 'vestanet_id'){
                     if(this.guestData[prop].value != "" && (this.guestData[prop].value.length < 9 || this.guestData[prop].value.length > 10)){
                         errors = true;
                         msg += 'ID Vestanet non valida.\n';
                         this.guestData[prop].hasError = true;
                     }else{
                         this.guestData[prop].hasError = false;
+                    }
+                }
+                if(prop == 'minor'){
+                    if(this.guestData[prop].value && !this.guestData.minor_family.value && !this.guestData.minor_alone.value){
+                        errors = true;
+                        msg += 'Avendo selezionato "Minore" è necessario indicare se con riferimento a nucleo familiare oppure solo.\n';
                     }
                 }
             });
@@ -310,6 +321,26 @@ var app = new Vue({
             } else {
                 this.guestData.draft.value = true;
                 this.guestData.draft_expiration.value = new Date((new Date()).getTime()+(60*24*60*60*1000));
+            }
+        },
+
+        resetMinor: function() {
+            this.guestData.minor_family.value = '';
+            this.guestData.family_guest.value = '';
+            this.guestData.family_guest.required = false;
+            this.guestData.minor_alone.value = '';
+            this.familyGuests = [];
+        },
+
+        changeMinorFamily: function(family) {
+            this.guestData.family_guest.value = '';
+            this.familyGuests = [];
+            if (family) {
+                this.guestData.family_guest.required = true;
+                this.guestData.minor_alone.value = '';
+            } else {
+                this.guestData.family_guest.required = false;
+                this.guestData.minor_family.value = '';
             }
         }
         

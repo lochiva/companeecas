@@ -82,11 +82,13 @@ class GuestsTable extends AppTable
 
         $validator
             ->scalar('cui')
+            ->minLength('cui', 7)
             ->maxLength('cui', 7)
             ->allowEmptyString('cui', true);
 
         $validator
             ->scalar('vestanet_id')
+            ->minLength('vestanet_id', 9)
             ->maxLength('vestanet_id', 10)
             ->allowEmptyString('vestanet_id', true);
 
@@ -104,16 +106,16 @@ class GuestsTable extends AppTable
 
         $validator
             ->date('birthdate')
-            ->allowEmptyString('birthdate', true);
+            ->allowEmptyString('birthdate', false);
 
         $validator
             ->integer('country_birth')
-            ->allowEmptyString('country_birth', true);
+            ->allowEmptyString('country_birth', false);
 
         $validator
             ->scalar('sex')
             ->maxLength('sex', 1)
-            ->allowEmptyString('sex', true);
+            ->allowEmptyString('sex', false);
 
         $validator
             ->boolean('minor');
@@ -147,6 +149,81 @@ class GuestsTable extends AppTable
         $rules->add($rules->existsIn(['country_birth'], 'Countries'));
 
         return $rules;
+    }
+
+    public function getFieldLabelsList() {
+        return [
+            'id' => 'ID',
+            'sede_id' => 'ID struttura',
+            'cui' => 'CUI',
+            'vestanet_id' => 'ID Vestanet',
+            'name' => 'Nome',
+            'surname' => 'Cognome',
+            'birthdate' => 'Data di nascita',
+            'country_birth' => 'Paese di nascita',
+            'sex' => 'Sesso',
+            'minor' => 'Minore',
+            'suspended' => 'Sospeso',
+            'draft' => 'Stato anagrafica in bozza',
+            'draft_expiration' => 'Scadenza stato bozza',
+            'deleted' => 'Cancellato',
+            'created' => 'Data creazione',
+            'modified' => 'Data modifica'
+        ];
+    }
+
+    public function beforeSave($event, $entity, $options)
+    {
+        // Se presente controllo unicità CUI e ID Vestanet (se non minore)
+        if (!empty($entity->cui) || !empty($entity->vestanet_id)) {
+            // Controllo CUI
+            if (!empty($entity->cui)) {
+                $where = [
+                    'cui' => $entity->cui
+                ];
+                if (!empty($entity->id)) {
+                    $where['id !='] = $entity->id;
+                }
+                $guest = $this->find()->where($where)->first();
+                if (!empty($guest)) {
+                    $entity->setError('cui', ['Il CUI deve essere univoco.']);
+                    return false;
+                }
+            }
+            //Controllo ID Vestanet
+            if (!empty($entity->vestanet_id) && !$entity->minor) {
+                $where = [
+                    'vestanet_id' => $entity->vestanet_id,
+                    'minor' => 0,
+                ];
+                if (!empty($entity->id)) {
+                    $where['id !='] = $entity->id;
+                }
+                $guest = $this->find()->where($where)->first();
+                if (!empty($guest)) {
+                    $entity->setError('vestanet_id', ['L\'ID Vestanet deve essere univoco.']);
+                    return false;
+                }
+            }
+        } else {
+            // Altrimenti controllo unicità combinazione nome, cognome, data di nascita, paese di nascita, sesso
+            $where = [
+                'name' => $entity->name,
+                'surname' => $entity->surname,
+                'birthdate' => $entity->birthdate,
+                'country_birth' => $entity->country_birth,
+                'sex' => $entity->sex
+            ];
+            if (!empty($entity->id)) {
+                $where['id !='] = $entity->id;
+            }
+            $guest = $this->find()->where($where)->first();
+            if (!empty($guest)) {
+                $entity->setError('cui', ['In mancanza di un CUI o un ID Vestanet, non possono esistere due ospiti con nome, cognome, data di nascita, paese di nascita e sesso uguali.']);
+                return false;
+            }
+        }
+        return true;
     }
 
 }
