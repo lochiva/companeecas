@@ -149,7 +149,6 @@ $cakeDescription = "Companee";
   <div id="template-spinner" hidden>
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"  ></i>
   </div>
-  <?= $this->element('notify') ?>
 	<div class="wrappwer">
 	    <header class="main-header">
 	        <!--<div class="header-title">

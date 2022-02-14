@@ -1660,8 +1660,10 @@ class WsController extends AppController
 
 		if(empty($data['id'])){
             $entity = $guests->newEntity();
+            $saveType = 'CREATE_GUEST';
 		}else{
-			$entity = $guests->get($data['id']); 
+			$entity = $guests->get($data['id']);
+            $saveType = 'UPDATE_GUEST';
         } 
 
         $data['minor'] = filter_var($data['minor'], FILTER_VALIDATE_BOOLEAN);
@@ -1669,15 +1671,28 @@ class WsController extends AppController
         $data['minor_alone'] = filter_var($data['minor_alone'], FILTER_VALIDATE_BOOLEAN);
         $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
         $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
-
-        $data['family_guest_id'] =  $data['family_guest'];
-
-        $data['birthdate'] =  new Time(substr($data['birthdate'], 0, 33));
+        $data['family_guest_id'] = $data['family_guest'];
+        $data['birthdate'] = new Time(substr($data['birthdate'], 0, 33));
         $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '' : new Time(substr($data['draft_expiration'], 0, 33));
 
         $guests->patchEntity($entity, $data);
 
 		if($guests->save($entity)){
+            // Creazione notifica
+            $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+            $notification = $guestsNotifications->newEntity();
+            $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+            $sede = TableRegistry::get('Aziende.Sedi')->get($entity->sede_id);
+            $notificationData = [
+                'type_id' => $notificationType->id,
+                'azienda_id' => $sede->id_azienda,
+                'sede_id' => $sede->id,
+                'guest_id' => $entity->id,
+                'user_maker_id' => $this->request->session()->read('Auth.User.id')
+            ];
+            $guestsNotifications->patchEntity($notification, $notificationData);
+            $guestsNotifications->save($notification);
+
             $this->_result['response'] = "OK";
             $this->_result['data'] = $entity->id;
             $this->_result['msg'] = "Ospite salvato con successo.";
@@ -1814,4 +1829,21 @@ class WsController extends AppController
 			$this->_result['msg'] = 'Nessun ospite trovato.';
 		}
 	}
+
+    public function getGuestsNotificationsCount()
+    {
+        $user = $this->request->session()->read('Auth.User');
+        if($user['role'] != 'admin'){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+        $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+        $notificationsCount = $guestsNotifications->countGuestsNotifications();
+
+        $this->_result['response'] = "OK";
+        $this->_result['data'] = $notificationsCount;
+        $this->_result['msg'] = 'Notifiche recuperate con sucesso.';
+    }
 }

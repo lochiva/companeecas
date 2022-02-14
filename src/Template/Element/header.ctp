@@ -47,21 +47,28 @@ $user = $this->request->session()->read('Auth.User');
       <ul class="nav navbar-nav">
 
         <!-- Notifications: style can be found in dropdown.less -->
+        <!--
         <li class="dropdown notifications-menu">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <a href="<?= Router::url('/registration/users/view/'.$user['id'].'/notifications');?>">
             <i class="fa fa-bell-o"></i>
             <span class="label label-info notify_count_label"></span>
           </a>
           <ul class="dropdown-menu">
             <li class="header">Hai <span class="notify_count"></span> notifiche da leggere</li>
             <li>
-              <!-- inner menu: contains the actual data -->
               <ul class="menu" id="notify_container">
               </ul>
             </li>
             <li class="footer"><a href="<?= Router::url('/registration/users/view/'.$user['id'].'/notifications');?>">Tutte le tue notifiche</a></li>
           </ul>
         </li>
+        -->
+
+        <?php 
+        if ($user['role'] == 'admin') {
+          echo $this->element('Aziende.guests_notify'); 
+        }
+        ?>
 
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
