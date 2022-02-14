@@ -49,6 +49,8 @@ $cakeDescription = "Companee";
 	<?= $this->Html->css('../plugins/reveal/reveal.css')?>
   <?= $this->Html->css('companee-style.css')?>
 	<!--<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/le-frog/jquery-ui.css">-->
+  <?= $this->Html->css('../plugins/vue-select/vue-select.min.css') ?>
+  <?= $this->Html->css('../plugins/vue-material/vue-material.min.css') ?>
 
 
 
@@ -89,6 +91,16 @@ $cakeDescription = "Companee";
   <?= $this->Html->script('../plugins/pace/pace') ?>
 	<?php // if($this->request->params['plugin'] == "Consulenza"){ echo $this->Html->script('Consulenza.consulenza.js'); } ?>
   <?= $this->Html->script('../plugins/angular/angular.min') ?>
+  <?= $this->Html->script('../plugins/vuejs/vue.min.js') ?>
+  <?= $this->Html->script('../plugins/axios/axios.min.js') ?>
+  <?= $this->Html->script('../plugins/vue-select/vue-select.min.js') ?>
+  <?= $this->Html->script('../plugins/vue-material/vue-material.min.js') ?>
+  <?= $this->Html->script('../plugins/vue-sortable/Sortable.min.js') ?>
+  <?= $this->Html->script('../plugins/vue-draggable/vuedraggable.umd.min.js') ?>
+  <?= $this->Html->script('../plugins/vue-intersection-observer/intersection-observer.js') ?>
+  <?= $this->Html->script('../plugins/vue-observe-visibility/vue-observe-visibility.min.js') ?>
+  <?= $this->Html->script('../plugins/vuejs-datepicker/vuejs-datepicker.min.js') ?>
+  <?= $this->Html->script('../plugins/vuejs-datepicker/it.js') ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
