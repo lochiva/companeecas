@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Table\AppTable;
 
 /**
  * GuestsNotifications Model
@@ -27,7 +28,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class GuestsNotificationsTable extends Table
+class GuestsNotificationsTable extends AppTable
 {
     /**
      * Initialize method

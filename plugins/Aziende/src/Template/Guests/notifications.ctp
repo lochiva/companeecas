@@ -1,11 +1,6 @@
 <?php
 use Cake\Routing\Router;
-
-$role = $this->request->session()->read('Auth.User.role'); 
 ?>
-<script>
-    var sede_id = '<?= $sede['id'] ?>';
-</script>
 <?php $this->assign('title', 'Notifiche') ?>
 <?= $this->Html->css('Aziende.guests'); ?>
 <?= $this->Html->script('Aziende.guests', ['block']); ?>
@@ -49,25 +44,27 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
 
+                    <div class="text-right">
+                        <input type="checkbox" id="showAllNotifications"> Mostra anche le notifiche gestite
+                    </div>
+
                     <div class="table-content">
                         <table id="table-guests-notifications" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Tipo</th>
                                     <th>Ente</th>
                                     <th>Struttura</th>
                                     <th>Ospite</th>
                                     <th>Operatore</th>
                                     <th>Operazione</th>
                                     <th class="filter-select filter-done">Gestita</th>
-                                    <th>Operatore gestione</th>
-                                    <th>Data gestione</th>
-                                    <th width="70px" class="filter-false" data-sorter="false"></th>
+                                    <!--<th>Operatore gestione</th>
+                                    <th>Data gestione</th>-->
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="10" class="text-center">Non ci sono dati</td>
+                                    <td colspan="8" class="text-center">Non ci sono dati</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -1846,4 +1846,88 @@ class WsController extends AppController
         $this->_result['data'] = $notificationsCount;
         $this->_result['msg'] = 'Notifiche recuperate con sucesso.';
     }
+
+    public function getGuestsNotifications()
+    {
+        $user = $this->request->session()->read('Auth.User');
+
+        if($user['role'] != 'admin'){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+        $pass['query'] = $this->request->query;
+
+        if(isset($pass['query']['filter'][5])){
+			if($pass['query']['filter'][5] == 'No'){
+				$pass['query']['filter'][5] = 0;
+			}elseif($pass['query']['filter'][5] == 'Sì'){
+				$pass['query']['filter'][5] = 1;
+			}
+		}
+
+        $res = $this->Guest->getGuestsNotifications($pass);
+
+        $out['total_rows'] = $res['tot'];
+
+        if(!empty($res['res'])){
+
+            foreach ($res['res'] as $key => $notification) {
+
+                if ($notification['done']) {
+                    $checkDone = '<td class="text-center"><input type="checkbox" checked class="inline-check-done" data-id="'.$notification['id'].'" data-field="done"></td>';
+                } else {
+                    $checkDone = '<td class="text-center"><input type="checkbox" class="inline-check-done" data-id="'.$notification['id'].'" data-field="done"></td>';
+                }
+
+				$out['rows'][] = [
+                    $notification['a']['denominazione'],
+                    $notification['s']['indirizzo'].' '.$notification['s']['num_civico'].' - '.$notification['l']['des_luo'],
+                    '<a href="'.Router::url('/aziende/guests/guest?sede='.$notification['s']['id'].'&guest='.$notification['g']['id']).'">'.$notification['g']['name'].' '.$notification['g']['surname'].'</a>',
+                    $notification['u']['nome'].' '.$notification['u']['cognome'],
+                    $notification['t']['msg_singular'],
+                    $checkDone,
+                    /*$notification['done'] ? $notification['u2']['nome'].' '.$notification['u2']['cognome'] : '',
+                    $notification['done'] ? (empty($notification['done_date']) ? '' : $notification['done_date']->format('d/m/Y')) : '',*/
+				];
+
+            }
+
+        }
+
+        $this->_result = $out;
+    }
+
+    public function saveGuestNotificationDone()
+    {
+        $data = $this->request->data;
+
+        if (!empty($data['id'])) {
+            $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+            $entity = $guestsNotifications->get($data['id']);
+
+            $dataToSave = ['done' => $data['value']];
+            if ($data['value']) {
+                $dataToSave['user_done_id'] = $this->request->session()->read('Auth.User.id');
+                $dataToSave['done_date'] = date('Y-m-d');
+            } else {
+                $dataToSave['user_done_id'] = NULL;
+                $dataToSave['done_date'] = NULL;
+            }
+
+            $guestsNotifications->patchEntity($entity, $dataToSave);
+
+            if ($guestsNotifications->save($entity)) {
+                $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'Valore salvato correttamente.';
+            } else { 
+                $this->_result['response'] = 'KO';
+                $this->_result['msg'] = 'Errore nel salvataggio del valore.';
+            }
+        } else { 
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'Errore nel salvataggio del valore: dati mancanti.';
+        }
+    }
 }
