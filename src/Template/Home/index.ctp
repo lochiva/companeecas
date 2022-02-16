@@ -17,13 +17,13 @@ $user = $this->request->session()->read('Auth.User');
 	<ol class="breadcrumb">
 		<li><a><i class="fa fa-dashboard"></i> Home</a></li>
 	</ol>
-	</section>
-	<!-- Main content -->
-	<section class="content">
-		<div class="row" style="margin:0;">  
-			<!-- Messaggio di benvenuto -->
-			<div id="box-benvenuto" class="box box-warning" style="text-align:center; padding:15px;">
-				<div class="row" style="margin:0;">  
+</section>
+<!-- Main content -->
+<section class="content">
+	<div class="row" style="margin:0;">  
+		<!-- Messaggio di benvenuto -->
+		<div id="box-benvenuto" class="box box-warning" style="text-align:center; padding:15px;">
+			<div class="row" style="margin:0;">  
 				<?php if ($user['role'] == 'admin' || ($user['role'] == 'ente' && $this->Utils->isValidEnte($user['id']))) { ?>
 					<img src="<?=Router::url('/img/logo_homepage.png');?>" class="logo_centro" />
 					<h2>Benvenuta/o!</h2>
@@ -37,4 +37,8 @@ $user = $this->request->session()->read('Auth.User');
 			</div>
 		</div>
 	</div>
+	<?php if ($user['role'] == 'admin') { ?>
+		<!-- Notifiche -->
+		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsCount, 'notifications' => $notifications]); ?>
+	<?php } ?>
 </section>

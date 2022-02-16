@@ -129,4 +129,19 @@ class GuestsNotificationsTable extends AppTable
         }
         return $this->find()->where($where)->count();
     }
+
+    public function getGuestsNotificationsForHome()
+    {
+        $messages = $this->find()
+            ->select([
+                'type_count' => 'COUNT(GuestsNotifications.id)',
+                'message' => 'IF(COUNT(GuestsNotifications.id) > 1, Types.msg_plural, Types.msg_singular)'
+            ])
+            ->where(['GuestsNotifications.done' => 0])
+            ->contain(['Types'])
+            ->group(['GuestsNotifications.type_id'])
+            ->toArray();
+
+        return $messages;
+    }
 }
