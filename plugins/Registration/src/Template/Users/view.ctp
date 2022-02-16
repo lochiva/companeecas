@@ -217,7 +217,7 @@ $(document).ready(function(){
           <ul class="nav nav-tabs">
             <li class="<?= $tabs['timeline'] ?>"><a href="#timeline" data-toggle="tab">Attività</a></li>
             <?php if ($authUser['id'] == $user['id']): ?>
-                <li class="<?= $tabs['notifications'] ?>"><a href="#notifications" data-toggle="tab">Notifiche</a></li>
+                <!--<li class="<?= $tabs['notifications'] ?>"><a href="#notifications" data-toggle="tab">Notifiche</a></li>-->
                 <li class="<?= $tabs['modify'] ?>"><a href="#modify" data-toggle="tab">Modifica</a></li>
             <?php endif; ?>
           </ul>

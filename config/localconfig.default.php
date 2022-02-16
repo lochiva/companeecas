@@ -22,7 +22,8 @@ return [
           'surveys' => 'un questionario', 'surveys_interviews' => 'un\'intervista', 'surveys_answers' => 'una domanda del questionario',
           'surveys_chapters' => 'un capitolo del questionario', 'surveys_to_structures' => 'una relazione tra questionario e sede',
           'surveys_chapters_contents' => 'un testo standard per questionari', 'reports' => 'una segnalazione',
-          'reports_victims' => 'l\'anagrafica di una vittima', 'reports_witnesses' => 'l\'anagrafica di un testimone'
+          'reports_victims' => 'l\'anagrafica di una vittima', 'reports_witnesses' => 'l\'anagrafica di un testimone',
+          'guests' => 'un ospite'
         ],
         'excludeEntity' => [
           'calendar_events_frozen' ,'users_to_groups','groups'

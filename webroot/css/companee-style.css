@@ -472,3 +472,8 @@ a[disabled="disabled"] {
 .logo-nodo-header{
     max-height: 50px !important;
 }
+
+.box-notifications .notifications-count {
+    position: relative;
+    top: -2px;
+}
