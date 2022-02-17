@@ -107,6 +107,7 @@ class WsController extends AppController
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                 $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
