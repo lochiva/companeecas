@@ -19,12 +19,14 @@ class SediComponent extends Component
 
         ######################################################################################################
 
-        $col[0] = "st.tipo";
-        $col[1] = "indirizzo";
-        $col[2] = "num_civico";
-        $col[3] = "cap";
-        $col[4] = "c.des_luo";
-        $col[5] = "p.des_luo";
+        $col[0] = "code_centro";
+        $col[1] = "stm.name";
+        $col[2] = "stc.name";
+        $col[3] = "indirizzo";
+        $col[4] = "num_civico";
+        $col[5] = "cap";
+        $col[6] = "c.des_luo";
+        $col[7] = "p.des_luo";
 
         if(isset($pass['query']) && !empty($pass['query'])){
 
@@ -55,8 +57,6 @@ class SediComponent extends Component
             $separatore = "";
 
             if($size != "all"){
-
-                $opt['order'] = "Sedi.id_tipo ASC";
 
                 if(isset($pass['query']['column']) && !empty($pass['query']['column']) && is_array($pass['query']['column'])){
 
@@ -95,41 +95,15 @@ class SediComponent extends Component
                         case '2':
                         case '3':
                         case '4':
-                        case '5':
+                        case '6':
+                        case '7':
                             $opt['conditions']['AND'][$key][$col[$key] . ' LIKE'] = "%" . $value . "%";
                         break;
 
-                        /*
                         case '5':
-
-                            if(strpos("_" . $value, "<=") > 0){
-
-                                $value = str_replace("<=", "", $value);
-                                $opt['conditions']['AND'][$key][$col[$key] . " <="] = $value ;
-
-                            }elseif(strpos("_" . $value, ">=") > 0){
-
-                                $value = str_replace(">=", "", $value);
-                                $opt['conditions']['AND'][$key][$col[$key] . " >="] = $value ;
-
-                            }elseif(strpos("_" . $value, ">") > 0){
-
-                                $value = str_replace(">", "", $value);
-                                $opt['conditions']['AND'][$key][$col[$key] . " >"] = $value ;
-
-                            }elseif(strpos("_" . $value, "<") > 0){
-
-                                $value = str_replace("<", "", $value);
-                                $opt['conditions']['AND'][$key][$col[$key] . " <"] = $value ;
-
-                            }else{
-
-                                $opt['conditions']['AND'][$key][$col[$key]] = $value ;
-
-                            }
-
+                            $opt['conditions']['AND'][$key][$col[$key]] = $value ;
                         break;
-                        */
+
                         default:
 
                         break;
@@ -142,7 +116,6 @@ class SediComponent extends Component
 
         if(isset($pass['idAzienda']) ){
             $opt['conditions']['AND'][]['Sedi.id_azienda'] = $pass['idAzienda'];
-			$opt['order'] = 'Sedi.id_tipo ASC';
         }
 
         $opt['join'] = [
@@ -159,22 +132,29 @@ class SediComponent extends Component
                 'conditions' => 'p.c_luo = Sedi.provincia'
             ],
             [
-                'table' => 'sedi_tipi',
-                'alias' => 'st',
+                'table' => 'sedi_tipi_ministero',
+                'alias' => 'stm',
                 'type' => 'LEFT',
-                'conditions' => 'st.id = Sedi.id_tipo'
+                'conditions' => 'stm.id = Sedi.id_tipo_ministero'
+            ],
+            [
+                'table' => 'sedi_tipi_capitolato',
+                'alias' => 'stc',
+                'type' => 'LEFT',
+                'conditions' => 'stc.id = Sedi.id_tipo_capitolato'
             ]
         ];
 
         $col[] = 'id';
-        $col[] = 'id_tipo';
+        $col[] = 'id_tipo_ministero';
+        $col[] = 'id_tipo_capitolato';
         $col[] = 'nazione';
 
         //echo "<pre>"; print_r($opt); echo "</pre>";
 
         $query = $az->find('all')
             ->select($col)
-            ->contain(['SediTipi'])
+            ->contain(['SediTipiMinistero', 'SediTipiCapitolato'])
             ->where($opt['conditions'])
             ->join($opt['join'])
             ->order($opt['order'])
@@ -212,9 +192,19 @@ class SediComponent extends Component
 
     }
 
-    public function getSediTipi(){
+    public function getSediTipiMinistero(){
 
-        $tipi = TableRegistry::get('Aziende.SediTipi');
+        $tipi = TableRegistry::get('Aziende.SediTipiMinistero');
+
+        $res = $tipi->find('all')->order(['ordering' => 'ASC']);
+
+        return $res->toArray();
+
+    }
+
+    public function getSediTipiCapitolato(){
+
+        $tipi = TableRegistry::get('Aziende.SediTipiCapitolato');
 
         $res = $tipi->find('all')->order(['ordering' => 'ASC']);
 
@@ -224,7 +214,7 @@ class SediComponent extends Component
 
     public function getById($id){
         $az = TableRegistry::get('Aziende.Sedi');
-        $res = $az->find('all')->contain(['SediTipi','Aziende'])->where(['Sedi.id' => $id])->toArray();
+        $res = $az->find('all')->contain(['SediTipiMinistero', 'SediTipiCapitolato','Aziende'])->where(['Sedi.id' => $id])->toArray();
         return $res[0];
         //return $az->get($id);
 

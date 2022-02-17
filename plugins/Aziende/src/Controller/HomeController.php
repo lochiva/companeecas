@@ -43,7 +43,8 @@ class HomeController extends AppController
      */
     public function index()
     {
-        $sediTipi = $this->Sedi->getSediTipi();
+        $sediTipiMinistero = $this->Sedi->getSediTipiMinistero();
+        $sediTipiCapitolato = $this->Sedi->getSediTipiCapitolato();
         $ruoli = $this->Contatti->getRuoli();
         $skills = TableRegistry::get('Aziende.Skills')->getList();
         $gruppi = TableRegistry::get('Aziende.AziendeGruppi')->getList();
@@ -55,7 +56,8 @@ class HomeController extends AppController
 
         $this->set('skills',$skills);
         $this->set('gruppi',$gruppi);
-        $this->set('sediTipi',$sediTipi);
+        $this->set('sediTipiMinistero',$sediTipiMinistero);
+        $this->set('sediTipiCapitolato',$sediTipiCapitolato);
         $this->set('ruoli',$ruoli);
         $this->set('province',$province);
         $this->set('tipologieCentro',$tipologieCentro);
@@ -67,7 +69,8 @@ class HomeController extends AppController
 
         if($idAzienda != 0){
 
-            $sediTipi = $this->Sedi->getSediTipi();
+            $sediTipiMinistero = $this->Sedi->getSediTipiMinistero();
+            $sediTipiCapitolato = $this->Sedi->getSediTipiCapitolato();
             $ruoli = $this->Contatti->getRuoli();
 
             ################################################################################
@@ -140,7 +143,8 @@ class HomeController extends AppController
             $this->set('sedi',$sedi);
             $this->set('contatti',$contatti);
             $this->set('idAzienda',$idAzienda);
-            $this->set('sediTipi',$sediTipi);
+            $this->set('sediTipiMinistero',$sediTipiMinistero);
+            $this->set('sediTipiCapitolato',$sediTipiCapitolato);
             $this->set('ruoli',$ruoli);
             $this->set('skills',$skills);
             $this->set('gruppi',$gruppi);

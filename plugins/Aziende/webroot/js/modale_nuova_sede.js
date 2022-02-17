@@ -96,7 +96,9 @@ function saveFormSede(){
 	
 		var id = $('[name="id"]').val();
 		var id_azienda = $('[name="id_azienda"]').val();
-		var id_tipo = $('[name="id_tipo"]').val();
+		var code_centro = $('[name="code_centro"]').val();
+		var id_tipo_ministero = $('[name="id_tipo_ministero"]').val();
+		var id_tipo_capitolato = $('[name="id_tipo_capitolato"]').val();
 		var id_tipologia_centro = $('[name="id_tipologia_centro"]').val();
 		var id_tipologia_ospiti = $('[name="id_tipologia_ospiti"]').val();
 		var indirizzo = $('[name="indirizzo"]').val();
@@ -110,7 +112,7 @@ function saveFormSede(){
 		var fax = $('[name="fax"]').val();
 		var email = $('[name="email"]').val();
 		var skype = $('[name="skype"]').val();
-		var n_posti_convenzione = $('[name="n_posti_convenzione"]').val();
+		var n_posti_struttura = $('[name="n_posti_struttura"]').val();
 		var n_posti_effettivi = $('[name="n_posti_effettivi"]').val();
 		var id_procedura_affidamento = $('[name="id_procedura_affidamento"]').val();
 		var operativita = $('[name="operativita"]').val();
@@ -119,10 +121,10 @@ function saveFormSede(){
 			url : pathServer + "aziende/Ws/saveSede/" + id,
 			type: "POST",
 			dataType: "json",
-			data:{id:id,id_azienda:id_azienda,id_tipo:id_tipo,id_tipologia_centro:id_tipologia_centro,id_tipologia_ospiti:id_tipologia_ospiti,
-				indirizzo:indirizzo,num_civico:num_civico,cap:cap,comune:comune,provincia:provincia,nazione:nazione,telefono:telefono,cellulare:cellulare,
-				fax:fax,email:email,skype:skype,n_posti_convenzione:n_posti_convenzione,n_posti_effettivi:n_posti_effettivi,
-				id_procedura_affidamento:id_procedura_affidamento,operativita:operativita},
+			data:{id:id,id_azienda:id_azienda,id_tipo_ministero:id_tipo_ministero,id_tipo_capitolato:id_tipo_capitolato,id_tipologia_centro:id_tipologia_centro,
+				id_tipologia_ospiti:id_tipologia_ospiti,indirizzo:indirizzo,num_civico:num_civico,cap:cap,comune:comune,provincia:provincia,nazione:nazione,
+				telefono:telefono,cellulare:cellulare,fax:fax,email:email,skype:skype,n_posti_struttura:n_posti_struttura,n_posti_effettivi:n_posti_effettivi,
+				id_procedura_affidamento:id_procedura_affidamento,operativita:operativita,code_centro:code_centro},
 			success : function (data,stato) {
 				
 				if(data.response == "OK"){

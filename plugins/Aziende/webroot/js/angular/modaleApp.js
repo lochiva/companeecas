@@ -52,10 +52,10 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
 
         function sedeModel(){
             this.sede = {
-                id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo:'', id_tipologia_centro:1, id_tipologia_ospiti:'', 
-                indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', telefono:'', email:'', 
-                cellulare:'', fax:'', skype:'', n_posti_convenzione:'', n_posti_effettivi:'', id_procedura_affidamento:1, operativita:1,
-                id: 'sede-'+vm.azienda.sedi.length,
+                id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo_ministero:'', id_tipo_capitolato:'', id_tipologia_centro:1, 
+                id_tipologia_ospiti:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', 
+                telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti_struttura:'', n_posti_effettivi:'', id_procedura_affidamento:1, 
+                operativita:1, id: 'sede-'+vm.azienda.sedi.length, code_centro:''
             };
         }
 

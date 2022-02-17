@@ -59,7 +59,8 @@ class SediController extends AppController
         }
 
         //Recupero i tipi di sedi
-        $sediTipi = $this->Sedi->getSediTipi();
+        $sediTipiMinistero = $this->Sedi->getSediTipiMinistero();
+        $sediTipiCapitolato = $this->Sedi->getSediTipiCapitolato();
         
         $province = TableRegistry::get('Luoghi')->getProvince();
 
@@ -69,7 +70,8 @@ class SediController extends AppController
 
         $this->set('idAzienda',$idAzienda);
         $this->set('azienda',$azienda);
-        $this->set('sediTipi',$sediTipi);
+        $this->set('sediTipiMinistero',$sediTipiMinistero);
+        $this->set('sediTipiCapitolato',$sediTipiCapitolato);
         $this->set('province',$province);
         $this->set('tipologieCentro',$tipologieCentro);
         $this->set('tipologieOspiti',$tipologieOspiti);

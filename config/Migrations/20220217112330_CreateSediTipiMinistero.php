@@ -41,7 +41,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 1,
                 'name' => 'Appartamento',
                 'ordering' => 10,
-                'color' => '',
+                'color' => '#ff0000',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -49,7 +49,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 2,
                 'name' => 'Casa colonica',
                 'ordering' => 20,
-                'color' => '',
+                'color' => '#ff8c00',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -57,7 +57,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 3,
                 'name' => 'Hotel - Albergo',
                 'ordering' => 30,
-                'color' => '',
+                'color' => '#13c100',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -65,7 +65,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 4,
                 'name' => 'Moduli abitativi',
                 'ordering' => 40,
-                'color' => '',
+                'color' => '#00e0d1',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -73,7 +73,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 5,
                 'name' => 'Palazzina a 2 piani',
                 'ordering' => 50,
-                'color' => '',
+                'color' => '#0076e5',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -81,7 +81,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 6,
                 'name' => 'Palazzina a 3 piani',
                 'ordering' => 60,
-                'color' => '',
+                'color' => '#b500ed',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -89,7 +89,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 7,
                 'name' => 'Residence',
                 'ordering' => 70,
-                'color' => '',
+                'color' => '#3f00ff',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -97,7 +97,7 @@ class CreateSediTipiMinistero extends AbstractMigration
                 'id' => 8,
                 'name' => 'Struttura ecclesiastica',
                 'ordering' => 80,
-                'color' => '',
+                'color' => '#00bc58',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ]

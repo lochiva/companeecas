@@ -17,14 +17,33 @@ use Cake\Routing\Router;
 
                         <input type="hidden" name="id" id="idSede" value="">
                         <input type="hidden" name="id_azienda" id="idAzienda" value="<?=$idAzienda?>">
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required" for="inputCodeCentro">Codice centro</label>
+                            <div class="col-sm-10">
+                                <input type="text" maxlength="8" placeholder="Codice centro" name="code_centro" id="inputCodeCentro" class="form-control required">
+                            </div>
+                        </div>
                         
                         <div class="form-group ">
-                            <label class="col-sm-2 control-label required" for="inputTipo">Tipologia struttura</label>
+                            <label class="col-sm-2 control-label required" for="inputTipoMinistero">Tipologia struttura (per ministero)</label>
                             <div class="col-sm-10">
-                                <select name="id_tipo" id="inputTipo" class="form-control required" >
+                                <select name="id_tipo_ministero" id="inputTipoMinistero" class="form-control required" >
                                     <option value="">-- Seleziona una tipologia struttura --</option>
-                                    <?php foreach ($sediTipi as $key => $tipo) { ?>
-                                        <option value="<?=$tipo->id?>"><?=$tipo->tipo?></option>
+                                    <?php foreach ($sediTipiMinistero as $key => $tipo) { ?>
+                                        <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label required" for="inputTipoCapitolato">Tipologia struttura (da capitolato)</label>
+                            <div class="col-sm-10">
+                                <select name="id_tipo_capitolato" id="inputTipoCapitolato" class="form-control required" >
+                                    <option value="">-- Seleziona una tipologia struttura --</option>
+                                    <?php foreach ($sediTipiCapitolato as $key => $tipo) { ?>
+                                        <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -141,9 +160,9 @@ use Cake\Routing\Router;
                         <hr>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label required" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
+                            <label class="col-sm-2 control-label required" for="inputCapienzaStruttura">Capienza (struttura)</label>
                             <div class="col-sm-10">
-                                <input type="text" placeholder="Capienza (da convenzione)" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer required" >
+                                <input type="text" placeholder="Capienza (struttura)" name="n_posti_struttura" id="inputCapienzaStruttura" class="form-control number-integer required" >
                             </div>
                         </div>
 

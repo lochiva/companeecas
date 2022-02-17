@@ -19,7 +19,7 @@ $(document).ready(function(){
               //2:provider,
           }
         },
-        headers: { 6: { filter: false, sorter:false} }
+        headers: { 8: { filter: false, sorter:false} }
     }).tablesorterPager({
 
           // **********************************
@@ -286,7 +286,9 @@ function loadInputModale(idSede){
 
 	        	$('[name="id"]').val(idSede);
             $('[name="id_azienda"]').val(idAzienda);
-            $('[name="id_tipo"]').val(data.data.id_tipo);
+            $('[name="code_centro"]').val(data.data.code_centro);
+            $('[name="id_tipo_ministero"]').val(data.data.id_tipo_ministero);
+            $('[name="id_tipo_capitolato"]').val(data.data.id_tipo_capitolato);
             $('[name="id_tipologia_centro"]').val(data.data.id_tipologia_centro);
             $('[name="id_tipologia_ospiti"]').val(data.data.id_tipologia_ospiti);
             $('[name="indirizzo"]').val(data.data.indirizzo);
@@ -300,7 +302,7 @@ function loadInputModale(idSede){
             $('[name="Fax"]').val(data.data.fax);
             $('[name="email"]').val(data.data.email);
             $('[name="skype"]').val(data.data.skype);
-            $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
+            $('[name="n_posti_struttura"]').val(data.data.n_posti_struttura);
             $('[name="n_posti_effettivi"]').val(data.data.n_posti_effettivi);
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
@@ -332,7 +334,9 @@ function clearModale(){
 
 	$('[name="id"]').val("");
 	$('[name="id_azienda"]').val(idAzienda);
-	$('[name="id_tipo"]').val("");
+  $('[name="code_centro"]').val("");
+	$('[name="id_tipo_ministero"]').val("");
+  $('[name="id_tipo_capitolato"]').val("");
   $('[name="id_tipologia_centro"]').val(1);
   $('[name="id_tipologia_ospiti"]').val("");
 	$('[name="indirizzo"]').val("");
@@ -347,7 +351,7 @@ function clearModale(){
 	$('[name="Fax"]').val("");
 	$('[name="email"]').val("");
 	$('[name="skype"]').val("");
-  $('[name="n_posti_convenzione"]').val("");
+  $('[name="n_posti_struttura"]').val("");
   $('[name="n_posti_effettivi"]').val("");
   $('[name="id_procedura_affidamento"]').val(1);
   $('[name="operativita"]').val(1);

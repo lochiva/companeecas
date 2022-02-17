@@ -15,9 +15,10 @@ class AlterSedi extends AbstractMigration
         $table = $this->table('sedi');
         $table->addColumn('code_centro', 'string', [
             'limit' => 8,
-            'null' => true,
+            'null' => false,
             'after' => 'id_azienda'
-        ]);
+        ])
+        ->addIndex(['code_centro']);
         $table->renameColumn('id_tipo', 'id_tipo_ministero');
         $table->addColumn('id_tipo_capitolato', 'integer', [
             'limit' => 255,

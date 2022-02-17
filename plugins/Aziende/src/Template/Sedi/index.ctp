@@ -58,18 +58,20 @@ $user = $this->request->session()->read('Auth.User');
                         <table id="table-sedi" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Tipo</th>
+                                    <th>Codice centro</th>
+                                    <th>Tipologia ministero</th>
+                                    <th>Tipologia capitolato</th>
                                     <th>Indirizzo</th>
                                     <th>Civico</th>
                                     <th>Cap</th>
                                     <th>Comune</th>
                                     <th>Provincia</th>
-                                    <th style="min-width:84px"></th>
+                                    <th style="min-width:110px"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="7">Non ci sono dati</td>
+                                    <td colspan="8">Non ci sono dati</td>
                                 </tr>
                             </tbody>
                         </table>

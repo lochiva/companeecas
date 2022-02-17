@@ -294,7 +294,9 @@ class WsController extends AppController
 
 
                     $rows[] = array(
-                        htmlspecialchars($sede['st']['tipo']),
+                        htmlspecialchars($sede->code_centro),
+                        htmlspecialchars($sede['stm']['name']),
+                        htmlspecialchars($sede['stc']['name']),
                         htmlspecialchars($sede->indirizzo),
                         htmlspecialchars($sede->num_civico),
                         htmlspecialchars($sede->cap),

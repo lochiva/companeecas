@@ -12,12 +12,22 @@ echo $this->Html->script( 'Aziende.jquery.tablesorter.widgets.js' );
 echo $this->Html->script( 'Aziende.angular/modaleApp.js' );
 ?>
 <style>
-<?php if (!empty($sediTipi)): ?>
-  <?php foreach ($sediTipi as $value): ?>
-      .sediTipiColor-<?= $value['id'] ?>{
+<?php if (!empty($sediTipiMinistero)): ?>
+  <?php foreach ($sediTipiMinistero as $value): ?>
+      .sediTipiMinisteroColor-<?= $value['id'] ?>{
           color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
       }
-      .sediTipiBG-<?= $value['id'] ?>{
+      .sediTipiMinisteroBG-<?= $value['id'] ?>{
+          background-color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
+      }
+  <?php endforeach; ?>
+<?php endif; ?>
+<?php if (!empty($sediTipiCapitolato)): ?>
+  <?php foreach ($sediTipiCapitolato as $value): ?>
+      .sediTipiCapitolatoColor-<?= $value['id'] ?>{
+          color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
+      }
+      .sediTipiCapitolatoBG-<?= $value['id'] ?>{
           background-color:<?= empty($value['color']) ? '#000000' : $value['color'] ?>;
       }
   <?php endforeach; ?>

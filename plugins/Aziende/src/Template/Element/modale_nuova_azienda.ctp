@@ -208,7 +208,7 @@ use Cake\Routing\Router;
                     <ul class="nav nav-tabs tabs-sedi" >
                       <li ng-repeat="sede in vm.azienda.sedi track by $index"  ng-class="{'active': ($first && !vm.editing) }" id="subtabsede_{{sede.id}}" >
                         <a id="click_subtab_sede_{{sede.id}}" href="#subtab_sede_{{ $index }}" data-toggle="tab">
-                          <i class="fa fa-circle-o sediTipiColor-{{sede.id_tipo}}"></i> {{ !sede.indirizzo ? 'nuova struttura' : sede.comune_des+' - '+sede.indirizzo }} 
+                          <i class="fa fa-circle-o sediTipiMinisteroColor-{{sede.id_tipo_ministero}}"></i> {{ !sede.indirizzo ? 'nuova struttura' : sede.comune_des+' - '+sede.indirizzo }} 
                           <i ng-if="sede.indirizzo" class="fa fa-times-circle text-red delete-sede" data-id="{{ sede.id }}" title="Cancella struttura"></i>
                         </a>
                       </li>
@@ -222,13 +222,32 @@ use Cake\Routing\Router;
                                     <input ng-model="sede.id" type="hidden" name="id" id="idSede" value="">
                                     <input type="hidden" name="id_azienda" id="idAzienda" value="">
 
-                                    <div class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="inputTipoStruttura">Tipologia struttura</label>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required" for="inputCodeCentro">Codice centro</label>
                                         <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipo" convert-to-number name="tipo" id="inputTipoStruttura" data-prova="ccc" class="form-control required" >
+                                            <input required ng-model="sede.code_centro" type="text" maxlength="8" placeholder="Codice centro" name="codice centro" id="inputCodeCentro" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label required" for="inputTipoStrutturaMinistero">Tipologia struttura (per ministero)</label>
+                                        <div class="col-sm-10">
+                                            <select required ng-model="sede.id_tipo_ministero" convert-to-number name="tipo" id="inputTipoStrutturaMinistero" data-prova="ccc" class="form-control required" >
                                                 <option value="">-- Seleziona una tipologia struttura --</option>
-                                                <?php foreach ($sediTipi as $key => $tipo): ?>
-                                                    <option value="<?=$tipo->id?>"><?=$tipo->tipo?></option>
+                                                <?php foreach ($sediTipiMinistero as $key => $tipo): ?>
+                                                    <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label required" for="inputTipoStrutturaMinistero">Tipologia struttura (per ministero)</label>
+                                        <div class="col-sm-10">
+                                            <select required ng-model="sede.id_tipo_capitolato" convert-to-number name="tipo" id="inputTipoStrutturaMinistero" data-prova="ccc" class="form-control required" >
+                                                <option value="">-- Seleziona una tipologia struttura --</option>
+                                                <?php foreach ($sediTipiCapitolato as $key => $tipo): ?>
+                                                    <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
                                                 <?php endforeach ?>
                                             </select>
                                         </div>
@@ -347,9 +366,9 @@ use Cake\Routing\Router;
                                     <hr>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
+                                        <label class="col-sm-2 control-label required" for="inputCapienzaConvenzione">Capienza (struttura)</label>
                                         <div class="col-sm-10">
-                                            <input required ng-model="sede.n_posti_convenzione" type="text" placeholder="Capienza (da convenzione)" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
+                                            <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
                                         </div>
                                     </div>
 

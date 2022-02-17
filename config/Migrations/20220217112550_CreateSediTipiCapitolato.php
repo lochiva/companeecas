@@ -41,7 +41,7 @@ class CreateSediTipiCapitolato extends AbstractMigration
                 'id' => 1,
                 'name' => 'Unità abitative',
                 'ordering' => 10,
-                'color' => '',
+                'color' => '#ff0000',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -49,7 +49,7 @@ class CreateSediTipiCapitolato extends AbstractMigration
                 'id' => 2,
                 'name' => 'Centri collettivi fino 50 posti',
                 'ordering' => 20,
-                'color' => '',
+                'color' => '#ff8c00',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -57,7 +57,7 @@ class CreateSediTipiCapitolato extends AbstractMigration
                 'id' => 3,
                 'name' => 'Centri collettivi da 51 a 100 posti',
                 'ordering' => 30,
-                'color' => '',
+                'color' => '#00e0d1',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
@@ -65,7 +65,7 @@ class CreateSediTipiCapitolato extends AbstractMigration
                 'id' => 4,
                 'name' => 'Centri collettivi da 101 a 300 posti',
                 'ordering' => 40,
-                'color' => '',
+                'color' => '#0076e5',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ]

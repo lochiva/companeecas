@@ -16,13 +16,31 @@ class SediTable extends AppTable
         $this->primaryKey('id');
         $this->addBehavior('Timestamp');
         $this->entityClass('Aziende.Sede');
-        $this->belongsTo('Aziende.SediTipi',['foreignKey' => 'id_tipo', 'propertyName' => 'tipoSede']);
+        $this->belongsTo('Aziende.SediTipiMinistero',['foreignKey' => 'id_tipo_ministero', 'propertyName' => 'tipoSedeMinistero']);
+        $this->belongsTo('Aziende.SediTipiCapitolato',['foreignKey' => 'id_tipo_capitolato', 'propertyName' => 'tipoSedeCapitolato']);
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda', 'propertyName' => 'azienda']);
         $this->belongsTo('Comuni',['className' => 'Luoghi','foreignKey' => 'comune', 'propertyName' => 'comune']);
         $this->belongsTo('Province',['className' => 'Luoghi','foreignKey' => 'provincia', 'propertyName' => 'provincia']);
         $this->belongsTo('Aziende.SediTipologieCentro',['foreignKey' => 'id_tipologia_centro', 'propertyName' => 'tipologiaCentro']);
         $this->belongsTo('Aziende.SediTipologieOspiti',['foreignKey' => 'id_tipologia_ospiti', 'propertyName' => 'tipologiaOspiti']);
         $this->belongsTo('Aziende.SediProcedureAffidamento',['foreignKey' => 'id_procedura_affidamento', 'propertyName' => 'proceduraAffidamento']);
+    }
+
+    public function beforeSave($event, $entity, $options)
+    {
+        // Controllo unicità codice centro
+        $where = [
+            'code_centro' => $entity->code_centro
+        ];
+        if (!empty($entity->id)) {
+            $where['id !='] = $entity->id;
+        }
+        $sede = $this->find()->where($where)->first();
+        if (!empty($sede)) {
+            $entity->setError('code_centro', ['Il Codice Centro deve essere univoco.']);
+            return false;
+        }
+        return true;
     }
 
     public function saveSede($data)

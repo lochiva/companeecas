@@ -7,12 +7,22 @@
 {{ Html.script('Aziende.angular/modaleApp.js') |raw }}
 
 <style>
-  {% if sediTipi is not empty %}
-    {% for sedi in sediTipi %}
-        .sediTipiColor-{{ sedi.id }}{
+  {% if sediTipiMinistero is not empty %}
+    {% for sedi in sediTipiMinistero %}
+        .sediTipiMinisteroColor-{{ sedi.id }}{
             color:{{ (sedi.color is not empty) ? sedi.color : '#000000' }};
         }
-        .sediTipiBG-{{ sedi.id }}{
+        .sediTipiMinisteroBG-{{ sedi.id }}{
+            background-color:{{ (sedi.color is not empty) ? sedi.color : '#000000' }};
+        }
+    {% endfor %}
+  {% endif %}
+  {% if sediTipiCapitolato is not empty %}
+    {% for sedi in sediTipiCapitolato %}
+        .sediTipiCapitolatoColor-{{ sedi.id }}{
+            color:{{ (sedi.color is not empty) ? sedi.color : '#000000' }};
+        }
+        .sediTipiCapitolatoBG-{{ sedi.id }}{
             background-color:{{ (sedi.color is not empty) ? sedi.color : '#000000' }};
         }
     {% endfor %}

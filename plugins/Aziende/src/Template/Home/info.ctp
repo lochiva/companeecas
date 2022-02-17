@@ -120,7 +120,9 @@ use Cake\Routing\Router;
                         <table class="table no-margin">
                             <thead>
                                 <tr>
-                                    <th>Tipo</th>
+                                    <th>Codice centro</th>
+                                    <th>Tipologia ministero</th>
+                                    <th>Tipologia capitolato</th>
                                     <th>Indirizzo</th>
                                     <th>Civico</th>
                                     <th>Cap</th>
@@ -133,7 +135,9 @@ use Cake\Routing\Router;
                                 <?php if(isset($sedi) && !empty($sedi)){ ?>
                                     <?php foreach ($sedi as $key => $sede) { ?>
                                         <tr style="position:relative;">
-                                            <td><span class="label sediTipiBG-<?=$sede->id_tipo?> pull-left"><?=h($sede['st']['tipo'])?></span></td>
+                                            <td><?=h($sede->code_centro)?></td>
+                                            <td><span class="label sediTipiMinisteroBG-<?=$sede->id_tipo_ministero?> pull-left"><?=h($sede['stm']['name'])?></span></td>
+                                            <td><span class="label sediTipiCapitolatoBG-<?=$sede->id_tipo_capitolato?> pull-left"><?=h($sede['stc']['name'])?></span></td>
                                             <td><?=h($sede->indirizzo)?></td>
                                             <td><?=h($sede->num_civico)?></td>
                                             <td><?=h($sede->cap)?></td>
