@@ -24,9 +24,9 @@ class KpiTable extends appTable
      */
     public function initialize(array $config)
     {
-        $this->table('kpi');
+        $this->setTable('kpi');
         $this->displayField('id');
-        $this->primaryKey('id');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
     }
 

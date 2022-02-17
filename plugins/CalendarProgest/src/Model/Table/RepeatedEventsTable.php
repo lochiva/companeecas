@@ -12,10 +12,10 @@ class RepeatedEventsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('calendar_repeated_events');
-        $this->primaryKey('id');
+        $this->setTable('calendar_repeated_events');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Calendar.RepeatedEvents');
+        $this->setEntityClass('Calendar.RepeatedEvents');
         $this->belongsTo('Calendar.Eventi',['foreignKey' => 'id_event', 'propertyName' => 'Evento']);
         //$this->belongsTo('Calendar.Eventi',['foreignKey' => 'id_event', 'propertyName' => 'Evento']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);

@@ -12,10 +12,10 @@ class OrdersStatusTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('orders_status');
-        $this->primaryKey('id');
+        $this->setTable('orders_status');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Aziende.Order');
+        //$this->setEntityClass('Aziende.Order');
         $this->hasMany('Aziende.Orders',['foreignKey' => 'id_status', 'propertyName' => 'order']);
 
     }

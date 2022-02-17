@@ -11,10 +11,10 @@ class InvoicesPurposesTable extends AppTable
 {
     public function initialize(array $config)
     {
-        $this->table('invoices_purposes');
-        $this->primaryKey('id');
+        $this->setTable('invoices_purposes');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Aziende.Contatto');
+        //$this->setEntityClass('Aziende.Contatto');
     }
 
 }

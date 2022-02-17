@@ -13,7 +13,7 @@ class DocumentsToTagsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('documents_to_tags');
+        $this->setTable('documents_to_tags');
         $this->addBehavior('Timestamp');
     }
 

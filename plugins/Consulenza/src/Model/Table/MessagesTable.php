@@ -12,10 +12,10 @@ class MessagesTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('messages');
-        $this->primaryKey('id');
+        $this->setTable('messages');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-     	$this->entityClass('Consulenza.Messages');
+     	$this->setEntityClass('Consulenza.Messages');
 
         $this->belongsTo('UserSources',[
         	'className'=>'Users',

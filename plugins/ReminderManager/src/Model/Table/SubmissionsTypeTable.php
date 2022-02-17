@@ -11,8 +11,8 @@ class SubmissionsTypeTable extends Table
 
     public function initialize(array $config)
     {
-      $this->table('submissions_type');
-      $this->primaryKey('id');
+      $this->setTable('submissions_type');
+      $this->setPrimaryKey('id');
       $this->addBehavior('Timestamp');
     }
 

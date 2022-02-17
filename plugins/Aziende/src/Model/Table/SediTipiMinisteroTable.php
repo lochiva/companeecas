@@ -12,8 +12,8 @@ class SediTipiMinisteroTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('sedi_tipi_ministero');
-        $this->primaryKey('id');
+        $this->setTable('sedi_tipi_ministero');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
     }
     

@@ -12,7 +12,7 @@ class EventiToTagsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('calendar_events_to_tags');
+        $this->setTable('calendar_events_to_tags');
         $this->addBehavior('Timestamp');
     }
 

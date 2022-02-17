@@ -11,8 +11,8 @@ class SubmissionsEmailsTable extends Table
 
     public function initialize(array $config)
     {
-      $this->table('submissions_emails');
-      $this->primaryKey('id');
+      $this->setTable('submissions_emails');
+      $this->setPrimaryKey('id');
       $this->addBehavior('Timestamp');
 
       $this->hasMany('ReminderManager.SubmissionsEmailsAttachements',[

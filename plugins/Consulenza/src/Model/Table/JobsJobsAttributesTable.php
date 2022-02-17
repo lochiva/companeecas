@@ -12,8 +12,8 @@ class JobsJobsAttributesTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('jobs_jobsattributes');
-        $this->primaryKey('id');
+        $this->setTable('jobs_jobsattributes');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
         
 

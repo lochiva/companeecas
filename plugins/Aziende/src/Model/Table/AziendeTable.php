@@ -12,10 +12,10 @@ class AziendeTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('aziende');
-        $this->primaryKey('id');
+        $this->setTable('aziende');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Aziende.Azienda');
+        $this->setEntityClass('Aziende.Azienda');
         $this->hasMany('Aziende.Sedi',['foreignKey' => 'id_azienda']);
         $this->hasMany('Aziende.Contatti',['foreignKey' => 'id_azienda']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
@@ -80,7 +80,7 @@ class AziendeTable extends AppTable
 
         $entity = $this->patchEntity($entity, $data);
         $entity->cleanDirty(['created','modified']);
-        if($entity->dirty()){
+        if($entity->isDirty()){
             return $this->save($entity);
         }
         return $entity;

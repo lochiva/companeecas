@@ -8,8 +8,8 @@ class EventiDettaglioAttivitaTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('calendar_events_detail_activities');
-        $this->primaryKey('id');
+        $this->setTable('calendar_events_detail_activities');
+        $this->setPrimaryKey('id');
 		$this->addBehavior('Timestamp');
 	}
 

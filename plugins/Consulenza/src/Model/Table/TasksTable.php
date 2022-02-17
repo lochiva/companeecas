@@ -13,10 +13,10 @@ class TasksTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('tasks');
-        $this->primaryKey('id');
+        $this->setTable('tasks');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Consulenza.Frozentask');
+        //$this->setEntityClass('Consulenza.Frozentask');
         $this->belongsTo('Consulenza.Jobs',[
         	'foreignKey' => 'job_id',
         	'propertyName' => 'job'

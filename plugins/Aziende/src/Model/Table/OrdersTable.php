@@ -12,10 +12,10 @@ class OrdersTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('orders');
-        $this->primaryKey('id');
+        $this->setTable('orders');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Aziende.Order');
+        $this->setEntityClass('Aziende.Order');
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda', 'propertyName' => 'azienda']);
         $this->belongsTo('Aziende.Contatti',['foreignKey' => 'id_contatto', 'propertyName' => 'contatto']);
         $this->belongsTo('Aziende.OrdersStatus',['foreignKey' => 'id_status', 'propertyName' => 'stato']);

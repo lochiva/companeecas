@@ -12,10 +12,10 @@ class OperatorsTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('operators');
-        $this->primaryKey('id');
+        $this->setTable('operators');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Consulenza.Phase');
+        //$this->setEntityClass('Consulenza.Phase');
         $this->belongsTo('Document.Users',['foreignKey' => 'user_id']);
     }
     

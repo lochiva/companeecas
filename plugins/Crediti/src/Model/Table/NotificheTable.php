@@ -26,9 +26,9 @@ class NotificheTable extends AppTable
      */
     public function initialize(array $config)
     {
-        $this->table('notifiche');
+        $this->setTable('notifiche');
         $this->displayField('id');
-        $this->primaryKey('id');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
         $this->belongsTo('Crediti.Aziende', [
             'foreignKey' => 'azienda_id',

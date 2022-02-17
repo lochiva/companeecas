@@ -11,8 +11,8 @@ class SubmissionsTemplatesTable extends Table
 
     public function initialize(array $config)
     {
-      $this->table('submissions_templates');
-      $this->primaryKey('id');
+      $this->setTable('submissions_templates');
+      $this->setPrimaryKey('id');
       $this->addBehavior('Timestamp');
     }
 

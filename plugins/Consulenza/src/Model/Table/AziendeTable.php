@@ -12,10 +12,10 @@ class AziendeTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('aziende');
-        $this->primaryKey('id');
+        $this->setTable('aziende');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Consulenza.Azienda');
+        $this->setEntityClass('Consulenza.Azienda');
         //$this->belongsTo('Document.Contacts',['foreignKey' => 'id_client', 'conditions' => ['Contacts.client' => 1], 'propertyName' => 'client']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
         $this->hasMany('Consulenza.Orders', [

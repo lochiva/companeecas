@@ -15,10 +15,10 @@ class EventiFrozenTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('calendar_events_frozen');
-        $this->primaryKey('id');
+        $this->setTable('calendar_events_frozen');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Calendar.EventoFrozen');
+        $this->setEntityClass('Calendar.EventoFrozen');
         //$this->belongsTo('Document.Contacts',['foreignKey' => 'id_client', 'conditions' => ['Contacts.client' => 1], 'propertyName' => 'client']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda','propertyName' => 'azienda']);

@@ -8,8 +8,8 @@ class AccessLogTable extends Table
 {
     public function initialize(array $config)
     {
-        $this->table('access_log');
-        $this->primaryKey('id');
+        $this->setTable('access_log');
+        $this->setPrimaryKey('id');
         $this->belongsTo('Registration.Users', ['foreignKey' => 'id_user', 'propertyName' => 'user']);
     }
 

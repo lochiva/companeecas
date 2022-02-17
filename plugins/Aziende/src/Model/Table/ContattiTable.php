@@ -12,10 +12,10 @@ class ContattiTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('contatti');
-        $this->primaryKey('id');
+        $this->setTable('contatti');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Aziende.Contatto');
+        $this->setEntityClass('Aziende.Contatto');
         $this->belongsTo('Aziende.ContattiRuoli',['foreignKey' => 'id_ruolo', 'propertyName' => 'ruolo']);
         $this->belongsTo('Aziende.Sedi',['foreignKey' => 'id_sede', 'propertyName' => 'sede']);
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda', 'propertyName' => 'azienda']);
@@ -98,7 +98,7 @@ class ContattiTable extends AppTable
         // pulisco la dirty dal created e modified che variano, e controllo se ci sono
         // variazione dell'entity, nel caso salvo
         $entity->cleanDirty(['created','modified']);
-        if($entity->dirty()){
+        if($entity->isDirty()){
             //debug($entity);die;
             return $this->save($entity);
         }

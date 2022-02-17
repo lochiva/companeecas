@@ -13,10 +13,10 @@ class JobsOrdersTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('jobs_orders');
-        $this->primaryKey('id');
+        $this->setTable('jobs_orders');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Consulenza.Typeofbusiness');
+        //$this->setEntityClass('Consulenza.Typeofbusiness');
         /*
         $this->belongsToMany('Consulenza.Jobs', [
             'joinTable' => 'jobs_jobsattributes',

@@ -11,8 +11,8 @@ class SubmissionsAttributesTable extends Table
 
     public function initialize(array $config)
     {
-      $this->table('submissions_attributes');
-      $this->primaryKey('id');
+      $this->setTable('submissions_attributes');
+      $this->setPrimaryKey('id');
       $this->addBehavior('Timestamp');
     }
 

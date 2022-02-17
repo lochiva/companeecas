@@ -36,7 +36,7 @@ class ServicesOrdersTable extends Table
         $this->setPrimaryKey('id');
         $this->belongsTo('Progest.Orders',['foreignKey' => 'id_order']);
         $this->belongsTo('Progest.Services',['foreignKey' => 'id_service']);
-        $this->entityClass('Progest.ServicesOrder');
+        $this->setEntityClass('Progest.ServicesOrder');
         $this->addBehavior('Timestamp');
     }
 

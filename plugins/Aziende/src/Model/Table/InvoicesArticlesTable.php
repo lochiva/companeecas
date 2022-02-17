@@ -11,8 +11,8 @@ class InvoicesArticlesTable extends AppTable
 {
     public function initialize(array $config)
     {
-        $this->table('invoices_articles');
-        $this->primaryKey('id');
+        $this->setTable('invoices_articles');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('Invoices',['foreignKey' => 'id_invoice','className' => 'Aziende.Invoices', 'propertyName' => 'invoice']);

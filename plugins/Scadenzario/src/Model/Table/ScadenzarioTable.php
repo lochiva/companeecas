@@ -14,10 +14,10 @@ class ScadenzarioTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('scadenzario');
-        $this->primaryKey('id');
+        $this->setTable('scadenzario');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Scadenzario.Scadenzario');
+        $this->setEntityClass('Scadenzario.Scadenzario');
         //$this->belongsTo('Document.Contacts',['foreignKey' => 'id_client', 'conditions' => ['Contacts.client' => 1], 'propertyName' => 'client']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
     }

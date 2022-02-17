@@ -12,10 +12,10 @@ class UsersTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('users');
-        $this->primaryKey('id');
+        $this->setTable('users');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Consulenza.Frozentask');
+        //$this->setEntityClass('Consulenza.Frozentask');
 
         $this->hasMany('Consulenza.Tasks',[
         	'classname' => 'user_id',

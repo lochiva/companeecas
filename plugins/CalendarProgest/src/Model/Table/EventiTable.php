@@ -15,10 +15,10 @@ class EventiTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('calendar_events');
-        $this->primaryKey('id');
+        $this->setTable('calendar_events');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Calendar.Evento');
+        $this->setEntityClass('Calendar.Evento');
         //$this->belongsTo('Document.Contacts',['foreignKey' => 'id_client', 'conditions' => ['Contacts.client' => 1], 'propertyName' => 'client']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda','propertyName' => 'azienda']);

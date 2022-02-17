@@ -12,10 +12,10 @@ class TagsTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('tags');
-        $this->primaryKey('id');
+        $this->setTable('tags');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Tag');
+        $this->setEntityClass('Tag');
         $this->belongsToMany('Calendar.Eventi', [
             'through' => 'Calendar.EventiToTags',
             'targetForeignKey' => 'id_event',

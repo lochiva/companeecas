@@ -11,8 +11,8 @@ class SubmissionsAttachementsTable extends Table
 
     public function initialize(array $config)
     {
-      $this->table('submissions_attachements');
-      $this->primaryKey('id');
+      $this->setTable('submissions_attachements');
+      $this->setPrimaryKey('id');
       $this->addBehavior('Timestamp');
 
 

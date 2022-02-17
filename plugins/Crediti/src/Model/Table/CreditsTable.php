@@ -27,9 +27,9 @@ class CreditsTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->table('credits');
+        $this->setTable('credits');
         $this->displayField('id');
-        $this->primaryKey('id');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('Crediti.Aziende', [

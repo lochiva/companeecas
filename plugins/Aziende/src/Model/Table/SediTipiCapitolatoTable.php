@@ -12,8 +12,8 @@ class SediTipiCapitolatoTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('sedi_tipi_capitolato');
-        $this->primaryKey('id');
+        $this->setTable('sedi_tipi_capitolato');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
     }
     

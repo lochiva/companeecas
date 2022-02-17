@@ -15,7 +15,7 @@ class JobsOrdersIrapEncTable extends AppTable
 	 public function initialize(array $config)
 	 {
 	 	$this->table('jobs_orders');
-        $this->primaryKey('id');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
        
         $this->belongsTo('PhasesIrapEnc',['foreignKey' => 'phase_id', 'propertyName' => 'phase','className' => 'Phases']);

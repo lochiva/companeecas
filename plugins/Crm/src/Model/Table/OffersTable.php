@@ -10,10 +10,10 @@ class OffersTable extends AppTable
 {
     public function initialize(array $config)
     {
-        $this->table('offers');
-        $this->primaryKey('id');
+        $this->setTable('offers');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Crm.Offer');
+        $this->setEntityClass('Crm.Offer');
         $this->belongsTo('Status', [
           'foreignKey' => 'id_status',
           'className' => 'Crm.OffersStatus',

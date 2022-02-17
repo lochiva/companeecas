@@ -12,10 +12,10 @@ class OrdersHistoryTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('orders_status_history');
-        $this->primaryKey('id');
+        $this->setTable('orders_status_history');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Aziende.Order');
+        //$this->setEntityClass('Aziende.Order');
         $this->belongsTo('Aziende.Orders',['foreignKey' => 'id_order', 'propertyName' => 'order']);
     }
 

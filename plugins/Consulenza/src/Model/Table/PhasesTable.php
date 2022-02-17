@@ -13,10 +13,10 @@ class PhasesTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('phases');
-        $this->primaryKey('id');
+        $this->setTable('phases');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Consulenza.Phase');
+        $this->setEntityClass('Consulenza.Phase');
         $this->belongsTo('Document.Processes',['foreignKey' => 'process_id']);
     }
     

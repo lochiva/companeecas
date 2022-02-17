@@ -12,10 +12,10 @@ class JobsattributesTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('jobsattributes');
-        $this->primaryKey('id');
+        $this->setTable('jobsattributes');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Consulenza.Typeofbusiness');
+        //$this->setEntityClass('Consulenza.Typeofbusiness');
         $this->belongsToMany('Consulenza.Jobs', [
             'joinTable' => 'jobs_jobsattributes',
             'className' => 'Jobs'

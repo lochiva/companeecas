@@ -13,8 +13,8 @@ class ActionLogTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('action_log');
-        $this->primaryKey('id');
+        $this->setTable('action_log');
+        $this->setPrimaryKey('id');
         $this->belongsTo('Registration.Users', ['foreignKey' => 'id_user', 'propertyName' => 'user']);
         $this->nammingEntity = Configure::read('localconfig.nammingEntity');
         $this->actionVerbs = ['insert'=>'inserito','update'=>'aggiornato','delete' => 'cancellato'];

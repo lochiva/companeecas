@@ -12,10 +12,10 @@ class PhasesdeadlinesTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('phasedeadlines');
-        $this->primaryKey('id');
+        $this->setTable('phasedeadlines');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Consulenza.Order');
+        $this->setEntityClass('Consulenza.Order');
         $this->belongsTo('Consulenza.Phases',[
         	'foreignKey' => 'phase_id', 
         	'propertyName' => 'phase'

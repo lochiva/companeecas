@@ -22,7 +22,7 @@ class ContactsOrdersTable extends Table
         $this->setTable('progest_contacts_orders');
         $this->setPrimaryKey('id');
         $this->belongsTo('Progest.Orders',['foreignKey' => 'id_order']);
-        $this->entityClass('Progest.ContactsOrder');
+        $this->setEntityClass('Progest.ContactsOrder');
         $this->addBehavior('Timestamp');
     }
 

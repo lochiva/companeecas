@@ -17,8 +17,8 @@ class CrmSchedeTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('crm_schede');
-        $this->primaryKey('scheda_id');
+        $this->setTable('crm_schede');
+        $this->setPrimaryKey('scheda_id');
         $this->addBehavior('Timestamp');
 
         $this->hasMany('Pmm.CrmContratti',[

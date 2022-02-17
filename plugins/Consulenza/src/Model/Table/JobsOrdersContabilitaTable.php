@@ -13,8 +13,8 @@ class JobsOrdersContabilitaTable extends AppTable
 
     public function initialize(array $config)
     {
-        $this->table('jobs_orders');
-        $this->primaryKey('id');
+        $this->setTable('jobs_orders');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('PhasesContabilita',['foreignKey' => 'phase_id', 'propertyName' => 'phase','className' => 'Phases']);

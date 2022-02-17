@@ -11,10 +11,10 @@ class ContattiRuoliTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('contatti_ruoli');
-        $this->primaryKey('id');
+        $this->setTable('contatti_ruoli');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Aziende.Ruolo');
+        $this->setEntityClass('Aziende.Ruolo');
         //$this->belongsTo('Document.Contacts',['foreignKey' => 'id_client', 'conditions' => ['Contacts.client' => 1], 'propertyName' => 'client']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
         $this->hasOne('Aziende.Contatti',['foreignKey' => 'id_ruolo', 'propertyName' => 'contatti']);

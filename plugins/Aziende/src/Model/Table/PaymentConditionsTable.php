@@ -11,9 +11,9 @@ class PayamentContidionsTable extends AppTable
 {
     public function initialize(array $config)
     {
-        $this->table('payament_conditions');
-        $this->primaryKey('id');
+        $this->setTable('payament_conditions');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Aziende.Contatto');
+        //$this->setEntityClass('Aziende.Contatto');
     }
 }

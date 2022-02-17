@@ -12,10 +12,10 @@ class InvoicesTable extends AppTable
 {
     public function initialize(array $config)
     {
-        $this->table('invoices');
-        $this->primaryKey('id');
+        $this->setTable('invoices');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Aziende.Invoice');
+        $this->setEntityClass('Aziende.Invoice');
         $this->belongsTo('Issuer',['foreignKey' => 'id_issuer','className' => 'Aziende.Aziende', 'propertyName' => 'issuer']);
         $this->belongsTo('Payer',['foreignKey' => 'id_payer','className' => 'Aziende.Aziende', 'propertyName' => 'payer']);
         $this->belongsTo('Aziende.Orders',['foreignKey' => 'id_order', 'propertyName' => 'order']);

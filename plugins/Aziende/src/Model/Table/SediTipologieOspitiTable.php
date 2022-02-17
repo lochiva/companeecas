@@ -12,8 +12,8 @@ class SediTipologieOspitiTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('sedi_tipologie_ospiti');
-        $this->primaryKey('id');
+        $this->setTable('sedi_tipologie_ospiti');
+        $this->setPrimaryKey('id');
         $this->setDisplayField('name');
 
         $this->addBehavior('Timestamp');

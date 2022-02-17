@@ -12,8 +12,8 @@ class SediProcedureAffidamentoTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('sedi_procedure_affidamento');
-        $this->primaryKey('id');
+        $this->setTable('sedi_procedure_affidamento');
+        $this->setPrimaryKey('id');
         $this->setDisplayField('name');
 
         $this->addBehavior('Timestamp');

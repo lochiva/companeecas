@@ -25,9 +25,9 @@ class CreditsTotalsTable extends AppTable
      */
     public function initialize(array $config)
     {
-        $this->table('credits_totals');
+        $this->setTable('credits_totals');
         $this->displayField('id');
-        $this->primaryKey('id');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
         $this->belongsTo('Crediti.Aziende', [
             'foreignKey' => 'azienda_id',

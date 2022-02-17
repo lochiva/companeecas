@@ -12,8 +12,8 @@ class SediTipologieCentroTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('sedi_tipologie_centro');
-        $this->primaryKey('id');
+        $this->setTable('sedi_tipologie_centro');
+        $this->setPrimaryKey('id');
         $this->setDisplayField('name');
 
         $this->addBehavior('Timestamp');

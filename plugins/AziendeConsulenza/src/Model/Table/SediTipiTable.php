@@ -12,10 +12,10 @@ class SediTipiTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('sedi_tipi');
-        $this->primaryKey('id');
+        $this->setTable('sedi_tipi');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        //$this->entityClass('Aziende.Sede');
+        //$this->setEntityClass('Aziende.Sede');
         //$this->belongsTo('Document.Contacts',['foreignKey' => 'id_client', 'conditions' => ['Contacts.client' => 1], 'propertyName' => 'client']);
         //$this->belongsTo('Document.Projects',['foreignKey' => 'id_project']);
     }

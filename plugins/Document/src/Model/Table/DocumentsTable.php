@@ -14,7 +14,7 @@ class DocumentsTable extends AppTable
     public function initialize(array $config)
     {
         $this->addBehavior('Timestamp');
-        $this->entityClass('Document.Document');
+        $this->setEntityClass('Document.Document');
         $this->belongsTo('Aziende.Aziende',['foreignKey' => 'id_azienda','propertyName' => 'azienda']);
         $this->belongsTo('Aziende.Orders',['foreignKey' => 'id_order','propertyName' => 'ordine']);
         $this->belongsToMany('Tags', [

@@ -19,8 +19,8 @@ class OffersStatusTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('offers_status');
-        $this->primaryKey('id');
+        $this->setTable('offers_status');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

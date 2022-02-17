@@ -9,8 +9,8 @@ class OffersStatusHistoryTable extends Table
 {
     public function initialize(array $config)
     {
-        $this->table('offers_status_history');
-        $this->primaryKey('id');
+        $this->setTable('offers_status_history');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('OffersStatus', [

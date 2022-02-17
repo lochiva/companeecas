@@ -23,7 +23,7 @@ class PeopleExtensionTable extends Table
         $this->setTable('progest_people_extension');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
-        $this->entityClass('Progest.PersonExtension');
+        $this->setEntityClass('Progest.PersonExtension');
         $this->addBehavior('Timestamp');
 		$this->belongsTo('Progest.People',['foreignKey' => 'id_person']);
     }

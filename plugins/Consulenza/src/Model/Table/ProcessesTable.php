@@ -12,10 +12,10 @@ class ProcessesTable extends AppTable
     
     public function initialize(array $config)
     {
-        $this->table('processes');
-        $this->primaryKey('id');
+        $this->setTable('processes');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-        $this->entityClass('Consulenza.Process');
+        $this->setEntityClass('Consulenza.Process');
         $this->belongsToMany('Consulenza.Jobs', [
             'joinTable' => 'jobs_processes',
         ]);

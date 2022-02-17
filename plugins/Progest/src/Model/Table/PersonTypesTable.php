@@ -33,9 +33,9 @@ class PersonTypesTable extends AppTable
     {
         parent::initialize($config);
 
-        $this->table('progest_person_types');
+        $this->setTable('progest_person_types');
         $this->displayField('name');
-        $this->primaryKey('id');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

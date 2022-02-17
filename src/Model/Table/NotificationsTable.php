@@ -13,8 +13,8 @@ class NotificationsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('notifications');
-        $this->primaryKey('id');
+        $this->setTable('notifications');
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
         $this->belongsTo('Dest', [
             'className' => 'Users',
