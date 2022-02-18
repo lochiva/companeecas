@@ -114,7 +114,6 @@ class GuestsNotificationsTable extends AppTable
         $rules->add($rules->existsIn(['type_id'], 'Types'));
         $rules->add($rules->existsIn(['azienda_id'], 'Aziende'));
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
-        $rules->add($rules->existsIn(['guest_id'], 'Guests'));
         $rules->add($rules->existsIn(['user_maker_id'], 'UsersMakers'));
         $rules->add($rules->existsIn(['user_done_id'], 'UsersDones'));
 

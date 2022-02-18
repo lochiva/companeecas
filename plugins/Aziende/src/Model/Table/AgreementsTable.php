@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Table\AppTable;
 
 /**
  * Agreements Model
@@ -23,7 +24,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class AgreementsTable extends Table
+class AgreementsTable extends AppTable
 {
     /**
      * Initialize method
@@ -41,6 +42,11 @@ class AgreementsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->belongsTo('Aziende', [
+            'foreignKey' => 'azienda_id',
+            'joinType' => 'INNER',
+            'className' => 'Aziende.Aziende'
+        ]);
         $this->belongsTo('Procedures', [
             'foreignKey' => 'procedure_id',
             'joinType' => 'INNER',
@@ -65,22 +71,25 @@ class AgreementsTable extends Table
             ->allowEmptyString('id', null, 'create');
 
         $validator
-            ->dateTime('date_agreement')
+            ->date('date_agreement')
             ->requirePresence('date_agreement', 'create')
             ->notEmptyDateTime('date_agreement');
 
         $validator
-            ->dateTime('date_agreement_expiration')
+            ->date('date_agreement_expiration')
             ->requirePresence('date_agreement_expiration', 'create')
             ->notEmptyDateTime('date_agreement_expiration');
 
         $validator
-            ->dateTime('date_extension_expiration')
+            ->date('date_extension_expiration')
             ->allowEmptyDateTime('date_extension_expiration');
 
         $validator
             ->decimal('guest_daily_price')
             ->notEmptyString('guest_daily_price');
+
+        $validator
+            ->boolean('deleted');
 
         return $validator;
     }
@@ -94,8 +103,24 @@ class AgreementsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
+        $rules->add($rules->existsIn(['azienda_id'], 'Aziende'));
         $rules->add($rules->existsIn(['procedure_id'], 'Procedures'));
 
         return $rules;
+    }
+
+    public function getFieldLabelsList() {
+        return [
+            'id' => 'ID',
+            'azienda_id' => 'ID ente',
+            'procedure_id' => 'ID procedura di affidamento',
+            'date_agreement' => 'Data stipula convenzione',
+            'date_agreement_expiration' => 'Data scadenza convenzione',
+            'date_extension_expiration' => 'Data scadenza proroga',
+            'guest_daily_ptice' => 'Prezzo giornaliero ospiti',
+            'deleted' => 'Cancellato',
+            'created' => 'Data creazione',
+            'modified' => 'Data modifica'
+        ];
     }
 }

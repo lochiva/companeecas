@@ -8,39 +8,38 @@ class AgreementComponent extends Component
 {
     public function getAgreements($aziendaId, $pass = array()){
 
-        $guests = TableRegistry::get('Aziende.Guests');
+        $agreements = TableRegistry::get('Aziende.Agreements');
 		
 		$columns = [
-			0 => ['val' => 'Guests.cui', 'type' => 'text'],
-			1 => ['val' => 'Guests.vestanet_id', 'type' => 'text'],
-			2 => ['val' => 'Guests.name', 'type' => 'text'],
-			3 => ['val' => 'Guests.surname', 'type' => 'text'],
-			4 => ['val' => 'Guests.birthdate', 'type' => 'date'],
-			5 => ['val' => 'Guests.sex', 'type' => 'text'],
-			6 => ['val' => 'Guests.draft', 'type' => 'number'],
-			7 => ['val' => 'Guests.draft_expiration', 'type' => 'date'],
-			8 => ['val' => 'Guests.suspended', 'type' => 'number']
+			0 => ['val' => 'spa.name', 'type' => 'text'],
+			1 => ['val' => 'Agreements.date_agreement', 'type' => 'date'],
+			2 => ['val' => 'Agreements.date_agreement_expiration', 'type' => 'date'],
+			3 => ['val' => 'Agreements.date_extension_expiration', 'type' => 'date'],
+			4 => ['val' => 'Agreements.guest_daily_price', 'type' => 'number']
         ];
         
         $opt['fields'] = [
-			'Guests.id', 
-			'Guests.cui', 
-			'Guests.vestanet_id', 
-			'Guests.name',
-			'Guests.surname', 
-			'Guests.birthdate', 
-			'Guests.sex', 
-			'Guests.draft',
-			'Guests.draft_expiration', 
-			'Guests.suspended'
+			'Agreements.id',
+			'Agreements.date_agreement',
+			'Agreements.date_agreement_expiration',
+			'Agreements.date_extension_expiration',
+			'Agreements.guest_daily_price',
+			'spa.name'
 		];
 
-		$opt['join'] = [];
+		$opt['join'] = [
+			[
+				'table' => 'sedi_procedure_affidamento',
+				'alias' => 'spa',
+				'type' => 'LEFT',
+				'conditions' => 'Agreements.procedure_id = spa.id'
+			]
+		];
         
-		$opt['conditions'] = ['Guests.sede_id' => $sedeId];
+		$opt['conditions'] = ['Agreements.azienda_id' => $aziendaId];
 
-        $toRet['res'] = $guests->queryForTableSorter($columns, $opt, $pass); 
-        $toRet['tot'] = $guests->queryForTableSorter($columns, $opt, $pass, true);
+        $toRet['res'] = $agreements->queryForTableSorter($columns, $opt, $pass); 
+        $toRet['tot'] = $agreements->queryForTableSorter($columns, $opt, $pass, true);
 
         return $toRet;
 

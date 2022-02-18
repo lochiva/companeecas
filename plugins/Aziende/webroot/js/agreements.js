@@ -35,6 +35,19 @@ $(document).ready(function(){
         }
     });
 
+    //Formattazione campi decimal (costi)
+    $(document).on('change', '.number-decimal', function(event) {
+        var val = $(this).val().replace(',', '.');
+        var valParsed = parseFloat(val);
+        if(valParsed == val || valParsed + '.00' == val){
+            var value = parseFloat($(this).val().replace(',', '.')).toFixed(2);
+        }else{
+            var value = $(this).val();
+        }
+        
+        $(this).val(value.replace('.', ',')).trigger('keyup');
+    });
+
     /*###################################################### OSPITI ########################################################*/
 
     //Tabella ospiti
@@ -137,4 +150,104 @@ $(document).ready(function(){
         });
     }
 
+    $('.agreement-sede-check').change(function() {
+        var id = $(this).attr('data-id');
+        if ($(this).is(':checked')) {
+            $('#inputSedeCapacity'+id).prop('disabled', false);
+            $('#inputSedeCapacity'+id).addClass('required');
+        } else {
+            $('#inputSedeCapacity'+id).prop('disabled', true);
+            $('#inputSedeCapacity'+id).removeClass('required');
+            $('#inputSedeCapacity'+id).val('');
+        }
+    });
+
+    $('#saveAgreement').click(function(){
+        if(formValidation('formAgreement')){
+            var formData= new FormData($('#formAgreement')[0]);
+            
+            $.ajax({
+                url : pathServer + "aziende/Ws/saveAgreement",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                data: formData
+            }).done(function (res) {
+                if(res.response == "OK"){
+                    $('#table-agreements').trigger('update');
+                    $('#modalAgreement').modal('hide');
+                }else{
+                    alert(res.msg);
+                }
+            }).fail(function(richiesta, stato, errori) {
+                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+            });
+        }
+    });
 });
+
+$(document).on('click', '.edit-agreement', function(){
+    var id = $(this).attr('data-id');
+    $.ajax({
+        url : pathServer + "aziende/Ws/getAgreement/"+id,
+        type: "GET",
+        dataType: "json"
+    }).done(function (res) {
+        if(res.response == "OK"){
+            $('#agreementId').val(res.data.id);
+            $('#inputProceduraAffidamento').val(res.data.procedure_id);
+            $('#inputDateAgreement').datepicker('setDate', res.data.date_agreement);
+            $('#inputDateAgreementExpiration').datepicker('setDate', res.data.date_agreement_expiration);
+            $('#inputDateExtensionExpiration').datepicker('setDate', res.data.date_extension_expiration);
+            $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
+            res.data.agreements_to_sedi.forEach(function(sede) {
+                if (sede.active) {
+                    $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
+                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity).trigger('change');
+                    $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
+                    $('#inputSedeCapacity'+sede.sede_id).addClass('required');
+                } else {
+                    $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
+                    $('#inputSedeCheck'+sede.sede_id).prop('disabled', true);
+                    $('#inputSedeCheck'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity).trigger('change');
+                    $('#inputSedeCapacity'+sede.sede_id).prop('disabled', true);
+                    $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
+                    $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                }
+            })
+            $('#modalAgreement').modal('show');
+        }else{
+            alert(res.msg);
+        }
+    }).fail(function(richiesta, stato, errori) {
+        alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+    });
+});
+
+$(document).on('hidden.bs.modal', '#modalAgreement', function() {
+    clearModal();
+});
+
+function clearModal(){
+	$('#agreementId').val("");
+    $('#inputProceduraAffidamento').val("");
+    $('#inputDateAgreement').val("");
+    $('#inputDateAgreementExpiration').val("");
+    $('#inputDateExtensionExpiration').val("");
+    $('#inputGuestDailyPrice').val("");
+
+    $('.agreement-sede-check').each(function() {
+        $(this).prop('checked', false);
+        $(this).prop("disabled", false);
+        $(this).prop("title", '');
+    });
+
+    $('.agreement-sede-capacity').each(function() {
+        $(this).val("");
+        $(this).removeClass("required");
+        $(this).prop("disabled", true);
+        $(this).prop("title", '');
+    });
+}

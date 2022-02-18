@@ -174,9 +174,17 @@ use Cake\Routing\Router;
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label required" for="inputProceduraAffidamento">Procedura di affidamento</label>
+                            <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                             <div class="col-sm-10">
-                                <select name="id_procedura_affidamento" id="inputProceduraAffidamento" class="form-control required" >
+                                <input type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-decimal" >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="inputProceduraAffidamento">Procedura di affidamento</label>
+                            <div class="col-sm-10">
+                                <select name="id_procedura_affidamento" id="inputProceduraAffidamento" class="form-control" >
+                                    <option value=""></option>
                                     <?php foreach ($procedureAffidamento as $procedura): ?>
                                     <option value="<?= $procedura->id ?>"><?= h($procedura->name) ?></option>
                                     <?php endforeach; ?>

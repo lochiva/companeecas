@@ -195,6 +195,9 @@ $(document).on('click','.edit',function(e){
 
 	enableInputModale();
 
+  $('#inputCapienzaConvenzione').prop('disabled', true);
+  $('#inputProceduraAffidamento').prop('disabled', true);
+
 });
 
 //#######################################################################################################################
@@ -304,6 +307,7 @@ function loadInputModale(idSede){
             $('[name="skype"]').val(data.data.skype);
             $('[name="n_posti_struttura"]').val(data.data.n_posti_struttura);
             $('[name="n_posti_effettivi"]').val(data.data.n_posti_effettivi);
+            $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione).trigger('change');
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
 
@@ -353,6 +357,7 @@ function clearModale(){
 	$('[name="skype"]').val("");
   $('[name="n_posti_struttura"]').val("");
   $('[name="n_posti_effettivi"]').val("");
-  $('[name="id_procedura_affidamento"]').val(1);
+  $('[name="n_posti_convenzione"]').val("");
+  $('[name="id_procedura_affidamento"]').val("");
   $('[name="operativita"]').val(1);
 }

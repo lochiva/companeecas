@@ -32,6 +32,19 @@ $(document).ready(function(){
             e.preventDefault();
         }
     });
+
+	//Formattazione campi decimal (costi)
+    $(document).on('change', '.number-decimal', function(event) {
+        var val = $(this).val().replace(',', '.');
+        var valParsed = parseFloat(val);
+        if(valParsed == val || valParsed + '.00' == val){
+            var value = parseFloat($(this).val().replace(',', '.')).toFixed(2);
+        }else{
+            var value = $(this).val();
+        }
+        
+        $(this).val(value.replace('.', ',')).trigger('keyup');
+    });
 	
 	$('#salvaNuovaSede').click(function(){
 		

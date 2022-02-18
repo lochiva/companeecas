@@ -35,10 +35,12 @@ class AgreementsController extends AppController
     public function index($aziendaId)
     {
         $azienda = TableRegistry::get('Aziende.Aziende')->get($aziendaId);
-        $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
+        $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->contain('Comuni')->toArray();
+        $procedureAffidamento = TableRegistry::get('Aziende.SediProcedureAffidamento')->getList();
 
         $this->set('azienda', $azienda);
         $this->set('sedi', $sedi);
+        $this->set('procedureAffidamento',$procedureAffidamento);
     }
 
 }

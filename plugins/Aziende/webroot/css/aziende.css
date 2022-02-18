@@ -2,7 +2,8 @@ div.box-table-aziende.box-body #pager-aziende,
 div.box-table-sedi.box-body #pager-sedi,
 div.box-table-contatti.box-body #pager-contatti,
 div.box-table-orders.box-body #pager-orders,
-div.box-table-invoice.box-body #pager-invoice{
+div.box-table-invoice.box-body #pager-invoice,
+div.box-table-agreements.box-body #pager-agreements{
 	text-align: left;
 }
 div.box-table-aziende.box-body #box-general-action a,
@@ -18,7 +19,8 @@ div.box-table-invoice.box-body #box-general-action a{
 #myModalContatto label.required::after,
 #myModalOrder label.required::after,
 #myModalFatturaPassiva label.required::after,
-#myModalFatturaAttiva label.required::after{
+#myModalFatturaAttiva label.required::after,
+#modalAgreement label.required::after{
     content: " *";
     color:red;
 }
@@ -273,4 +275,8 @@ a.contact-login:hover{
 
 .preview-nodo-logo{
 	max-height: 150px;
+}
+
+.agreement-sede-check {
+	margin-right: 10px !important;
 }

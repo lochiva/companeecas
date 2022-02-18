@@ -13,26 +13,35 @@ class CreateAgreements extends AbstractMigration
     public function change()
     {
         $table = $this->table('agreements');
+        $table->addColumn('azienda_id', 'integer', [
+            'limit' => 11,
+            'null' => false,
+        ])
+        ->addIndex(['azienda_id']);
         $table->addColumn('procedure_id', 'integer', [
             'limit' => 11,
             'null' => false,
         ])
         ->addIndex(['procedure_id']);
-        $table->addColumn('date_agreement', 'datetime', [
+        $table->addColumn('date_agreement', 'date', [
             'default' => null,
             'null' => false,
         ]);
-        $table->addColumn('date_agreement_expiration', 'datetime', [
+        $table->addColumn('date_agreement_expiration', 'date', [
             'default' => null,
             'null' => false,
         ]);
-        $table->addColumn('date_extension_expiration', 'datetime', [
+        $table->addColumn('date_extension_expiration', 'date', [
             'default' => null,
             'null' => true,
         ]);
         $table->addColumn('guest_daily_price','decimal', [
             'scale' => 2,
             'precision' => 10,
+            'default' => 0,
+            'null' => false,
+        ]);
+        $table->addColumn('deleted', 'boolean', [
             'default' => 0,
             'null' => false,
         ]);

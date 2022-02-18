@@ -380,9 +380,17 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputProceduraAffidamento">Procedura di affidamento</label>
+                                        <label class="col-sm-2 control-label" for="inputCapienzaEffettiva">Capienza (da convenzione)</label>
                                         <div class="col-sm-10">
-                                            <select requried ng-model="sede.id_procedura_affidamento" convert-to-number name="procedura di affidamento" id="inputProceduraAffidamento" class="form-control" >
+                                            <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaEffettiva" class="form-control number-integer" >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="inputProceduraAffidamento">Procedura di affidamento</label>
+                                        <div class="col-sm-10">
+                                            <select disabled ng-model="sede.id_procedura_affidamento" convert-to-number name="procedura di affidamento" id="inputProceduraAffidamento" class="form-control" >
+                                              <option value=""></option>
                                               <?php foreach ($procedureAffidamento as $procedura): ?>
                                                 <option value="<?= $procedura->id ?>"><?= h($procedura->name) ?></option>
                                               <?php endforeach; ?>
