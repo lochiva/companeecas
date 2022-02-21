@@ -58,7 +58,7 @@ use Cake\Routing\Router;
                             </div>
                             <div class="col-sm-4">
                                 <input disabled type="text" name="sedi[<?=$sede['id']?>][capacity]" id="inputSedeCapacity<?=$sede['id']?>" 
-                                    class="form-control number-decimal agreement-sede-capacity" placeholder="Capienza da convenzione">
+                                    class="form-control number-integer agreement-sede-capacity" placeholder="Capienza da convenzione">
                             </div>
                         </div>
                     <?php } ?>

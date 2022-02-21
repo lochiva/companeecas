@@ -127,7 +127,6 @@ function saveFormSede(){
 		var skype = $('[name="skype"]').val();
 		var n_posti_struttura = $('[name="n_posti_struttura"]').val();
 		var n_posti_effettivi = $('[name="n_posti_effettivi"]').val();
-		var id_procedura_affidamento = $('[name="id_procedura_affidamento"]').val();
 		var operativita = $('[name="operativita"]').val();
 		
 		$.ajax({
@@ -137,10 +136,27 @@ function saveFormSede(){
 			data:{id:id,id_azienda:id_azienda,id_tipo_ministero:id_tipo_ministero,id_tipo_capitolato:id_tipo_capitolato,id_tipologia_centro:id_tipologia_centro,
 				id_tipologia_ospiti:id_tipologia_ospiti,indirizzo:indirizzo,num_civico:num_civico,cap:cap,comune:comune,provincia:provincia,nazione:nazione,
 				telefono:telefono,cellulare:cellulare,fax:fax,email:email,skype:skype,n_posti_struttura:n_posti_struttura,n_posti_effettivi:n_posti_effettivi,
-				id_procedura_affidamento:id_procedura_affidamento,operativita:operativita,code_centro:code_centro},
+				operativita:operativita,code_centro:code_centro},
 			success : function (data,stato) {
 				
 				if(data.response == "OK"){
+					if (data.data) {
+						//Aggiorna conteggio notifiche
+						$.ajax({
+							url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+							type: "GET",
+							dataType: "json"
+						}).done(function(res) {
+							if(res.response == 'OK'){
+								var count = res.data;
+								if(count > 0){
+									$('.guests_notify_count_label').html(count);
+								}
+							}
+						}).fail(function(richiesta,stato,errori){
+							alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+						});
+					}
 					$('.close').click();
 				}else{
 					alert(data.msg);

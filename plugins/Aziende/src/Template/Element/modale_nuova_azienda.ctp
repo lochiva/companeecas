@@ -366,9 +366,9 @@ use Cake\Routing\Router;
                                     <hr>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCapienzaConvenzione">Capienza (struttura)</label>
+                                        <label class="col-sm-2 control-label required" for="inputCapienzaStruttura">Capienza (struttura)</label>
                                         <div class="col-sm-10">
-                                            <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
+                                            <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (da convenzione)" id="inputCapienzaStruttura" class="form-control number-integer" >
                                         </div>
                                     </div>
 
@@ -380,9 +380,9 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputCapienzaEffettiva">Capienza (da convenzione)</label>
+                                        <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                                         <div class="col-sm-10">
-                                            <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaEffettiva" class="form-control number-integer" >
+                                            <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
                                         </div>
                                     </div>
 

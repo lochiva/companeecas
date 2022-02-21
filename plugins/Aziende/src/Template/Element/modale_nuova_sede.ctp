@@ -176,7 +176,7 @@ use Cake\Routing\Router;
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                             <div class="col-sm-10">
-                                <input type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-decimal" >
+                                <input type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer" >
                             </div>
                         </div>
 

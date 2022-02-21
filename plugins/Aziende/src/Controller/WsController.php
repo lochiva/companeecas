@@ -329,9 +329,11 @@ class WsController extends AppController
         //echo "<pre>"; print_r($this->request->data); echo "</pre>";
 
         $saveType = '';
+        $new = false;
         if($idSede == 0){
             unset($this->request->data['id']);
             $saveType = 'CREATE_CENTER';
+            $new = true;
         }
 
         $sede = $this->Sedi->_newEntity(); 
@@ -360,7 +362,7 @@ class WsController extends AppController
                 $guestsNotifications->save($notification);
             }
 
-            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+            $this->_result = array('response' => 'OK', 'data' => $new, 'msg' => "Salvato");
         }else{
             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
         }
@@ -2016,6 +2018,7 @@ class WsController extends AppController
 		if($agreements->save($entity)){
             // Relazione convenzione - sede
             $agreementsSedi = TableRegistry::get('Aziende.AgreementsToSedi');
+            $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $entity->azienda_id])->toArray();
 
             $agreementsSedi->deleteAll(['agreement_id' => $entity->id, 'active' => 1]);
 
@@ -2033,15 +2036,53 @@ class WsController extends AppController
                         'agreement_id' => $entity->id,
                         'sede_id' => $sedeId,
                         'active' => 1,
-                        'capacity' => str_replace(',', '.', $sede['capacity'])
+                        'capacity' => $sede['capacity']
                     ];
                     $agreementsSedi->patchEntity($agreementSede, $dataToSave);
-                    $agreementsSedi->save($agreementSede);
+                    if ($agreementsSedi->save($agreementSede)) {
+                        foreach ($sedi as $key => $sede) {
+                            if ($sede->id == $sedeId) {
+                                unset($sedi[$key]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Notifiche mancanza convenzione per struttura
+            $missing = false;
+            if (!empty($sedi)) {
+                $notifications = TableRegistry::get('Aziende.GuestsNotifications');
+                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => 'MISSING_AGREEMENT_CENTER'])->first();
+                foreach ($sedi as $sede) {
+                    $agreement = $agreementsSedi->find()->where(['sede_id' => $sede->id, 'active' => 1])->first();
+                    if (empty($agreement)) {
+                        $missing = true;
+                        $sedeNotified = $notifications->find()->where(['type_id' => $notificationType->id, 'sede_id' => $sede->id, 'done' => 0])->first();
+                        if (empty($sedeNotified)) {
+                            $notification = $notifications->newEntity();
+                            $notificationData = [
+                                'type_id' => $notificationType->id,
+                                'azienda_id' => $sede->id_azienda,
+                                'sede_id' => $sede->id,
+                                'guest_id' => 0,
+                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                            ];
+                            $notifications->patchEntity($notification, $notificationData);
+                            $notifications->save($notification);
+                        } else {
+                            $notificationData = [
+                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                            ];
+                            $notifications->patchEntity($sedeNotified, $notificationData);
+                            $notifications->save($sedeNotified);
+                        }
+                    }
                 }
             }
 
             $this->_result['response'] = "OK";
-            $this->_result['data'] = $entity->id;
+            $this->_result['data'] = $missing;
             $this->_result['msg'] = "Convenzione salvata con successo.";
         }else{
             $message = "Errore nel salvataggio dell'ospite."; 

@@ -307,7 +307,7 @@ function loadInputModale(idSede){
             $('[name="skype"]').val(data.data.skype);
             $('[name="n_posti_struttura"]').val(data.data.n_posti_struttura);
             $('[name="n_posti_effettivi"]').val(data.data.n_posti_effettivi);
-            $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione).trigger('change');
+            $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
 

@@ -67,7 +67,7 @@ class AgreementsToSediTable extends AppTable
             ->allowEmptyString('id', null, 'create');
 
         $validator
-            ->decimal('capacity')
+            ->integer('capacity')
             ->notEmptyString('capacity');
 
         $validator

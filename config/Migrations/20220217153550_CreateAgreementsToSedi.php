@@ -23,9 +23,8 @@ class CreateAgreementsToSedi extends AbstractMigration
             'null' => false,
         ])
         ->addIndex(['sede_id']);
-        $table->addColumn('capacity', 'decimal', [
-            'scale' => 2,
-            'precision' => 10,
+        $table->addColumn('capacity', 'integer', [
+            'limit' => 11,
             'default' => 0,
             'null' => false,
         ]);

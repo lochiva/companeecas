@@ -177,6 +177,24 @@ $(document).ready(function(){
                 if(res.response == "OK"){
                     $('#table-agreements').trigger('update');
                     $('#modalAgreement').modal('hide');
+                    if (res.data) {
+                        alert('Attenzione! Una o più strutture non sono associate ad una convenzione.');
+                        //Aggiorna conteggio notifiche
+                        $.ajax({
+                            url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+                            type: "GET",
+                            dataType: "json"
+                        }).done(function(res) {
+                            if(res.response == 'OK'){
+                                var count = res.data;
+                                if(count > 0){
+                                    $('.guests_notify_count_label').html(count);
+                                }
+                            }
+                        }).fail(function(richiesta,stato,errori){
+                            alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+                        });
+                    }
                 }else{
                     alert(res.msg);
                 }
@@ -204,14 +222,14 @@ $(document).on('click', '.edit-agreement', function(){
             res.data.agreements_to_sedi.forEach(function(sede) {
                 if (sede.active) {
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
-                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity).trigger('change');
+                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
                     $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
                     $('#inputSedeCapacity'+sede.sede_id).addClass('required');
                 } else {
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
                     $('#inputSedeCheck'+sede.sede_id).prop('disabled', true);
                     $('#inputSedeCheck'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
-                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity).trigger('change');
+                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
                     $('#inputSedeCapacity'+sede.sede_id).prop('disabled', true);
                     $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
                     $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');

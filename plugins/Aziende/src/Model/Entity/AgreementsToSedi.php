@@ -9,7 +9,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property int $agreement_id
  * @property int $sede_id
- * @property float $capacity
+ * @property int $capacity
  * @property bool $active
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
