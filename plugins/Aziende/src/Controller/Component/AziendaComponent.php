@@ -97,6 +97,22 @@ class AziendaComponent extends Component
                 }else{
                     $res['sedi'][$key]['comune_des'] = '';
                 }
+
+                $agreements = TableRegistry::get('Aziende.Agreements');
+                $agreement = $agreements->find()
+                    ->select(['Agreements.procedure_id', 'ats.capacity'])
+                    ->where(['ats.sede_id' => $sede['id'], 'ats.active' => 1])
+                    ->join([
+                        [
+                            'table' => 'agreements_to_sedi',
+                            'alias' => 'ats',
+                            'left' => 'LEFT',
+                            'conditions' => 'Agreements.id = ats.agreement_id'
+                        ]
+                    ])
+                    ->first();
+                $res['sedi'][$key]['n_posti_convenzione'] = empty($agreement) ? '' : $agreement['ats']['capacity'];
+                $res['sedi'][$key]['id_procedura_affidamento'] = empty($agreement) ? '' : $agreement['procedure_id'];
             }
         }
         $gruppi = array();
@@ -275,6 +291,22 @@ class AziendaComponent extends Component
                 $sede['id_azienda'] = $azienda->id;
 
                 if ($entity = $sediTable->saveSede($sede)) {
+                    if(empty($sede['id']) || !is_int($sede['id'])){
+                        // Salvataggio notifica creazione struttura
+                        $saveType = 'CREATE_CENTER';
+                        $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                        $notification = $guestsNotifications->newEntity();
+                        $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                        $notificationData = [
+                            'type_id' => $notificationType->id,
+                            'azienda_id' => $entity->id_azienda,
+                            'sede_id' => $entity->id,
+                            'guest_id' => 0,
+                            'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                        ];
+                        $guestsNotifications->patchEntity($notification, $notificationData);
+                        $guestsNotifications->save($notification);
+                    }
                     $sediId[$sede['id']] = $entity->id;
                 }
             }

@@ -27,6 +27,7 @@ class WsController extends AppController
         $this->loadComponent('Aziende.Fornitori');
         $this->loadComponent('Aziende.Clienti');
         $this->loadComponent('Aziende.Guest');
+        $this->loadComponent('Aziende.Agreement');
     }
 
     public function isAuthorized($user)
@@ -107,6 +108,7 @@ class WsController extends AppController
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                 $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
@@ -326,8 +328,12 @@ class WsController extends AppController
 
         //echo "<pre>"; print_r($this->request->data); echo "</pre>";
 
+        $saveType = '';
+        $new = false;
         if($idSede == 0){
             unset($this->request->data['id']);
+            $saveType = 'CREATE_CENTER';
+            $new = true;
         }
 
         $sede = $this->Sedi->_newEntity(); 
@@ -340,7 +346,23 @@ class WsController extends AppController
         $sede->provincia =  $data['provincia'];
 
         if ($this->Sedi->_save($sede)) {
-            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+            // Salvataggio notifica creazione struttura
+            if (!empty($saveType)) {
+                $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                $notification = $guestsNotifications->newEntity();
+                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                $notificationData = [
+                    'type_id' => $notificationType->id,
+                    'azienda_id' => $sede->id_azienda,
+                    'sede_id' => $sede->id,
+                    'guest_id' => 0,
+                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                ];
+                $guestsNotifications->patchEntity($notification, $notificationData);
+                $guestsNotifications->save($notification);
+            }
+
+            $this->_result = array('response' => 'OK', 'data' => $new, 'msg' => "Salvato");
         }else{
             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
         }
@@ -1884,8 +1906,8 @@ class WsController extends AppController
                 }
 
 				$out['rows'][] = [
-                    $notification['a']['denominazione'],
-                    $notification['s']['indirizzo'].' '.$notification['s']['num_civico'].' - '.$notification['l']['des_luo'],
+                    '<a href="'.Router::url('/aziende/home/info/'.$notification['a']['id']).'">'.$notification['a']['denominazione'].'</a>',
+                    '<a href="'.Router::url('/aziende/sedi/index/'.$notification['a']['id']).'">'.$notification['s']['indirizzo'].' '.$notification['s']['num_civico'].' - '.$notification['l']['des_luo'].'</a>',
                     '<a href="'.Router::url('/aziende/guests/guest?sede='.$notification['s']['id'].'&guest='.$notification['g']['id']).'">'.$notification['g']['name'].' '.$notification['g']['surname'].'</a>',
                     $notification['u']['nome'].' '.$notification['u']['cognome'],
                     $notification['t']['msg_singular'],
@@ -1931,5 +1953,165 @@ class WsController extends AppController
             $this->_result['response'] = 'KO';
             $this->_result['msg'] = 'Errore nel salvataggio del valore: dati mancanti.';
         }
+    }
+
+    public function getAgreements($aziendaId)
+    {
+        $user = $this->request->session()->read('Auth.User');
+
+        if(!$this->Azienda->verifyUser($user, $aziendaId)){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+        $pass['query'] = $this->request->query;
+
+        $res = $this->Agreement->getAgreements($aziendaId, $pass);
+
+        $out['total_rows'] = $res['tot'];
+
+        if(!empty($res['res'])){
+
+            foreach ($res['res'] as $key => $agreement) {  
+
+                $buttons = "";
+				$buttons .= '<div class="button-group">';
+                $buttons .= '<a href="#" class="btn btn-xs btn-warning edit-agreement" data-id="'.$agreement['id'].'" data-toggle="tooltip" title="Modifica convenzione"><i class="fa fa-pencil"></i></a>'; 
+				$buttons .= '</div>';
+
+				$out['rows'][] = [
+                    $agreement['spa']['name'],
+                    empty($agreement['date_agreement']) ? '' : $agreement['date_agreement']->format('d/m/Y'),
+                    empty($agreement['date_agreement_expiration']) ? '' : $agreement['date_agreement_expiration']->format('d/m/Y'),
+                    empty($agreement['date_extension_expiration']) ? '' : $agreement['date_extension_expiration']->format('d/m/Y'),
+                    number_format($agreement['guest_daily_price'], 2, ',', ''),
+					$buttons
+				];
+
+            }
+
+        }
+
+        $this->_result = $out;
+    }
+
+    public function saveAgreement()
+    {
+        $data = $this->request->data;
+
+        $agreements = TableRegistry::get('Aziende.Agreements');
+
+		if(empty($data['id'])){
+            $entity = $agreements->newEntity();
+		}else{
+			$entity = $agreements->get($data['id']);
+        } 
+
+        $data['date_agreement'] = implode('-', array_reverse(explode('/', $data['date_agreement'])));
+        $data['date_agreement_expiration'] = implode('-', array_reverse(explode('/', $data['date_agreement_expiration'])));
+        $data['date_extension_expiration'] = empty($data['date_extension_expiration']) || $data['date_extension_expiration'] == 'null' ? '' : implode('-', array_reverse(explode('/', $data['date_extension_expiration'])));
+        $date['quest_daily_price'] = str_replace(',', '.', $data['guest_daily_price']);
+
+        $agreements->patchEntity($entity, $data);
+
+		if($agreements->save($entity)){
+            // Relazione convenzione - sede
+            $agreementsSedi = TableRegistry::get('Aziende.AgreementsToSedi');
+            $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $entity->azienda_id])->toArray();
+
+            $agreementsSedi->deleteAll(['agreement_id' => $entity->id, 'active' => 1]);
+
+            if (!empty($data['sedi'])) {
+                foreach ($data['sedi'] as $sedeId => $sede) {
+                    // Imposto non attive le relazioni della sede con altre convenzioni
+                    $agreementsSedi->updateAll(
+                        ['active' => false],
+                        ['agreement_id !=' => $entity->id, 'sede_id' => $sedeId]
+                    );
+
+                    // Salvo i dati della relazione della sede con la convenzione
+                    $agreementSede = $agreementsSedi->newEntity();
+                    $dataToSave = [
+                        'agreement_id' => $entity->id,
+                        'sede_id' => $sedeId,
+                        'active' => 1,
+                        'capacity' => $sede['capacity']
+                    ];
+                    $agreementsSedi->patchEntity($agreementSede, $dataToSave);
+                    if ($agreementsSedi->save($agreementSede)) {
+                        foreach ($sedi as $key => $sede) {
+                            if ($sede->id == $sedeId) {
+                                unset($sedi[$key]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Notifiche mancanza convenzione per struttura
+            $missing = false;
+            if (!empty($sedi)) {
+                $notifications = TableRegistry::get('Aziende.GuestsNotifications');
+                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => 'MISSING_AGREEMENT_CENTER'])->first();
+                foreach ($sedi as $sede) {
+                    $agreement = $agreementsSedi->find()->where(['sede_id' => $sede->id, 'active' => 1])->first();
+                    if (empty($agreement)) {
+                        $missing = true;
+                        $sedeNotified = $notifications->find()->where(['type_id' => $notificationType->id, 'sede_id' => $sede->id, 'done' => 0])->first();
+                        if (empty($sedeNotified)) {
+                            $notification = $notifications->newEntity();
+                            $notificationData = [
+                                'type_id' => $notificationType->id,
+                                'azienda_id' => $sede->id_azienda,
+                                'sede_id' => $sede->id,
+                                'guest_id' => 0,
+                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                            ];
+                            $notifications->patchEntity($notification, $notificationData);
+                            $notifications->save($notification);
+                        } else {
+                            $notificationData = [
+                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                            ];
+                            $notifications->patchEntity($sedeNotified, $notificationData);
+                            $notifications->save($sedeNotified);
+                        }
+                    }
+                }
+            }
+
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $missing;
+            $this->_result['msg'] = "Convenzione salvata con successo.";
+        }else{
+            $message = "Errore nel salvataggio dell'ospite."; 
+            $fieldLabelsList = $agreements->getFieldLabelsList();
+            foreach($entity->errors() as $field => $errors){ 
+                foreach($errors as $rule => $msg){ 
+                    $message .= "\n" . $fieldLabelsList[$field].': '.$msg;
+                }
+            }  
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = $message;
+        }
+    }
+
+    public function getAgreement($id)
+	{
+        $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['AgreementsToSedi']]);
+
+        $agreement['date_agreement'] = empty($agreement['date_agreement']) ? '' : $agreement['date_agreement']->format('d/m/Y');
+        $agreement['date_agreement_expiration'] = empty($agreement['date_agreement_expiration']) ? '' : $agreement['date_agreement_expiration']->format('d/m/Y');
+        $agreement['date_extension_expiration'] = empty($agreement['date_extension_expiration']) ? '' : $agreement['date_extension_expiration']->format('d/m/Y');
+
+		if($agreement){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $agreement;
+			$this->_result['msg'] = 'Convenzione recuperata correttamente.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore nel recupero della convenzione.';
+		}		
     }
 }

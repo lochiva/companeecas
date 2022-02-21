@@ -237,8 +237,23 @@ class SediComponent extends Component
 
     public function _get($id){
         $az = TableRegistry::get('Aziende.Sedi');
-        return $az->get($id);
-
+        $sede = $az->get($id);
+        $agreements = TableRegistry::get('Aziende.Agreements');
+        $agreement = $agreements->find()
+            ->select(['Agreements.procedure_id', 'ats.capacity'])
+            ->where(['ats.sede_id' => $id, 'ats.active' => 1])
+            ->join([
+                [
+                    'table' => 'agreements_to_sedi',
+                    'alias' => 'ats',
+                    'left' => 'LEFT',
+                    'conditions' => 'Agreements.id = ats.agreement_id'
+                ]
+            ])
+            ->first();
+        $sede['n_posti_convenzione'] = empty($agreement) ? '' : $agreement['ats']['capacity'];
+        $sede['id_procedura_affidamento'] = empty($agreement) ? '' : $agreement['procedure_id'];
+        return $sede;
     }
 
     public function _delete($doc){
