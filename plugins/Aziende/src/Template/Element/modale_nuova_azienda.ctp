@@ -329,6 +329,13 @@ use Cake\Routing\Router;
                                     <hr>
 
                                     <div class="form-group">
+                                        <label class="col-sm-2 control-label required" for="inputReferente">Nome referente</label>
+                                        <div class="col-sm-10">
+                                            <input required ng-model="sede.referente" type="text" placeholder="Nome referente" name="referente" id="inputReferente" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label class="col-sm-2 control-label" for="inputTelefono">Telefono</label>
                                         <div class="col-sm-10">
                                             <input ng-model="sede.telefono" type="text" placeholder="Telefono" name="telefono" id="inputTelefono" class="form-control">

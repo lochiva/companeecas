@@ -16,6 +16,8 @@ $(document).ready(function(){
 			var count = res.data;
 			if(count > 0){
 				$('.guests_notify_count_label').html(count);
+			} else {
+				$('.guests_notify_count_label').html('');
 			}
 		}
 	}).fail(function(richiesta,stato,errori){

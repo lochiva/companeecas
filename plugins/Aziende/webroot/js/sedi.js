@@ -300,9 +300,10 @@ function loadInputModale(idSede){
             $('#comuneValue').val(data.data.comune);
             $('[name="provincia"]').val(data.data.provincia).trigger('change');
             $('[name="nazione"]').val(data.data.nazione);
-            $('[name="Telefono"]').val(data.data.telefono);
+            $('[name="referente"]').val(data.data.referente);
+            $('[name="telefono"]').val(data.data.telefono);
             $('[name="cellulare"]').val(data.data.cellulare);
-            $('[name="Fax"]').val(data.data.fax);
+            $('[name="fax"]').val(data.data.fax);
             $('[name="email"]').val(data.data.email);
             $('[name="skype"]').val(data.data.skype);
             $('[name="n_posti_struttura"]').val(data.data.n_posti_struttura);
@@ -350,9 +351,10 @@ function clearModale(){
   $('#comuneValue').val("");
 	$('[name="comune"]').val("").trigger('change');
 	$('[name="nazione"]').val("");
-	$('[name="Telefono"]').val("");
+  $('[name="referente"]').val("");
+	$('[name="telefono"]').val("");
 	$('[name="cellulare"]').val("");
-	$('[name="Fax"]').val("");
+	$('[name="fax"]').val("");
 	$('[name="email"]').val("");
 	$('[name="skype"]').val("");
   $('[name="n_posti_struttura"]').val("");

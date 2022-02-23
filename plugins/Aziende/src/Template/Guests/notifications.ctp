@@ -54,7 +54,7 @@ use Cake\Routing\Router;
                                 <tr>
                                     <th>Ente</th>
                                     <th>Struttura</th>
-                                    <th>Ospite</th>
+                                    <!--<th>Ospite</th>-->
                                     <th>Operatore</th>
                                     <th>Operazione</th>
                                     <th class="filter-select filter-done">Gestita</th>

@@ -1908,12 +1908,12 @@ class WsController extends AppController
 				$out['rows'][] = [
                     '<a href="'.Router::url('/aziende/home/info/'.$notification['a']['id']).'">'.$notification['a']['denominazione'].'</a>',
                     '<a href="'.Router::url('/aziende/sedi/index/'.$notification['a']['id']).'">'.$notification['s']['indirizzo'].' '.$notification['s']['num_civico'].' - '.$notification['l']['des_luo'].'</a>',
-                    '<a href="'.Router::url('/aziende/guests/guest?sede='.$notification['s']['id'].'&guest='.$notification['g']['id']).'">'.$notification['g']['name'].' '.$notification['g']['surname'].'</a>',
+                    //'<a href="'.Router::url('/aziende/guests/guest?sede='.$notification['s']['id'].'&guest='.$notification['g']['id']).'">'.$notification['g']['name'].' '.$notification['g']['surname'].'</a>',
                     $notification['u']['nome'].' '.$notification['u']['cognome'],
                     $notification['t']['msg_singular'],
                     $checkDone,
-                    /*$notification['done'] ? $notification['u2']['nome'].' '.$notification['u2']['cognome'] : '',
-                    $notification['done'] ? (empty($notification['done_date']) ? '' : $notification['done_date']->format('d/m/Y')) : '',*/
+                    //$notification['done'] ? $notification['u2']['nome'].' '.$notification['u2']['cognome'] : '',
+                    //$notification['done'] ? (empty($notification['done_date']) ? '' : $notification['done_date']->format('d/m/Y')) : '',
 				];
 
             }
@@ -2011,7 +2011,7 @@ class WsController extends AppController
         $data['date_agreement'] = implode('-', array_reverse(explode('/', $data['date_agreement'])));
         $data['date_agreement_expiration'] = implode('-', array_reverse(explode('/', $data['date_agreement_expiration'])));
         $data['date_extension_expiration'] = empty($data['date_extension_expiration']) || $data['date_extension_expiration'] == 'null' ? '' : implode('-', array_reverse(explode('/', $data['date_extension_expiration'])));
-        $date['quest_daily_price'] = str_replace(',', '.', $data['guest_daily_price']);
+        $data['guest_daily_price'] = str_replace(',', '.', $data['guest_daily_price']);
 
         $agreements->patchEntity($entity, $data);
 

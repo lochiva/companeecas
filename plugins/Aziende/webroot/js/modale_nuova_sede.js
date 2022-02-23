@@ -120,6 +120,7 @@ function saveFormSede(){
 		var comune = $('[name="comune"]').val();
 		var provincia = $('[name="provincia"]').val();
 		var nazione = $('[name="nazione"]').val();
+		var referente = $('[name="referente"]').val();
 		var telefono = $('[name="telefono"]').val();
 		var cellulare = $('[name="cellulare"]').val();
 		var fax = $('[name="fax"]').val();
@@ -135,8 +136,8 @@ function saveFormSede(){
 			dataType: "json",
 			data:{id:id,id_azienda:id_azienda,id_tipo_ministero:id_tipo_ministero,id_tipo_capitolato:id_tipo_capitolato,id_tipologia_centro:id_tipologia_centro,
 				id_tipologia_ospiti:id_tipologia_ospiti,indirizzo:indirizzo,num_civico:num_civico,cap:cap,comune:comune,provincia:provincia,nazione:nazione,
-				telefono:telefono,cellulare:cellulare,fax:fax,email:email,skype:skype,n_posti_struttura:n_posti_struttura,n_posti_effettivi:n_posti_effettivi,
-				operativita:operativita,code_centro:code_centro},
+				referente:referente, telefono:telefono,cellulare:cellulare,fax:fax,email:email,skype:skype,n_posti_struttura:n_posti_struttura,
+				n_posti_effettivi:n_posti_effettivi,operativita:operativita,code_centro:code_centro},
 			success : function (data,stato) {
 				
 				if(data.response == "OK"){
@@ -151,6 +152,8 @@ function saveFormSede(){
 								var count = res.data;
 								if(count > 0){
 									$('.guests_notify_count_label').html(count);
+								} else {
+									$('.guests_notify_count_label').html('');
 								}
 							}
 						}).fail(function(richiesta,stato,errori){

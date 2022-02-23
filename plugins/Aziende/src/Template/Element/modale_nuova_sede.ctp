@@ -123,6 +123,13 @@ use Cake\Routing\Router;
                         <hr>
                         
                         <div class="form-group">
+                            <label class="col-sm-2 control-label required" for="inputReferente">Nome referente</label>
+                            <div class="col-sm-10">
+                                <input type="text" placeholder="Nome referente" name="referente" id="inputReferente" class="form-control required">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-2 control-label" for="inputTelefono">Telefono</label>
                             <div class="col-sm-10">
                                 <input type="text" placeholder="Telefono" name="telefono" id="inputTelefono" class="form-control">
@@ -176,14 +183,14 @@ use Cake\Routing\Router;
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                             <div class="col-sm-10">
-                                <input type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer" >
+                                <input disabled type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer" >
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="inputProceduraAffidamento">Procedura di affidamento</label>
                             <div class="col-sm-10">
-                                <select name="id_procedura_affidamento" id="inputProceduraAffidamento" class="form-control" >
+                                <select disabled name="id_procedura_affidamento" id="inputProceduraAffidamento" class="form-control" >
                                     <option value=""></option>
                                     <?php foreach ($procedureAffidamento as $procedura): ?>
                                     <option value="<?= $procedura->id ?>"><?= h($procedura->name) ?></option>

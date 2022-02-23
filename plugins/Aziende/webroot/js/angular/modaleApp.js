@@ -54,8 +54,8 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
             this.sede = {
                 id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo_ministero:'', id_tipo_capitolato:'', id_tipologia_centro:1, 
                 id_tipologia_ospiti:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', 
-                telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti_struttura:'', n_posti_effettivi:'', n_posti_convenzione:'',
-                id_procedura_affidamento:'', operativita:1, id: 'sede-'+vm.azienda.sedi.length, code_centro:''
+                referente:'', telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti_struttura:'', n_posti_effettivi:'', 
+                n_posti_convenzione:'', id_procedura_affidamento:'', operativita:1, id: 'sede-'+vm.azienda.sedi.length, code_centro:''
             };
         }
 
