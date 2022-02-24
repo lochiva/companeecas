@@ -25,7 +25,7 @@ $user = $this->request->session()->read('Auth.User');
 		<div id="box-benvenuto" class="box box-warning" style="text-align:center; padding:15px;">
 			<div class="row" style="margin:0;">  
 				<?php if ($user['role'] == 'admin' || ($user['role'] == 'ente' && $this->Utils->isValidEnte($user['id']))) { ?>
-					<img src="<?=Router::url('/img/logo_homepage.png');?>" class="logo_centro" />
+					<?= $this->Html->Image('/img/logo_homepage.png',['class'=>'logo_centro']) ?>
 					<h2>Benvenuta/o!</h2>
 					<br />
 					<p>Ti diamo il benvenuto su Companee.
