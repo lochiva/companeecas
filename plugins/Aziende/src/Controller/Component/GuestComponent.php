@@ -53,10 +53,10 @@ class GuestComponent extends Component
 		$columns = [
 			0 => ['val' => 'a.denominazione', 'type' => 'text'],
 			1 => ['val' => 'CONCAT(s.indirizzo, " ", s.num_civico, " - ", l.des_luo)', 'type' => 'text'],
-			//2 => ['val' => 'CONCAT(g.name, " ", g.surname)', 'type' => 'text'],
-			2 => ['val' => 'CONCAT(u.nome, " ", u.cognome)', 'type' => 'text'],
-			3 => ['val' => 't.msg_singular', 'type' => 'text'],
-			4 => ['val' => 'GuestsNotifications.done', 'type' => ''],
+			2 => ['val' => 'CONCAT(g.name, " ", g.surname)', 'type' => 'text'],
+			3 => ['val' => 'CONCAT(u.nome, " ", u.cognome)', 'type' => 'text'],
+			4 => ['val' => 't.msg_singular', 'type' => 'text'],
+			5 => ['val' => 'GuestsNotifications.done', 'type' => ''],
 			//6 => ['val' => 'CONCAT(u2.nome, " ", u2.cognome)', 'type' => 'text'],
 			//7 => ['val' => 'GuestsNotifications.done_date', 'type' => 'date']
         ];

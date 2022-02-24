@@ -6,13 +6,13 @@ use Cake\Routing\Router;
 <?= $this->Html->script('Aziende.guests', ['block']); ?>
 <section class="content-header">
     <h1>
-        Notifiche ospiti
-        <small>Gestione notifiche ospiti
+        Notifiche
+        <small>Gestione notifiche
         </small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li class="active">Notifiche ospiti</li>
+        <li class="active">Notifiche</li>
     </ol>
 </section>
 
@@ -24,7 +24,7 @@ use Cake\Routing\Router;
             <div id="box-guests" class="box box-guests">
                 <div class="box-header with-border">
                   <i class="fa fa-list-alt"></i>
-                  <h3 class="box-title"><?=__c('Lista notifiche ospiti')?></h3>
+                  <h3 class="box-title"><?=__c('Lista notifiche')?></h3>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-table-guests box-body">
@@ -54,7 +54,7 @@ use Cake\Routing\Router;
                                 <tr>
                                     <th>Ente</th>
                                     <th>Struttura</th>
-                                    <!--<th>Ospite</th>-->
+                                    <th>Ospite</th>
                                     <th>Operatore</th>
                                     <th>Operazione</th>
                                     <th class="filter-select filter-done">Gestita</th>
