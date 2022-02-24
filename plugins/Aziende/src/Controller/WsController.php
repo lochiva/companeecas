@@ -288,8 +288,9 @@ class WsController extends AppController
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                    $button.= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
-                    $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+                    $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
                     $button.= '</ul>';
                     $button.= '</div>';
                     $button.= '</div>';
@@ -2113,5 +2114,68 @@ class WsController extends AppController
 			$this->_result['response'] = "KO";
 			$this->_result['msg'] = 'Errore nel recupero della convenzione.';
 		}		
+    }
+
+    public function getGuestsForPresenze($sedeId = 0, $date = '')
+    {
+        $data = $this->request->query;
+
+        if (!empty($data['sede']) && !empty($data['date'])) {
+            $guests = TableRegistry::get('Aziende.Guests')->getGuestsForPresenze($data['sede'], $data['date']);
+
+            foreach ($guests as $index => $guest) {
+                if ($guest['presente'] === null) {
+                    $guest['not_saved'] = 1;
+                } else {
+                    $guest['not_saved'] = 0;
+                }
+                $guest['presente'] = filter_var($guest['presente'], FILTER_VALIDATE_BOOLEAN);
+            }
+
+            $this->_result['response'] = "OK";
+			$this->_result['data'] = $guests;
+			$this->_result['msg'] = 'Ospiti recuperati con successo.';
+        } else {
+            $this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore nel recupero degli ospiti: dati mancanti.';
+        }
+    }
+
+    public function saveGuestsPresenze()
+    {
+        $data = $this->request->data;
+        $guests = json_decode($data['guests']);
+
+        if (!empty($guests)) {
+            $presenze = TableRegistry::get('Aziende.Presenze');
+            $error = false;
+            foreach ($guests as $guest) {
+                $presenza = $presenze->newEntity();
+                $presenzaData = [
+                    'guest_id' => $guest->id,
+                    'date' => $data['date'],
+                    'sede_id' => $data['sede'],
+                    'presente' => filter_var($guest->presente, FILTER_VALIDATE_BOOLEAN)
+                ];
+                $presenze->patchEntity($presenza, $presenzaData);
+                if ($presenze->save($presenza)) {
+                    $guest->not_saved = 0;
+                } else {
+                    $error = true;
+                }
+            }
+
+            if ($error) {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = "Errore nel salvataggio delle presenze.";
+            }else{ 
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $guests;
+                $this->_result['msg'] = "Presenze salvate con successo.";
+            }
+        } else {
+            $this->_result['response'] = "KO";
+                $this->_result['msg'] = "Errore nel salvataggio delle presenze: non ci sono ospiti da slavare.";
+        }
     }
 }

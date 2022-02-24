@@ -10,7 +10,7 @@ use App\Model\Table\AppTable;
 /**
  * Agreements Model
  *
- * @property \Aziende\Model\Table\ProceduresTable&\Cake\ORM\Association\BelongsTo $Procedures
+ * @property \Aziende\Model\Table\SediProcedureAffidamentoTable&\Cake\ORM\Association\BelongsTo $Procedures
  * @property \Aziende\Model\Table\AgreementsToSediTable&\Cake\ORM\Association\HasMany $AgreementsToSedi
  *
  * @method \Aziende\Model\Entity\Agreement get($primaryKey, $options = [])

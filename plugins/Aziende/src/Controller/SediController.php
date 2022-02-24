@@ -78,4 +78,21 @@ class SediController extends AppController
         $this->set('procedureAffidamento',$procedureAffidamento);
     }
 
+    public function presenze()
+    {
+        $user = $this->request->session()->read('Auth.User');
+        $sede = TableRegistry::get('Aziende.Sedi')->get($this->request->query['sede'], ['contain' => ['Comuni', 'Province']]);
+
+        if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($sede['id_azienda']);
+
+        $this->set('sede', $sede);
+        $this->set('azienda', $azienda);
+    }
+
 }

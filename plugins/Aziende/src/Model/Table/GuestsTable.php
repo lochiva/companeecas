@@ -10,7 +10,7 @@ use App\Model\Table\AppTable;
 /**
  * Guests Model
  *
- * @property \Diary\Model\Table\SedesTable|\Cake\ORM\Association\BelongsTo $Sedes
+ * @property \Diary\Model\Table\SediTable|\Cake\ORM\Association\BelongsTo $Sedi
  * @property \Diary\Model\Table\GuestTypesTable|\Cake\ORM\Association\BelongsTo $GuestTypes
  * @property \Diary\Model\Table\ServiceTypesTable|\Cake\ORM\Association\BelongsTo $ServiceTypes
  *
@@ -224,6 +224,28 @@ class GuestsTable extends AppTable
             }
         }
         return true;
+    }
+
+    public function getGuestsForPresenze($sedeId, $date)
+    {
+        $guests = $this->find()
+            ->select($this)
+            ->select(['presente' => 'p.presente'])
+            ->where([
+                'Guests.sede_id' => $sedeId, 
+                'Guests.created <=' => $date.' 23:59:59'
+            ])
+            ->join([
+                [
+                    'table' => 'presenze',
+                    'alias' => 'p',
+                    'type' => 'LEFT',
+                    'conditions' => ['Guests.id = p.guest_id', 'p.date' => $date, 'p.sede_id' => $sedeId]
+                ]
+            ])
+            ->toArray();
+
+        return $guests;
     }
 
 }

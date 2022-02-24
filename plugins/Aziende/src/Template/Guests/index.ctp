@@ -34,6 +34,7 @@ $role = $this->request->session()->read('Auth.User.role');
                   <i class="fa fa-list-alt"></i>
                   <h3 class="box-title"><?=__c('Lista ospiti per la struttura '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['provincia']['s_prv'].') dell\'ente '.$azienda['denominazione'])?></h3>
                   <span hidden class="warning-out-of-spots">Posti esauriti</span>
+                  <a href="<?=Router::url('/aziende/sedi/presenze?sede='.$sede['id']);?>" id="sediPresenze" class="btn btn-primary btn-xs pull-right" style="margin-left:10px"><i class="fa fa-calendar"></i> Presenze</a>
                   <a href="<?=Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=""');?>" id="newGuest" class="btn btn-info btn-xs pull-right" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>

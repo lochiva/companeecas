@@ -280,3 +280,19 @@ a.contact-login:hover{
 .agreement-sede-check {
 	margin-right: 10px !important;
 }
+
+.check-presenza {
+	margin-right: 20px !important;
+	position: relative;
+    top: 2px;
+}
+
+#formPresenze label {
+	color: black;
+}
+
+.text-small-presenza {
+	font-size: 11px;
+	font-style: italic;
+	color: gray;
+}
