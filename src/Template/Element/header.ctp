@@ -6,6 +6,8 @@ $user = $this->request->session()->read('Auth.User');
 ?>
 <script>
 
+  var pathServer = '<?=Router::url('/')?>'; 
+
   $(document).ready(function(){
 
     $('#close-sidebar').click(function(){
