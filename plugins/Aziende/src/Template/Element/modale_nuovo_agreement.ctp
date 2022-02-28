@@ -1,5 +1,7 @@
 <?php
 use Cake\Routing\Router;
+
+$role = $this->request->session()->read('Auth.User.role'); 
 ?>
 
 <div class="modal fade" id="modalAgreement" tabindex="-1" role="dialog" aria-labelledby="modalAgreement">
@@ -13,6 +15,20 @@ use Cake\Routing\Router;
                 <form class="form-horizontal" id="formAgreement">
                     <input type="hidden" name="id" id="agreementId" value="">
                     <input type="hidden" name="azienda_id" id="aziendaId" value="<?=$azienda['id']?>">
+
+                    <?php if ($role == 'admin') { ?>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="inputApproved">Approvato</label>
+                            <div class="col-sm-8">
+                                <input hidden name="approved" value="0">
+                                <input type="checkbox" name="approved" id="inputApproved" value="1">
+                            </div>
+                        </div>
+                    <?php } else { ?>
+                        <div hidden class="approved-message col-sm-12">
+                            <span>La convenzione è stata approvata pertanto non è più modificabile.</span>
+                        </div>
+                    <?php } ?>
 
                     <div class="form-group">
                         <label class="col-sm-4 control-label required" for="inputProceduraAffidamento">Procedura di affidamento</label>

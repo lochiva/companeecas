@@ -2009,10 +2009,18 @@ class WsController extends AppController
 			$entity = $agreements->get($data['id']);
         } 
 
-        $data['date_agreement'] = implode('-', array_reverse(explode('/', $data['date_agreement'])));
-        $data['date_agreement_expiration'] = implode('-', array_reverse(explode('/', $data['date_agreement_expiration'])));
-        $data['date_extension_expiration'] = empty($data['date_extension_expiration']) || $data['date_extension_expiration'] == 'null' ? '' : implode('-', array_reverse(explode('/', $data['date_extension_expiration'])));
-        $data['guest_daily_price'] = str_replace(',', '.', $data['guest_daily_price']);
+        if (!empty($data['date_agreement'])) {
+            $data['date_agreement'] = implode('-', array_reverse(explode('/', $data['date_agreement'])));
+        }
+        if (!empty($data['date_agreement_expiration'])) {
+            $data['date_agreement_expiration'] = implode('-', array_reverse(explode('/', $data['date_agreement_expiration'])));
+        }
+        if (!empty($data['date_extension_expiration'])) {
+            $data['date_extension_expiration'] = empty($data['date_extension_expiration']) || $data['date_extension_expiration'] == 'null' ? '' : implode('-', array_reverse(explode('/', $data['date_extension_expiration'])));
+        }
+        if (!empty($data['guest_daily_price'])) {
+            $data['guest_daily_price'] = str_replace(',', '.', $data['guest_daily_price']);
+        }
 
         $agreements->patchEntity($entity, $data);
 

@@ -106,59 +106,40 @@ $(document).on('hide.bs.modal','#myModalSede', function (e) {
 function saveFormSede(){
 
 	if(formValidation('formSede')){
-	
-		var id = $('[name="id"]').val();
-		var id_azienda = $('[name="id_azienda"]').val();
-		var code_centro = $('[name="code_centro"]').val();
-		var id_tipo_ministero = $('[name="id_tipo_ministero"]').val();
-		var id_tipo_capitolato = $('[name="id_tipo_capitolato"]').val();
-		var id_tipologia_centro = $('[name="id_tipologia_centro"]').val();
-		var id_tipologia_ospiti = $('[name="id_tipologia_ospiti"]').val();
-		var indirizzo = $('[name="indirizzo"]').val();
-		var num_civico = $('[name="num_civico"]').val();
-		var cap = $('[name="cap"]').val();
-		var comune = $('[name="comune"]').val();
-		var provincia = $('[name="provincia"]').val();
-		var nazione = $('[name="nazione"]').val();
-		var referente = $('[name="referente"]').val();
-		var telefono = $('[name="telefono"]').val();
-		var cellulare = $('[name="cellulare"]').val();
-		var fax = $('[name="fax"]').val();
-		var email = $('[name="email"]').val();
-		var skype = $('[name="skype"]').val();
-		var n_posti_struttura = $('[name="n_posti_struttura"]').val();
-		var n_posti_effettivi = $('[name="n_posti_effettivi"]').val();
-		var operativita = $('[name="operativita"]').val();
 		
+		var id = $('[name="id"]').val();
+		var formData= new FormData($('#formSede')[0]);
+
 		$.ajax({
 			url : pathServer + "aziende/Ws/saveSede/" + id,
 			type: "POST",
+			processData: false,
+			contentType: false,
 			dataType: "json",
-			data:{id:id,id_azienda:id_azienda,id_tipo_ministero:id_tipo_ministero,id_tipo_capitolato:id_tipo_capitolato,id_tipologia_centro:id_tipologia_centro,
-				id_tipologia_ospiti:id_tipologia_ospiti,indirizzo:indirizzo,num_civico:num_civico,cap:cap,comune:comune,provincia:provincia,nazione:nazione,
-				referente:referente, telefono:telefono,cellulare:cellulare,fax:fax,email:email,skype:skype,n_posti_struttura:n_posti_struttura,
-				n_posti_effettivi:n_posti_effettivi,operativita:operativita,code_centro:code_centro},
+			data: formData,
 			success : function (data,stato) {
 				
 				if(data.response == "OK"){
 					if (data.data) {
-						//Aggiorna conteggio notifiche
-						$.ajax({
-							url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
-							type: "GET",
-							dataType: "json"
-						}).done(function(res) {
-							if(res.response == 'OK'){
-								var count = res.data;
-								if(count > 0){
-									$('.guests_notify_count_label').html(count);
-								} else {
-									$('.guests_notify_count_label').html('');
+						if (role == 'admin') {
+							//Aggiorna conteggio notifiche
+							$.ajax({
+								url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+								type: "GET",
+								dataType: "json"
+							}).done(function(res) {
+								if(res.response == 'OK'){
+									var count = res.data;
+									if(count > 0){
+										$('.guests_notify_count_label').html(count);
+									} else {
+										$('.guests_notify_count_label').html('');
+									}
 								}
-							}
-						}).fail(function(richiesta,stato,errori){
-							alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
-						});
+							}).fail(function(richiesta,stato,errori){
+								alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+							});
+						}
 					}
 					$('.close').click();
 				}else{

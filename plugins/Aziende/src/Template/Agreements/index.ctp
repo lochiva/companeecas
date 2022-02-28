@@ -5,6 +5,7 @@ $role = $this->request->session()->read('Auth.User.role');
 ?>
 <script>
     var azienda_id = '<?= $azienda['id'] ?>';
+    var role = '<?= $role ?>';
 </script>
 <?php $this->assign('title', 'Convenzioni') ?>
 <?= $this->Html->css('Aziende.aziende'); ?>

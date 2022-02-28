@@ -18,7 +18,7 @@ class AgreementsController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin'){
+        if($user['role'] == 'admin' || $user['role'] == 'ente'){
             return true;
         }else{
             $this->Flash->error('Accesso negato. Non sei autorizzato.');

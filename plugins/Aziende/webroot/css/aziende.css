@@ -296,3 +296,21 @@ a.contact-login:hover{
 	font-style: italic;
 	color: gray;
 }
+
+#inputApproved {
+	position: relative;
+    top: 8px;
+}
+
+.approved-message {
+	margin-bottom: 15px;
+	padding: 7px;
+    color: #000;
+	background-color: #ff9c4a;
+	font-weight: 700;
+	border-radius: 7px;
+}
+
+.disabled-approved {
+	background-color: #fff !important;
+}

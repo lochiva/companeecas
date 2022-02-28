@@ -1,5 +1,7 @@
 <?php
 use Cake\Routing\Router;
+
+$role = $this->request->session()->read('Auth.User.role'); 
 ?>
 
 <?php echo $this->Html->script('Aziende.modale_nuova_sede'); ?>
@@ -17,6 +19,20 @@ use Cake\Routing\Router;
 
                         <input type="hidden" name="id" id="idSede" value="">
                         <input type="hidden" name="id_azienda" id="idAzienda" value="<?=$idAzienda?>">
+
+                        <?php if ($role == 'admin') { ?>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="inputApproved">Approvato</label>
+                                <div class="col-sm-10">
+                                    <input hidden name="approved" value="0">
+                                    <input type="checkbox" name="approved" id="inputApproved" value="1">
+                                </div>
+                            </div>
+                        <?php } else { ?>
+                            <div hidden class="approved-message col-sm-12">
+                                <span>La struttura è stata approvata pertanto non è più modificabile.</span>
+                            </div>
+                        <?php } ?>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label required" for="inputCodeCentro">Codice centro</label>

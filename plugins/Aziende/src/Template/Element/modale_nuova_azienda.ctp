@@ -223,6 +223,13 @@ use Cake\Routing\Router;
                                     <input type="hidden" name="id_azienda" id="idAzienda" value="">
 
                                     <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="inputApproved">Approvato</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="sede.approved" type="checkbox" name="approved" id="inputApproved">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputCodeCentro">Codice centro</label>
                                         <div class="col-sm-10">
                                             <input required ng-model="sede.code_centro" type="text" maxlength="8" placeholder="Codice centro" name="codice centro" id="inputCodeCentro" class="form-control">

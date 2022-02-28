@@ -89,6 +89,9 @@ class AgreementsTable extends AppTable
             ->notEmptyString('guest_daily_price');
 
         $validator
+            ->boolean('approved');
+
+        $validator
             ->boolean('deleted');
 
         return $validator;
@@ -118,6 +121,7 @@ class AgreementsTable extends AppTable
             'date_agreement_expiration' => 'Data scadenza convenzione',
             'date_extension_expiration' => 'Data scadenza proroga',
             'guest_daily_ptice' => 'Prezzo giornaliero ospiti',
+            'approved' => 'Approvato',
             'deleted' => 'Cancellato',
             'created' => 'Data creazione',
             'modified' => 'Data modifica'

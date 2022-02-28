@@ -180,22 +180,24 @@ $(document).ready(function(){
                     if (res.data) {
                         alert('Attenzione! Una o più strutture non sono associate ad una convenzione.');
                         //Aggiorna conteggio notifiche
-                        $.ajax({
-                            url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
-                            type: "GET",
-                            dataType: "json"
-                        }).done(function(res) {
-                            if(res.response == 'OK'){
-                                var count = res.data;
-                                if(count > 0){
-                                    $('.guests_notify_count_label').html(count);
-                                } else {
-                                    $('.guests_notify_count_label').html('');
+                        if (role == 'admin') {
+                            $.ajax({
+                                url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+                                type: "GET",
+                                dataType: "json"
+                            }).done(function(res) {
+                                if(res.response == 'OK'){
+                                    var count = res.data;
+                                    if(count > 0){
+                                        $('.guests_notify_count_label').html(count);
+                                    } else {
+                                        $('.guests_notify_count_label').html('');
+                                    }
                                 }
-                            }
-                        }).fail(function(richiesta,stato,errori){
-                            alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
-                        });
+                            }).fail(function(richiesta,stato,errori){
+                                alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+                            });
+                        }
                     }
                 }else{
                     alert(res.msg);
@@ -216,6 +218,9 @@ $(document).on('click', '.edit-agreement', function(){
     }).done(function (res) {
         if(res.response == "OK"){
             $('#agreementId').val(res.data.id);
+            if (role == 'admin') {
+                $('#inputApproved').prop('checked', res.data.approved);
+            }
             $('#inputProceduraAffidamento').val(res.data.procedure_id);
             $('#inputDateAgreement').datepicker('setDate', res.data.date_agreement);
             $('#inputDateAgreementExpiration').datepicker('setDate', res.data.date_agreement_expiration);
@@ -237,6 +242,13 @@ $(document).on('click', '.edit-agreement', function(){
                     $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
                 }
             })
+
+            // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
+            if (role == 'ente' && res.data.approved) {
+                $('.approved-message').show();
+                disableApprovedModal();
+            }
+
             $('#modalAgreement').modal('show');
         }else{
             alert(res.msg);
@@ -251,12 +263,23 @@ $(document).on('hidden.bs.modal', '#modalAgreement', function() {
 });
 
 function clearModal(){
+    $('.approved-message').hide();
 	$('#agreementId').val("");
     $('#inputProceduraAffidamento').val("");
+    $('#inputProceduraAffidamento').prop("disabled", false);
+    $('#inputProceduraAffidamento').removeClass('disabled-approved');
     $('#inputDateAgreement').val("");
+    $('#inputDateAgreement').prop("disabled", false);
+    $('#inputDateAgreement').removeClass('disabled-approved');
     $('#inputDateAgreementExpiration').val("");
+    $('#inputDateAgreementExpiration').prop("disabled", false);
+    $('#inputDateAgreementExpiration').removeClass('disabled-approved');
     $('#inputDateExtensionExpiration').val("");
+    $('#inputDateExtensionExpiration').prop("disabled", false);
+    $('#inputDateExtensionExpiration').removeClass('disabled-approved');
     $('#inputGuestDailyPrice').val("");
+    $('#inputGuestDailyPrice').prop("disabled", false);
+    $('#inputGuestDailyPrice').removeClass('disabled-approved');
 
     $('.agreement-sede-check').each(function() {
         $(this).prop('checked', false);
@@ -269,5 +292,28 @@ function clearModal(){
         $(this).removeClass("required");
         $(this).prop("disabled", true);
         $(this).prop("title", '');
+        $(this).removeClass('disabled-approved');
+    });
+}
+
+function disableApprovedModal() {
+    $('#inputProceduraAffidamento').prop("disabled", true);
+    $('#inputProceduraAffidamento').addClass('disabled-approved');
+    $('#inputDateAgreement').prop("disabled", true);
+    $('#inputDateAgreement').addClass('disabled-approved');
+    $('#inputDateAgreementExpiration').prop("disabled", true);
+    $('#inputDateAgreementExpiration').addClass('disabled-approved');
+    $('#inputDateExtensionExpiration').prop("disabled", true);
+    $('#inputDateExtensionExpiration').addClass('disabled-approved');
+    $('#inputGuestDailyPrice').prop("disabled", true);
+    $('#inputGuestDailyPrice').addClass('disabled-approved');
+
+    $('.agreement-sede-check').each(function() {
+        $(this).prop("disabled", true);
+    });
+
+    $('.agreement-sede-capacity').each(function() {
+        $(this).prop("disabled", true);
+        $(this).addClass('disabled-approved');
     });
 }

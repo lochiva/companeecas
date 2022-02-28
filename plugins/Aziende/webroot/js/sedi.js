@@ -193,11 +193,6 @@ $(document).on('click','.edit',function(e){
 	//alert('edit ' + idAzienda);
 	loadInputModale(idSede);
 
-	enableInputModale();
-
-  $('#inputCapienzaConvenzione').prop('disabled', true);
-  $('#inputProceduraAffidamento').prop('disabled', true);
-
 });
 
 //#######################################################################################################################
@@ -289,6 +284,9 @@ function loadInputModale(idSede){
 
 	        	$('[name="id"]').val(idSede);
             $('[name="id_azienda"]').val(idAzienda);
+            if (role == 'admin') {
+                $('#inputApproved').prop('checked', data.data.approved);
+            }
             $('[name="code_centro"]').val(data.data.code_centro);
             $('[name="id_tipo_ministero"]').val(data.data.id_tipo_ministero);
             $('[name="id_tipo_capitolato"]').val(data.data.id_tipo_capitolato);
@@ -311,6 +309,17 @@ function loadInputModale(idSede){
             $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
+
+            enableInputModale();
+
+            // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
+            if (role == 'ente' && data.data.approved) {
+                $('.approved-message').show();
+                disableApprovedModal();
+            }
+
+            $('#inputCapienzaConvenzione').prop('disabled', true);
+            $('#inputProceduraAffidamento').prop('disabled', true);
 
 	        }else{
 	        	alert(data.msg);
@@ -337,29 +346,122 @@ function reloadTableSedi(){
 
 function clearModale(){
 
+  $('.approved-message').hide();
 	$('[name="id"]').val("");
 	$('[name="id_azienda"]').val(idAzienda);
   $('[name="code_centro"]').val("");
-	$('[name="id_tipo_ministero"]').val("");
+  $('[name="code_centro"]').prop("disabled", false);
+  $('[name="code_centro"]').removeClass('disabled-approved');
+  $('[name="id_tipo_ministero"]').val("");
+	$('[name="id_tipo_ministero"]').prop("disabled", false);
+  $('[name="id_tipo_ministero"]').removeClass('disabled-approved');
   $('[name="id_tipo_capitolato"]').val("");
+  $('[name="id_tipo_capitolato"]').prop("disabled", false);
+  $('[name="id_tipo_capitolato"]').removeClass('disabled-approved');
   $('[name="id_tipologia_centro"]').val(1);
+  $('[name="id_tipologia_centro"]').prop("disabled", false);
+  $('[name="id_tipologia_centro"]').removeClass('disabled-approved');
   $('[name="id_tipologia_ospiti"]').val("");
-	$('[name="indirizzo"]').val("");
-	$('[name="num_civico"]').val("");
-	$('[name="cap"]').val("");
-	$('[name="provincia"]').val("").trigger('change');
+  $('[name="id_tipologia_ospiti"]').prop("disabled", false);
+  $('[name="id_tipologia_ospiti"]').removeClass('disabled-approved');
+  $('[name="indirizzo"]').val("");
+	$('[name="indirizzo"]').prop("disabled", false);
+  $('[name="indirizzo"]').removeClass('disabled-approved');
+  $('[name="num_civico"]').val("");
+	$('[name="num_civico"]').prop("disabled", false);
+  $('[name="num_civico"]').removeClass('disabled-approved');
+  $('[name="cap"]').val("");
+	$('[name="cap"]').prop("disabled", false);
+  $('[name="cap"]').removeClass('disabled-approved');
+  $('[name="provincia"]').val("").trigger('change');
+	$('[name="provincia"]').prop("disabled", false);
+  $('[name="provincia"]').removeClass('disabled-approved');
   $('#comuneValue').val("");
-	$('[name="comune"]').val("").trigger('change');
-	$('[name="nazione"]').val("");
+  $('#comuneValue').prop("disabled", false);
+  $('#comuneValue').removeClass('disabled-approved');
+  $('[name="comune"]').val("").trigger('change');
+	$('[name="comune"]').prop("disabled", false);
+  $('[name="comune"]').removeClass('disabled-approved');
+  $('[name="nazione"]').val("");
+	$('[name="nazione"]').prop("disabled", false);
+  $('[name="nazione"]').removeClass('disabled-approved');
   $('[name="referente"]').val("");
-	$('[name="telefono"]').val("");
-	$('[name="cellulare"]').val("");
-	$('[name="fax"]').val("");
-	$('[name="email"]').val("");
-	$('[name="skype"]').val("");
+  $('[name="referente"]').prop("disabled", false);
+  $('[name="referente"]').removeClass('disabled-approved');
+  $('[name="telefono"]').val("");
+	$('[name="telefono"]').prop("disabled", false);
+  $('[name="telefono"]').removeClass('disabled-approved');
+  $('[name="cellulare"]').val("");
+	$('[name="cellulare"]').prop("disabled", false);
+  $('[name="cellulare"]').removeClass('disabled-approved');
+  $('[name="fax"]').val("");
+	$('[name="fax"]').prop("disabled", false);
+  $('[name="fax"]').removeClass('disabled-approved');
+  $('[name="email"]').val("");
+	$('[name="email"]').prop("disabled", false);
+  $('[name="email"]').removeClass('disabled-approved');
+  $('[name="skype"]').val("");
+	$('[name="skype"]').prop("disabled", false);
+  $('[name="skype"]').removeClass('disabled-approved');
   $('[name="n_posti_struttura"]').val("");
+  $('[name="n_posti_struttura"]').prop("disabled", false);
+  $('[name="n_posti_struttura"]').removeClass('disabled-approved');
   $('[name="n_posti_effettivi"]').val("");
+  $('[name="n_posti_effettivi"]').prop("disabled", false);
+  $('[name="n_posti_effettivi"]').removeClass('disabled-approved');
   $('[name="n_posti_convenzione"]').val("");
+  $('[name="n_posti_convenzione"]').removeClass('disabled-approved');
   $('[name="id_procedura_affidamento"]').val("");
+  $('[name="id_procedura_affidamento"]').removeClass('disabled-approved');
   $('[name="operativita"]').val(1);
+  $('[name="operativita"]').prop("disabled", false);
+  $('[name="operativita"]').removeClass('disabled-approved');
+
+}
+
+function disableApprovedModal() {
+  $('[name="code_centro"]').prop("disabled", true);
+  $('[name="code_centro"]').addClass('disabled-approved');
+	$('[name="id_tipo_ministero"]').prop("disabled", true);
+  $('[name="id_tipo_ministero"]').addClass('disabled-approved');
+  $('[name="id_tipo_capitolato"]').prop("disabled", true);
+  $('[name="id_tipo_capitolato"]').addClass('disabled-approved');
+  $('[name="id_tipologia_centro"]').prop("disabled", true);
+  $('[name="id_tipologia_centro"]').addClass('disabled-approved');
+  $('[name="id_tipologia_ospiti"]').prop("disabled", true);
+  $('[name="id_tipologia_ospiti"]').addClass('disabled-approved');
+	$('[name="indirizzo"]').prop("disabled", true);
+  $('[name="indirizzo"]').addClass('disabled-approved');
+	$('[name="num_civico"]').prop("disabled", true);
+  $('[name="num_civico"]').addClass('disabled-approved');
+	$('[name="cap"]').prop("disabled", true);
+  $('[name="cap"]').addClass('disabled-approved');
+	$('[name="provincia"]').prop("disabled", true);
+  $('[name="provincia"]').addClass('disabled-approved');
+  $('#comuneValue').prop("disabled", true);
+  $('#comuneValue').addClass('disabled-approved');
+	$('[name="comune"]').prop("disabled", true);
+  $('[name="comune"]').addClass('disabled-approved');
+	$('[name="nazione"]').prop("disabled", true);
+  $('[name="nazione"]').addClass('disabled-approved');
+  $('[name="referente"]').prop("disabled", true);
+  $('[name="referente"]').addClass('disabled-approved');
+	$('[name="telefono"]').prop("disabled", true);
+  $('[name="telefono"]').addClass('disabled-approved');
+	$('[name="cellulare"]').prop("disabled", true);
+  $('[name="cellulare"]').addClass('disabled-approved');
+	$('[name="fax"]').prop("disabled", true);
+  $('[name="fax"]').addClass('disabled-approved');
+	$('[name="email"]').prop("disabled", true);
+  $('[name="email"]').addClass('disabled-approved');
+	$('[name="skype"]').prop("disabled", true);
+  $('[name="skype"]').addClass('disabled-approved');
+  $('[name="n_posti_struttura"]').prop("disabled", true);
+  $('[name="n_posti_struttura"]').addClass('disabled-approved');
+  $('[name="n_posti_effettivi"]').prop("disabled", true);
+  $('[name="n_posti_effettivi"]').addClass('disabled-approved');
+  $('[name="n_posti_convenzione"]').addClass('disabled-approved');
+  $('[name="id_procedura_affidamento"]').addClass('disabled-approved');
+  $('[name="operativita"]').prop("disabled", true);
+  $('[name="operativita"]').addClass('disabled-approved');
 }
