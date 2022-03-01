@@ -48,6 +48,7 @@ use Cake\Routing\Router;
                                         <label class="col-sm-2 control-label" for="idSede">Struttura</label>
                                         <div class="col-sm-10">
                                             <select name="id_sede" id="idSede" class="form-control" >
+                                                <option value="0">-- Seleziona una struttura --</option>
                                                 <?php foreach ($sedi as $key => $sede) { ?>
                                                     <option value="<?=$sede->id?>"><?=$sede->indirizzo . " " . $sede->num_civico?></option>
                                                 <?php } ?>
@@ -72,7 +73,7 @@ use Cake\Routing\Router;
                                         <label class="col-sm-2 control-label" for="idSede">Struttura</label>
                                         <div class="col-sm-10">
                                             <select name="id_sede" id="idSede" class="form-control" >
-                                                <option></option>
+                                                <option value="0">-- Seleziona una struttura --</option>
                                                 <?php foreach ($sedi as $key => $sede) { ?>
                                                     <option value="<?=$sede->id?>"><?=$sede->indirizzo . " " . $sede->num_civico?></option>
                                                 <?php } ?>
