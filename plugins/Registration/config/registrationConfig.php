@@ -12,8 +12,8 @@ return [
         'RegistrationFrontEnd' => false
     ],
     'localconfig' => [
-        'PluginUsed' =>[
-          "Registration" => ['label' => 'Utenti' , 'icon' => 'glyphicon glyphicon-user']
+        'PluginUsed' => [
+          "Registration" => ['label' => 'Utenti' , 'icon' => 'glyphicon glyphicon-user', 'user_level' => 900]
         ]
     ]
 ];

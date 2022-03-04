@@ -333,7 +333,7 @@ return [
          'timestamp' => 'force'
      ],
      'ActivePlugins' => [
-        'Registration', 'Aziende', 'Remarks', 'AttachmentManager', 'Gdpr', 'Reports', 'Surveys' /*'Calendar' ,'Document','Scadenzario','Crm',
+        'Registration', 'Aziende', 'Remarks', 'AttachmentManager', 'Gdpr', /*'Reports', 'Surveys', 'Calendar' ,'Document','Scadenzario','Crm',
         'Cespiti', 'ImportData', 'WebApp', 'Leads', 'Tooltility'*/
     ]
 

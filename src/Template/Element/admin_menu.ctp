@@ -101,7 +101,7 @@ $adminControllers = Configure::read('localconfig.AdminControllers');
 
         foreach ($pluginList as $key => $plugin) {
 
-            if(isset($pluginUsed[$plugin])){
+            if(isset($pluginUsed[$plugin]) && $user['level'] >= $pluginUsed[$plugin]['user_level']){
 
               if(strtolower($this->plugin) == strtolower($plugin)){
                   $active = "active";
