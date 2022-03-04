@@ -87,4 +87,16 @@ class PresenzeTable extends Table
 
         return $rules;
     }
+
+    public function getPresenzeGuestPrecedentiCheckIn($guestId, $checkInDate)
+    {
+        $presenze = $this->find()
+            ->where([
+                'guest_id' => $guestId,
+                'date <' => $checkInDate
+            ])
+            ->toArray();
+            
+        return $presenze;
+    }
 }

@@ -314,3 +314,8 @@ a.contact-login:hover{
 .disabled-approved {
 	background-color: #fff !important;
 }
+
+.sede-textarea{
+    resize: none;
+    height: 75px !important;
+}

@@ -309,6 +309,7 @@ function loadInputModale(idSede){
             $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
+            $('[name="note"]').val(data.data.note);
 
             enableInputModale();
 
@@ -416,6 +417,9 @@ function clearModale(){
   $('[name="operativita"]').val(1);
   $('[name="operativita"]').prop("disabled", false);
   $('[name="operativita"]').removeClass('disabled-approved');
+  $('[name="note"]').val('');
+  $('[name="note"]').prop("disabled", false);
+  $('[name="note"]').removeClass('disabled-approved');
 
 }
 
@@ -464,4 +468,6 @@ function disableApprovedModal() {
   $('[name="id_procedura_affidamento"]').addClass('disabled-approved');
   $('[name="operativita"]').prop("disabled", true);
   $('[name="operativita"]').addClass('disabled-approved');
+  $('[name="note"]').prop("disabled", true);
+  $('[name="note"]').addClass('disabled-approved');
 }

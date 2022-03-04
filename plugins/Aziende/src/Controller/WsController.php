@@ -1620,19 +1620,19 @@ class WsController extends AppController
 
         $pass['query'] = $this->request->query;
 
-        if(isset($pass['query']['filter'][6])){
-			if($pass['query']['filter'][6] == 'No'){
-				$pass['query']['filter'][6] = 0;
-			}elseif($pass['query']['filter'][6] == 'Sì'){
-				$pass['query']['filter'][6] = 1;
+        if(isset($pass['query']['filter'][7])){
+			if($pass['query']['filter'][7] == 'No'){
+				$pass['query']['filter'][7] = 0;
+			}elseif($pass['query']['filter'][7] == 'Sì'){
+				$pass['query']['filter'][7] = 1;
 			}
 		}
 
-        if(isset($pass['query']['filter'][8])){
-			if($pass['query']['filter'][8] == 'No'){
-				$pass['query']['filter'][8] = 0;
-			}elseif($pass['query']['filter'][8] == 'Sì'){
-				$pass['query']['filter'][8] = 1;
+        if(isset($pass['query']['filter'][9])){
+			if($pass['query']['filter'][9] == 'No'){
+				$pass['query']['filter'][9] = 0;
+			}elseif($pass['query']['filter'][9] == 'Sì'){
+				$pass['query']['filter'][9] = 1;
 			}
 		}
 
@@ -1658,6 +1658,7 @@ class WsController extends AppController
                 }
 
 				$out['rows'][] = [
+                    empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y'),
                     $guest['cui'],
                     $guest['vestanet_id'],
                     $guest['name'],
@@ -1691,46 +1692,59 @@ class WsController extends AppController
             $saveType = 'UPDATE_GUEST';
         } 
 
-        $data['minor'] = filter_var($data['minor'], FILTER_VALIDATE_BOOLEAN);
-        $data['minor_family'] = filter_var($data['minor_family'], FILTER_VALIDATE_BOOLEAN);
-        $data['minor_alone'] = filter_var($data['minor_alone'], FILTER_VALIDATE_BOOLEAN);
-        $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
-        $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
-        $data['family_guest_id'] = $data['family_guest'];
-        $data['birthdate'] = new Time(substr($data['birthdate'], 0, 33));
-        $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '' : new Time(substr($data['draft_expiration'], 0, 33));
+        $data['check_in_date'] = empty($data['check_in_date']) || $data['check_in_date'] == 'null' ? NULL : new Time(substr($data['check_in_date'], 0, 33));
 
-        $guests->patchEntity($entity, $data);
+        $presenze = [];
+        if (!empty($data['id']) && !empty($data['check_in_date'])) {
+            // controllo che non esistano presenze segnate per una data precedente alla data di check-in che si desidera salvare
+            $presenze = TableRegistry::get('Aziende.Presenze')->getPresenzeGuestPrecedentiCheckIn($data['id'], $data['check_in_date']);
+        }
 
-		if($guests->save($entity)){
-            // Creazione notifica
-            $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-            $notification = $guestsNotifications->newEntity();
-            $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-            $sede = TableRegistry::get('Aziende.Sedi')->get($entity->sede_id);
-            $notificationData = [
-                'type_id' => $notificationType->id,
-                'azienda_id' => $sede->id_azienda,
-                'sede_id' => $sede->id,
-                'guest_id' => $entity->id,
-                'user_maker_id' => $this->request->session()->read('Auth.User.id')
-            ];
-            $guestsNotifications->patchEntity($notification, $notificationData);
-            $guestsNotifications->save($notification);
+        if (empty($presenze)) {
+            $data['minor'] = filter_var($data['minor'], FILTER_VALIDATE_BOOLEAN);
+            $data['minor_family'] = filter_var($data['minor_family'], FILTER_VALIDATE_BOOLEAN);
+            $data['minor_alone'] = filter_var($data['minor_alone'], FILTER_VALIDATE_BOOLEAN);
+            $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
+            $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
+            $data['family_guest_id'] = $data['family_guest'];
+            $data['birthdate'] = new Time(substr($data['birthdate'], 0, 33));
+            $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '' : new Time(substr($data['draft_expiration'], 0, 33));
 
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $entity->id;
-            $this->_result['msg'] = "Ospite salvato con successo.";
-        }else{
-            $message = "Errore nel salvataggio dell'ospite."; 
-            $fieldLabelsList = $guests->getFieldLabelsList();
-            foreach($entity->errors() as $field => $errors){ 
-                foreach($errors as $rule => $msg){ 
-                    $message .= "\n" . $fieldLabelsList[$field].': '.$msg;
-                }
-            }  
+            $guests->patchEntity($entity, $data);
+
+            if($guests->save($entity)){
+                // Creazione notifica
+                $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                $notification = $guestsNotifications->newEntity();
+                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                $sede = TableRegistry::get('Aziende.Sedi')->get($entity->sede_id);
+                $notificationData = [
+                    'type_id' => $notificationType->id,
+                    'azienda_id' => $sede->id_azienda,
+                    'sede_id' => $sede->id,
+                    'guest_id' => $entity->id,
+                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                ];
+                $guestsNotifications->patchEntity($notification, $notificationData);
+                $guestsNotifications->save($notification);
+
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $entity->id;
+                $this->_result['msg'] = "Ospite salvato con successo.";
+            }else{
+                $message = "Errore nel salvataggio dell'ospite."; 
+                $fieldLabelsList = $guests->getFieldLabelsList();
+                foreach($entity->errors() as $field => $errors){ 
+                    foreach($errors as $rule => $msg){ 
+                        $message .= "\n" . $fieldLabelsList[$field].': '.$msg;
+                    }
+                }  
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = $message;
+            }
+        } else { 
             $this->_result['response'] = "KO";
-            $this->_result['msg'] = $message;
+            $this->_result['msg'] = "Errore nel salvataggio dell'ospite: data di check-in non valida. Esistono delle presenze segnate per l'ospite con data precedente alla data di check-in che si desidera salvare.";
         }
     }
 

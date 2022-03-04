@@ -46,6 +46,13 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-body">
                         <form class="form-horizontal" id="formGuest">
                             <div class="form-group">
+                                <div class="col-md-4" :class="{'has-error': guestData.check_in_date.hasError}">
+                                    <label :class="{'required': guestData.check_in_date.required}" for="guestCheckInDate"><?= __('Check-in') ?></label>
+                                    <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
+                                        id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.cui.hasError}">
                                     <label :class="{'required': guestData.cui.required}" for="guestCui"><?= __('CUI') ?></label>
                                     <input type="text" maxlength="7" class="form-control" name="cui" id="guestCui" v-model="guestData.cui.value" @change="setDraft()" />

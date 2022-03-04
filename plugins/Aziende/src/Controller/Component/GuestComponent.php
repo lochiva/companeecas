@@ -11,19 +11,21 @@ class GuestComponent extends Component
         $guests = TableRegistry::get('Aziende.Guests');
 		
 		$columns = [
-			0 => ['val' => 'Guests.cui', 'type' => 'text'],
-			1 => ['val' => 'Guests.vestanet_id', 'type' => 'text'],
-			2 => ['val' => 'Guests.name', 'type' => 'text'],
-			3 => ['val' => 'Guests.surname', 'type' => 'text'],
-			4 => ['val' => 'Guests.birthdate', 'type' => 'date'],
-			5 => ['val' => 'Guests.sex', 'type' => 'text'],
-			6 => ['val' => 'Guests.draft', 'type' => 'number'],
-			7 => ['val' => 'Guests.draft_expiration', 'type' => 'date'],
-			8 => ['val' => 'Guests.suspended', 'type' => 'number']
+			0 => ['val' => 'Guests.check_in_date', 'type' => 'date'],
+			1 => ['val' => 'Guests.cui', 'type' => 'text'],
+			2 => ['val' => 'Guests.vestanet_id', 'type' => 'text'],
+			3 => ['val' => 'Guests.name', 'type' => 'text'],
+			4 => ['val' => 'Guests.surname', 'type' => 'text'],
+			5 => ['val' => 'Guests.birthdate', 'type' => 'date'],
+			6 => ['val' => 'Guests.sex', 'type' => 'text'],
+			7 => ['val' => 'Guests.draft', 'type' => 'number'],
+			8 => ['val' => 'Guests.draft_expiration', 'type' => 'date'],
+			9 => ['val' => 'Guests.suspended', 'type' => 'number']
         ];
         
         $opt['fields'] = [
 			'Guests.id', 
+			'Guests.check_in_date', 
 			'Guests.cui', 
 			'Guests.vestanet_id', 
 			'Guests.name',

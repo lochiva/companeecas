@@ -422,6 +422,13 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Note sulla struttura/ospiti</label>
+                                        <div class="col-sm-10">
+                                            <textarea ng-model="sede.note" name="note" class="form-control sede-textarea"></textarea>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

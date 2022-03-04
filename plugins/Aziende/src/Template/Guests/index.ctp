@@ -59,6 +59,7 @@ $role = $this->request->session()->read('Auth.User.role');
                         <table id="table-guests" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>Check-in</th>
                                     <th>CUI</th>
                                     <th>ID Vestanet</th>
                                     <th>Nome</th>

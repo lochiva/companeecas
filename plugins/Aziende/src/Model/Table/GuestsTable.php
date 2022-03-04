@@ -131,6 +131,10 @@ class GuestsTable extends AppTable
             ->allowEmptyString('draft_expiration', true);
 
         $validator
+            ->date('check_in_date')
+            ->allowEmptyString('check_in_date', true);
+
+        $validator
             ->boolean('deleted');
 
         return $validator;
@@ -155,6 +159,7 @@ class GuestsTable extends AppTable
         return [
             'id' => 'ID',
             'sede_id' => 'ID struttura',
+            'check_in_date' => 'Check-in',
             'cui' => 'CUI',
             'vestanet_id' => 'ID Vestanet',
             'name' => 'Nome',
@@ -233,7 +238,8 @@ class GuestsTable extends AppTable
             ->select(['presente' => 'p.presente'])
             ->where([
                 'Guests.sede_id' => $sedeId, 
-                'Guests.created <=' => $date.' 23:59:59'
+                'Guests.check_in_date <=' => $date,
+                'Guests.check_in_date IS NOT NULL'
             ])
             ->join([
                 [

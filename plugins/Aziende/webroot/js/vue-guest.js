@@ -16,6 +16,11 @@ var app = new Vue({
                 value: '',
                 required: true
             },
+            check_in_date: {
+                hasError: false,
+                value: new Date(),
+                required: false
+            },
             cui: {
                 hasError: false,
                 value: '',
@@ -121,6 +126,7 @@ var app = new Vue({
                 .then(res => {  
                     if (res.data.response == 'OK') { 
                         this.guestData.sede_id.value = res.data.data.sede_id;
+                        this.guestData.check_in_date.value = res.data.data.check_in_date;
                         this.guestData.cui.value = res.data.data.cui;
                         this.guestData.vestanet_id.value = res.data.data.vestanet_id;
                         this.guestData.name.value = res.data.data.name;
