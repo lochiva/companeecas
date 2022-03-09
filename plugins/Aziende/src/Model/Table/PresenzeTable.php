@@ -99,4 +99,30 @@ class PresenzeTable extends Table
             
         return $presenze;
     }
+
+    public function getPresenzeSedeForDay($sedeId, $day)
+    {
+        $presenze = $this->find()
+            ->where([
+                'sede_id' => $sedeId,
+                'date' => $day,
+                'presente' => 1
+            ])
+            ->toArray();
+            
+        return $presenze;
+    }
+
+    public function getPresenzeSedeForMonth($sedeId, $month)
+    {
+        $presenze = $this->find()
+            ->where([
+                'sede_id' => $sedeId,
+                'date LIKE' => $month.'%',
+                'presente' => 1
+            ])
+            ->toArray();
+            
+        return $presenze;
+    }
 }

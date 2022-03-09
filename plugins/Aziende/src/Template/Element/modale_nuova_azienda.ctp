@@ -394,6 +394,17 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="form-group">
+                                        <label class="col-sm-3 control-label" for="inputIncrementoPosti20">Incremento posti +20%</label>
+                                        <div class="col-sm-1">
+                                            <input type="radio" ng-model="sede.incremento_posti" ng-value="20" id="inputIncrementoPosti20" class="radio-sede">
+                                        </div>
+                                        <label class="col-sm-3 control-label" for="inputIncrementoPosti50">Incremento posti +50%</label>
+                                        <div class="col-sm-1">
+                                            <input type="radio" ng-model="sede.incremento_posti" ng-value="50" id="inputIncrementoPosti50" class="radio-sede">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                                         <div class="col-sm-10">
                                             <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >

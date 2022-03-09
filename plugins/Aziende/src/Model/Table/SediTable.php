@@ -62,8 +62,12 @@ class SediTable extends AppTable
 
         $entity = $this->patchEntity($entity, $data);
 
-        $entity->comune = $data['comune'];
-        $entity->provincia = $data['provincia'];
+        if (!empty($data['comune'])) {
+            $entity->comune = $data['comune'];
+        }
+        if (!empty($data['provincia'])) {
+            $entity->provincia = $data['provincia'];
+        }
 
         $entity->cleanDirty(['created','modified']);
         if($entity->dirty()){

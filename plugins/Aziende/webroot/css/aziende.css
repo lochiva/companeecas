@@ -282,9 +282,8 @@ a.contact-login:hover{
 }
 
 .check-presenza {
-	margin-right: 20px !important;
 	position: relative;
-    top: 2px;
+    top: 9px;
 }
 
 #formPresenze label {
@@ -318,4 +317,28 @@ a.contact-login:hover{
 .sede-textarea{
     resize: none;
     height: 75px !important;
+}
+
+.presenze-label {
+	text-align: left !important;
+}
+
+.check-presenze-all-guests {
+	margin-left: 10px !important;
+	position: relative;
+    top: 2px;
+}
+
+.div-label-guest-presenza {
+	padding-right: 0px !important;
+}
+
+.count-presenze {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.radio-sede {
+	position: relative;
+    top: 8px;
 }

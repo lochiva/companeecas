@@ -19,7 +19,7 @@ $(document).ready(function(){
               //2:provider,
           }
         },
-        headers: { 8: { filter: false, sorter:false} }
+        headers: { 8: { filter: false, sorter:false}, 9: { filter: false, sorter:false} }
     }).tablesorterPager({
 
           // **********************************
@@ -306,6 +306,7 @@ function loadInputModale(idSede){
             $('[name="skype"]').val(data.data.skype);
             $('[name="n_posti_struttura"]').val(data.data.n_posti_struttura);
             $('[name="n_posti_effettivi"]').val(data.data.n_posti_effettivi);
+            $('#inputIncrementoPosti'+data.data.incremento_posti).prop('checked', true);
             $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
@@ -410,6 +411,12 @@ function clearModale(){
   $('[name="n_posti_effettivi"]').val("");
   $('[name="n_posti_effettivi"]').prop("disabled", false);
   $('[name="n_posti_effettivi"]').removeClass('disabled-approved');
+  $('#inputIncrementoPosti20').prop("checked", false);
+  $('#inputIncrementoPosti20').prop("disabled", false);
+  $('#inputIncrementoPosti20').removeClass('disabled-approved');
+  $('#inputIncrementoPosti50').prop("checked", false);
+  $('#inputIncrementoPosti50').prop("disabled", false);
+  $('#inputIncrementoPosti50').removeClass('disabled-approved');
   $('[name="n_posti_convenzione"]').val("");
   $('[name="n_posti_convenzione"]').removeClass('disabled-approved');
   $('[name="id_procedura_affidamento"]').val("");
@@ -464,6 +471,10 @@ function disableApprovedModal() {
   $('[name="n_posti_struttura"]').addClass('disabled-approved');
   $('[name="n_posti_effettivi"]').prop("disabled", true);
   $('[name="n_posti_effettivi"]').addClass('disabled-approved');
+  $('#inputIncrementoPosti20').prop("disabled", true);
+  $('#inputIncrementoPosti20').addClass('disabled-approved');
+  $('#inputIncrementoPosti50').prop("disabled", true);
+  $('#inputIncrementoPosti50').addClass('disabled-approved');
   $('[name="n_posti_convenzione"]').addClass('disabled-approved');
   $('[name="id_procedura_affidamento"]').addClass('disabled-approved');
   $('[name="operativita"]').prop("disabled", true);

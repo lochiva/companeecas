@@ -33,23 +33,45 @@ $role = $this->request->session()->read('Auth.User.role');
                         <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
                     <div class="box-body">
-                        <form id="formPresenze">
+                        <form id="formPresenze" class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-sm-4">
                                     <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" 
                                         id="inputDate" v-model="date" @closed="loadGuests()"></datepicker>
                                 </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Totale presenze del giorno</label>
+                                    <span class="count-presenze">{{ count_presenze_day }}</span>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Totale presenze del mese</label>
+                                    <span class="count-presenze">{{ count_presenze_month }}</span>
+                                </div>
                                 <div class="clear-both"></div>
                             </div>
                             <div v-if="guests.length > 0">
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label presenze-label" for="checkAllGuests">Tutti gli ospiti</label>
+                                        <input type="checkbox" id="checkAllGuests" v-model="check_all_guests" class="check-presenze-all-guests" @change="checkAllGuests()">
+                                    </div>
+                                    <div class="clear-both"></div>
+                                </div>
                                 <div v-for="guest in guests" class="form-group">
-                                    <div class="col-sm-12">
-                                        <input type="checkbox" :id="'inputGuest'+guest.id" v-model="guest.presente" class="check-presenza">
-                                        <label class="control-label" :for="'inputGuest'+guest.id">
-                                            {{guest.name}} {{guest.surname}}
-                                            <span v-if="guest.suspended">(sospeso)</span>
-                                            <span v-if="guest.not_saved" class="text-small-presenza">(da salvare)</span>
-                                        </label>
+                                    <div class="col-sm-2 div-label-guest-presenza">
+                                        <div class="col-sm-2 div-label-guest-presenza">
+                                            <input type="checkbox" :id="'inputGuest'+guest.id" v-model="guest.presente" class="check-presenza">
+                                        </div>
+                                        <div class="col-sm-10 div-label-guest-presenza">
+                                            <label class="control-label presenze-label" :for="'inputGuest'+guest.id">
+                                                {{guest.name}} {{guest.surname}}
+                                                <span v-if="guest.suspended">(sospeso)</span>
+                                                <span v-if="guest.not_saved" class="text-small-presenza">(da salvare)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" v-model="guest.note" class="form-control">
                                     </div>
                                 </div>
                             </div>

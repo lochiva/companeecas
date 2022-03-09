@@ -149,6 +149,7 @@ class SediComponent extends Component
         $col[] = 'id_tipo_ministero';
         $col[] = 'id_tipo_capitolato';
         $col[] = 'nazione';
+        $col[] = 'n_posti_effettivi';
 
         //echo "<pre>"; print_r($opt); echo "</pre>";
 

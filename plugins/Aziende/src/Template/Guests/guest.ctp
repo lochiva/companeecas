@@ -108,7 +108,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                         id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.country_birth.hasError}">
-                                    <label :class="{'required': guestData.country_birth.required}" for="guestCountryBirth"><?= __('Paese di nascita') ?></label>
+                                    <label :class="{'required': guestData.country_birth.required}" for="guestCountryBirth"><?= __('Nazionalità') ?></label>
                                     <v-select name="country_birth" id="guestCountryBirth" :options="countries" v-model="guestData.country_birth.value"
                                         @search="searchCountry" placeholder="Seleziona una nazione" :filterable="false">
                                         <template #no-options="{ search, searching }">

@@ -235,7 +235,7 @@ class GuestsTable extends AppTable
     {
         $guests = $this->find()
             ->select($this)
-            ->select(['presente' => 'p.presente'])
+            ->select(['presente' => 'p.presente', 'note' => 'p.note'])
             ->where([
                 'Guests.sede_id' => $sedeId, 
                 'Guests.check_in_date <=' => $date,
@@ -250,6 +250,15 @@ class GuestsTable extends AppTable
                 ]
             ])
             ->toArray();
+
+        return $guests;
+    }
+
+    public function countGuestsForSede($sedeId)
+    {
+        $guests = $this->find()
+            ->where(['Guests.sede_id' => $sedeId])
+            ->count();
 
         return $guests;
     }

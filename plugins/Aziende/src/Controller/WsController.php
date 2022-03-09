@@ -295,6 +295,7 @@ class WsController extends AppController
                     $button.= '</div>';
                     $button.= '</div>';
 
+                    $countGuests = TableRegistry::get('Aziende.Guests')->countGuestsForSede($sede->id);
 
                     $rows[] = array(
                         htmlspecialchars($sede->code_centro),
@@ -305,6 +306,7 @@ class WsController extends AppController
                         htmlspecialchars($sede->cap),
                         htmlspecialchars($sede->c['des_luo']),
                         htmlspecialchars($sede->p['des_luo']),
+                        $countGuests.'/'.$sede->n_posti_effettivi,
                         $button
                     );
                 }
@@ -343,8 +345,12 @@ class WsController extends AppController
 
         $sede = $this->Sedi->_patchEntity($sede, $data);
 
-        $sede->comune =  $data['comune'];
-        $sede->provincia =  $data['provincia'];
+        if (!empty($data['comune'])) {
+            $sede->comune = $data['comune'];
+        }
+        if (!empty($data['provincia'])) {
+            $sede->provincia = $data['provincia'];
+        }
 
         if ($this->Sedi->_save($sede)) {
             // Salvataggio notifica creazione struttura
@@ -2154,8 +2160,17 @@ class WsController extends AppController
                 $guest['presente'] = filter_var($guest['presente'], FILTER_VALIDATE_BOOLEAN);
             }
 
+            $presenzeTable = TableRegistry::get('Aziende.Presenze');
+            //totale presenze ospiti per il giorno
+            $presenzeForDay = $presenzeTable->getPresenzeSedeForDay($data['sede'], $data['date']);
+            $countPresenzeDay = count($presenzeForDay);
+            //totale presenze ospiti per il mese
+            $month = substr($data['date'], 0, 7);
+            $presenzeForMonth = $presenzeTable->getPresenzeSedeForMonth($data['sede'], $month);
+            $countPresenzeMonth = count($presenzeForMonth);
+
             $this->_result['response'] = "OK";
-			$this->_result['data'] = $guests;
+			$this->_result['data'] = ['guests' => $guests, 'count_presenze_day' => $countPresenzeDay, 'count_presenze_month' => $countPresenzeMonth];
 			$this->_result['msg'] = 'Ospiti recuperati con successo.';
         } else {
             $this->_result['response'] = "KO";
@@ -2177,7 +2192,8 @@ class WsController extends AppController
                     'guest_id' => $guest->id,
                     'date' => $data['date'],
                     'sede_id' => $data['sede'],
-                    'presente' => filter_var($guest->presente, FILTER_VALIDATE_BOOLEAN)
+                    'presente' => filter_var($guest->presente, FILTER_VALIDATE_BOOLEAN),
+                    'note' => $guest->note
                 ];
                 $presenze->patchEntity($presenza, $presenzaData);
                 if ($presenze->save($presenza)) {
@@ -2191,8 +2207,17 @@ class WsController extends AppController
                 $this->_result['response'] = "KO";
                 $this->_result['msg'] = "Errore nel salvataggio delle presenze.";
             }else{ 
+                $presenzeTable = TableRegistry::get('Aziende.Presenze');
+                //totale presenze ospiti per il giorno
+                $presenzeForDay = $presenzeTable->getPresenzeSedeForDay($data['sede'], $data['date']);
+                $countPresenzeDay = count($presenzeForDay);
+                //totale presenze ospiti per il mese
+                $month = substr($data['date'], 0, 7);
+                $presenzeForMonth = $presenzeTable->getPresenzeSedeForMonth($data['sede'], $month);
+                $countPresenzeMonth = count($presenzeForMonth);
+
                 $this->_result['response'] = "OK";
-                $this->_result['data'] = $guests;
+                $this->_result['data'] = ['guests' => $guests, 'count_presenze_day' => $countPresenzeDay, 'count_presenze_month' => $countPresenzeMonth];
                 $this->_result['msg'] = "Presenze salvate con successo.";
             }
         } else {

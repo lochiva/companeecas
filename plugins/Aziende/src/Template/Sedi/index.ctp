@@ -70,12 +70,13 @@ $user = $this->request->session()->read('Auth.User');
                                     <th>Cap</th>
                                     <th>Comune</th>
                                     <th>Provincia</th>
+                                    <th>Posti</th>
                                     <th style="min-width:110px"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="8">Non ci sono dati</td>
+                                    <td colspan="10">Non ci sono dati</td>
                                 </tr>
                             </tbody>
                         </table>

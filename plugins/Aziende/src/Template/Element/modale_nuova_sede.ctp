@@ -197,6 +197,17 @@ $role = $this->request->session()->read('Auth.User.role');
                         </div>
 
                         <div class="form-group">
+                            <label class="col-sm-3 control-label" for="inputIncrementoPosti20">Incremento posti +20%</label>
+                            <div class="col-sm-1">
+                                <input type="radio" name="incremento_posti" id="inputIncrementoPosti20" value="20" class="radio-sede">
+                            </div>
+                            <label class="col-sm-3 control-label" for="inputIncrementoPosti50">Incremento posti +50%</label>
+                            <div class="col-sm-1">
+                                <input type="radio" name="incremento_posti" id="inputIncrementoPosti50" value="50" class="radio-sede">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                             <div class="col-sm-10">
                                 <input disabled type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer" >
