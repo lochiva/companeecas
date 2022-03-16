@@ -107,5 +107,38 @@ class SediTable extends AppTable
 					->toArray();
 
     }
+
+    public function searchTransferSedi($sedeId, $aziendaId, $search)
+    {
+        return $this->find()
+            ->select([
+                'Sedi.id',
+                'label' => 'CONCAT(
+                    Sedi.indirizzo, 
+                    " ", 
+                    Sedi.num_civico, 
+                    ", ", 
+                    l.des_luo, 
+                    " (", 
+                    l.s_prv, 
+                    ")"
+                )'
+            ])
+            ->where([ 
+                'Sedi.id !=' => $sedeId,
+                'Sedi.id_azienda' => $aziendaId
+            ])
+            ->join([
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'l',
+                    'type' => 'left',
+                    'conditions' => 'l.c_luo = Sedi.comune'
+                ],
+            ])
+            ->having(['label LIKE' => '%'.$search.'%'])
+            ->order('label ASC')
+            ->toArray();
+    }
     
 }

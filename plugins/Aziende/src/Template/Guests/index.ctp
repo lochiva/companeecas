@@ -5,6 +5,11 @@ $role = $this->request->session()->read('Auth.User.role');
 ?>
 <script>
     var sede_id = '<?= $sede['id'] ?>';
+    var statuses = JSON.parse('<?= json_encode($statuses) ?>');
+    var statusesList = [];
+    Object.keys(statuses).forEach(function(key){
+        statusesList.push(statuses[key].name);
+    }); 
 </script>
 <?php $this->assign('title', 'Ospiti') ?>
 <?= $this->Html->css('Aziende.guests'); ?>
@@ -55,6 +60,10 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
 
+                    <div class="table-actions col-sm-6">
+                        <input id="showOld" type="checkbox"> Mostra ospiti non più presenti in struttura
+                    </div>
+
                     <div class="table-content">
                         <table id="table-guests" class="table table-bordered table-hover">
                             <thead>
@@ -69,6 +78,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <th class="filter-select filter-draft">Stato bozza</th>
                                     <th>Scadenza stato bozza</th>
                                     <th class="filter-select filter-suspended">Sospeso</th>
+                                    <th class="filter-select filter-status">Stato</th>
                                     <th width="70px" class="filter-false" data-sorter="false"></th>
                                 </tr>
                             </thead>

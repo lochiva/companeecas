@@ -171,3 +171,7 @@ div.edit-user div.password input {
 .passtrengthMeter::after {
     bottom: -4px !important;
 }
+.input-checkbox {
+	margin: 04px 0px 0px 0px !important;
+	width: auto !important;
+}

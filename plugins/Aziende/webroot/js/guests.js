@@ -59,7 +59,9 @@ $(document).ready(function(){
                         'No': function(e,n,f,i,$r){return e===f}
                     }
                 },
-                filter_selectSource: {}
+                filter_selectSource: {
+                    '.filter-status': statusesList
+                }
             },
         }).tablesorterPager({
             container: $("#pager-guests"),
@@ -69,8 +71,8 @@ $(document).ready(function(){
             // modify the url after all processing has been applied
             customAjaxUrl: function(table, url) {
                 // manipulate the url string as you desire
-            // url += '&cPage=' + window.location.pathname;
-            // trigger my custom event
+                url += '&showOld=' + $('#showOld').is(':checked');
+                // trigger my custom event
                 $(table).trigger('changingUrl', url);
                 // send the server the current page
                 $('#template-spinner').show();
@@ -149,6 +151,10 @@ $(document).ready(function(){
 
         });
     }
+
+    $('#showOld').change(function() {
+        $('#table-guests').trigger('update');
+    });
     
     $(document).on('click', '.delete-guest', function(){
         var guest_id = $(this).attr('data-id');

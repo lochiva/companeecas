@@ -4,7 +4,7 @@ namespace Aziende\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Sondaggio Entity.
+ * Guest Entity.
  */
 class Guest extends Entity
 {

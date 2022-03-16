@@ -1642,7 +1642,9 @@ class WsController extends AppController
 			}
 		}
 
-        $res = $this->Guest->getGuests($sedeId, $pass);
+        $showOld =  filter_var($pass['query']['showOld'], FILTER_VALIDATE_BOOLEAN);
+
+        $res = $this->Guest->getGuests($sedeId, $showOld, $pass);
 
         $out['total_rows'] = $res['tot'];
 
@@ -1663,6 +1665,8 @@ class WsController extends AppController
                     $alertDraftIcon = '<span class="alert-draft" data-toggle="tooltip" title="Inserire il  CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
                 }
 
+                $status = '<span class="guest-status" style="background-color: '.$guest['gs']['color'].'">'.$guest['gs']['name'].'</span>';
+
 				$out['rows'][] = [
                     empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y'),
                     $guest['cui'],
@@ -1674,6 +1678,7 @@ class WsController extends AppController
                     $guest['draft'] ? 'Sì' : 'No',
                     $alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')),
                     $guest['suspended'] ? 'Sì' : 'No',
+                    $status,
 					$buttons
 				];
 
@@ -1813,6 +1818,17 @@ class WsController extends AppController
         }
 
 		if($guest){
+            if ($guest->status_id != 1) {
+                //Dati per messaggi di stato
+                $lastHistory = $guestsHistory->getLastGuestHistoryByStatus($guest->id, $guest->status_id);
+                $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
+                $guest['status'] = $guest->status_id;
+                $guest['exit_type'] = $exitType['name'];
+                $guest['operation_date'] = $lastHistory->operation_date->format('d/m/Y');
+                $guest['operation_note'] = $lastHistory->note;
+                $guest['destination'] = '';
+                $guest['provenance'] = '';
+            }
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $guest;
 			$this->_result['msg'] = 'Ospite recuperato correttamente.';
@@ -2224,5 +2240,201 @@ class WsController extends AppController
             $this->_result['response'] = "KO";
                 $this->_result['msg'] = "Errore nel salvataggio delle presenze: non ci sono ospiti da slavare.";
         }
+    }
+
+    public function loadGuestHistory($guestId)
+    {
+        $guest = TableRegistry::get('Aziende.Guests')->get($guestId);
+
+        $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+
+        $history = $guestsHistory->getHistoryGuest($guestId);
+
+        foreach($history as $h){
+            $h->operation_date = empty($h->operation_date) ? '' : $h->operation_date->format('d/m/Y');
+        }
+
+        $this->_result['response'] = "OK";
+        $this->_result['data'] = $history;
+        $this->_result['msg'] = "";
+    }
+
+    public function getExitTypes()
+	{
+		$table = TableRegistry::get('Aziende.GuestsExitTypes');
+
+		$exitTypes = $table->find()->toArray();
+
+        $res = [];
+        foreach ($exitTypes as $type) {
+            $res[$type['id']] = $type;
+        }
+
+		if($res){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $res;
+			$this->_result['msg'] = 'Tipologie uscite recuperate con successo.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore nel recupero delle tipologie uscite.';
+		}		
+    }
+
+    public function getTransferAziendaDefault($sedeId) 
+    {
+        $azienda = TableRegistry::get('Aziende.Aziende')->getTransferAziendaDefault($sedeId);
+
+		if($azienda){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $azienda;
+			$this->_result['msg'] = 'Ente recuperato con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ente trovato.';
+		}		
+    }
+
+    public function searchTransferAziende($search = "") 
+    {
+        $aziende = TableRegistry::get('Aziende.Aziende')->searchTransferAziende($search);
+
+		if($aziende){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $aziende;
+			$this->_result['msg'] = 'Enti recuperati con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ente trovato.';
+		}		
+    }
+
+    public function searchTransferSedi($sedeId, $aziendaId, $search = "") 
+    {
+        $sedi = TableRegistry::get('Aziende.Sedi')->searchTransferSedi($sedeId, $aziendaId, $search);
+
+		if($sedi){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $sedi;
+			$this->_result['msg'] = 'Strutture recuperate con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessuna struttura trovata.';
+		}		
+    }
+
+    public function exitProcedure()
+    {
+        $data = $this->request->data;
+      
+        $guests = TableRegistry::get('Aziende.Guests');
+        $guest = $guests->get($data['guest_id']); 
+
+        $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
+
+        if ($exitType['required_confirmation']) {
+            $status = 2;
+        } else {
+            $status = 3;
+        }
+
+        //aggiornamento storico
+        $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+        $history = $guestsHistory->newEntity();
+
+        $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+        $historyData['guest_id'] = $guest->id;
+        $historyData['azienda_id'] = $sede->id_azienda;
+        $historyData['sede_id'] = $guest->sede_id;
+        $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+        $historyData['operation_date'] = date('Y-m-d');
+        $historyData['guest_status_id'] = $status;
+        $historyData['exit_type_id'] = $data['exit_type_id'];
+        $historyData['note'] = $data['note'];
+
+        $guestsHistory->patchEntity($history, $historyData);
+
+        if ($guestsHistory->save($history)) {
+
+            $guest->status = $status;
+
+            if($guests->save($guest)){
+                $res['status'] = $status;
+                $res['exit_type'] = $exitType['name'];
+                $res['date'] = $history->operation_date->format('d/m/Y');
+                $res['note'] = $history->note;
+
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $res;
+                $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
+            }else{
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite.';
+            }
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
+        }	
+    }
+
+    public function confirmExit()
+    {
+        $data = $this->request->data;
+      
+        $guests = TableRegistry::get('Aziende.Guests');
+        $guest = $guests->get($data['guest_id']);
+
+        $status = 3;
+
+        //aggiornamento storico
+        $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+        $history = $guestsHistory->newEntity();
+
+        $lastHistory = $guestsHistory->getLastGuestHistoryByStatus($guest->id, 2);
+        $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
+        $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+        $historyData['guest_id'] = $guest->id;
+        $historyData['azienda_id'] = $sede->id_azienda;
+        $historyData['sede_id'] = $guest->sede_id;
+        $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+        $historyData['operation_date'] = date('Y-m-d');
+        $historyData['guest_status_id'] = $status;
+        $historyData['exit_type_id'] = $lastHistory->exit_type_id;
+        $historyData['note'] = $lastHistory->note;
+
+        $guestsHistory->patchEntity($history, $historyData);
+
+        if ($guestsHistory->save($history)) {
+
+            $guest->status = $status;
+
+            if($guests->save($guest)){
+                $res['status'] = $status;
+                $res['exit_type'] = $exitType['name'];
+                $res['date'] = $history->operation_date->format('d/m/Y');
+                $res['note'] = $history->note;
+
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $res;
+                $this->_result['msg'] = 'Uscita dell\'ospite confermata con successo.';
+            }else{
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite.';
+            }	
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
+        }
+    }
+
+    public function transferProcedure()
+    {
+        
+    }
+
+    public function acceptTransfer()
+    {
+       
     }
 }

@@ -16,12 +16,18 @@ return [
     ],
     'localconfig' => [
         'PluginUsed' =>[
-            'Aziende' => ['label' => 'Enti' , 'icon' => 'fa fa-building', 'user_level' => 500, 'controllers' => [
-              //'orders_status' => 'Stati degli ordini',
-              'contatti_ruoli' => 'Ruoli dei contatti',
-              'sedi_tipi' => 'Tipi di strutture',
-              'aziende_gruppi' => 'Gruppi Enti'
-              ]]
+            'Aziende' => [
+                'label' => 'Enti' , 
+                'icon' => 'fa fa-building', 
+                'user_level' => 500, 
+                'controllers' => [
+                    //'orders_status' => 'Stati degli ordini',
+                    'contatti_ruoli' => 'Ruoli dei contatti',
+                    'sedi_tipi' => 'Tipi di strutture',
+                    'aziende_gruppi' => 'Gruppi Enti',
+                    'guests_exit_types' => 'Tipologie uscite ospiti'
+                ]
+            ]
         ]
     ]
 ];

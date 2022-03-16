@@ -148,4 +148,39 @@ class AziendeTable extends AppTable
           return false;
       }
 
+      public function searchTransferAziende($search)
+      {
+          return $this->find()
+              ->select([
+                'Aziende.id',
+                'label' => 'Aziende.denominazione'
+              ])
+              ->where([
+                'Aziende.denominazione LIKE' => '%'.$search.'%'
+              ])
+              ->order('Aziende.denominazione ASC')
+              ->toArray();
+      }
+
+      public function getTransferAziendaDefault($sedeId)
+      {
+          return $this->find()
+              ->select([
+                'Aziende.id',
+                'label' => 'Aziende.denominazione'
+              ])
+              ->where([
+                's.id' => $sedeId
+              ])
+              ->join([
+                [
+                  'table' => 'sedi',
+                  'alias' => 's',
+                  'type' => 'INNER',
+                  'conditions' => 's.id_azienda = Aziende.id'
+                ]
+              ])
+              ->first();
+      }
+
 }

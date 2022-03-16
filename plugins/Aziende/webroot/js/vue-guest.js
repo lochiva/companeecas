@@ -92,8 +92,53 @@ var app = new Vue({
                 required: false
             },
         },
+        guestStatus: '',
         countries: [],
         familyGuests: [],
+        guestHistory: [],
+        exitTypes: [],
+        exitProcedureData: {
+            exit_type_id: {
+                required: true,
+                hasError: false,
+                value: ''
+            },
+            note:  {
+                required: false,
+                hasError: false,
+                value: ''
+            }
+        },
+        exitData: {
+            type: '',
+            date: '',
+            note: '',
+        },
+        transferAziende: [],
+        transferSedi: [],
+        transferProcedureData: {
+            azienda: {
+                required: true,
+                hasError: false,
+                value: ''
+            },
+            sede: {
+                required: true,
+                hasError: false,
+                value: ''
+            },
+            note: {
+                required: false,
+                hasError: false,
+                value: ''
+            }
+        },
+        transferData: {
+            destination: '',
+            provenance: '',
+            date: '',
+            note: '',
+        },
         datepickerItalian: vdp_translation_it.js,
         loadedData: ''
     },
@@ -116,6 +161,16 @@ var app = new Vue({
         if(this.guestData.id.value){
             this.loadGuest(this.guestData.id.value);
         }
+
+        let modalGuestExit = this.$refs.modalGuestExit; 
+        $(modalGuestExit).on('hidden.bs.modal', () => {
+            this.clearExitProcedureData();
+        });
+
+        let modalGuestTransfer = this.$refs.modalGuestTransfer; 
+        $(modalGuestTransfer).on('hidden.bs.modal', () => {
+            this.clearTransferProcedureData();
+        });
 
     },
        
@@ -153,6 +208,10 @@ var app = new Vue({
                         this.guestData.suspended.value = res.data.data.suspended;
 
                         this.loadedData = JSON.stringify(this.guestData);
+
+                        this.guestStatus = res.data.data.status_id;
+
+                        this.loadGuestHistory();
 
                     } else {
                         alert(res.data.msg);
@@ -348,7 +407,282 @@ var app = new Vue({
                 this.guestData.family_guest.required = false;
                 this.guestData.minor_family.value = '';
             }
-        }
+        },
+
+        loadGuestHistory: function() {
+            axios.get(pathServer + 'aziende/ws/loadGuestHistory/' + this.guestData.id.value)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.guestHistory = res.data.data; 
+                } else {
+                    alert(res.data.msg);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+
+        openExitModal: function() {
+            axios.get(pathServer + 'aziende/ws/getExitTypes')
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.exitTypes = res.data.data; 
+                        let modalGuestExit = this.$refs.modalGuestExit;
+                        $(modalGuestExit).modal('show');
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+        },
+
+        updateExitNote: function() {
+            if (this.exitProcedureData.exit_type_id.value && this.exitTypes[this.exitProcedureData.exit_type_id.value].required_note) {
+                this.exitProcedureData.note.required = true;
+            } else {
+                this.exitProcedureData.note.hasError = false;
+                this.exitProcedureData.note.required = false;
+            }
+        },
+
+        executeExitProcedure: function() { 
+            var error = false;
+
+            Object.keys(this.exitProcedureData).forEach((prop) => {
+                if (this.exitProcedureData[prop].required && (this.exitProcedureData[prop].value == "" || this.exitProcedureData[prop].value == null)) {
+                    error = true;
+                    this.exitProcedureData[prop].hasError = true;
+                } else {
+                    this.exitProcedureData[prop].hasError = false;
+                }
+            });                 
+
+            if(error){
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            }else{ 
+                let params = new URLSearchParams();
+                params.append('guest_id', this.guestData.id.value);
+                Object.keys(this.exitProcedureData).forEach((prop) => {
+                    params.append(prop, this.exitProcedureData[prop].value);
+                });
+    
+                axios.post(pathServer + 'aziende/ws/exitProcedure', params)
+                .then(res => {
+                    if (res.data.response == 'OK') {
+                        alert(res.data.msg);
+                        this.guestStatus = res.data.data.status;
+                        this.exitData.type = res.data.data.exit_type;
+                        this.exitData.date = res.data.data.date;
+                        this.exitData.note = res.data.data.note;
+    
+                        this.loadGuestHistory();
+    
+                        let modalGuestExit = this.$refs.modalGuestExit;
+                        $(modalGuestExit).modal('hide');
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+        },
+
+        clearExitProcedureData: function() {
+            this.exitTypes = [];
+            this.exitProcedureData = {
+                exit_type_id: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                note:  {
+                    required: false,
+                    hasError: false,
+                    value: ''
+                }
+            };
+        },
+
+        confirmExit: function() {
+            if (confirm('Si è sicuri di voler confermare l\'uscita dell\'ospite?')) {
+                let params = new URLSearchParams();
+                params.append('guest_id', this.guestData.id.value);
+
+                axios.post(pathServer + 'aziende/ws/confirmExit', params)
+                .then(res => {
+                    if (res.data.response == 'OK') {
+                        alert(res.data.msg);
+                        this.guestStatus = res.data.data.status;
+                        this.exitData.type = res.data.data.exit_type;
+                        this.exitData.date = res.data.data.date;
+                        this.exitData.note = res.data.data.note;
+    
+                        this.loadGuestHistory();
+    
+                        let modalGuestExit = this.$refs.modalGuestExit;
+                        $(modalGuestExit).modal('hide');
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+        },
+
+        openTransferModal: function() {
+            axios.get(pathServer + 'aziende/ws/getTransferAziendaDefault/'+this.guestData.sede_id.value)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.transferProcedureData.azienda.value = res.data.data; 
+                        let modalGuestTransfer = this.$refs.modalGuestTransfer;
+                        $(modalGuestTransfer).modal('show');
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+        },
+
+        executeTransferProcedure: function() { 
+            var error = false;
+
+            Object.keys(this.transferProcedureData).forEach((prop) => {
+                if (this.transferProcedureData[prop].required && (this.transferProcedureData[prop].value == "" || this.transferProcedureData[prop].value == null)) {
+                    error = true;
+                    this.transferProcedureData[prop].hasError = true;
+                } else {
+                    this.transferProcedureData[prop].hasError = false;
+                }
+            });                 
+
+            if(error){
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            }else{ 
+                let params = new URLSearchParams();
+                params.append('guest_id', this.guestData.id.value);
+                Object.keys(this.transferProcedureData).forEach((prop) => {
+                    params.append(prop, this.transferProcedureData[prop].value);
+                });
+    
+                axios.post(pathServer + 'aziende/ws/transferProcedure', params)
+                .then(res => {
+                    if (res.data.response == 'OK') {
+                        alert(res.data.msg);
+                        this.guestStatus = res.data.data.status;
+                        this.transferData.destination = res.data.data.destination;
+                        this.transferData.provenance = res.data.data.provenance;
+                        this.transferData.date = res.data.data.date;
+                        this.transferData.note = res.data.data.note;
+    
+                        this.loadGuestHistory();
+    
+                        let modalGuestTransfer = this.$refs.modalGuestTransfer;
+                        $(modalGuestTransfer).modal('hide');
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+        },
+
+        clearTransferProcedureData: function() {
+            this.transferAziende = [];
+            this.transferSedi = [];
+            this.transferProcedureData = {
+                azienda: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                sede: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                note: {
+                    required: false,
+                    hasError: false,
+                    value: ''
+                }
+            };
+        },
+
+        searchTransferAziende: function(search, loading) { 
+            if(search != ''){
+                loading(true);
+                axios.get(pathServer + 'aziende/ws/searchTransferAziende/'+search)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.transferAziende = res.data.data; 
+                        loading(false);
+                    } else {
+                        this.transferAziende = [];
+                        loading(false);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    loading(false);
+                });
+            }
+        },
+
+        setTransferAzienda: function(value) { 
+            if(value != null){
+                this.transferProcedureData.azienda.value = value;
+                this.transferSedi = [];
+                this.transferProcedureData.sede.value = '';
+            }
+        },
+
+        searchTransferSedi: function(search, loading) {
+            if(search != ''){
+                var error = false;
+
+                if(this.transferProcedureData.azienda.value == "" || this.transferProcedureData.azienda.value == null){
+                    error = true;
+                    this.transferProcedureData.azienda.hasError = true;
+                }else{
+                    this.transferProcedureData.azienda.hasError = false;
+                }   
+
+                if(error){
+                    alert('Si prega di compilare il campo ENTE.');
+                    this.transferSedi = [];
+                }else{
+                    loading(true);
+                    axios.get(pathServer + 'aziende/ws/searchTransferSedi/'+this.guestData.sede_id.value+'/'+this.transferProcedureData.azienda.value.id+'/'+search)
+                    .then(res => { 
+                        if (res.data.response == 'OK') {
+                            this.transferSedi = res.data.data; 
+                            loading(false);
+                        } else {
+                            this.transferSedi = [];
+                            loading(false);
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                        loading(false);
+                    });
+                }
+            }
+        },
+
+        setTransferSede: function(value) { 
+            if(value != null){
+                this.transferProcedureData.sede.value = value;
+            }            
+        },
         
     }
 

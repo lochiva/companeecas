@@ -560,6 +560,14 @@ msgstr "Tipi delle Sedi"
 msgid "Delete Sedi Tipi"
 msgstr "Cancella Tipo"
 
+#: Template/Admin/GuestsExitTypes/index.ctp:14
+msgid "Required Confirmation"
+msgstr "Richiesta Conferma"
+
+#: Template/Admin/GuestsExitTypes/index.ctp:15
+msgid "Required Note"
+msgstr "Richieste Note"
+
 #
 # END PLUGIN AZIENDE
 #

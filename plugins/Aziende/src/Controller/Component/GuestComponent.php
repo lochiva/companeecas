@@ -6,7 +6,7 @@ use Cake\ORM\TableRegistry;
 
 class GuestComponent extends Component
 {
-    public function getGuests($sedeId, $pass = array()){
+    public function getGuests($sedeId, $showOld = false, $pass = array()){
 
         $guests = TableRegistry::get('Aziende.Guests');
 		
@@ -20,7 +20,8 @@ class GuestComponent extends Component
 			6 => ['val' => 'Guests.sex', 'type' => 'text'],
 			7 => ['val' => 'Guests.draft', 'type' => 'number'],
 			8 => ['val' => 'Guests.draft_expiration', 'type' => 'date'],
-			9 => ['val' => 'Guests.suspended', 'type' => 'number']
+			9 => ['val' => 'Guests.suspended', 'type' => 'number'],
+			10 => ['val' => 'gs.name', 'type' => 'text']
         ];
         
         $opt['fields'] = [
@@ -34,12 +35,25 @@ class GuestComponent extends Component
 			'Guests.sex', 
 			'Guests.draft',
 			'Guests.draft_expiration', 
-			'Guests.suspended'
+			'Guests.suspended',
+			'gs.name',
+			'gs.color'
 		];
 
-		$opt['join'] = [];
+		$opt['join'] = [
+			[
+				'table' => 'guests_statuses',
+				'alias' => 'gs',
+				'type' => 'LEFT',
+				'conditions' => 'Guests.status_id = gs.id'
+			]
+		];
         
 		$opt['conditions'] = ['Guests.sede_id' => $sedeId];
+
+		if (!$showOld) {
+			$opt['conditions'] = ['gs.visibility' => 1];
+		}
 
         $toRet['res'] = $guests->queryForTableSorter($columns, $opt, $pass); 
         $toRet['tot'] = $guests->queryForTableSorter($columns, $opt, $pass, true);

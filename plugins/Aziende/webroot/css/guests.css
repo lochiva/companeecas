@@ -52,11 +52,11 @@ label.required:after{
 }
 /**********************************/
 
-.status{
-    padding: 5px;
-    color: #fff;
-    font-weight: 600;
-    border-radius: 7px;
+.guest-status {
+	padding: 5px;
+	color: #fff;
+	font-weight: 600;
+	border-radius: 7px;
 }
 
 .status-struttura{
@@ -121,42 +121,33 @@ label.required:after{
     width: 800px;
 }
 
-.message-status-scadenza,
-.message-dimesso,
-.message-authorize-transfer,
-.message-confirm-transfer,
+.message-exiting,
+.message-exited,
+.message-transferring,
 .message-accept-transfer,
-.message-transfered{
+.message-transferred{
     margin: 15px 15px 0px 15px;
     color: #FFF;
 }
 
-.message-dimesso{
-    background-color: #845BFF;
+.message-exiting{
+    background-color: #E07800;
 }
 
-.message-authorize-transfer{
-    background-color: #FF00FF;
+.message-exited{
+    background-color: #CA0000;
 }
 
-.message-confirm-transfer{
-    background-color: #F400A1;
+.message-transferring{
+    background-color: #A60061;
 }
 
 .message-accept-transfer{
-    background-color: #CA2C92;
+    background-color: #8200FC;
 }
 
-.message-transfered{
-    background-color: #B55489;
-}
-
-.message-expired-surveys{
-    margin: 15px 15px 0px 15px;
-}
-
-.message-expired-surveys{
-    background-color: #FFE100;
+.message-transferred{
+    background-color: #2154FC;
 }
 
 .box-scadenza{
@@ -291,6 +282,7 @@ label.required:after{
     border-color: #661446;
 }
 
+.exit-buttons,
 .transfer-buttons{
     margin-top: 10px;
 }
@@ -336,4 +328,17 @@ label.required:after{
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392 !important;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392 !important;
     border-radius: 4px !important;
+}
+
+.table-actions {
+    margin: 20px 0px;
+    text-align: right;
+}
+
+#modalGuestExit .modal-dialog{
+    width: 650px;
+}
+
+.btn-transfer {
+    margin-left: 10px;
 }

@@ -61,6 +61,12 @@ class GuestsTable extends AppTable
             'joinType' => 'LEFT',
             'className' => 'Luoghi'
         ]);
+
+        $this->belongsTo('GuestsStatuses', [
+            'foreignKey' => 'status_id',
+            'joinType' => 'INNER',
+            'className' => 'Aziende.GuestsStatuses'
+        ]);
     }
 
     /**
@@ -77,8 +83,8 @@ class GuestsTable extends AppTable
 
         $validator
             ->integer('sede_id')
-            ->requirePresence('name', 'create')
-            ->allowEmptyString('name', false);
+            ->requirePresence('sede_id', 'create')
+            ->allowEmptyString('sede_id', false);
 
         $validator
             ->scalar('cui')
@@ -151,6 +157,7 @@ class GuestsTable extends AppTable
     {
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
         $rules->add($rules->existsIn(['country_birth'], 'Countries'));
+        $rules->add($rules->existsIn(['status_id'], 'GuestsStatuses'));
 
         return $rules;
     }
@@ -171,6 +178,7 @@ class GuestsTable extends AppTable
             'suspended' => 'Sospeso',
             'draft' => 'Stato anagrafica in bozza',
             'draft_expiration' => 'Scadenza stato bozza',
+            'status_id' => 'Stato',
             'deleted' => 'Cancellato',
             'created' => 'Data creazione',
             'modified' => 'Data modifica'
@@ -257,7 +265,18 @@ class GuestsTable extends AppTable
     public function countGuestsForSede($sedeId)
     {
         $guests = $this->find()
-            ->where(['Guests.sede_id' => $sedeId])
+            ->where([
+                'Guests.sede_id' => $sedeId,
+                'gs.visibility' => 1
+            ])
+            ->join([
+                [
+                    'table' => 'guests_statuses',
+                    'alias' => 'gs',
+                    'type' => 'LEFT',
+                    'conditions' => 'Guests.status_id = gs.id'
+                ]
+            ])
             ->count();
 
         return $guests;
