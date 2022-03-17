@@ -52,7 +52,7 @@ class GuestComponent extends Component
 		$opt['conditions'] = ['Guests.sede_id' => $sedeId];
 
 		if (!$showOld) {
-			$opt['conditions'] = ['gs.visibility' => 1];
+			$opt['conditions']['gs.visibility'] = 1;
 		}
 
         $toRet['res'] = $guests->queryForTableSorter($columns, $opt, $pass); 

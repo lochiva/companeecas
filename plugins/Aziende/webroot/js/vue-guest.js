@@ -210,6 +210,13 @@ var app = new Vue({
                         this.loadedData = JSON.stringify(this.guestData);
 
                         this.guestStatus = res.data.data.status_id;
+                        this.exitData.type = res.data.data.history_exit_type;
+                        this.exitData.date = res.data.data.history_date;
+                        this.exitData.note = res.data.data.history_note;
+                        this.transferData.destination = res.data.data.history_destination;
+                        this.transferData.provenance = res.data.data.history_provenance;
+                        this.transferData.date = res.data.data.history_date;
+                        this.transferData.note = res.data.data.history_note;
 
                         this.loadGuestHistory();
 
@@ -472,15 +479,18 @@ var app = new Vue({
                 .then(res => {
                     if (res.data.response == 'OK') {
                         alert(res.data.msg);
-                        this.guestStatus = res.data.data.status;
-                        this.exitData.type = res.data.data.exit_type;
-                        this.exitData.date = res.data.data.date;
-                        this.exitData.note = res.data.data.note;
+                        this.guestStatus = res.data.data.history_status;
+                        this.exitData.type = res.data.data.history_exit_type;
+                        this.exitData.date = res.data.data.history_date;
+                        this.exitData.note = res.data.data.history_note;
     
                         this.loadGuestHistory();
     
                         let modalGuestExit = this.$refs.modalGuestExit;
                         $(modalGuestExit).modal('hide');
+
+                        //Aggiorna conteggio notifiche
+                        this.updateNotificationsCount();
                     } else {
                         alert(res.data.msg);
                     }
@@ -516,15 +526,15 @@ var app = new Vue({
                 .then(res => {
                     if (res.data.response == 'OK') {
                         alert(res.data.msg);
-                        this.guestStatus = res.data.data.status;
-                        this.exitData.type = res.data.data.exit_type;
-                        this.exitData.date = res.data.data.date;
-                        this.exitData.note = res.data.data.note;
+                        this.guestStatus = res.data.data.history_status;
+                        this.exitData.type = res.data.data.history_exit_type;
+                        this.exitData.date = res.data.data.history_date;
+                        this.exitData.note = res.data.data.history_note;
     
                         this.loadGuestHistory();
-    
-                        let modalGuestExit = this.$refs.modalGuestExit;
-                        $(modalGuestExit).modal('hide');
+
+                        //Aggiorna conteggio notifiche
+                        this.updateNotificationsCount();
                     } else {
                         alert(res.data.msg);
                     }
@@ -569,23 +579,29 @@ var app = new Vue({
                 let params = new URLSearchParams();
                 params.append('guest_id', this.guestData.id.value);
                 Object.keys(this.transferProcedureData).forEach((prop) => {
-                    params.append(prop, this.transferProcedureData[prop].value);
+                    if (prop == 'azienda' || prop == 'sede') {
+                        params.append(prop, this.transferProcedureData[prop].value.id);
+                    } else {
+                        params.append(prop, this.transferProcedureData[prop].value);
+                    }
                 });
     
                 axios.post(pathServer + 'aziende/ws/transferProcedure', params)
                 .then(res => {
                     if (res.data.response == 'OK') {
                         alert(res.data.msg);
-                        this.guestStatus = res.data.data.status;
-                        this.transferData.destination = res.data.data.destination;
-                        this.transferData.provenance = res.data.data.provenance;
-                        this.transferData.date = res.data.data.date;
-                        this.transferData.note = res.data.data.note;
+                        this.guestStatus = res.data.data.history_status;
+                        this.transferData.destination = res.data.data.history_destination;
+                        this.transferData.date = res.data.data.history_date;
+                        this.transferData.note = res.data.data.history_note;
     
                         this.loadGuestHistory();
     
                         let modalGuestTransfer = this.$refs.modalGuestTransfer;
                         $(modalGuestTransfer).modal('hide');
+
+                        //Aggiorna conteggio notifiche
+                        this.updateNotificationsCount();
                     } else {
                         alert(res.data.msg);
                     }
@@ -616,6 +632,34 @@ var app = new Vue({
                     value: ''
                 }
             };
+        },
+
+        acceptTransfer: function() {
+            if (confirm('Si è sicuri di voler confermare l\'ingresso dell\'ospite?')) {
+                let params = new URLSearchParams();
+                params.append('guest_id', this.guestData.id.value);
+
+                axios.post(pathServer + 'aziende/ws/acceptTransfer', params)
+                .then(res => {
+                    if (res.data.response == 'OK') {
+                        alert(res.data.msg);
+                        this.guestStatus = res.data.data.status_id;
+                        this.transferData.provenance = '';
+                        this.transferData.date = '';
+                        this.transferData.note = '';
+    
+                        this.loadGuestHistory();
+
+                        //Aggiorna conteggio notifiche
+                        this.updateNotificationsCount();
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
         },
 
         searchTransferAziende: function(search, loading) { 
@@ -683,6 +727,23 @@ var app = new Vue({
                 this.transferProcedureData.sede.value = value;
             }            
         },
+
+        updateNotificationsCount: function() {
+            //Aggiorna conteggio notifiche
+            axios.get(pathServer + 'aziende/ws/getGuestsNotificationsCount/')
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    var count = res.data.data;
+                    if(count > 0){
+                        $('.guests_notify_count_label').html(count);
+                    } else {
+                        $('.guests_notify_count_label').html('');
+                    }
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        }
         
     }
 

@@ -67,6 +67,12 @@ class GuestsTable extends AppTable
             'joinType' => 'INNER',
             'className' => 'Aziende.GuestsStatuses'
         ]);
+
+        $this->belongsTo('OriginalGuests', [
+            'foreignKey' => 'original_guest_id',
+            'joinType' => 'LEFT',
+            'className' => 'Aziende.Guests'
+        ]);
     }
 
     /**
@@ -158,6 +164,7 @@ class GuestsTable extends AppTable
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
         $rules->add($rules->existsIn(['country_birth'], 'Countries'));
         $rules->add($rules->existsIn(['status_id'], 'GuestsStatuses'));
+        $rules->add($rules->existsIn(['original_guest_id'], 'OriginalGuests'));
 
         return $rules;
     }
@@ -179,6 +186,7 @@ class GuestsTable extends AppTable
             'draft' => 'Stato anagrafica in bozza',
             'draft_expiration' => 'Scadenza stato bozza',
             'status_id' => 'Stato',
+            'original_guest_id' => 'ID ospite originale',
             'deleted' => 'Cancellato',
             'created' => 'Data creazione',
             'modified' => 'Data modifica'
@@ -195,7 +203,12 @@ class GuestsTable extends AppTable
                     'cui' => $entity->cui
                 ];
                 if (!empty($entity->id)) {
-                    $where['id !='] = $entity->id;
+                    $where[] = ['id !=' => $entity->id];
+                    $where[] = ['original_guest_id !=' => $entity->id];
+                }
+                if (!empty($entity->original_guest_id)) {
+                    $where[] = ['original_guest_id !=' => $entity->original_guest_id];
+                    $where[] = ['id !=' => $entity->original_guest_id];
                 }
                 $guest = $this->find()->where($where)->first();
                 if (!empty($guest)) {
@@ -210,7 +223,12 @@ class GuestsTable extends AppTable
                     'minor' => 0,
                 ];
                 if (!empty($entity->id)) {
-                    $where['id !='] = $entity->id;
+                    $where[] = ['id !=' => $entity->id];
+                    $where[] = ['original_guest_id !=' => $entity->id];
+                }
+                if (!empty($entity->original_guest_id)) {
+                    $where[] = ['original_guest_id !=' => $entity->original_guest_id];
+                    $where[] = ['id !=' => $entity->original_guest_id];
                 }
                 $guest = $this->find()->where($where)->first();
                 if (!empty($guest)) {
@@ -228,7 +246,12 @@ class GuestsTable extends AppTable
                 'sex' => $entity->sex
             ];
             if (!empty($entity->id)) {
-                $where['id !='] = $entity->id;
+                $where[] = ['id !=' => $entity->id];
+                $where[] = ['original_guest_id !=' => $entity->id];
+            }
+            if (!empty($entity->original_guest_id)) {
+                $where[] = ['original_guest_id !=' => $entity->original_guest_id];
+                $where[] = ['id !=' => $entity->original_guest_id];
             }
             $guest = $this->find()->where($where)->first();
             if (!empty($guest)) {

@@ -42,8 +42,14 @@ $role = $this->request->session()->read('Auth.User.role');
                 <button type="button" class="btn btn-danger" @click="confirmExit()">Conferma uscita</button>
             </div>
         </div>
-        <div v-if="guestStatus == 3" class="message-exited alert">L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type}}.</div>
-        <div v-if="guestStatus == 4" class="message-transferring alert">L'ospite è in stato "Trasferimento in uscita" con destinazione {{transferData.destination}}.</div>
+        <div v-if="guestStatus == 3" class="message-exited alert">
+            L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type}}.
+            <div><b>Note uscita:</b> {{exitData.note}}</div>
+        </div>
+        <div v-if="guestStatus == 4" class="message-transferring alert">
+            L'ospite è in stato "Trasferimento in uscita" con destinazione {{transferData.destination}}.
+            <div><b>Note trasferimento:</b> {{transferData.note}}</div>
+        </div>
         <div v-if="guestStatus == 5" class="message-accept-transfer alert">
             <div>L'ospite è in stato "Trasferimento in ingresso" con provenienza {{transferData.provenance}}.</div>
             <div><b>Note trasferimento:</b> {{transferData.note}}</div>
@@ -51,7 +57,10 @@ $role = $this->request->session()->read('Auth.User.role');
                 <button type="button" class="btn btn-accept-transfer" @click="acceptTransfer()">Conferma ingresso</button>
             </div>
         </div>
-        <div v-if="guestStatus == 6" class="message-transferred alert">L'ospite è stato trasferito nella struttura {{transferData.destination}} in data {{transferData.date}}.</div>
+        <div v-if="guestStatus == 6" class="message-transferred alert">
+            L'ospite è stato trasferito nella struttura {{transferData.destination}} in data {{transferData.date}}.
+            <div><b>Note trasferimento:</b> {{transferData.note}}</div>
+        </div>
     </div>
 
     <section class="content">

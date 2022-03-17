@@ -105,7 +105,7 @@ class GuestsHistoriesTable extends Table
 
         $validator
             ->date('operation_date')
-            ->notEmptyDate('operation_date');
+            ->allowEmptyDate('operation_date');
 
         $validator
             ->date('exit_date')
@@ -234,13 +234,14 @@ class GuestsHistoriesTable extends Table
                     'conditions' => 'u.id = GuestsHistories.operator_id'
                 ]
             ])
+            ->order(['GuestsHistories.created' => 'DESC', 'GuestsHistories.id' => 'DESC'])
             ->toArray();
     }
 
     public function getLastGuestHistoryByStatus($guestId, $statusId) {
         return $this->find()
             ->where(['guest_id' => $guestId, 'guest_status_id' => $statusId])
-            ->order(['created' => 'DESC'])
+            ->order(['created' => 'DESC', 'id' => 'DESC'])
             ->first();
     }
 }

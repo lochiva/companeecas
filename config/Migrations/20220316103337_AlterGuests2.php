@@ -18,6 +18,10 @@ class AlterGuests2 extends AbstractMigration
             'null' => false,
             'after' => 'check_in_date'
         ]);
+        $table->addColumn('original_guest_id', 'integer', [
+            'null' => true,
+            'after' => 'status_id'
+        ]);
         $table->update();
     }
 }
