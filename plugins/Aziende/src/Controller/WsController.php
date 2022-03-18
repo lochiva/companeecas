@@ -2692,7 +2692,7 @@ class WsController extends AppController
 
                         $this->_result['response'] = "OK";
                         $this->_result['data'] = $guest;
-                        $this->_result['msg'] = 'Incresso dell\'ospite confermato con successo.';
+                        $this->_result['msg'] = 'Ingresso dell\'ospite confermato con successo.';
                     } else {
                         $this->_result['response'] = "KO";
                     $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite originale.';
