@@ -77,39 +77,39 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.check_in_date.hasError}">
                                     <label :class="{'required': guestData.check_in_date.required}" for="guestCheckInDate"><?= __('Check-in') ?></label>
-                                    <datepicker :disabled="guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
                                         id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.cui.hasError}">
                                     <label :class="{'required': guestData.cui.required}" for="guestCui"><?= __('CUI') ?></label>
-                                    <input :disabled="guestStatus != 1" type="text" maxlength="7" class="form-control" name="cui" id="guestCui" v-model="guestData.cui.value" @change="setDraft()" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="7" class="form-control" name="cui" id="guestCui" v-model="guestData.cui.value" @change="setDraft()" />
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.vestanet_id.hasError}">
                                     <label :class="{'required': guestData.vestanet_id.required}" for="guestVestanetId"><?= __('ID Vestanet') ?></label>
-                                    <input :disabled="guestStatus != 1" type="text" maxlength="10" class="form-control" name="vestanet_id" id="guestVestanetId" v-model="guestData.vestanet_id.value" @change="setDraft()" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="10" class="form-control" name="vestanet_id" id="guestVestanetId" v-model="guestData.vestanet_id.value" @change="setDraft()" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.name.hasError}">
                                     <label :class="{'required': guestData.name.required}" for="guestName"><?= __('Nome') ?></label>
-                                    <input :disabled="guestStatus != 1" type="text" maxlength="255" class="form-control" name="name" id="guestName" v-model="guestData.name.value" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="255" class="form-control" name="name" id="guestName" v-model="guestData.name.value" />
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.surname.hasError}">
                                     <label :class="{'required': guestData.surname.required}" for="guestSurname"><?= __('Cognome') ?></label>
-                                    <input :disabled="guestStatus != 1" type="text" maxlength="255" class="form-control" name="surname" id="guestSurname" v-model="guestData.surname.value" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="255" class="form-control" name="surname" id="guestSurname" v-model="guestData.surname.value" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-2 div-input-check" :class="{'has-error': guestData.minor.hasError}">
                                     <label :class="{'required': guestData.minor.required}" for="guestMinor"><?= __('Minore') ?></label>
-                                    <input :disabled="guestStatus != 1" type="checkbox" class="input-check" name="minor" id="guestMinor" v-model="guestData.minor.value" @change="resetMinor()" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor" id="guestMinor" v-model="guestData.minor.value" @change="resetMinor()" />
                                 </div>
                                 <div class="col-md-4">
                                     <div v-show="guestData.minor.value" class="div-input-check" :class="{'has-error': guestData.minor_family.hasError}">
                                         <label :class="{'required': guestData.minor_family.required}" for="guestMinorFamily"><?= __('Con riferimento al nucleo familiare') ?></label>
-                                        <input :disabled="guestStatus != 1" type="checkbox" class="input-check" name="minor_family" id="guestMinorFamily" v-model="guestData.minor_family.value" 
+                                        <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor_family" id="guestMinorFamily" v-model="guestData.minor_family.value" 
                                             @change="changeMinorFamily(true)" />
                                     </div>
                                     <div v-show="guestData.minor.value"  :class="{'has-error': guestData.family_guest.hasError}">
@@ -126,19 +126,19 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                                 <div v-show="guestData.minor.value"  class="col-md-3 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
                                     <label :class="{'required': guestData.minor_alone.required}" for="guestMinorAlone"><?= __('Si dichiara minore solo') ?></label>
-                                    <input :disabled="guestStatus != 1" type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
                                         @change="changeMinorFamily(false)" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.birthdate.hasError}">
                                     <label :class="{'required': guestData.birthdate.required}" for="guestBirthdate"><?= __('Data di nascita') ?></label>
-                                    <datepicker :disabled="guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
                                         id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.country_birth.hasError}">
                                     <label :class="{'required': guestData.country_birth.required}" for="guestCountryBirth"><?= __('Nazionalità') ?></label>
-                                    <v-select :disabled="guestStatus != 1" name="country_birth" id="guestCountryBirth" :options="countries" v-model="guestData.country_birth.value"
+                                    <v-select :disabled="guestData.id.value != '' && guestStatus != 1" name="country_birth" id="guestCountryBirth" :options="countries" v-model="guestData.country_birth.value"
                                         @search="searchCountry" placeholder="Seleziona una nazione" :filterable="false">
                                         <template #no-options="{ search, searching }">
                                             <template v-if="searching">
@@ -150,7 +150,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.sex.hasError}">
                                     <label :class="{'required': guestData.sex.required}" for="guestSex"><?= __('Sesso') ?></label>
-                                    <select :disabled="guestStatus != 1" class="form-control" name="sex" id="guestSex" v-model="guestData.sex.value">
+                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="sex" id="guestSex" v-model="guestData.sex.value">
                                         <option value=""></option>
                                         <option value="F">F</option>
                                         <option value="M">M</option>
@@ -160,7 +160,7 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.draft.hasError}">
                                     <label :class="{'required': guestData.draft.required}" for="guestDraft"><?= __('Stato anagrafica in bozza') ?></label>
-                                    <input :disabled="guestStatus != 1" disabled type="checkbox" class="input-check" name="draft" id="guestDraft" v-model="guestData.draft.value" />
+                                    <input disabled type="checkbox" class="input-check" name="draft" id="guestDraft" v-model="guestData.draft.value" />
                                 </div>
                                 <div v-show="guestData.draft_expiration.value" class="col-md-4" :class="{'has-error': guestData.draft_expiration.hasError}">
                                     <label :class="{'required': guestData.draft_expiration.required}" for="guestDraftExpiration"><?= __('Scadenza stato bozza') ?></label>
@@ -169,7 +169,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.suspended.hasError}">
                                     <label :class="{'required': guestData.suspended.required}" for="guestSuspended"><?= __('Sospeso') ?></label>
-                                    <input :disabled="guestStatus != 1" type="checkbox" class="input-check" name="suspended" id="guestSuspended" v-model="guestData.suspended.value" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="suspended" id="guestSuspended" v-model="guestData.suspended.value" />
                                 </div>
                             </div>
                         </form>

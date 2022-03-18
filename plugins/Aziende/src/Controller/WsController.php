@@ -1697,6 +1697,7 @@ class WsController extends AppController
 
 		if(empty($data['id'])){
             $entity = $guests->newEntity();
+            $data['status_id'] = 1;
             $saveType = 'CREATE_GUEST';
 		}else{
 			$entity = $guests->get($data['id']);
@@ -1738,6 +1739,22 @@ class WsController extends AppController
                 ];
                 $guestsNotifications->patchEntity($notification, $notificationData);
                 $guestsNotifications->save($notification);
+
+                if ($saveType == 'CREATE_GUEST') {
+                    // Aggiornamento storico
+                    $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+                    $history = $guestsHistory->newEntity();
+
+                    $historyData['guest_id'] = $entity->id;
+                    $historyData['azienda_id'] = $sede->id_azienda;
+                    $historyData['sede_id'] = $sede->id;
+                    $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+                    $historyData['operation_date'] = date('Y-m-d');
+                    $historyData['guest_status_id'] = 1;
+
+                    $guestsHistory->patchEntity($history, $historyData);
+                    $guestsHistory->save($history);
+                }
 
                 $this->_result['response'] = "OK";
                 $this->_result['data'] = $entity->id;
