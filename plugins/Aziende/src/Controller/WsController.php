@@ -2361,6 +2361,7 @@ class WsController extends AppController
 
         $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
 
+        //richiesta conferma uscita
         if ($exitType['required_confirmation']) {
             $status = 2;
         } else {
@@ -2387,6 +2388,11 @@ class WsController extends AppController
         if ($guestsHistory->save($history)) {
             //aggiornamento stato ospite
             $guest->status_id = $status;
+
+            //se non è richiesta la conferma dell'uscita imposta la data di check-out
+            if (!$exitType['required_confirmation']) {
+                $guest->check_out_date = date('Y-m-d');
+            }   
 
             if ($guests->save($guest)) {
                 if ($status == 3) {
@@ -2452,8 +2458,9 @@ class WsController extends AppController
         $guestsHistory->patchEntity($history, $historyData);
 
         if ($guestsHistory->save($history)) {
-            //aggiornamento stato ospite
+            //aggiornamento stato ospite e data di check-out
             $guest->status_id = $status;
+            $guest->check_out_date = date('Y-m-d');
 
             if ($guests->save($guest)) {
                 //creazione notifica uscita ospite
@@ -2497,6 +2504,7 @@ class WsController extends AppController
         $guest = $guests->get($data['guest_id']);
         $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
+        // se rimane nello stesso ente non serve conferma trasferimento
         if ($sede->id_azienda == $data['azienda']) {
             $status = 6;
             $statusCloned = 1;
@@ -2504,8 +2512,6 @@ class WsController extends AppController
             $status = 4;
             $statusCloned = 5;
         }
-
-        
 
         //aggiornamento storico
         $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
@@ -2526,6 +2532,11 @@ class WsController extends AppController
             //aggiornamento stato ospite
             $guest->status_id = $status;
 
+            // se rimane nello stesso ente setta già la data di check-out, altrimenti verrà compilata sulla conferma del trasferimento
+            if ($sede->id_azienda == $data['azienda']) {
+                $guest->check_out_date = date('Y-m-d');
+            }
+
             if ($guests->save($guest)) {
                 //inserimento ospite clonato per struttura di destinazione
                 $dataGuest = clone $guest;
@@ -2536,6 +2547,14 @@ class WsController extends AppController
                 unset($dataClonedGuest['id']);
                 unset($dataClonedGuest['created']);
                 unset($dataClonedGuest['modified']);
+                unset($dataClonedGuest['check_out_date']);
+
+                // se rimane nello stesso ente setta già la nuova data di check-in, altrimenti verrà compilata sulla conferma del trasferimento
+                if ($sede->id_azienda == $data['azienda']) {
+                    $dataClonedGuest['check_in_date'] = date('Y-m-d');
+                } else {
+                    unset($dataClonedGuest['check_in_date']);
+                }
 
                 $clonedGuest = $guests->newEntity($dataClonedGuest);
 
@@ -2647,13 +2666,14 @@ class WsController extends AppController
         $guestsHistory->patchEntity($history, $historyData);
 
         if ($guestsHistory->save($history)) {
-            //aggiornamento stato ospite
+            //aggiornamento stato ospite e data check-in
             $guest->status_id = 1;
+            $guest->check_in_date = date('Y-m-d');
 
             if ($guests->save($guest)) {
                 $originalGuest = $guests->get($lastHistory->cloned_guest_id);
                 
-                //aggiornamento stato ospite originale
+                //aggiornamento stato ospite originale e data check-out
                 $originalHistory = $guestsHistory->newEntity();
 
                 $lastOriginalHistory = $guestsHistory->getLastGuestHistoryByStatus($originalGuest->id, 4);
@@ -2673,6 +2693,7 @@ class WsController extends AppController
 
                 if ($guestsHistory->save($originalHistory)) {
                     $originalGuest->status_id = 6;
+                    $originalGuest->check_out_date = date('Y-m-d');
 
                     if ($guests->save($originalGuest)) {
                         //creazione notifica trasferimento ospite

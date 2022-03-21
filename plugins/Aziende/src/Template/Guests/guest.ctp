@@ -186,7 +186,7 @@ $role = $this->request->session()->read('Auth.User.role');
     <section class="content no-min-height">
         <div class="row">
             <div class="col-xs-12">
-                <div id="box-guests-history" class="box collapsed-box">
+                <div id="box-guests-history" class="box">
                     <div class="box-header with-border">
                         <i class="fa fa-history"></i>
                         <h3 class="box-title"><?=__c('Storico')?></h3>

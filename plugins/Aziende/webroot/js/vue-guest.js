@@ -644,6 +644,7 @@ var app = new Vue({
                     if (res.data.response == 'OK') {
                         alert(res.data.msg);
                         this.guestStatus = res.data.data.status_id;
+                        this.guestData.check_in_date.value = res.data.data.check_in_date
                         this.transferData.provenance = '';
                         this.transferData.date = '';
                         this.transferData.note = '';

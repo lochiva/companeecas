@@ -147,6 +147,10 @@ class GuestsTable extends AppTable
             ->allowEmptyString('check_in_date', true);
 
         $validator
+            ->date('check_out_date')
+            ->allowEmptyString('check_out_date', true);
+
+        $validator
             ->boolean('deleted');
 
         return $validator;
@@ -185,6 +189,8 @@ class GuestsTable extends AppTable
             'suspended' => 'Sospeso',
             'draft' => 'Stato anagrafica in bozza',
             'draft_expiration' => 'Scadenza stato bozza',
+            'check_in_date' => 'Data di check-in',
+            'check_out_date' => 'Data di check-out',
             'status_id' => 'Stato',
             'original_guest_id' => 'ID ospite originale',
             'deleted' => 'Cancellato',
@@ -270,7 +276,12 @@ class GuestsTable extends AppTable
             ->where([
                 'Guests.sede_id' => $sedeId, 
                 'Guests.check_in_date <=' => $date,
-                'Guests.check_in_date IS NOT NULL'
+                'Guests.check_in_date IS NOT NULL',
+                'OR' => [
+                    'Guests.check_out_date >=' => $date,
+                    'Guests.check_out_date IS NULL'
+                ],
+                'Guests.status_id !=' => 5, //stato diverso da trasferimento in ingresso
             ])
             ->join([
                 [
