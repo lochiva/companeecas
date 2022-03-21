@@ -53,6 +53,7 @@ use Cake\Routing\Router;
                                     <th>Telefono</th>
                                     <th>Email</th>
                                     <th>Sito Web</th>
+                                    <th>Posti</th>
                                     <!--<th width="10%">Partita IVA</th>-->
 									<!--<th width="10%">Codice Destinatario</th>-->
                                     <th style="width: 130px;"></th>

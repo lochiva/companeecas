@@ -15,7 +15,8 @@ class AgreementComponent extends Component
 			1 => ['val' => 'Agreements.date_agreement', 'type' => 'date'],
 			2 => ['val' => 'Agreements.date_agreement_expiration', 'type' => 'date'],
 			3 => ['val' => 'Agreements.date_extension_expiration', 'type' => 'date'],
-			4 => ['val' => 'Agreements.guest_daily_price', 'type' => 'number']
+			4 => ['val' => 'Agreements.guest_daily_price', 'type' => 'number'],
+			5 => ['val' => 'Agreements.capacity_increment', 'type' => 'number']
         ];
         
         $opt['fields'] = [
@@ -24,6 +25,7 @@ class AgreementComponent extends Component
 			'Agreements.date_agreement_expiration',
 			'Agreements.date_extension_expiration',
 			'Agreements.guest_daily_price',
+			'Agreements.capacity_increment',
 			'spa.name'
 		];
 

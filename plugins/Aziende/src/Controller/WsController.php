@@ -115,7 +115,8 @@ class WsController extends AppController
                 $button.= '</div>';
                 $button.= '</div>';
 
-
+                $countGuestsAzienda = $this->Azienda->countGuestsForAzienda($azienda->id);
+                $countPostiEffettiviAzienda = $this->Azienda->countPostiEffettiviForAzienda($azienda->id);
 
                 $out['rows'][] = array(
                     htmlspecialchars($azienda->denominazione),
@@ -125,6 +126,7 @@ class WsController extends AppController
                     htmlspecialchars($azienda->sito_web),
                     //htmlspecialchars($azienda->piva),
 					//htmlspecialchars($azienda->pa_codice),
+                    $countGuestsAzienda.'/'.$countPostiEffettiviAzienda,
                     $button
                 );
             }
@@ -1825,7 +1827,7 @@ class WsController extends AppController
     public function getGuest($id)
 	{
         $user = $this->request->session()->read('Auth.User');
-        $guest = TableRegistry::get('Aziende.Guests')->get($id, ['contain' => ['FamilyGuests', 'Countries']]);
+        $guest = TableRegistry::get('Aziende.Guests')->get($id, ['contain' => ['FamilyGuests', 'Countries', 'EducationalQualifications']]);
         $sede = TableRegistry::get('Aziende.Sedi')->get($guest['sede_id']);
 
         if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
@@ -1835,6 +1837,12 @@ class WsController extends AppController
         }
 
 		if($guest){
+            if (!empty($guest['educational_qualification']) && $guest['educational_qualification']['parent'] > 0) {
+                $guest['educational_qualification_child'] = $guest['educational_qualification'];
+                $guest['educational_qualification'] = TableRegistry::get('Aziende.GuestsEducationalQualifications')->get($guest['educational_qualification']['parent']);
+            } else {
+                $guest['educational_qualification_child'] = '';
+            }
             if ($guest->status_id != 1) {
                 //Dati per messaggi di stato
                 $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $guest->status_id);
@@ -2053,6 +2061,7 @@ class WsController extends AppController
                     empty($agreement['date_agreement_expiration']) ? '' : $agreement['date_agreement_expiration']->format('d/m/Y'),
                     empty($agreement['date_extension_expiration']) ? '' : $agreement['date_extension_expiration']->format('d/m/Y'),
                     number_format($agreement['guest_daily_price'], 2, ',', ''),
+                    $agreement['capacity_increment'],
 					$buttons
 				];
 
@@ -2730,5 +2739,14 @@ class WsController extends AppController
             $this->_result['response'] = "KO";
             $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
         }
+    }
+
+    public function getEducationalQualifications($parentId = 0)
+    {
+        $qualifications = TableRegistry::get('Aziende.GuestsEducationalQualifications')->getByParent($parentId);
+
+        $this->_result['response'] = "OK";
+        $this->_result['data'] = $qualifications;
+        $this->_result['msg'] = 'Titoli di studio recuperati con successo.';
     }
 }

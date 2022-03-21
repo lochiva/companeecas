@@ -64,6 +64,7 @@ use Cake\Routing\Router;
                             <dd><i class="fa fa-mobile"></i> <b>Cellulare:</b> <?php if($azienda->fax){echo h($azienda->fax);}else{echo "-";}?></dd>
                             <dd><i class="fa fa-envelope"></i> <b>Email Info:</b> <?php if($azienda->email_info){echo h($azienda->email_info);}else{echo "-";}?></dd>
                             <dd><i class="fa fa-globe"></i> <b>Sito:</b> <?php if($azienda->sito_web){echo '<a target="_blank" href="http://'.h($azienda->sito_web).'">'.h($azienda->sito_web).'</a>';}else{echo "-";}?></dd>
+                            <dd><i class="fa fa-circle"></i> <b>Tipologia ente:</b> <?php if($azienda->tipo){echo h($azienda->tipo->name);}else{echo "-";}?></dd>
                             <!--<dd><i class="fa fa-envelope"></i> <b>Contabilità:</b> <?php if($azienda->email_contabilita){echo h($azienda->email_contabilita);}else{echo "-";}?></dd>-->
                             <!--<dd><i class="fa fa-envelope"></i> <b>Solleciti:</b> <?php if($azienda->email_solleciti){echo h($azienda->email_solleciti);}else{echo "-";}?></dd>-->
                         </dl>

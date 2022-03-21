@@ -46,7 +46,7 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                 denominazione:'', codice_provincia:'', nome:'',cognome:'',cod_paese:'IT',piva:'',cf:'',cod_eori:'',
                 telefono:'', pec:'', pec_commissione:'', email_info:'', referente_1: '', referente_2: '', email_contabilita:'',
                 email_solleciti:'', pa_codice:'', sito_web:'', fax:'', cliente:false, fornitore:false, interno:false, logo:'', 
-                logo_to_save:'', sedi:[],contatti:[],gruppi:[]
+                logo_to_save:'', id_tipo:'', sedi:[],contatti:[],gruppi:[]
             };
         }
 
@@ -55,8 +55,8 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                 id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo_ministero:'', id_tipo_capitolato:'', id_tipologia_centro:1, 
                 id_tipologia_ospiti:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', 
                 referente:'', telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti_struttura:'', n_posti_effettivi:'', 
-                incremento_posti: 0, n_posti_convenzione:'', id_procedura_affidamento:'', operativita:1, 
-                id: 'sede-'+vm.azienda.sedi.length, code_centro:'', approved:0, note:''
+                n_posti_convenzione:'', id_procedura_affidamento:'', operativita:1, id: 'sede-'+vm.azienda.sedi.length, code_centro:'', 
+                approved:0, note:''
             };
         }
 

@@ -65,6 +65,16 @@ $role = $this->request->session()->read('Auth.User.role');
                             <input type="text" name="guest_daily_price" id="inputGuestDailyPrice" class="form-control number-decimal required">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="inputCapacityIncrement20">Incremento posti +20%</label>
+                        <div class="col-sm-1">
+                            <input type="radio" name="capacity_increment" id="inputCapacityIncrement20" value="20" class="radio-agreement">
+                        </div>
+                        <label class="col-sm-3 control-label" for="inputCapacityIncrement50">Incremento posti +50%</label>
+                        <div class="col-sm-1">
+                            <input type="radio" name="capacity_increment" id="inputCapacityIncrement50" value="50" class="radio-agreement">
+                        </div>
+                    </div>
                     <hr>
                     <?php foreach($sedi as $sede) { ?>
                         <div class="form-group">

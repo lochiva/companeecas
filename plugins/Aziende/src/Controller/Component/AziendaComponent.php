@@ -78,7 +78,7 @@ class AziendaComponent extends Component
     public function _get($id)
     {
         $az = TableRegistry::get('Aziende.Aziende');
-        $res = $az->get($id, ['contain' => ['Sedi' => ['sort' => ['ordering' => 'ASC']], 'Gruppi', 'Contatti' => ['sort' => ['ordering' => 'ASC'], 'Users', 'Skills']]]);
+        $res = $az->get($id, ['contain' => ['Sedi' => ['sort' => ['ordering' => 'ASC']], 'Gruppi', 'Contatti' => ['sort' => ['ordering' => 'ASC'], 'Users', 'Skills'], 'Tipi']]);
         if(!empty($res['contatti'])){
           foreach ($res['contatti'] as $key => $contatto) {
             $res['contatti'][$key]['skills'] = array();
@@ -343,5 +343,30 @@ class AziendaComponent extends Component
         } else {
             return false;
         }
+    }
+
+    public function countGuestsForAzienda($aziendaId)
+    {
+        $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
+
+        $guestsTable = TableRegistry::get('Aziende.Guests');
+        $count = 0;
+        foreach ($sedi as $sede) {
+            $count += $guestsTable->countGuestsForSede($sede->id);
+        }
+
+        return $count;
+    }
+
+    public function countPostiEffettiviForAzienda($aziendaId)
+    {
+        $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
+
+        $count = 0;
+        foreach ($sedi as $sede) {
+            $count += $sede->n_posti_effettivi;
+        }
+
+        return $count;
     }
 }

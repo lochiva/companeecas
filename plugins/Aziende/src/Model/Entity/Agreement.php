@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\Date $date_agreement_expiration
  * @property \Cake\I18n\Date|null $date_extension_expiration
  * @property float $guest_daily_price
+ * @property int $capacity_increment
  * @property bool $approved
  * @property bool $deleted
  * @property \Cake\I18n\Time $created
@@ -40,6 +41,7 @@ class Agreement extends Entity
         'date_agreement_expiration' => true,
         'date_extension_expiration' => true,
         'guest_daily_price' => true,
+        'capacity_increment' => true,
         'approved' => true,
         'deleted' => true,
         'created' => true,

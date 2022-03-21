@@ -19,7 +19,7 @@ $(document).ready(function(){
               //2:provider,
           }
         },
-        headers: { 4: { filter: false, sorter:false} }
+        headers: { 4: { filter: false, sorter:false}, 5: { filter: false, sorter:false} }
     }).tablesorterPager({
 
           // **********************************

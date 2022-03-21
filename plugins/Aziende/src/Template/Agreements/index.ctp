@@ -62,6 +62,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <th>Data di scadenza della convenzione</th>
                                     <th>Data di scadenza della proroga</th>
                                     <th>Prezzo giornaliero per ospite</th>
+                                    <th>Incremento posti (%)</th>
                                     <th width="70px" class="filter-false" data-sorter="false"></th>
                                 </tr>
                             </thead>

@@ -197,6 +197,20 @@ use Cake\Routing\Router;
                                     <input type="file" name="Logo" id="inputLogo" file-upload ng-model="vm.azienda.logo_to_save" class="form-control">
                                 </div>
                             </div>
+
+                            <hr>
+
+                            <div class="form-group ">
+                                <label class="col-sm-2 control-label required" for="inputTipoEnte">Tipologia ente</label>
+                                <div class="col-sm-10">
+                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required" >
+                                        <option value="">-- Seleziona una tipologia ente --</option>
+                                        <?php foreach ($tipi as $key => $tipo): ?>
+                                            <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </form>
 
@@ -390,17 +404,6 @@ use Cake\Routing\Router;
                                         <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
                                         <div class="col-sm-10">
                                             <input required ng-model="sede.n_posti_effettivi" type="text" placeholder="Capienza (effettiva)" name="capienza (effettiva)" id="inputCapienzaEffettiva" class="form-control number-integer" >
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label" for="inputIncrementoPosti20">Incremento posti +20%</label>
-                                        <div class="col-sm-1">
-                                            <input type="radio" ng-model="sede.incremento_posti" ng-value="20" id="inputIncrementoPosti20" class="radio-sede">
-                                        </div>
-                                        <label class="col-sm-3 control-label" for="inputIncrementoPosti50">Incremento posti +50%</label>
-                                        <div class="col-sm-1">
-                                            <input type="radio" ng-model="sede.incremento_posti" ng-value="50" id="inputIncrementoPosti50" class="radio-sede">
                                         </div>
                                     </div>
 

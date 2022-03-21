@@ -30,6 +30,11 @@ class AziendeTable extends AppTable
           'foreignKey' => 'id_azienda',
           'className' => 'Aziende.AziendeToGruppi',
         ]);
+        $this->belongsTo('Tipi', [
+          'foreignKey' => 'id_tipo',
+          'className' => 'Aziende.AziendeTipi',
+          'propertyName' => 'tipo'
+      ]);
     }
 
     public function saveAzienda($data)

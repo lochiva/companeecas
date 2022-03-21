@@ -158,6 +158,24 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                             </div>
                             <div class="form-group">
+                                <div class="col-md-4" :class="{'has-error': guestData.educational_qualification.hasError}">
+                                    <label :class="{'required': guestData.educational_qualification.required}" for="guestEducationalQualification"><?= __('Titolo di studio') ?></label>
+                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification" id="guestEducationalQualification" 
+                                        v-model="guestData.educational_qualification.value" @change="updateEducationalQualificationChildren()">
+                                        <option value=""></option>
+                                        <option v-for="qualification in educationalQualifications" :value="qualification">{{ qualification.name }}</option>
+                                    </select>
+                                </div>
+                                <div v-show="educationalQualificationChildren.length > 0" class="col-md-4" :class="{'has-error': guestData.educational_qualification_child.hasError}">
+                                    <label :class="{'required': guestData.educational_qualification_child.required}" for="guestEducationalQualificationChild"><?= __('Dettaglio titolo di studio') ?></label>
+                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification_child" id="guestEducationalQualificationChild" 
+                                        v-model="guestData.educational_qualification_child.value">
+                                        <option value=""></option>
+                                        <option v-for="qualification in educationalQualificationChildren" :value="qualification">{{ qualification.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.draft.hasError}">
                                     <label :class="{'required': guestData.draft.required}" for="guestDraft"><?= __('Stato anagrafica in bozza') ?></label>
                                     <input disabled type="checkbox" class="input-check" name="draft" id="guestDraft" v-model="guestData.draft.value" />

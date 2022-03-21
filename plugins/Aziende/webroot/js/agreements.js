@@ -226,6 +226,7 @@ $(document).on('click', '.edit-agreement', function(){
             $('#inputDateAgreementExpiration').datepicker('setDate', res.data.date_agreement_expiration);
             $('#inputDateExtensionExpiration').datepicker('setDate', res.data.date_extension_expiration);
             $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
+            $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
             res.data.agreements_to_sedi.forEach(function(sede) {
                 if (sede.active) {
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
@@ -280,6 +281,12 @@ function clearModal(){
     $('#inputGuestDailyPrice').val("");
     $('#inputGuestDailyPrice').prop("disabled", false);
     $('#inputGuestDailyPrice').removeClass('disabled-approved');
+    $('#inputCapacityIncrement20').prop("checked", false);
+    $('#inputCapacityIncrement20').prop("disabled", false);
+    $('#inputCapacityIncrement20').removeClass('disabled-approved');
+    $('#inputCapacityIncrement50').prop("checked", false);
+    $('#inputCapacityIncrement50').prop("disabled", false);
+    $('#inputCapacityIncrement50').removeClass('disabled-approved');
 
     $('.agreement-sede-check').each(function() {
         $(this).prop('checked', false);
@@ -307,6 +314,10 @@ function disableApprovedModal() {
     $('#inputDateExtensionExpiration').addClass('disabled-approved');
     $('#inputGuestDailyPrice').prop("disabled", true);
     $('#inputGuestDailyPrice').addClass('disabled-approved');
+    $('#inputCapacityIncrement20').prop("disabled", false);
+    $('#inputCapacityIncrement20').removeClass('disabled-approved');
+    $('#inputCapacityIncrement50').prop("disabled", false);
+    $('#inputCapacityIncrement50').removeClass('disabled-approved');
 
     $('.agreement-sede-check').each(function() {
         $(this).prop("disabled", true);

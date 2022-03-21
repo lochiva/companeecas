@@ -76,6 +76,16 @@ var app = new Vue({
                 value: '',
                 required: true
             },
+            educational_qualification: {
+                hasError: false,
+                value: '',
+                required: false
+            },
+            educational_qualification_child: {
+                hasError: false,
+                value: '',
+                required: false
+            },
             draft: {
                 hasError: false,
                 value: true,
@@ -95,6 +105,8 @@ var app = new Vue({
         guestStatus: '',
         countries: [],
         familyGuests: [],
+        educationalQualifications: [],
+        educationalQualificationChildren: [],
         guestHistory: [],
         exitTypes: [],
         exitProcedureData: {
@@ -162,6 +174,8 @@ var app = new Vue({
             this.loadGuest(this.guestData.id.value);
         }
 
+        this.educationalQualifications = this.getEducationalQualifications();
+
         let modalGuestExit = this.$refs.modalGuestExit; 
         $(modalGuestExit).on('hidden.bs.modal', () => {
             this.clearExitProcedureData();
@@ -203,6 +217,11 @@ var app = new Vue({
                             };
                         }
                         this.guestData.sex.value = res.data.data.sex;
+                        this.guestData.educational_qualification.value = res.data.data.educational_qualification;
+                        if (res.data.data.educational_qualification_child) {
+                            this.guestData.educational_qualification_child.value = res.data.data.educational_qualification_child;
+                            this.getEducationalQualifications(res.data.data.educational_qualification.id);
+                        }
                         this.guestData.draft.value = res.data.data.draft;
                         this.guestData.draft_expiration.value = res.data.data.draft_expiration;
                         this.guestData.suspended.value = res.data.data.suspended;
@@ -272,6 +291,12 @@ var app = new Vue({
                         msg += 'Avendo selezionato "Minore" è necessario indicare se con riferimento a nucleo familiare oppure solo.\n';
                     }
                 }
+                if(prop == 'educational_qualification'){
+                    if(this.guestData[prop].value && this.guestData[prop].value.have_children && !this.guestData.educational_qualification_child.value){
+                        errors = true;
+                        msg += 'Per il titolo di studio selezionato è necessario selezionare anche il dettaglio.\n';
+                    }
+                }
             });
 
             if(errors){
@@ -288,14 +313,22 @@ var app = new Vue({
             let params = new URLSearchParams();
 
             Object.keys(this.guestData).forEach((prop) => {
-                if (prop == 'country_birth' || prop == 'family_guest') {
-                    if (this.guestData[prop] == '' || this.guestData[prop] == null) {
-                        params.append(prop, '');
+                if (prop != 'educational_qualification_child') {
+                    if (prop == 'country_birth' || prop == 'family_guest') {
+                        if (this.guestData[prop] == '' || this.guestData[prop] == null) {
+                            params.append(prop, '');
+                        } else {
+                            params.append(prop, this.guestData[prop].value.id);
+                        }
+                    } else if (prop == 'educational_qualification') {
+                        if (!this.guestData.educational_qualification_child.value) {
+                            params.append('educational_qualification_id', this.guestData[prop].value.id);
+                        } else {
+                            params.append('educational_qualification_id', this.guestData.educational_qualification_child.value.id);
+                        }
                     } else {
-                        params.append(prop, this.guestData[prop].value.id);
+                        params.append(prop, this.guestData[prop].value);
                     }
-                } else {
-                    params.append(prop, this.guestData[prop].value);
                 }
             });
 
@@ -744,6 +777,32 @@ var app = new Vue({
             }).catch(error => {
                 console.log(error);
             });
+        },
+
+        getEducationalQualifications: function(parent_id = 0) {
+            axios.get(pathServer + 'aziende/ws/getEducationalQualifications/'+parent_id)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    if (parent_id > 0) {
+                        this.educationalQualificationChildren = res.data.data;
+                    } else {
+                        this.educationalQualifications = res.data.data;
+                    }
+                } else {
+                    alert(res.data.msg);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+
+        updateEducationalQualificationChildren: function() {
+            this.guestData.educational_qualification_child.value = '';
+            if (this.guestData.educational_qualification.value.have_children) {
+                this.getEducationalQualifications(this.guestData.educational_qualification.value.id);
+            } else {
+                this.educationalQualificationChildren = [];
+            }
         }
         
     }

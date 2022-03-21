@@ -73,6 +73,12 @@ class GuestsTable extends AppTable
             'joinType' => 'LEFT',
             'className' => 'Aziende.Guests'
         ]);
+
+        $this->belongsTo('EducationalQualifications', [
+            'foreignKey' => 'educational_qualification_id',
+            'joinType' => 'LEFT',
+            'className' => 'Aziende.GuestsEducationalQualifications'
+        ]);
     }
 
     /**
@@ -169,6 +175,7 @@ class GuestsTable extends AppTable
         $rules->add($rules->existsIn(['country_birth'], 'Countries'));
         $rules->add($rules->existsIn(['status_id'], 'GuestsStatuses'));
         $rules->add($rules->existsIn(['original_guest_id'], 'OriginalGuests'));
+        $rules->add($rules->existsIn(['educational_qualification_id'], 'EducationalQualifications'));
 
         return $rules;
     }
@@ -186,6 +193,7 @@ class GuestsTable extends AppTable
             'country_birth' => 'Paese di nascita',
             'sex' => 'Sesso',
             'minor' => 'Minore',
+            'educational_qualification_id' => 'ID titolo di studio',
             'suspended' => 'Sospeso',
             'draft' => 'Stato anagrafica in bozza',
             'draft_expiration' => 'Scadenza stato bozza',
