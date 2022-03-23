@@ -66,6 +66,7 @@ try {
     Configure::config('default', new PhpConfig());
     Configure::load('app', 'default', false);
     Configure::load('localconfig', 'default');
+    Configure::load('globalConfig', 'default');
 } catch (\Exception $e) {
     die($e->getMessage() . "\n");
 }

@@ -16,9 +16,9 @@ class ActionLogTable extends Table
         $this->setTable('action_log');
         $this->setPrimaryKey('id');
         $this->belongsTo('Registration.Users', ['foreignKey' => 'id_user', 'propertyName' => 'user']);
-        $this->nammingEntity = Configure::read('localconfig.nammingEntity');
+        $this->nammingEntity = Configure::read('globalConfig.nammingEntity');
         $this->actionVerbs = ['insert'=>'inserito','update'=>'aggiornato','delete' => 'cancellato'];
-        $this->excludeEntity = Configure::read('localconfig.excludeEntity');
+        $this->excludeEntity = Configure::read('globalConfig.excludeEntity');
     }
 
     public function getRecordHistory($table, $recordId, $limit = 0)
