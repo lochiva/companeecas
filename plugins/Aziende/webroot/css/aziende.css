@@ -347,3 +347,11 @@ a.contact-login:hover{
 	position: relative;
     top: 8px;
 }
+
+.warning-presenze {
+	background-color: #fdc775;
+}
+
+.danger-presenze {
+	background-color: #fd9393;
+}

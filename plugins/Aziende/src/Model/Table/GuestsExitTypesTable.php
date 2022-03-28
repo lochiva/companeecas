@@ -64,6 +64,9 @@ class GuestsExitTypesTable extends Table
             ->boolean('required_note');
 
         $validator
+            ->boolean('startable_by_ente');
+
+        $validator
             ->integer('ordering');
 
         return $validator;

@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property bool $required_confirmation
  * @property bool $required_note
+ * @property bool $startable_by_ente
  * @property int $ordering
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
@@ -29,6 +30,7 @@ class GuestsExitType extends Entity
         'name' => true,
         'required_confirmation' => true,
         'required_note' => true,
+        'startable_by_ente' => true,
         'ordering' => true,
         'created' => true,
         'modified' => true

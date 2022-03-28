@@ -36,6 +36,7 @@ class GuestComponent extends Component
 			'Guests.draft',
 			'Guests.draft_expiration', 
 			'Guests.suspended',
+			'Guests.status_id',
 			'gs.name',
 			'gs.color'
 		];

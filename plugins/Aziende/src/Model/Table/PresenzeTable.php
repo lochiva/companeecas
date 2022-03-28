@@ -125,4 +125,18 @@ class PresenzeTable extends Table
             
         return $presenze;
     }
+
+    public function getGuestLastPresenzaByDate($guestId, $date)
+    {
+        $presenza = $this->find()
+            ->where([
+                'guest_id' => $guestId,
+                'presente' => 1,
+                'date <=' => $date
+            ])
+            ->order(['date' => 'DESC'])
+            ->first();
+            
+        return $presenza;
+    }
 }

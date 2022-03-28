@@ -38,8 +38,8 @@ $role = $this->request->session()->read('Auth.User.role');
         <div v-if="guestStatus == 2" class="message-exiting alert">
             L'ospite è in stato "In uscita" con motivazione {{exitData.type}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
-            <div class="exit-buttons">
-                <button type="button" class="btn btn-danger" @click="confirmExit()">Conferma uscita</button>
+            <div v-if="role == 'admin'" class="exit-buttons">
+                <button type="button" class="btn btn-danger" @click="openConfirmExitModal()">Conferma uscita</button>
             </div>
         </div>
         <div v-if="guestStatus == 3" class="message-exited alert">
@@ -77,7 +77,8 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.check_in_date.hasError}">
                                     <label :class="{'required': guestData.check_in_date.required}" for="guestCheckInDate"><?= __('Check-in') ?></label>
-                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" 
+                                        :clear-button="true" :monday-first="true" input-class="form-control"
                                         id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
                                 </div>
                             </div>
@@ -194,7 +195,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     </div>
                     <div class="box-footer">
                         <button :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
-                        <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-danger pull-right" @click="openExitModal()">Uscita</button>
+                        <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-danger pull-right" @click="openExitModal()">Uscita</button>
                     </div>
                 </div>
             </div>
@@ -269,6 +270,7 @@ $role = $this->request->session()->read('Auth.User.role');
     </md-speed-dial>
 
     <?= $this->element('Aziende.modal_guest_exit') ?>
+    <?= $this->element('Aziende.modal_confirm_guest_exit') ?>
     <?= $this->element('Aziende.modal_guest_transfer') ?>
 
 </div>

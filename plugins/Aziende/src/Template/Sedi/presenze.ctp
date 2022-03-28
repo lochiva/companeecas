@@ -62,7 +62,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                         <div class="col-sm-2 div-label-guest-presenza">
                                             <input type="checkbox" :id="'inputGuest'+guest.id" v-model="guest.presente" class="check-presenza">
                                         </div>
-                                        <div class="col-sm-10 div-label-guest-presenza">
+                                        <div class="col-sm-10 div-label-guest-presenza" :class="{'warning-presenze': guest.warning_presenze, 'danger-presenze': guest.danger_presenze}">
                                             <label class="control-label presenze-label" :for="'inputGuest'+guest.id">
                                                 {{guest.name}} {{guest.surname}}
                                                 <span v-if="guest.suspended">(sospeso)</span>

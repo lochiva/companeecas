@@ -1660,27 +1660,50 @@ class WsController extends AppController
                 $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
 				$buttons .= '</div>';
 
+                //Icona di avvertenza se superata data dello stato bozza
                 $alertDraftIcon = '';
                 $today = date('Y-m-d');
                 $draftExpiration = empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('Y-m-d');
                 if ($guest['draft'] && $today > $draftExpiration) {
-                    $alertDraftIcon = '<span class="alert-draft" data-toggle="tooltip" title="Inserire il  CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
+                    $alertDraftIcon = '<span class="alert-draft" data-toggle="tooltip" title="Inserire il CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
                 }
 
+                //Stato ospite
                 $status = '<span class="guest-status" style="background-color: '.$guest['gs']['color'].'">'.$guest['gs']['name'].'</span>';
 
+                //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+                $classPresenze = '';
+                if ($guest['status_id'] == 1 && !$guest['suspended']) {
+                    $lastPresenzaDate = '';
+                    $today = date('Y-m-d');
+                    $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $today);
+                    if (!empty($lastPresenza)) {
+                        $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+                    } elseif (!empty($guest['check_in_date'])) {
+                        $lastPresenzaDate = $guest['check_in_date']->format('Y-m-d');
+                    }
+                    if (!empty($lastPresenzaDate)) {
+                        $threeDaysAgo = date('Y-m-d', strtotime('-3 days'));
+                        if ($lastPresenzaDate < $today && $lastPresenzaDate >= $threeDaysAgo) {
+                            $classPresenze = 'warning-presenze';
+                        } elseif ($lastPresenzaDate < $threeDaysAgo) {
+                            $classPresenze = 'danger-presenze';
+                        }
+                    }
+                }
+
 				$out['rows'][] = [
-                    empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y'),
-                    $guest['cui'],
-                    $guest['vestanet_id'],
-                    $guest['name'],
-                    $guest['surname'],
-                    empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y'),
-                    $guest['sex'],
-                    $guest['draft'] ? 'Sì' : 'No',
-                    $alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')),
-                    $guest['suspended'] ? 'Sì' : 'No',
-                    $status,
+                    '<td class="'.$classPresenze.'">'.(empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y')).'</td>',
+                    '<td class="'.$classPresenze.'">'.$guest['cui'].'</td>',
+                    '<td class="'.$classPresenze.'">'.$guest['vestanet_id'].'</td>',
+                    '<td class="'.$classPresenze.'">'.$guest['name'].'</td>',
+                    '<td class="'.$classPresenze.'">'.$guest['surname'],
+                    '<td class="'.$classPresenze.'">'.(empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y')).'</td>',
+                    '<td class="'.$classPresenze.'">'.$guest['sex'].'</td>',
+                    '<td class="'.$classPresenze.'">'.($guest['draft'] ? 'Sì' : 'No').'</td>',
+                    '<td class="'.$classPresenze.'">'.$alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')).'</td>',
+                    '<td class="'.$classPresenze.'">'.($guest['suspended'] ? 'Sì' : 'No').'</td>',
+                    '<td class="'.$classPresenze.'">'.$status.'</td>',
 					$buttons
 				];
 
@@ -1864,7 +1887,11 @@ class WsController extends AppController
                 } else {
                     $guest['history_provenance'] = '';
                 }
-                $guest['history_date'] = $lastHistory->operation_date->format('d/m/Y');
+                if ($guest->check_out_date) {
+                    $guest['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+                } else {
+                    $guest['check_out_date'] = '';
+                }
                 $guest['history_note'] = $lastHistory->note;
             }
 			$this->_result['response'] = "OK";
@@ -2199,7 +2226,7 @@ class WsController extends AppController
 		}		
     }
 
-    public function getGuestsForPresenze($sedeId = 0, $date = '')
+    public function getGuestsForPresenze()
     {
         $data = $this->request->query;
 
@@ -2213,6 +2240,27 @@ class WsController extends AppController
                     $guest['not_saved'] = 0;
                 }
                 $guest['presente'] = filter_var($guest['presente'], FILTER_VALIDATE_BOOLEAN);
+
+                //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+                $warningPresenze = 0;
+                $dangerPresenze = 0;
+                $lastPresenzaDate = '';
+                $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $data['date']);
+                if (!empty($lastPresenza)) {
+                    $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+                } elseif (!empty($guest['check_in_date'])) {
+                    $lastPresenzaDate = $guest['check_in_date']->format('Y-m-d');
+                }
+                if (!empty($lastPresenzaDate)) {
+                    $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
+                    if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
+                        $warningPresenze = 1;
+                    } elseif ($lastPresenzaDate < $threeDaysBefore) {
+                        $dangerPresenze = 1;
+                    }
+                }
+                $guest['warning_presenze'] = $warningPresenze;
+                $guest['danger_presenze'] = $dangerPresenze;
             }
 
             $presenzeTable = TableRegistry::get('Aziende.Presenze');
@@ -2256,6 +2304,27 @@ class WsController extends AppController
                 } else {
                     $error = true;
                 }
+
+                //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+                $warningPresenze = 0;
+                $dangerPresenze = 0;
+                $lastPresenzaDate = '';
+                $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest->id, $data['date']);
+                if (!empty($lastPresenza)) {
+                    $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+                } elseif (!empty($guest->check_in_date)) {
+                    $lastPresenzaDate = $guest->check_in_date->format('Y-m-d');
+                }
+                if (!empty($lastPresenzaDate)) {
+                    $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
+                    if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
+                        $warningPresenze = 1;
+                    } elseif ($lastPresenzaDate < $threeDaysBefore) {
+                        $dangerPresenze = 1;
+                    }
+                }
+                $guest->warning_presenze = $warningPresenze;
+                $guest->danger_presenze = $dangerPresenze;
             }
 
             if ($error) {
@@ -2302,21 +2371,23 @@ class WsController extends AppController
 	{
 		$table = TableRegistry::get('Aziende.GuestsExitTypes');
 
-		$exitTypes = $table->find()->toArray();
-
-        $res = [];
-        foreach ($exitTypes as $type) {
-            $res[$type['id']] = $type;
+        $role = $this->request->session()->read('Auth.User.role');
+        if ($role == 'admin') {
+		    $exitTypes = $table->find()->toArray();
+        } elseif ($role == 'ente') {
+            $exitTypes = $table->find()->where(['startable_by_ente' => 1])->toArray();
         }
 
-		if($res){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $res;
-			$this->_result['msg'] = 'Tipologie uscite recuperate con successo.';
-		}else{
-			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero delle tipologie uscite.';
-		}		
+        $res = [];
+        if (!empty($exitTypes)) {
+            foreach ($exitTypes as $type) {
+                $res[$type['id']] = $type;
+            }
+        }
+
+        $this->_result['response'] = "OK";
+        $this->_result['data'] = $res;
+        $this->_result['msg'] = 'Tipologie uscite recuperate con successo.';
     }
 
     public function getTransferAziendaDefault($sedeId) 
@@ -2395,13 +2466,9 @@ class WsController extends AppController
         $guestsHistory->patchEntity($history, $historyData);
 
         if ($guestsHistory->save($history)) {
-            //aggiornamento stato ospite
+            //aggiornamento stato ospite e data di check-out
             $guest->status_id = $status;
-
-            //se non è richiesta la conferma dell'uscita imposta la data di check-out
-            if (!$exitType['required_confirmation']) {
-                $guest->check_out_date = date('Y-m-d');
-            }   
+            $guest->check_out_date = date('Y-m-d');  
 
             if ($guests->save($guest)) {
                 if ($status == 3) {
@@ -2422,7 +2489,7 @@ class WsController extends AppController
                 }
                 $res['history_status'] = $status;
                 $res['history_exit_type'] = $exitType['name'];
-                $res['history_date'] = $history->operation_date->format('d/m/Y');
+                $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
                 $res['history_note'] = $history->note;
 
                 $this->_result['response'] = "OK";
@@ -2441,7 +2508,7 @@ class WsController extends AppController
     public function confirmExit()
     {
         $data = $this->request->data;
-      
+
         $guests = TableRegistry::get('Aziende.Guests');
         $guest = $guests->get($data['guest_id']);
 
@@ -2469,7 +2536,7 @@ class WsController extends AppController
         if ($guestsHistory->save($history)) {
             //aggiornamento stato ospite e data di check-out
             $guest->status_id = $status;
-            $guest->check_out_date = date('Y-m-d');
+            $guest->check_out_date = new Time(substr($data['check_out_date'], 0, 33));
 
             if ($guests->save($guest)) {
                 //creazione notifica uscita ospite
@@ -2489,7 +2556,7 @@ class WsController extends AppController
 
                 $res['history_status'] = $status;
                 $res['history_exit_type'] = $exitType['name'];
-                $res['history_date'] = $history->operation_date->format('d/m/Y');
+                $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
                 $res['history_note'] = $history->note;
 
                 $this->_result['response'] = "OK";
@@ -2538,13 +2605,9 @@ class WsController extends AppController
         $guestsHistory->patchEntity($history, $historyData);
 
         if ($guestsHistory->save($history)) {
-            //aggiornamento stato ospite
+            //aggiornamento stato ospite e data di check-out
             $guest->status_id = $status;
-
-            // se rimane nello stesso ente setta già la data di check-out, altrimenti verrà compilata sulla conferma del trasferimento
-            if ($sede->id_azienda == $data['azienda']) {
-                $guest->check_out_date = date('Y-m-d');
-            }
+            $guest->check_out_date = date('Y-m-d');
 
             if ($guests->save($guest)) {
                 //inserimento ospite clonato per struttura di destinazione
@@ -2626,7 +2689,7 @@ class WsController extends AppController
                         }
 
                         $res['history_status'] = $status;
-                        $res['history_date'] = $history->operation_date->format('d/m/Y');
+                        $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
                         $res['history_destination'] = $sedeClonedGuest['azienda']['denominazione'].' - '.$sedeClonedGuest['indirizzo'].' '.$sedeClonedGuest['num_civico'].', '.$sedeClonedGuest['comune']['des_luo'].' ('.$sedeClonedGuest['comune']['s_prv'].')';
                         $res['history_note'] = $history->note;
 

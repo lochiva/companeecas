@@ -24,6 +24,10 @@
             echo $this->Form->label('Richieste Note');
             echo $this->Form->checkbox('required_note', ['class' => 'input-checkbox']);
             echo '</div>';
+            echo '<div class="input checkbox">';
+            echo $this->Form->label('Avviabile Da Ente');
+            echo $this->Form->checkbox('startable_by_ente', ['class' => 'input-checkbox']);
+            echo '</div>';
             echo $this->Form->input('ordering');
         ?>
     </fieldset>

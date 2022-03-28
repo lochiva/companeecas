@@ -23,6 +23,10 @@
             <td><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Avviabile da ente') ?></th>
+            <td><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Ordinamento') ?></th>
             <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
         </tr>

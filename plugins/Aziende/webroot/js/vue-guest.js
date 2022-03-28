@@ -121,6 +121,13 @@ var app = new Vue({
                 value: ''
             }
         },
+        confirmExitProcedureData: {
+            check_out_date: {
+                required: true,
+                hasError: false,
+                value: ''
+            }
+        },
         exitData: {
             type: '',
             date: '',
@@ -174,11 +181,17 @@ var app = new Vue({
             this.loadGuest(this.guestData.id.value);
         }
 
-        this.educationalQualifications = this.getEducationalQualifications();
+        this.getEducationalQualifications();
+        this.getExitTypes();
 
         let modalGuestExit = this.$refs.modalGuestExit; 
         $(modalGuestExit).on('hidden.bs.modal', () => {
             this.clearExitProcedureData();
+        });
+
+        let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit; 
+        $(modalConfirmGuestExit).on('hidden.bs.modal', () => {
+            this.clearConfirmExitProcedureData();
         });
 
         let modalGuestTransfer = this.$refs.modalGuestTransfer; 
@@ -230,11 +243,11 @@ var app = new Vue({
 
                         this.guestStatus = res.data.data.status_id;
                         this.exitData.type = res.data.data.history_exit_type;
-                        this.exitData.date = res.data.data.history_date;
+                        this.exitData.date = res.data.data.check_out_date;
                         this.exitData.note = res.data.data.history_note;
                         this.transferData.destination = res.data.data.history_destination;
                         this.transferData.provenance = res.data.data.history_provenance;
-                        this.transferData.date = res.data.data.history_date;
+                        this.transferData.date = res.data.data.check_out_date;
                         this.transferData.note = res.data.data.history_note;
 
                         this.loadGuestHistory();
@@ -321,10 +334,10 @@ var app = new Vue({
                             params.append(prop, this.guestData[prop].value.id);
                         }
                     } else if (prop == 'educational_qualification') {
-                        if (!this.guestData.educational_qualification_child.value) {
-                            params.append('educational_qualification_id', this.guestData[prop].value.id);
-                        } else {
+                        if (this.guestData.educational_qualification_child.value) {
                             params.append('educational_qualification_id', this.guestData.educational_qualification_child.value.id);
+                        } else if (this.guestData[prop].value) {
+                            params.append('educational_qualification_id', this.guestData[prop].value.id);
                         }
                     } else {
                         params.append(prop, this.guestData[prop].value);
@@ -462,19 +475,22 @@ var app = new Vue({
             });
         },
 
-        openExitModal: function() {
+        getExitTypes: function() {
             axios.get(pathServer + 'aziende/ws/getExitTypes')
                 .then(res => { 
                     if (res.data.response == 'OK') {
-                        this.exitTypes = res.data.data; 
-                        let modalGuestExit = this.$refs.modalGuestExit;
-                        $(modalGuestExit).modal('show');
+                        this.exitTypes = res.data.data;
                     } else {
                         alert(res.data.msg);
                     }
                 }).catch(error => {
                     console.log(error);
                 });
+        },
+
+        openExitModal: function() {
+            let modalGuestExit = this.$refs.modalGuestExit;
+            $(modalGuestExit).modal('show');
         },
 
         updateExitNote: function() {
@@ -514,7 +530,7 @@ var app = new Vue({
                         alert(res.data.msg);
                         this.guestStatus = res.data.data.history_status;
                         this.exitData.type = res.data.data.history_exit_type;
-                        this.exitData.date = res.data.data.history_date;
+                        this.exitData.date = res.data.data.check_out_date;
                         this.exitData.note = res.data.data.history_note;
     
                         this.loadGuestHistory();
@@ -535,7 +551,6 @@ var app = new Vue({
         },
 
         clearExitProcedureData: function() {
-            this.exitTypes = [];
             this.exitProcedureData = {
                 exit_type_id: {
                     required: true,
@@ -550,10 +565,34 @@ var app = new Vue({
             };
         },
 
+        openConfirmExitModal: function() {
+            var date = this.exitData.date.split('/');
+            this.confirmExitProcedureData.check_out_date.value = date[2]+'-'+date[1]+'-'+date[0];
+            let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
+            $(modalConfirmGuestExit).modal('show');
+        },
+
         confirmExit: function() {
-            if (confirm('Si è sicuri di voler confermare l\'uscita dell\'ospite?')) {
+            var error = false;
+
+            Object.keys(this.confirmExitProcedureData).forEach((prop) => {
+                if (this.confirmExitProcedureData[prop].required && (this.confirmExitProcedureData[prop].value == "" || this.confirmExitProcedureData[prop].value == null)) {
+                    error = true;
+                    this.confirmExitProcedureData[prop].hasError = true;
+                } else {
+                    this.confirmExitProcedureData[prop].hasError = false;
+                }
+            });                 
+
+            if(error){
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            }else{ 
                 let params = new URLSearchParams();
                 params.append('guest_id', this.guestData.id.value);
+                Object.keys(this.confirmExitProcedureData).forEach((prop) => {
+                    params.append(prop, this.confirmExitProcedureData[prop].value);
+                });
 
                 axios.post(pathServer + 'aziende/ws/confirmExit', params)
                 .then(res => {
@@ -561,10 +600,13 @@ var app = new Vue({
                         alert(res.data.msg);
                         this.guestStatus = res.data.data.history_status;
                         this.exitData.type = res.data.data.history_exit_type;
-                        this.exitData.date = res.data.data.history_date;
+                        this.exitData.date = res.data.data.check_out_date;
                         this.exitData.note = res.data.data.history_note;
-    
+
                         this.loadGuestHistory();
+
+                        let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
+                        $(modalConfirmGuestExit).modal('hide');
 
                         //Aggiorna conteggio notifiche
                         this.updateNotificationsCount();
@@ -576,6 +618,16 @@ var app = new Vue({
                     console.log(error);
                 });
             }
+        },
+
+        clearConfirmExitProcedureData: function() {
+            this.confirmExitProcedureData = {
+                check_out_date: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                }
+            };
         },
 
         openTransferModal: function() {
@@ -625,7 +677,7 @@ var app = new Vue({
                         alert(res.data.msg);
                         this.guestStatus = res.data.data.history_status;
                         this.transferData.destination = res.data.data.history_destination;
-                        this.transferData.date = res.data.data.history_date;
+                        this.transferData.date = res.data.data.check_out_date;
                         this.transferData.note = res.data.data.history_note;
     
                         this.loadGuestHistory();

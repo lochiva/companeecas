@@ -286,10 +286,9 @@ class GuestsTable extends AppTable
                 'Guests.check_in_date <=' => $date,
                 'Guests.check_in_date IS NOT NULL',
                 'OR' => [
-                    'Guests.check_out_date >=' => $date,
+                    'Guests.check_out_date >' => $date,
                     'Guests.check_out_date IS NULL'
-                ],
-                'Guests.status_id !=' => 5, //stato diverso da trasferimento in ingresso
+                ]
             ])
             ->join([
                 [

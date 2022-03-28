@@ -13,6 +13,7 @@
                 <th scope="col"><?= $this->Paginator->sort('name') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('required_confirmation') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('required_note') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('startable_by_ente') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('ordering') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
@@ -26,6 +27,7 @@
                 <td ><?= h($guestsExitType->name) ?></td>
                 <td ><?= $guestsExitType->required_confirmation ? 'Sì' : 'No' ?></td>
                 <td ><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>
+                <td ><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
                 <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
                 <td ><?= h($guestsExitType->created) ?></td>
                 <td ><?= h($guestsExitType->modified) ?></td>

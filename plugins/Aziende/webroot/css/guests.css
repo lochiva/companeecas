@@ -343,3 +343,11 @@ label.required:after{
 .btn-transfer {
     margin-left: 10px;
 }
+
+.warning-presenze {
+	background-color: #fdc775;
+}
+
+.danger-presenze {
+	background-color: #fd9393;
+}
