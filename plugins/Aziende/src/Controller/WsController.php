@@ -1894,6 +1894,9 @@ class WsController extends AppController
                 }
                 $guest['history_note'] = $lastHistory->note;
             }
+            //Presenza oggi
+            $guest['presenza'] = TableRegistry::get('Aziende.Presenze')->getGuestPresenzaByDate($guest->id, date('Y-m-d'));
+
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $guest;
 			$this->_result['msg'] = 'Ospite recuperato correttamente.';
@@ -2435,74 +2438,82 @@ class WsController extends AppController
     public function exitProcedure()
     {
         $data = $this->request->data;
-      
-        $guests = TableRegistry::get('Aziende.Guests');
-        $guest = $guests->get($data['guest_id']); 
 
-        $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
+        //Presenza oggi
+        $guestPresenza = TableRegistry::get('Aziende.Presenze')->getGuestPresenzaByDate($data['guest_id'], date('Y-m-d'));
 
-        //richiesta conferma uscita
-        if ($exitType['required_confirmation']) {
-            $status = 2;
-        } else {
-            $status = 3;
-        }
+        if (!$guestPresenza) {
+            $guests = TableRegistry::get('Aziende.Guests');
+            $guest = $guests->get($data['guest_id']); 
 
-        //aggiornamento storico
-        $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
-        $history = $guestsHistory->newEntity();
+            $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
 
-        $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
-
-        $historyData['guest_id'] = $guest->id;
-        $historyData['azienda_id'] = $sede->id_azienda;
-        $historyData['sede_id'] = $guest->sede_id;
-        $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-        $historyData['operation_date'] = date('Y-m-d');
-        $historyData['guest_status_id'] = $status;
-        $historyData['exit_type_id'] = $data['exit_type_id'];
-        $historyData['note'] = $data['note'];
-
-        $guestsHistory->patchEntity($history, $historyData);
-
-        if ($guestsHistory->save($history)) {
-            //aggiornamento stato ospite e data di check-out
-            $guest->status_id = $status;
-            $guest->check_out_date = date('Y-m-d');  
-
-            if ($guests->save($guest)) {
-                if ($status == 3) {
-                    //creazione notifica uscita ospite
-                    $saveType = 'EXITED_GUEST';
-                    $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-                    $notification = $guestsNotifications->newEntity();
-                    $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-                    $notificationData = [
-                        'type_id' => $notificationType->id,
-                        'azienda_id' => $sede->id_azienda,
-                        'sede_id' => $sede->id,
-                        'guest_id' => $guest->id,
-                        'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                    ];
-                    $guestsNotifications->patchEntity($notification, $notificationData);
-                    $guestsNotifications->save($notification);
-                }
-                $res['history_status'] = $status;
-                $res['history_exit_type'] = $exitType['name'];
-                $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
-                $res['history_note'] = $history->note;
-
-                $this->_result['response'] = "OK";
-                $this->_result['data'] = $res;
-                $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
-            }else{
-                $this->_result['response'] = "KO";
-                $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite.';
+            //richiesta conferma uscita
+            if ($exitType['required_confirmation']) {
+                $status = 2;
+            } else {
+                $status = 3;
             }
+
+            //aggiornamento storico
+            $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+            $history = $guestsHistory->newEntity();
+
+            $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+            $historyData['guest_id'] = $guest->id;
+            $historyData['azienda_id'] = $sede->id_azienda;
+            $historyData['sede_id'] = $guest->sede_id;
+            $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+            $historyData['operation_date'] = date('Y-m-d');
+            $historyData['guest_status_id'] = $status;
+            $historyData['exit_type_id'] = $data['exit_type_id'];
+            $historyData['note'] = $data['note'];
+
+            $guestsHistory->patchEntity($history, $historyData);
+
+            if ($guestsHistory->save($history)) {
+                //aggiornamento stato ospite e data di check-out
+                $guest->status_id = $status;
+                $guest->check_out_date = date('Y-m-d');  
+
+                if ($guests->save($guest)) {
+                    if ($status == 3) {
+                        //creazione notifica uscita ospite
+                        $saveType = 'EXITED_GUEST';
+                        $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                        $notification = $guestsNotifications->newEntity();
+                        $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                        $notificationData = [
+                            'type_id' => $notificationType->id,
+                            'azienda_id' => $sede->id_azienda,
+                            'sede_id' => $sede->id,
+                            'guest_id' => $guest->id,
+                            'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                        ];
+                        $guestsNotifications->patchEntity($notification, $notificationData);
+                        $guestsNotifications->save($notification);
+                    }
+                    $res['history_status'] = $status;
+                    $res['history_exit_type'] = $exitType['name'];
+                    $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+                    $res['history_note'] = $history->note;
+
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = $res;
+                    $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
+                }else{
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite.';
+                }
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
+            }	
         } else {
             $this->_result['response'] = "KO";
-            $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
-        }	
+            $this->_result['msg'] = "L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di uscita.";
+        }
     }
 
     public function confirmExit()
@@ -2576,141 +2587,149 @@ class WsController extends AppController
     {
         $data = $this->request->data;
       
-        $guests = TableRegistry::get('Aziende.Guests');
-        $guest = $guests->get($data['guest_id']);
-        $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+        //Presenza oggi
+        $guestPresenza = TableRegistry::get('Aziende.Presenze')->getGuestPresenzaByDate($data['guest_id'], date('Y-m-d'));
 
-        // se rimane nello stesso ente non serve conferma trasferimento
-        if ($sede->id_azienda == $data['azienda']) {
-            $status = 6;
-            $statusCloned = 1;
-        } else {
-            $status = 4;
-            $statusCloned = 5;
-        }
+        if (!$guestPresenza) {
+            $guests = TableRegistry::get('Aziende.Guests');
+            $guest = $guests->get($data['guest_id']);
+            $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-        //aggiornamento storico
-        $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
-        $history = $guestsHistory->newEntity();
+            // se rimane nello stesso ente non serve conferma trasferimento
+            if ($sede->id_azienda == $data['azienda']) {
+                $status = 6;
+                $statusCloned = 1;
+            } else {
+                $status = 4;
+                $statusCloned = 5;
+            }
 
-        $historyData['guest_id'] = $guest->id;
-        $historyData['azienda_id'] = $sede->id_azienda;
-        $historyData['sede_id'] = $guest->sede_id;
-        $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-        $historyData['operation_date'] = date('Y-m-d');
-        $historyData['guest_status_id'] = $status;
-        $historyData['destination_id'] = $data['sede'];
-        $historyData['note'] = $data['note'];
+            //aggiornamento storico
+            $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+            $history = $guestsHistory->newEntity();
 
-        $guestsHistory->patchEntity($history, $historyData);
+            $historyData['guest_id'] = $guest->id;
+            $historyData['azienda_id'] = $sede->id_azienda;
+            $historyData['sede_id'] = $guest->sede_id;
+            $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+            $historyData['operation_date'] = date('Y-m-d');
+            $historyData['guest_status_id'] = $status;
+            $historyData['destination_id'] = $data['sede'];
+            $historyData['note'] = $data['note'];
 
-        if ($guestsHistory->save($history)) {
-            //aggiornamento stato ospite e data di check-out
-            $guest->status_id = $status;
-            $guest->check_out_date = date('Y-m-d');
+            $guestsHistory->patchEntity($history, $historyData);
 
-            if ($guests->save($guest)) {
-                //inserimento ospite clonato per struttura di destinazione
-                $dataGuest = clone $guest;
-                $dataClonedGuest = $dataGuest->toArray();
-                $dataClonedGuest['sede_id'] = $data['sede'];
-                $dataClonedGuest['status_id'] = $statusCloned;
-                $dataClonedGuest['original_guest_id'] = empty($guest->original_guest_id) ? $guest->id : $guest->original_guest_id;
-                unset($dataClonedGuest['id']);
-                unset($dataClonedGuest['created']);
-                unset($dataClonedGuest['modified']);
-                unset($dataClonedGuest['check_out_date']);
+            if ($guestsHistory->save($history)) {
+                //aggiornamento stato ospite e data di check-out
+                $guest->status_id = $status;
+                $guest->check_out_date = date('Y-m-d');
 
-                // se rimane nello stesso ente setta già la nuova data di check-in, altrimenti verrà compilata sulla conferma del trasferimento
-                if ($sede->id_azienda == $data['azienda']) {
-                    $dataClonedGuest['check_in_date'] = date('Y-m-d');
-                } else {
-                    unset($dataClonedGuest['check_in_date']);
-                }
+                if ($guests->save($guest)) {
+                    //inserimento ospite clonato per struttura di destinazione
+                    $dataGuest = clone $guest;
+                    $dataClonedGuest = $dataGuest->toArray();
+                    $dataClonedGuest['sede_id'] = $data['sede'];
+                    $dataClonedGuest['status_id'] = $statusCloned;
+                    $dataClonedGuest['original_guest_id'] = empty($guest->original_guest_id) ? $guest->id : $guest->original_guest_id;
+                    unset($dataClonedGuest['id']);
+                    unset($dataClonedGuest['created']);
+                    unset($dataClonedGuest['modified']);
+                    unset($dataClonedGuest['check_out_date']);
 
-                $clonedGuest = $guests->newEntity($dataClonedGuest);
-
-                if ($guests->save($clonedGuest)) {
-                    $history->cloned_guest_id = $clonedGuest->id;
-                    $guestsHistory->save($history);
-
-                    //clonazione storico
-                    $oldHistory = $guestsHistory->find()
-                        ->where(['guest_id' => $data['guest_id']])
-                        ->toArray();
-
-                    foreach ($oldHistory as $h) {
-                        $clonedHistory = $guestsHistory->newEntity();
-                        $oldHistoryData = $h->toArray();
-                        unset($oldHistoryData['id']);
-                        unset($oldHistoryData['created']);
-                        unset($oldHistoryData['modified']);
-                        $oldHistoryData['guest_id'] = $clonedGuest->id;
-
-                        $clonedHistory = $guestsHistory->patchEntity($clonedHistory, $oldHistoryData); 
-
-                        $guestsHistory->save($clonedHistory);
+                    // se rimane nello stesso ente setta già la nuova data di check-in, altrimenti verrà compilata sulla conferma del trasferimento
+                    if ($sede->id_azienda == $data['azienda']) {
+                        $dataClonedGuest['check_in_date'] = date('Y-m-d');
+                    } else {
+                        unset($dataClonedGuest['check_in_date']);
                     }
 
-                    //aggiornamento storico ospite clonato
-                    $historyClonedGuest = $guestsHistory->newEntity();
+                    $clonedGuest = $guests->newEntity($dataClonedGuest);
 
-                    $sedeClonedGuest = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
-            
-                    $historyClonedGuestData['guest_id'] = $clonedGuest->id;
-                    $historyClonedGuestData['azienda_id'] = $sedeClonedGuest->id_azienda;
-                    $historyClonedGuestData['sede_id'] = $data['sede'];
-                    $historyClonedGuestData['operator_id'] = $this->request->session()->read('Auth.User.id');
-                    $historyClonedGuestData['operation_date'] = date('Y-m-d');
-                    $historyClonedGuestData['guest_status_id'] = $clonedGuest->status_id;
-                    $historyClonedGuestData['cloned_guest_id'] = $guest->id;
-                    $historyClonedGuestData['provenance_id'] = $sede->id;
-                    $historyClonedGuestData['note'] = $data['note'];
-            
-                    $guestsHistory->patchEntity($historyClonedGuest, $historyClonedGuestData);
-            
-                    if ($guestsHistory->save($historyClonedGuest)) {
+                    if ($guests->save($clonedGuest)) {
+                        $history->cloned_guest_id = $clonedGuest->id;
+                        $guestsHistory->save($history);
 
-                        if ($status == 6) {
-                            //creazione notifica trasferimento ospite
-                            $saveType = 'TRANSFERRED_GUEST';
-                            $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-                            $notification = $guestsNotifications->newEntity();
-                            $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-                            $notificationData = [
-                                'type_id' => $notificationType->id,
-                                'azienda_id' => $sede->id_azienda,
-                                'sede_id' => $sede->id,
-                                'guest_id' => $guest->id,
-                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                            ];
-                            $guestsNotifications->patchEntity($notification, $notificationData);
-                            $guestsNotifications->save($notification);
+                        //clonazione storico
+                        $oldHistory = $guestsHistory->find()
+                            ->where(['guest_id' => $data['guest_id']])
+                            ->toArray();
+
+                        foreach ($oldHistory as $h) {
+                            $clonedHistory = $guestsHistory->newEntity();
+                            $oldHistoryData = $h->toArray();
+                            unset($oldHistoryData['id']);
+                            unset($oldHistoryData['created']);
+                            unset($oldHistoryData['modified']);
+                            $oldHistoryData['guest_id'] = $clonedGuest->id;
+
+                            $clonedHistory = $guestsHistory->patchEntity($clonedHistory, $oldHistoryData); 
+
+                            $guestsHistory->save($clonedHistory);
                         }
 
-                        $res['history_status'] = $status;
-                        $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
-                        $res['history_destination'] = $sedeClonedGuest['azienda']['denominazione'].' - '.$sedeClonedGuest['indirizzo'].' '.$sedeClonedGuest['num_civico'].', '.$sedeClonedGuest['comune']['des_luo'].' ('.$sedeClonedGuest['comune']['s_prv'].')';
-                        $res['history_note'] = $history->note;
+                        //aggiornamento storico ospite clonato
+                        $historyClonedGuest = $guestsHistory->newEntity();
 
-                        $this->_result['response'] = "OK";
-                        $this->_result['data'] = $res;
-                        $this->_result['msg'] = 'Trasferimento dell\'ospite avviato con successo.';
-                    }  else {
+                        $sedeClonedGuest = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
+                
+                        $historyClonedGuestData['guest_id'] = $clonedGuest->id;
+                        $historyClonedGuestData['azienda_id'] = $sedeClonedGuest->id_azienda;
+                        $historyClonedGuestData['sede_id'] = $data['sede'];
+                        $historyClonedGuestData['operator_id'] = $this->request->session()->read('Auth.User.id');
+                        $historyClonedGuestData['operation_date'] = date('Y-m-d');
+                        $historyClonedGuestData['guest_status_id'] = $clonedGuest->status_id;
+                        $historyClonedGuestData['cloned_guest_id'] = $guest->id;
+                        $historyClonedGuestData['provenance_id'] = $sede->id;
+                        $historyClonedGuestData['note'] = $data['note'];
+                
+                        $guestsHistory->patchEntity($historyClonedGuest, $historyClonedGuestData);
+                
+                        if ($guestsHistory->save($historyClonedGuest)) {
+
+                            if ($status == 6) {
+                                //creazione notifica trasferimento ospite
+                                $saveType = 'TRANSFERRED_GUEST';
+                                $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                                $notification = $guestsNotifications->newEntity();
+                                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                                $notificationData = [
+                                    'type_id' => $notificationType->id,
+                                    'azienda_id' => $sede->id_azienda,
+                                    'sede_id' => $sede->id,
+                                    'guest_id' => $guest->id,
+                                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                                ];
+                                $guestsNotifications->patchEntity($notification, $notificationData);
+                                $guestsNotifications->save($notification);
+                            }
+
+                            $res['history_status'] = $status;
+                            $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+                            $res['history_destination'] = $sedeClonedGuest['azienda']['denominazione'].' - '.$sedeClonedGuest['indirizzo'].' '.$sedeClonedGuest['num_civico'].', '.$sedeClonedGuest['comune']['des_luo'].' ('.$sedeClonedGuest['comune']['s_prv'].')';
+                            $res['history_note'] = $history->note;
+
+                            $this->_result['response'] = "OK";
+                            $this->_result['data'] = $res;
+                            $this->_result['msg'] = 'Trasferimento dell\'ospite avviato con successo.';
+                        }  else {
+                            $this->_result['response'] = "KO";
+                            $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite clonato per la struttura di destinazione.';
+                        }
+                    } else {
                         $this->_result['response'] = "KO";
-                        $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite clonato per la struttura di destinazione.';
+                        $this->_result['msg'] = "Errore nella clonazione dell'ospite nella struttura di destinazione.";
                     }
-                } else {
+                }else{
                     $this->_result['response'] = "KO";
-                    $this->_result['msg'] = "Errore nella clonazione dell'ospite nella struttura di destinazione.";
-                }
-            }else{
+                    $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite.';
+                }	
+            } else {
                 $this->_result['response'] = "KO";
-                $this->_result['msg'] = 'Errore nell\'aggiornamento dello stato dell\'ospite.';
-            }	
+                $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
+            }
         } else {
             $this->_result['response'] = "KO";
-            $this->_result['msg'] = 'Errore nell\'aggiornamento dello storico dell\'ospite.';
+            $this->_result['msg'] = "L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di trasferimento.";
         }
     }
 

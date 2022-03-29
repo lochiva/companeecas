@@ -102,6 +102,7 @@ var app = new Vue({
                 required: false
             },
         },
+        guestPresenza: null,
         guestStatus: '',
         countries: [],
         familyGuests: [],
@@ -241,7 +242,9 @@ var app = new Vue({
 
                         this.loadedData = JSON.stringify(this.guestData);
 
+                        this.guestPresenza = res.data.data.presenza;
                         this.guestStatus = res.data.data.status_id;
+
                         this.exitData.type = res.data.data.history_exit_type;
                         this.exitData.date = res.data.data.check_out_date;
                         this.exitData.note = res.data.data.history_note;
@@ -489,8 +492,12 @@ var app = new Vue({
         },
 
         openExitModal: function() {
-            let modalGuestExit = this.$refs.modalGuestExit;
-            $(modalGuestExit).modal('show');
+            if (this.guestPresenza) {
+                alert("L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di uscita.")
+            } else {
+                let modalGuestExit = this.$refs.modalGuestExit;
+                $(modalGuestExit).modal('show');
+            }
         },
 
         updateExitNote: function() {
@@ -631,18 +638,22 @@ var app = new Vue({
         },
 
         openTransferModal: function() {
-            axios.get(pathServer + 'aziende/ws/getTransferAziendaDefault/'+this.guestData.sede_id.value)
-                .then(res => { 
-                    if (res.data.response == 'OK') {
-                        this.transferProcedureData.azienda.value = res.data.data; 
-                        let modalGuestTransfer = this.$refs.modalGuestTransfer;
-                        $(modalGuestTransfer).modal('show');
-                    } else {
-                        alert(res.data.msg);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
+            if (this.guestPresenza) {
+                alert("L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di trasferimento.")
+            } else {
+                axios.get(pathServer + 'aziende/ws/getTransferAziendaDefault/'+this.guestData.sede_id.value)
+                    .then(res => { 
+                        if (res.data.response == 'OK') {
+                            this.transferProcedureData.azienda.value = res.data.data; 
+                            let modalGuestTransfer = this.$refs.modalGuestTransfer;
+                            $(modalGuestTransfer).modal('show');
+                        } else {
+                            alert(res.data.msg);
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+            }
         },
 
         executeTransferProcedure: function() { 

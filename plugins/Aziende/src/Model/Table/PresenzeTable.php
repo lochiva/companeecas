@@ -139,4 +139,17 @@ class PresenzeTable extends Table
             
         return $presenza;
     }
+
+    public function getGuestPresenzaByDate($guestId, $date)
+    {
+        $presenza = $this->find()
+            ->where([
+                'guest_id' => $guestId,
+                'presente' => 1,
+                'date' => $date
+            ])
+            ->first();
+            
+        return $presenza;
+    }
 }
