@@ -44,7 +44,7 @@ function formValidation(idForm)
       }
    }
  	//Controllo i campi obbligatori
- 		$('#'+idForm+' input, #'+idForm+' select, #'+idForm+' textarea').each(function(){ 
+ 		$('#'+idForm+' input:visible, #'+idForm+' select:visible, #'+idForm+' textarea:visible').each(function(){
       $(this).parentsUntil('.input').parent().removeClass('has-error');
  			if($(this).val() == "" || $(this).val() == null ){
         if($(this).hasClass('required')){

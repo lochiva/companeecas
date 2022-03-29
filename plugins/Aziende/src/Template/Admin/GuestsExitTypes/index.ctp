@@ -14,6 +14,7 @@
                 <th scope="col"><?= $this->Paginator->sort('required_confirmation') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('required_note') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('startable_by_ente') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('ente_type') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('ordering') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
@@ -24,13 +25,14 @@
             <?php foreach ($guestsExitTypes as $guestsExitType): ?>
             <tr>
                 <td><?= $this->Number->format($guestsExitType->id) ?></td>
-                <td ><?= h($guestsExitType->name) ?></td>
-                <td ><?= $guestsExitType->required_confirmation ? 'Sì' : 'No' ?></td>
-                <td ><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>
-                <td ><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
+                <td><?= h($guestsExitType->name) ?></td>
+                <td><?= $guestsExitType->required_confirmation ? 'Sì' : 'No' ?></td>
+                <td><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>
+                <td><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
+                <td><?= $guestsExitType->tipo->name ?></td>
                 <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
-                <td ><?= h($guestsExitType->created) ?></td>
-                <td ><?= h($guestsExitType->modified) ?></td>
+                <td><?= h($guestsExitType->created) ?></td>
+                <td><?= h($guestsExitType->modified) ?></td>
                 <td class="actions">
                     <a class="btn btn-xs btn-primary" href="<?= $this->Url->build(['action' => 'view', $guestsExitType->id]) ?>" title="<?= __('View') ?>"><i class="glyphicon glyphicon-eye-open"></i></a>
                     <a class="btn btn-xs btn-primary" href="<?= $this->Url->build(['action' => 'edit', $guestsExitType->id]) ?>" title="<?= __('Edit') ?>"><i class="glyphicon glyphicon-pencil"></i></a>

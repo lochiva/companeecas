@@ -37,6 +37,12 @@ class GuestsExitTypesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Tipi', [
+            'foreignKey' => 'ente_type',
+            'className' => 'Aziende.AziendeTipi',
+            'propertyName' => 'tipo'
+        ]);
     }
 
     /**
@@ -65,6 +71,9 @@ class GuestsExitTypesTable extends Table
 
         $validator
             ->boolean('startable_by_ente');
+
+        $validator
+            ->integer('ente_type');
 
         $validator
             ->integer('ordering');

@@ -572,6 +572,10 @@ msgstr "Richieste Note"
 msgid "Startable By Ente"
 msgstr "Avviabile Da Ente"
 
+#: Template/Admin/GuestsExitTypes/index.ctp:17
+msgid "Ente Type"
+msgstr "Tipologia Ente"
+
 #
 # END PLUGIN AZIENDE
 #

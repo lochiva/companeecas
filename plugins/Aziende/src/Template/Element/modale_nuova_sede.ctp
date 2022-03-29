@@ -41,19 +41,19 @@ $role = $this->request->session()->read('Auth.User.role');
                             </div>
                         </div>
                         
-                        <div class="form-group ">
+                        <div class="form-group">
                             <label class="col-sm-2 control-label required" for="inputTipoMinistero">Tipologia struttura (per ministero)</label>
                             <div class="col-sm-10">
                                 <select name="id_tipo_ministero" id="inputTipoMinistero" class="form-control required" >
                                     <option value="">-- Seleziona una tipologia struttura --</option>
                                     <?php foreach ($sediTipiMinistero as $key => $tipo) { ?>
-                                        <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
+                                        <option value="<?=$tipo->id?>" data-type="<?=$tipo->ente_type?>"><?=$tipo->name?></option>
                                     <?php } ?>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="form-group ">
+                        <div class="form-group">
                             <label class="col-sm-2 control-label required" for="inputTipoCapitolato">Tipologia struttura (da capitolato)</label>
                             <div class="col-sm-10">
                                 <select name="id_tipo_capitolato" id="inputTipoCapitolato" class="form-control required" >

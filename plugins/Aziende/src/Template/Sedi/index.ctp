@@ -5,6 +5,7 @@ $user = $this->request->session()->read('Auth.User');
 ?>
 <script>
     var role = '<?= $user['role'] ?>';
+    var ente_tipo = <?= $azienda->id_tipo ?>;
 </script>
 <?php echo $this->Element('Aziende.include'); ?>
 <?php //echo "<pre>"; print_r($azienda); echo "</pre>"; ?>

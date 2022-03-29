@@ -5,6 +5,7 @@ var app = new Vue({
     el: '#app-guest',
     data: {
         role: role,
+        ente_type: ente_type,
         guestData: {
             id: {
                 hasError: false,
@@ -347,6 +348,8 @@ var app = new Vue({
                     }
                 }
             });
+
+            params.append('ente_type', this.ente_type);
 
             axios.post(pathServer + 'aziende/ws/saveGuest', params)
                 .then(res => {

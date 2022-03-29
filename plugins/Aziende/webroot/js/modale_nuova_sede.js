@@ -54,7 +54,7 @@ $(document).ready(function(){
 		var msgError = "";
 		
 		//Controllo i campi obbligatori
-		$('input.required').each(function(){
+		/*$('input.required').each(function(){
 			
 			if(ckError == false && $(this).val() == ""){
 				ckError = true;
@@ -62,7 +62,7 @@ $(document).ready(function(){
 				$(this).parentsUntil('div.form-group').parent().addClass('has-error');
 			}
 			
-		});
+		});*/
 		
 		//Controlle che la mail sia realmente una mail
 		if(ckError == false){

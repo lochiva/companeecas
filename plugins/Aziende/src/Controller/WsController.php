@@ -116,7 +116,7 @@ class WsController extends AppController
                 $button.= '</div>';
 
                 $countGuestsAzienda = $this->Azienda->countGuestsForAzienda($azienda->id);
-                $countPostiEffettiviAzienda = $this->Azienda->countPostiEffettiviForAzienda($azienda->id);
+                $countPostiForAzienda = $this->Azienda->countPostiForAzienda($azienda->id);
 
                 $out['rows'][] = array(
                     htmlspecialchars($azienda->denominazione),
@@ -126,7 +126,7 @@ class WsController extends AppController
                     htmlspecialchars($azienda->sito_web),
                     //htmlspecialchars($azienda->piva),
 					//htmlspecialchars($azienda->pa_codice),
-                    $countGuestsAzienda.'/'.$countPostiEffettiviAzienda,
+                    $countGuestsAzienda.'/'.$countPostiForAzienda,
                     $button
                 );
             }
@@ -271,6 +271,8 @@ class WsController extends AppController
 
         $pass['idAzienda'] = $idAzienda;
 
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($idAzienda);
+
         $sedi = $this->Sedi->getSedi($pass);
 
         if($for == "table"){
@@ -298,6 +300,11 @@ class WsController extends AppController
                     $button.= '</div>';
 
                     $countGuests = TableRegistry::get('Aziende.Guests')->countGuestsForSede($sede->id);
+                    if ($azienda->id_tipo == 1) {
+                        $postiSede = $sede->n_posti_effettivi;
+                    } elseif ($azienda->id_tipo == 2) {
+                        $postiSede = $sede->n_posti_struttura;
+                    }
 
                     $rows[] = array(
                         htmlspecialchars($sede->code_centro),
@@ -308,7 +315,7 @@ class WsController extends AppController
                         htmlspecialchars($sede->cap),
                         htmlspecialchars($sede->c['des_luo']),
                         htmlspecialchars($sede->p['des_luo']),
-                        $countGuests.'/'.$sede->n_posti_effettivi,
+                        $countGuests.'/'.$postiSede,
                         $button
                     );
                 }
@@ -1741,11 +1748,17 @@ class WsController extends AppController
             $data['minor'] = filter_var($data['minor'], FILTER_VALIDATE_BOOLEAN);
             $data['minor_family'] = filter_var($data['minor_family'], FILTER_VALIDATE_BOOLEAN);
             $data['minor_alone'] = filter_var($data['minor_alone'], FILTER_VALIDATE_BOOLEAN);
-            $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
-            $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
             $data['family_guest_id'] = $data['family_guest'];
             $data['birthdate'] = new Time(substr($data['birthdate'], 0, 33));
-            $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '' : new Time(substr($data['draft_expiration'], 0, 33));
+            if ($data['ente_type'] == 1) {
+                $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
+                $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
+                $data['draft_expiration'] = empty($data['draft_expiration']) || $data['draft_expiration'] == 'null' ? '' : new Time(substr($data['draft_expiration'], 0, 33));
+            } elseif ($data['ente_type'] == 2) {
+                unset($data['draft']);
+                unset($data['suspended']);
+                unset($data['draft_expiration']);
+            }
 
             $guests->patchEntity($entity, $data);
 

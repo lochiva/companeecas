@@ -6,6 +6,7 @@ $role = $this->request->session()->read('Auth.User.role');
 <script>
     var role = '<?= $role ?>';
     var sede_id = '<?= $sede['id'] ?>';
+    var ente_type = '<?= $azienda['id_tipo'] ?>';
 </script>
 <?php $this->assign('title', 'Ospiti') ?>
 <?= $this->Html->css('Aziende.guests'); ?>
@@ -83,11 +84,11 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-4" :class="{'has-error': guestData.cui.hasError}">
+                                <div v-if="ente_type == 1" class="col-md-4" :class="{'has-error': guestData.cui.hasError}">
                                     <label :class="{'required': guestData.cui.required}" for="guestCui"><?= __('CUI') ?></label>
                                     <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="7" class="form-control" name="cui" id="guestCui" v-model="guestData.cui.value" @change="setDraft()" />
                                 </div>
-                                <div class="col-md-4" :class="{'has-error': guestData.vestanet_id.hasError}">
+                                <div v-if="ente_type == 1" class="col-md-4" :class="{'has-error': guestData.vestanet_id.hasError}">
                                     <label :class="{'required': guestData.vestanet_id.required}" for="guestVestanetId"><?= __('ID Vestanet') ?></label>
                                     <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="10" class="form-control" name="vestanet_id" id="guestVestanetId" v-model="guestData.vestanet_id.value" @change="setDraft()" />
                                 </div>
@@ -176,7 +177,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div v-if="ente_type == 1" class="form-group">
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.draft.hasError}">
                                     <label :class="{'required': guestData.draft.required}" for="guestDraft"><?= __('Stato anagrafica in bozza') ?></label>
                                     <input disabled type="checkbox" class="input-check" name="draft" id="guestDraft" v-model="guestData.draft.value" />

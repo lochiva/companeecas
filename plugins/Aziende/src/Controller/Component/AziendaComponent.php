@@ -358,13 +358,18 @@ class AziendaComponent extends Component
         return $count;
     }
 
-    public function countPostiEffettiviForAzienda($aziendaId)
+    public function countPostiForAzienda($aziendaId)
     {
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($aziendaId);
         $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
 
         $count = 0;
         foreach ($sedi as $sede) {
-            $count += $sede->n_posti_effettivi;
+            if ($azienda->id_tipo == 1) {
+                $count += $sede->n_posti_effettivi;
+            } elseif ($azienda->id_tipo == 2) {
+                $count += $sede->n_posti_struttura;
+            }
         }
 
         return $count;

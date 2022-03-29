@@ -27,6 +27,10 @@
             <td><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Tipologia Ente') ?></th>
+            <td><?= $guestsExitType->tipo->name ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Ordinamento') ?></th>
             <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
         </tr>

@@ -23,7 +23,7 @@ class GuestsExitTypesController extends AppController
      */
     public function index()
     {
-        $guestsExitTypes = $this->paginate($this->GuestsExitTypes);
+        $guestsExitTypes = $this->paginate($this->GuestsExitTypes, ['contain' => ['Tipi']]);
 
         $this->set(compact('guestsExitTypes'));
         $this->set('_serialize', ['guestsExitTypes']);
@@ -39,7 +39,7 @@ class GuestsExitTypesController extends AppController
     public function view($id = null)
     {
         $guestsExitType = $this->GuestsExitTypes->get($id, [
-            'contain' => []
+            'contain' => ['Tipi']
         ]);
 
         $this->set('guestsExitType', $guestsExitType);
@@ -54,6 +54,11 @@ class GuestsExitTypesController extends AppController
     public function add()
     {
         $guestsExitType = $this->GuestsExitTypes->newEntity();
+        $aziendeTipi = TableRegistry::get('Aziende.AziendeTipi')->getList();
+        $tipi = [];
+        foreach ($aziendeTipi as $t) {
+            $tipi[$t->id] = $t->name;
+        }
         if ($this->request->is('post')) {
             $guestsExitType = $this->GuestsExitTypes->patchEntity($guestsExitType, $this->request->data);
             if ($this->GuestsExitTypes->save($guestsExitType)) {
@@ -66,6 +71,7 @@ class GuestsExitTypesController extends AppController
         }
         $this->set(compact('guestsExitType'));
         $this->set('_serialize', ['guestsExitType']);
+        $this->set('tipi', $tipi);
     }
 
     /**
@@ -80,6 +86,11 @@ class GuestsExitTypesController extends AppController
         $guestsExitType = $this->GuestsExitTypes->get($id, [
             'contain' => []
         ]);
+        $aziendeTipi = TableRegistry::get('Aziende.AziendeTipi')->getList();
+        $tipi = [];
+        foreach ($aziendeTipi as $t) {
+            $tipi[$t->id] = $t->name;
+        }
         if ($this->request->is(['patch', 'post', 'put'])) {
             $guestsExitType = $this->GuestsExitTypes->patchEntity($guestsExitType, $this->request->data);
             if ($this->GuestsExitTypes->save($guestsExitType)) {
@@ -92,6 +103,7 @@ class GuestsExitTypesController extends AppController
         }
         $this->set(compact('guestsExitType'));
         $this->set('_serialize', ['guestsExitType']);
+        $this->set('tipi', $tipi);
     }
 
     /**
