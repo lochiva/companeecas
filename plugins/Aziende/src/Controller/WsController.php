@@ -1669,7 +1669,7 @@ class WsController extends AppController
 
         $showOld = filter_var($pass['query']['showOld'], FILTER_VALIDATE_BOOLEAN);
 
-        $res = $this->Guest->getGuests($sedeId, $showOld, $pass);
+        $res = $this->Guest->getGuests($sedeId, $azienda['id_tipo'], $showOld, $pass);
 
         $out['total_rows'] = $res['tot'];
 
@@ -1715,20 +1715,22 @@ class WsController extends AppController
                     }
                 }
 
-				$out['rows'][] = [
-                    '<td class="'.$classPresenze.'">'.(empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y')).'</td>',
-                    '<td class="'.$classPresenze.'">'.$guest['cui'].'</td>',
-                    '<td class="'.$classPresenze.'">'.$guest['vestanet_id'].'</td>',
-                    '<td class="'.$classPresenze.'">'.$guest['name'].'</td>',
-                    '<td class="'.$classPresenze.'">'.$guest['surname'],
-                    '<td class="'.$classPresenze.'">'.(empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y')).'</td>',
-                    '<td class="'.$classPresenze.'">'.$guest['sex'].'</td>',
-                    '<td class="'.$classPresenze.'">'.($guest['draft'] ? 'Sì' : 'No').'</td>',
-                    '<td class="'.$classPresenze.'">'.$alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')).'</td>',
-                    '<td class="'.$classPresenze.'">'.($guest['suspended'] ? 'Sì' : 'No').'</td>',
-                    '<td class="'.$classPresenze.'">'.$status.'</td>',
-					$buttons
-				];
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.(empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y')).'</td>';
+                if ($azienda['id_tipo'] == 1) {
+                    $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['cui'].'</td>';
+                    $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['vestanet_id'].'</td>';
+                }
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['name'].'</td>';
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['surname'];
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.(empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y')).'</td>';
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['sex'].'</td>';
+                if ($azienda['id_tipo'] == 1) {
+                    $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.($guest['draft'] ? 'Sì' : 'No').'</td>';
+                    $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')).'</td>';
+                    $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.($guest['suspended'] ? 'Sì' : 'No').'</td>';
+                }
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$status.'</td>';
+                $out['rows'][$key][] = $buttons;
 
             }
 

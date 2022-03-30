@@ -6,23 +6,25 @@ use Cake\ORM\TableRegistry;
 
 class GuestComponent extends Component
 {
-    public function getGuests($sedeId, $showOld = false, $pass = array()){
+    public function getGuests($sedeId, $aziendaTipo, $showOld = false, $pass = array()){
 
         $guests = TableRegistry::get('Aziende.Guests');
 		
-		$columns = [
-			0 => ['val' => 'Guests.check_in_date', 'type' => 'date'],
-			1 => ['val' => 'Guests.cui', 'type' => 'text'],
-			2 => ['val' => 'Guests.vestanet_id', 'type' => 'text'],
-			3 => ['val' => 'Guests.name', 'type' => 'text'],
-			4 => ['val' => 'Guests.surname', 'type' => 'text'],
-			5 => ['val' => 'Guests.birthdate', 'type' => 'date'],
-			6 => ['val' => 'Guests.sex', 'type' => 'text'],
-			7 => ['val' => 'Guests.draft', 'type' => 'number'],
-			8 => ['val' => 'Guests.draft_expiration', 'type' => 'date'],
-			9 => ['val' => 'Guests.suspended', 'type' => 'number'],
-			10 => ['val' => 'gs.name', 'type' => 'text']
-        ];
+		$columns[] = ['val' => 'Guests.check_in_date', 'type' => 'date'];
+		if ($aziendaTipo == 1) {
+			$columns[] = ['val' => 'Guests.cui', 'type' => 'text'];
+			$columns[] = ['val' => 'Guests.vestanet_id', 'type' => 'text'];
+		}
+		$columns[] = ['val' => 'Guests.name', 'type' => 'text'];
+		$columns[] = ['val' => 'Guests.surname', 'type' => 'text'];
+		$columns[] = ['val' => 'Guests.birthdate', 'type' => 'date'];
+		$columns[] = ['val' => 'Guests.sex', 'type' => 'text'];
+		if ($aziendaTipo == 1) {
+			$columns[] = ['val' => 'Guests.draft', 'type' => 'number'];
+			$columns[] = ['val' => 'Guests.draft_expiration', 'type' => 'date'];
+			$columns[] = ['val' => 'Guests.suspended', 'type' => 'number'];
+		}
+		$columns[] = ['val' => 'gs.name', 'type' => 'text'];
         
         $opt['fields'] = [
 			'Guests.id', 

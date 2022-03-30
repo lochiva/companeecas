@@ -71,15 +71,19 @@ $role = $this->request->session()->read('Auth.User.role');
                             <thead>
                                 <tr>
                                     <th>Check-in</th>
-                                    <th>CUI</th>
-                                    <th>ID Vestanet</th>
+                                    <?php if ($azienda['id_tipo'] == 1) { ?>
+                                        <th>CUI</th>
+                                        <th>ID Vestanet</th>
+                                    <?php } ?>
                                     <th>Nome</th>
                                     <th>Cognome</th>
                                     <th>Data di nascita</th>
                                     <th class="filter-select filter-sex">Sesso</th>
-                                    <th class="filter-select filter-draft">Stato bozza</th>
-                                    <th>Scadenza stato bozza</th>
-                                    <th class="filter-select filter-suspended">Sospeso</th>
+                                    <?php if ($azienda['id_tipo'] == 1) { ?>
+                                        <th class="filter-select filter-draft">Stato bozza</th>
+                                        <th>Scadenza stato bozza</th>
+                                        <th class="filter-select filter-suspended">Sospeso</th>
+                                    <?php } ?>
                                     <th class="filter-select filter-status">Stato</th>
                                     <th width="70px" class="filter-false" data-sorter="false"></th>
                                 </tr>
