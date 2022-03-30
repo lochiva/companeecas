@@ -202,7 +202,7 @@ class WsController extends AppController
 
             $data['azienda'] = $azienda;
 
-			$sedi = $this->Sedi->getSedi(['idAzienda' => $id]);
+			$sedi = $this->Sedi->getSedi(['idAzienda' => $id], $azienda->id_tipo);
 			if($sedi){
 				$data['sede'] = $sedi[0];
 			}
@@ -273,7 +273,7 @@ class WsController extends AppController
 
         $azienda = TableRegistry::get('Aziende.Aziende')->get($idAzienda);
 
-        $sedi = $this->Sedi->getSedi($pass);
+        $sedi = $this->Sedi->getSedi($pass, $azienda->id_tipo);
 
         if($for == "table"){
 
@@ -282,6 +282,8 @@ class WsController extends AppController
             $out['total_rows'] = $totSedi;
 
             if(!empty($sedi)){
+
+                $rows = [];
 
                 foreach ($sedi as $key => $sede) {
 
@@ -292,7 +294,9 @@ class WsController extends AppController
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                    $button.= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
+                    if ($azienda->id_tipo == 1) {
+                        $button.= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
+                    }
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                     $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
                     $button.= '</ul>';
@@ -306,18 +310,18 @@ class WsController extends AppController
                         $postiSede = $sede->n_posti_struttura;
                     }
 
-                    $rows[] = array(
-                        htmlspecialchars($sede->code_centro),
-                        htmlspecialchars($sede['stm']['name']),
-                        htmlspecialchars($sede['stc']['name']),
-                        htmlspecialchars($sede->indirizzo),
-                        htmlspecialchars($sede->num_civico),
-                        htmlspecialchars($sede->cap),
-                        htmlspecialchars($sede->c['des_luo']),
-                        htmlspecialchars($sede->p['des_luo']),
-                        $countGuests.'/'.$postiSede,
-                        $button
-                    );
+                    $rows[$key][] = htmlspecialchars($sede->code_centro);
+                    $rows[$key][] = htmlspecialchars($sede['stm']['name']);
+                    if ($azienda->id_tipo == 1) {
+                        $rows[$key][] = htmlspecialchars($sede['stc']['name']);
+                    }
+                    $rows[$key][] = htmlspecialchars($sede->indirizzo);
+                    $rows[$key][] = htmlspecialchars($sede->num_civico);
+                    $rows[$key][] = htmlspecialchars($sede->cap);
+                    $rows[$key][] = htmlspecialchars($sede->c['des_luo']);
+                    $rows[$key][] = htmlspecialchars($sede->p['des_luo']);
+                    $rows[$key][] = $countGuests.'/'.$postiSede;
+                    $rows[$key][] = $button;
                 }
 
                 $out['rows'] = $rows;
@@ -351,6 +355,16 @@ class WsController extends AppController
         $sede = $this->Sedi->_newEntity(); 
         array_walk_recursive($this->request->data, array($this,'trimByReference') );
         $data = $this->request->data;
+
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($data['id_azienda']);
+
+        if ($azienda->id_tipo == 2) {
+            $data['id_tipo_capitolato'] = 0;
+            $data['id_tipologia_centro'] = 0;
+            $data['id_tipologia_ospiti'] = 0;
+            $data['n_posti_effettivi'] = 0;
+            $data['operativita'] = 1;
+        }
 
         $sede = $this->Sedi->_patchEntity($sede, $data);
 
@@ -1635,6 +1649,8 @@ class WsController extends AppController
 
         $pass['query'] = $this->request->query;
 
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($sede['id_azienda']);
+
         if(isset($pass['query']['filter'][7])){
 			if($pass['query']['filter'][7] == 'No'){
 				$pass['query']['filter'][7] = 0;
@@ -1678,9 +1694,9 @@ class WsController extends AppController
                 //Stato ospite
                 $status = '<span class="guest-status" style="background-color: '.$guest['gs']['color'].'">'.$guest['gs']['name'].'</span>';
 
-                //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+                //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso e ente tipo cas)
                 $classPresenze = '';
-                if ($guest['status_id'] == 1 && !$guest['suspended']) {
+                if ($guest['status_id'] == 1 && !$guest['suspended'] && $azienda['id_tipo'] == 1) {
                     $lastPresenzaDate = '';
                     $today = date('Y-m-d');
                     $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $today);

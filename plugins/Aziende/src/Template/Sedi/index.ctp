@@ -65,7 +65,9 @@ $user = $this->request->session()->read('Auth.User');
                                 <tr>
                                     <th>Codice centro</th>
                                     <th>Tipologia ministero</th>
+                                    <?php if ($azienda->id_tipo == 1) { ?>
                                     <th>Tipologia capitolato</th>
+                                    <?php } ?>
                                     <th>Indirizzo</th>
                                     <th>Civico</th>
                                     <th>Cap</th>

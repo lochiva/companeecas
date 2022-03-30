@@ -67,7 +67,7 @@ class ContattiController extends AppController
                 ################################################################################
                 //recupero le sedi
                 $pass['idAzienda'] = $idAzienda;
-                $sedi = $this->Sedi->getSedi($pass);
+                $sedi = $this->Sedi->getSedi($pass, $azienda->id_tipo);
 
             }
 

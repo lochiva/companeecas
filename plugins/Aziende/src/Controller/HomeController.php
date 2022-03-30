@@ -82,7 +82,7 @@ class HomeController extends AppController
             ################################################################################
             //recupero le sedi
             $pass['idAzienda'] = $idAzienda;
-            $sedi = $this->Sedi->getSedi($pass);
+            $sedi = $this->Sedi->getSedi($pass, $azienda->id_tipo);
 
             //echo "<pre>"; print_r($sedi); echo "</pre>";
 
@@ -138,6 +138,7 @@ class HomeController extends AppController
             $tipologieCentro = TableRegistry::get('Aziende.SediTipologieCentro')->getList();
             $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
             $procedureAffidamento = TableRegistry::get('Aziende.SediProcedureAffidamento')->getList();
+            $tipi = TableRegistry::get('Aziende.AziendeTipi')->getList();
 
             $this->set('history',$history);
             $this->set('azienda',$azienda);
@@ -168,6 +169,7 @@ class HomeController extends AppController
             $this->set('tipologieCentro',$tipologieCentro);
             $this->set('tipologieOspiti',$tipologieOspiti);
             $this->set('procedureAffidamento',$procedureAffidamento);
+            $this->set('tipi',$tipi);
 
         }else{
             $this->redirect('/aziende');

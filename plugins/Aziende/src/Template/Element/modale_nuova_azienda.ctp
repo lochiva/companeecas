@@ -262,10 +262,10 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <div class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="inputTipoStrutturaMinistero">Tipologia struttura (per ministero)</label>
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group ">
+                                        <label class="col-sm-2 control-label required" for="inputTipoStrutturaCapitolato">Tipologia struttura (da capitolato)</label>
                                         <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipo_capitolato" convert-to-number name="tipo" id="inputTipoStrutturaMinistero" data-prova="ccc" class="form-control required" >
+                                            <select required ng-model="sede.id_tipo_capitolato" convert-to-number name="tipo" id="inputTipoStrutturaCapitolato" data-prova="ccc" class="form-control required" >
                                                 <option value="">-- Seleziona una tipologia struttura --</option>
                                                 <?php foreach ($sediTipiCapitolato as $key => $tipo): ?>
                                                     <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
@@ -274,7 +274,7 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <div class="form-group ">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group ">
                                         <label class="col-sm-2 control-label required" for="inputTipoCentro">Tipologia centro</label>
                                         <div class="col-sm-10">
                                             <select required ng-model="sede.id_tipologia_centro" convert-to-number name="tipologia centro" id="inputTipoCentro" class="form-control" >
@@ -286,7 +286,7 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputTipoOspite">Tipologia ospiti</label>
                                         <div class="col-sm-10">
                                             <select required ng-model="sede.id_tipologia_ospiti" convert-to-number name="tipologia ospiti" id="inputTipoOspite" class="form-control" >
@@ -400,14 +400,14 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
                                         <div class="col-sm-10">
                                             <input required ng-model="sede.n_posti_effettivi" type="text" placeholder="Capienza (effettiva)" name="capienza (effettiva)" id="inputCapienzaEffettiva" class="form-control number-integer" >
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                                         <div class="col-sm-10">
                                             <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
@@ -426,7 +426,7 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputOperativita">Operatività</label>
                                         <div class="col-sm-10">
                                             <select required ng-model="sede.operativita" convert-to-number name="operatività" id="inputOperativita" class="form-control" >

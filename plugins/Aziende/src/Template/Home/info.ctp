@@ -123,7 +123,9 @@ use Cake\Routing\Router;
                                 <tr>
                                     <th>Codice centro</th>
                                     <th>Tipologia ministero</th>
-                                    <th>Tipologia capitolato</th>
+                                    <?php if ($azienda->id_tipo == 1) { ?>
+                                        <th>Tipologia capitolato</th>
+                                    <?php } ?>
                                     <th>Indirizzo</th>
                                     <th>Civico</th>
                                     <th>Cap</th>
@@ -138,7 +140,9 @@ use Cake\Routing\Router;
                                         <tr style="position:relative;">
                                             <td><?=h($sede->code_centro)?></td>
                                             <td><span class="label sediTipiMinisteroBG-<?=$sede->id_tipo_ministero?> pull-left"><?=h($sede['stm']['name'])?></span></td>
-                                            <td><span class="label sediTipiCapitolatoBG-<?=$sede->id_tipo_capitolato?> pull-left"><?=h($sede['stc']['name'])?></span></td>
+                                            <?php if ($azienda->id_tipo == 1) { ?>
+                                                <td><span class="label sediTipiCapitolatoBG-<?=$sede->id_tipo_capitolato?> pull-left"><?=h($sede['stc']['name'])?></span></td>
+                                            <?php } ?>
                                             <td><?=h($sede->indirizzo)?></td>
                                             <td><?=h($sede->num_civico)?></td>
                                             <td><?=h($sede->cap)?></td>

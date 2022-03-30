@@ -8,7 +8,7 @@ class SediComponent extends Component
 {
 
 
-    public function getSedi($pass = array()){
+    public function getSedi($pass = array(), $aziendaTipo){
 
         $az = TableRegistry::get('Aziende.Sedi');
 
@@ -17,16 +17,20 @@ class SediComponent extends Component
         $opt['order'] = "";
         $opt['conditions'] = array();
 
+        $col = [];
+
         ######################################################################################################
 
-        $col[0] = "code_centro";
-        $col[1] = "stm.name";
-        $col[2] = "stc.name";
-        $col[3] = "indirizzo";
-        $col[4] = "num_civico";
-        $col[5] = "cap";
-        $col[6] = "c.des_luo";
-        $col[7] = "p.des_luo";
+        $col[] = "code_centro";
+        $col[] = "stm.name";
+        if ($aziendaTipo == 1) {
+            $col[] = "stc.name";
+        }
+        $col[] = "indirizzo";
+        $col[] = "num_civico";
+        $col[] = "cap";
+        $col[] = "c.des_luo";
+        $col[] = "p.des_luo";
 
         if(isset($pass['query']) && !empty($pass['query'])){
 
@@ -89,26 +93,46 @@ class SediComponent extends Component
 
                 foreach ($pass['query']['filter'] as $key => $value) {
 
-                    switch ($key) {
-                        case '0':
-                        case '1':
-                        case '2':
-                        case '3':
-                        case '4':
-                        case '6':
-                        case '7':
-                            $opt['conditions']['AND'][$key][$col[$key] . ' LIKE'] = "%" . $value . "%";
-                        break;
+                    if ($aziendaTipo == 1) {
+                        switch ($key) {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '6':
+                            case '7':
+                                $opt['conditions']['AND'][$key][$col[$key] . ' LIKE'] = "%" . $value . "%";
+                            break;
+    
+                            case '5':
+                                $opt['conditions']['AND'][$key][$col[$key]] = $value ;
+                            break;
+    
+                            default:
+    
+                            break;
+                        }
+                    } else {
+                        switch ($key) {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '5':
+                            case '6':
+                                $opt['conditions']['AND'][$key][$col[$key] . ' LIKE'] = "%" . $value . "%";
+                            break;
+    
+                            case '4':
+                                $opt['conditions']['AND'][$key][$col[$key]] = $value ;
+                            break;
 
-                        case '5':
-                            $opt['conditions']['AND'][$key][$col[$key]] = $value ;
-                        break;
+                            default:
 
-                        default:
-
-                        break;
+                            break;
+                        }
                     }
-
 
                 }
             }
