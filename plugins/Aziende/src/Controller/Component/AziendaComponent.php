@@ -22,7 +22,7 @@ class AziendaComponent extends Component
          ];
          $opt['fields'] = ['denominazione', 'nome_cognome' => 'CONCAT(nome,SPACE(1),cognome)', 'telefono',
                     'email_info', 'sito_web', 'piva', 'id', 'cliente', 'fornitore', 'interno', 'id_cliente_fattureincloud',
-           		    'id_fornitore_fattureincloud', 'pa_codice'];
+           		    'id_fornitore_fattureincloud', 'pa_codice', 'id_tipo'];
         $opt['order'] = ['Aziende.denominazione' => 'ASC', 'nome_cognome' => 'ASC'];
         $toRet['res'] = $az->queryForTableSorter($columns, $opt, $pass);
         $toRet['tot'] = $az->queryForTableSorter($columns, $opt, $pass, true);
@@ -360,16 +360,11 @@ class AziendaComponent extends Component
 
     public function countPostiForAzienda($aziendaId)
     {
-        $azienda = TableRegistry::get('Aziende.Aziende')->get($aziendaId);
         $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $aziendaId])->toArray();
 
         $count = 0;
         foreach ($sedi as $sede) {
-            if ($azienda->id_tipo == 1) {
-                $count += $sede->n_posti_effettivi;
-            } elseif ($azienda->id_tipo == 2) {
-                $count += $sede->n_posti_struttura;
-            }
+            $count += $sede->n_posti_effettivi;
         }
 
         return $count;

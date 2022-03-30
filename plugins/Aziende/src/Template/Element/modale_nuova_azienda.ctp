@@ -393,7 +393,7 @@ use Cake\Routing\Router;
 
                                     <hr>
 
-                                    <div class="form-group">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputCapienzaStruttura">Capienza (struttura)</label>
                                         <div class="col-sm-10">
                                             <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (da convenzione)" id="inputCapienzaStruttura" class="form-control number-integer" >
@@ -414,7 +414,7 @@ use Cake\Routing\Router;
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label" for="inputProceduraAffidamento">Procedura di affidamento</label>
                                         <div class="col-sm-10">
                                             <select disabled ng-model="sede.id_procedura_affidamento" convert-to-number name="procedura di affidamento" id="inputProceduraAffidamento" class="form-control" >

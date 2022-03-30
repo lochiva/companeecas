@@ -176,8 +176,10 @@ $(document).ready(function(){
         $('#inputTipoCapitolato').closest('.form-group').show();
         $('#inputTipologieCentro').closest('.form-group').show();
         $('#inputTipologieOspiti').closest('.form-group').show();
+        $('#inputCapienzaStruttura').closest('.form-group').show();
         $('#inputCapienzaEffettiva').closest('.form-group').show();
         $('#inputCapienzaConvenzione').closest('.form-group').show();
+        $('#inputProceduraAffidamento').closest('.form-group').show();
         $('#inputOperativita').closest('.form-group').show();
         $('#inputTipoMinistero option[data-type="1"]').show();
         $('#inputTipoMinistero option[data-type!="1"]').hide();
@@ -185,8 +187,10 @@ $(document).ready(function(){
         $('#inputTipoCapitolato').closest('.form-group').hide();
         $('#inputTipologieCentro').closest('.form-group').hide();
         $('#inputTipologieOspiti').closest('.form-group').hide();
+        $('#inputCapienzaStruttura').closest('.form-group').hide();
         $('#inputCapienzaEffettiva').closest('.form-group').hide();
         $('#inputCapienzaConvenzione').closest('.form-group').hide();
+        $('#inputProceduraAffidamento').closest('.form-group').hide();
         $('#inputOperativita').closest('.form-group').hide();
         $('#inputTipoMinistero option[data-type="2"]').show();
         $('#inputTipoMinistero option[data-type!="2"]').hide();

@@ -108,7 +108,9 @@ class WsController extends AppController
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
+                if ($azienda->id_tipo == 1) {
+                    $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
+                }
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                 $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 $button.= '</ul>';
@@ -116,7 +118,11 @@ class WsController extends AppController
                 $button.= '</div>';
 
                 $countGuestsAzienda = $this->Azienda->countGuestsForAzienda($azienda->id);
-                $countPostiForAzienda = $this->Azienda->countPostiForAzienda($azienda->id);
+                if ($azienda->id_tipo == 1) {
+                    $countPostiForAzienda = $this->Azienda->countPostiForAzienda($azienda->id);
+                } elseif ($azienda->id_tipo == 2) {
+                    $countPostiForAzienda = $countGuestsAzienda;
+                }
 
                 $out['rows'][] = array(
                     htmlspecialchars($azienda->denominazione),
@@ -307,7 +313,7 @@ class WsController extends AppController
                     if ($azienda->id_tipo == 1) {
                         $postiSede = $sede->n_posti_effettivi;
                     } elseif ($azienda->id_tipo == 2) {
-                        $postiSede = $sede->n_posti_struttura;
+                        $postiSede = $countGuests;
                     }
 
                     $rows[$key][] = htmlspecialchars($sede->code_centro);
@@ -362,6 +368,7 @@ class WsController extends AppController
             $data['id_tipo_capitolato'] = 0;
             $data['id_tipologia_centro'] = 0;
             $data['id_tipologia_ospiti'] = 0;
+            $data['n_posti_struttura'] = 0;
             $data['n_posti_effettivi'] = 0;
             $data['operativita'] = 1;
         }
@@ -2401,15 +2408,15 @@ class WsController extends AppController
         $this->_result['msg'] = "";
     }
 
-    public function getExitTypes()
+    public function getExitTypes($aziendaTipo)
 	{
 		$table = TableRegistry::get('Aziende.GuestsExitTypes');
 
         $role = $this->request->session()->read('Auth.User.role');
         if ($role == 'admin') {
-		    $exitTypes = $table->find()->toArray();
+		    $exitTypes = $table->find()->where(['ente_type' => $aziendaTipo])->toArray();
         } elseif ($role == 'ente') {
-            $exitTypes = $table->find()->where(['startable_by_ente' => 1])->toArray();
+            $exitTypes = $table->find()->where(['startable_by_ente' => 1, 'ente_type' => $aziendaTipo])->toArray();
         }
 
         $res = [];

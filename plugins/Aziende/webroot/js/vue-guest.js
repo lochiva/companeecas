@@ -482,7 +482,7 @@ var app = new Vue({
         },
 
         getExitTypes: function() {
-            axios.get(pathServer + 'aziende/ws/getExitTypes')
+            axios.get(pathServer + 'aziende/ws/getExitTypes/'+this.ente_type)
                 .then(res => { 
                     if (res.data.response == 'OK') {
                         this.exitTypes = res.data.data;
