@@ -68,7 +68,13 @@ class UsersController extends AppController
                     return $this->redirect('/');
                 }
             }
-            $this->Flash->error(__('Impossibile creare l\'utente, si prega di riprovare.'));
+            $errorMsg = '';
+            foreach($user->errors() as $field => $errors){ 
+				foreach($errors as $rule => $msg){ 
+					$errorMsg .= ' '.$msg;
+				}
+			}  
+            $this->Flash->error(__('Impossibile creare l\'utente.'.$errorMsg.' Si prega di riprovare.'));
         }
         $this->set('user', $user);
     }
@@ -101,7 +107,13 @@ class UsersController extends AppController
 
                 return $this->redirect(['controller' => 'home', 'action' => 'login']);
             }
-            $this->Flash->error(__('Impossibile creare l\'utente, si prega di riprovare.'));
+            $errorMsg = '';
+            foreach($user->errors() as $field => $errors){ 
+				foreach($errors as $rule => $msg){ 
+					$errorMsg .= ' '.$msg;
+				}
+			}  
+            $this->Flash->error(__('Impossibile creare l\'utente.'.$errorMsg.' Si prega di riprovare.'));
         }
         $this->set('user', $user);
     }
@@ -161,63 +173,69 @@ class UsersController extends AppController
 
     public function edit()
     {
-        $u = $this->request->session()->read('Auth.User');
+            $u = $this->request->session()->read('Auth.User');
 
-        $user = $this->Users->get($u['id']);
+            $user = $this->Users->get($u['id']);
 
-        unset($user->password);
+            unset($user->password);
 
 
-       if ($this->request->is(['post', 'put'])) {
-           $data = $this->request->data;
-           // if we have a new password, create key `password` in data
-           if (!empty($new_password = $data['new_password'])) {
-               $data['password'] = $new_password;
-           } else { // else, we remove the rules on password
-               $this->Users->validator()->remove('password');
-           }
-           // Check if there is any uploaded file
-           if (!empty($data['inputImage']['name'])) {
-               try {
-                   $this->_generateSaveUserImage($data['inputImage'], $user['id']);
-               } catch (\Exception $e) {
-                   $this->Flash->error(__($e->getMessage()));
+        if ($this->request->is(['post', 'put'])) {
+            $data = $this->request->data;
+            // if we have a new password, create key `password` in data
+            if (!empty($new_password = $data['new_password'])) {
+                $data['password'] = $new_password;
+            } else { // else, we remove the rules on password
+                $this->Users->validator()->remove('password');
+            }
+            // Check if there is any uploaded file
+            if (!empty($data['inputImage']['name'])) {
+                try {
+                    $this->_generateSaveUserImage($data['inputImage'], $user['id']);
+                } catch (\Exception $e) {
+                    $this->Flash->error(__($e->getMessage()));
 
-                   return  $this->redirect($this->referer());
-               }
-           } elseif (isset($data['deleteImage'])) {
-               if ($data['deleteImage']) {
-                   if (file_exists(WWW_ROOT.'img'.DS.'user'.DS.$user['id'].'.jpg')) {
-                       unlink(WWW_ROOT.'img'.DS.'user'.DS.$user['id'].'.jpg');
-                   }
-               }
-           }
+                    return  $this->redirect($this->referer());
+                }
+            } elseif (isset($data['deleteImage'])) {
+                if ($data['deleteImage']) {
+                    if (file_exists(WWW_ROOT.'img'.DS.'user'.DS.$user['id'].'.jpg')) {
+                        unlink(WWW_ROOT.'img'.DS.'user'.DS.$user['id'].'.jpg');
+                    }
+                }
+            }
 
-           if (!empty($data['googleAuth'])) {
-               $googleTokens = $this->Google->generateGoogleToken($data['googleAuth']);
-               if (!$googleTokens) {
-                   $this->Flash->error(__('Errore durante il collegamento a google, assicurarsi di aver inserito un codice valido.'));
+            if (!empty($data['googleAuth'])) {
+                $googleTokens = $this->Google->generateGoogleToken($data['googleAuth']);
+                if (!$googleTokens) {
+                    $this->Flash->error(__('Errore durante il collegamento a google, assicurarsi di aver inserito un codice valido.'));
 
-                   return  $this->redirect($this->referer());
-               }
-               $data = array_merge($data, $googleTokens);
-           }
-           /*
-           if($this->request->data['email'] == ""){
-               unset($this->request->data['email']);
-           }
-           */
-           $user = $this->Users->patchEntity($user, $data);
+                    return  $this->redirect($this->referer());
+                }
+                $data = array_merge($data, $googleTokens);
+            }
+            /*
+            if($this->request->data['email'] == ""){
+                unset($this->request->data['email']);
+            }
+            */
+            $user = $this->Users->patchEntity($user, $data);
 
-           if ($this->Users->save($user)) {
-               $this->Flash->success(__('Profilo modificato correttamente.'));
-               $this->Auth->setUser($user);
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Profilo modificato correttamente.'));
+                $this->Auth->setUser($user);
 
-               return  $this->redirect($this->referer());
-           }
-           $this->Flash->error(__('Impossibile modificare il profilo, si prega di riprovare.'));
-           return  $this->redirect($this->referer());
-       }
+                return  $this->redirect($this->referer());
+            }
+            $errorMsg = '';
+            foreach($user->errors() as $field => $errors){ 
+				foreach($errors as $rule => $msg){ 
+					$errorMsg .= ' '.$msg;
+				}
+			}  
+            $this->Flash->error(__('Impossibile modificare il profilo.'.$errorMsg.' Si prega di riprovare.'));
+            return  $this->redirect($this->referer());
+        }
 
         $this->set('googleAuthLink', $this->Google->client()->createAuthUrl());
         $this->set('user', $user);
