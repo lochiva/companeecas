@@ -2354,7 +2354,7 @@ class WsController extends AppController
                 if (!empty($lastPresenza)) {
                     $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
                 } elseif (!empty($guest->check_in_date)) {
-                    $lastPresenzaDate = $guest->check_in_date->format('Y-m-d');
+                    $lastPresenzaDate = substr($guest->check_in_date, 0, 10);
                 }
                 if (!empty($lastPresenzaDate)) {
                     $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
@@ -2493,6 +2493,8 @@ class WsController extends AppController
                 $status = 3;
             }
 
+            $today = new Time();
+
             //aggiornamento storico
             $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
             $history = $guestsHistory->newEntity();
@@ -2503,7 +2505,7 @@ class WsController extends AppController
             $historyData['azienda_id'] = $sede->id_azienda;
             $historyData['sede_id'] = $guest->sede_id;
             $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-            $historyData['operation_date'] = date('Y-m-d');
+            $historyData['operation_date'] = $today->format('Y-m-d');
             $historyData['guest_status_id'] = $status;
             $historyData['exit_type_id'] = $data['exit_type_id'];
             $historyData['note'] = $data['note'];
@@ -2513,7 +2515,7 @@ class WsController extends AppController
             if ($guestsHistory->save($history)) {
                 //aggiornamento stato ospite e data di check-out
                 $guest->status_id = $status;
-                $guest->check_out_date = date('Y-m-d');  
+                $guest->check_out_date = $today->format('Y-m-d');  
 
                 if ($guests->save($guest)) {
                     if ($status == 3) {
@@ -2534,7 +2536,7 @@ class WsController extends AppController
                     }
                     $res['history_status'] = $status;
                     $res['history_exit_type'] = $exitType['name'];
-                    $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+                    $res['check_out_date'] = $today->format('d/m/Y');
                     $res['history_note'] = $history->note;
 
                     $this->_result['response'] = "OK";
@@ -2642,6 +2644,8 @@ class WsController extends AppController
                 $statusCloned = 5;
             }
 
+            $today = new Time();
+
             //aggiornamento storico
             $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
             $history = $guestsHistory->newEntity();
@@ -2650,7 +2654,7 @@ class WsController extends AppController
             $historyData['azienda_id'] = $sede->id_azienda;
             $historyData['sede_id'] = $guest->sede_id;
             $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-            $historyData['operation_date'] = date('Y-m-d');
+            $historyData['operation_date'] = $today->format('Y-m-d');
             $historyData['guest_status_id'] = $status;
             $historyData['destination_id'] = $data['sede'];
             $historyData['note'] = $data['note'];
@@ -2660,7 +2664,7 @@ class WsController extends AppController
             if ($guestsHistory->save($history)) {
                 //aggiornamento stato ospite e data di check-out
                 $guest->status_id = $status;
-                $guest->check_out_date = date('Y-m-d');
+                $guest->check_out_date = $today->format('Y-m-d');
 
                 if ($guests->save($guest)) {
                     //inserimento ospite clonato per struttura di destinazione
@@ -2676,7 +2680,7 @@ class WsController extends AppController
 
                     // se rimane nello stesso ente setta già la nuova data di check-in, altrimenti verrà compilata sulla conferma del trasferimento
                     if ($sede->id_azienda == $data['azienda']) {
-                        $dataClonedGuest['check_in_date'] = date('Y-m-d');
+                        $dataClonedGuest['check_in_date'] = $today->format('Y-m-d');
                     } else {
                         unset($dataClonedGuest['check_in_date']);
                     }
@@ -2714,7 +2718,7 @@ class WsController extends AppController
                         $historyClonedGuestData['azienda_id'] = $sedeClonedGuest->id_azienda;
                         $historyClonedGuestData['sede_id'] = $data['sede'];
                         $historyClonedGuestData['operator_id'] = $this->request->session()->read('Auth.User.id');
-                        $historyClonedGuestData['operation_date'] = date('Y-m-d');
+                        $historyClonedGuestData['operation_date'] = $today->format('Y-m-d');
                         $historyClonedGuestData['guest_status_id'] = $clonedGuest->status_id;
                         $historyClonedGuestData['cloned_guest_id'] = $guest->id;
                         $historyClonedGuestData['provenance_id'] = $sede->id;
@@ -2742,7 +2746,7 @@ class WsController extends AppController
                             }
 
                             $res['history_status'] = $status;
-                            $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+                            $res['check_out_date'] = $today->format('d/m/Y');
                             $res['history_destination'] = $sedeClonedGuest['azienda']['denominazione'].' - '.$sedeClonedGuest['indirizzo'].' '.$sedeClonedGuest['num_civico'].', '.$sedeClonedGuest['comune']['des_luo'].' ('.$sedeClonedGuest['comune']['s_prv'].')';
                             $res['history_note'] = $history->note;
 
@@ -2778,6 +2782,8 @@ class WsController extends AppController
         $guests = TableRegistry::get('Aziende.Guests');
         $guest = $guests->get($data['guest_id']);
 
+        $today = new Time();
+
         //aggiornamento storico
         $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
         $history = $guestsHistory->newEntity();
@@ -2789,7 +2795,7 @@ class WsController extends AppController
         $historyData['azienda_id'] = $sede->id_azienda;
         $historyData['sede_id'] = $guest->sede_id;
         $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-        $historyData['operation_date'] = date('Y-m-d');
+        $historyData['operation_date'] = $today->format('Y-m-d');
         $historyData['guest_status_id'] = 1;
 
         $guestsHistory->patchEntity($history, $historyData);
@@ -2797,7 +2803,7 @@ class WsController extends AppController
         if ($guestsHistory->save($history)) {
             //aggiornamento stato ospite e data check-in
             $guest->status_id = 1;
-            $guest->check_in_date = date('Y-m-d');
+            $guest->check_in_date = $today->format('Y-m-d');
 
             if ($guests->save($guest)) {
                 $originalGuest = $guests->get($lastHistory->cloned_guest_id);
@@ -2812,7 +2818,7 @@ class WsController extends AppController
                 $originalHistoryData['azienda_id'] = $sede->id_azienda;
                 $originalHistoryData['sede_id'] = $guest->sede_id;
                 $originalHistoryData['operator_id'] = $this->request->session()->read('Auth.User.id');
-                $originalHistoryData['operation_date'] = date('Y-m-d');
+                $originalHistoryData['operation_date'] = $today->format('Y-m-d');
                 $originalHistoryData['guest_status_id'] = 6;
                 $originalHistoryData['cloned_guest_id'] = $lastOriginalHistory->cloned_guest_id;
                 $originalHistoryData['destination_id'] = $lastOriginalHistory->destination_id;
@@ -2822,7 +2828,7 @@ class WsController extends AppController
 
                 if ($guestsHistory->save($originalHistory)) {
                     $originalGuest->status_id = 6;
-                    $originalGuest->check_out_date = date('Y-m-d');
+                    $originalGuest->check_out_date = $today->format('Y-m-d');
 
                     if ($guests->save($originalGuest)) {
                         //creazione notifica trasferimento ospite
