@@ -1788,6 +1788,55 @@ class WsController extends AppController
             $guests->patchEntity($entity, $data);
 
             if($guests->save($entity)){
+                // Salvataggio ospiti famiglia
+                $data['family'] = json_decode($data['family']);
+
+                if(count($data['family']) > 0){
+                    $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+
+                    $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
+
+                    $familyId = '';
+                    if($guestHasFamily){
+                        // Ospite ha gia una famiglia a cui associare
+                        $familyId = $guestHasFamily['family_id'];
+                    }else{
+                        // Cerco se uno degli ospiti associati ha già una famiglia a cui associare
+                        foreach($data['family'] as $guest){ 
+                            if(!empty($guest->id)){
+                                $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                                if($guestHasFamily){
+                                    $familyId = $guestHasFamily['family_id'];
+                                    $newGuestFamily = $guestsFamilies->newEntity();
+                                    $newGuestFamily->family_id = $familyId;
+                                    $newGuestFamily->guest_id = $entity->id;
+                                    $guestsFamilies->save($newGuestFamily);
+                                    break;
+                                }
+                            }
+                        }
+                        if($familyId == ''){
+                            // Creo nuova famiglia a cui associare
+                            $newGuestFamily = $guestsFamilies->newEntity();
+                            $familyId = (int)$guestsFamilies->find()->order('family_id DESC')->first()['family_id'] + 1;
+                            $newGuestFamily->family_id = $familyId;
+                            $newGuestFamily->guest_id = $entity->id;
+                            $guestsFamilies->save($newGuestFamily);
+                        }
+                    }
+
+                    foreach($data['family'] as $guest){ 
+                        $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+
+                        if(empty($guestHasFamily)){
+                            $newGuestFamily = $guestsFamilies->newEntity();
+                            $newGuestFamily->family_id = $familyId;
+                            $newGuestFamily->guest_id = $guest->id;
+                            $guestsFamilies->save($newGuestFamily);
+                        }
+                    }
+                }
+
                 // Creazione notifica
                 $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
                 $notification = $guestsNotifications->newEntity();
@@ -1935,6 +1984,19 @@ class WsController extends AppController
             //Presenza oggi
             $guest['presenza'] = TableRegistry::get('Aziende.Presenze')->getGuestPresenzaByDate($guest->id, date('Y-m-d'));
 
+            //recupero ospiti della stessa famiglia
+            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+
+            $guest['family_id'] = '';
+            $guest['family'] = [];
+
+            if($guestHasFamily){
+                $familyId = $guestHasFamily['family_id'];
+                $guest['family_id'] = $familyId;
+                $guest['family'] = $guestsFamilies->getGuestsByFamily($familyId, $guest->id);
+            }
+
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $guest;
 			$this->_result['msg'] = 'Ospite recuperato correttamente.';
@@ -1996,6 +2058,61 @@ class WsController extends AppController
 			$this->_result['msg'] = 'Nessun ospite trovato.';
 		}
 	}
+
+    public function removeGuestFromFamily()
+    {
+        $id = $this->request->data['id'];
+
+        if($id){
+            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $id])->first();
+
+            if($guestHasFamily){
+                if($guestsFamilies->delete($guestHasFamily)){
+                    $this->_result['response'] = "OK";
+                    $this->_result['msg'] = "Rimozione dell'ospite dalla famiglia avvenuta con successo";
+                }else{
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia.";
+                }
+            }else{
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia: l'ospite non è associato a nessuna famiglia.";
+            }
+        }else{
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia: id mancante.";
+        }
+    }
+
+    public function searchGuestsBySede($sedeId, $search, $guestId = "") 
+    {
+        $user = $this->request->session()->read('Auth.User');
+        $sede = TableRegistry::get('Aziende.Sedi')->get($sedeId);
+
+        if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
+            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $this->redirect('/');
+            return null;
+        }
+
+        $guestHasFamily = false;
+        if(!empty($guestId)){
+            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guestId])->first();
+        }
+
+        $guests = TableRegistry::get('Aziende.Guests')->searchGuestsForFamily($sedeId, $search, $guestId, $guestHasFamily);
+
+		if($guests){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $guests;
+			$this->_result['msg'] = 'Ospiti recuperati con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ospite trovato.';
+		}		
+    }
 
     public function getGuestsNotificationsCount()
     {

@@ -323,4 +323,47 @@ class GuestsTable extends AppTable
         return $guests;
     }
 
+    public function searchGuestsForFamily($sedeId, $search, $guestId = "", $guestHasFamily)
+    {
+        $where = [
+            'Guests.sede_id' => $sedeId, 
+            'Guests.status_id' => 1,
+            'OR' => [
+                'CONCAT(Guests.cui, " - ", Guests.name, " ", Guests.surname) LIKE' => '%'.$search.'%',
+                'CONCAT(Guests.cui, " ", Guests.name, " ", Guests.surname) LIKE' => '%'.$search.'%',
+                'CONCAT(Guests.cui, " ", Guests.surname, " ", Guests.name) LIKE' => '%'.$search.'%',
+                'CONCAT(Guests.name, " ", Guests.cui, " ", Guests.surname) LIKE' => '%'.$search.'%',
+                'CONCAT(Guests.name, " ", Guests.surname, " ", Guests.cui) LIKE' => '%'.$search.'%',
+                'CONCAT(Guests.surname, " ", Guests.cui, " ", Guests.name) LIKE' => '%'.$search.'%',
+                'CONCAT(Guests.surname, " ", Guests.name, " ", Guests.cui) LIKE' => '%'.$search.'%'
+            ]
+        ];
+
+        $join = [];
+
+        if(!empty($guestId)){
+            $where['Guests.id !='] = $guestId;
+        }
+
+        if($guestHasFamily){
+            $where[]= 'gf.id IS NULL';
+        }
+
+        return $this->find()
+            ->select(['Guests.id', 'Guests.name', 'Guests.surname', 
+                    'label' => 'CONCAT(Guests.cui,  " - ", Guests.name, " ", Guests.surname)', 'family_id' => 'gf.family_id'
+            ])
+            ->where($where)
+            ->join([
+                [
+                    'table' => 'guests_families',
+                    'alias' => 'gf',
+                    'type' => 'left',
+                    'conditions' => 'gf.guest_id = Guests.id'
+                ]
+            ])
+            ->order('CONCAT(Guests.cui,  " - ", Guests.name, " ", Guests.surname) ASC')
+            ->toArray();
+    }
+
 }

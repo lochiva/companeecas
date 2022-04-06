@@ -109,6 +109,8 @@ var app = new Vue({
         familyGuests: [],
         educationalQualifications: [],
         educationalQualificationChildren: [],
+        familyId : '',
+        guestFamily: [],
         guestHistory: [],
         exitTypes: [],
         exitProcedureData: {
@@ -161,7 +163,11 @@ var app = new Vue({
             note: '',
         },
         datepickerItalian: vdp_translation_it.js,
-        loadedData: ''
+        guestsForSearch: [],
+        searchedGuest: null,
+        searchGuestSelectVisible: false,
+        loadedData: '',
+        loadedFamily: ''
     },
 
     components: {
@@ -253,6 +259,11 @@ var app = new Vue({
                         this.transferData.provenance = res.data.data.history_provenance;
                         this.transferData.date = res.data.data.check_out_date;
                         this.transferData.note = res.data.data.history_note;
+
+                        this.familyId = res.data.data.family_id;
+                        this.guestFamily = res.data.data.family; 
+
+                        this.loadedFamily = JSON.stringify(this.guestFamily);
 
                         this.loadGuestHistory();
 
@@ -350,6 +361,7 @@ var app = new Vue({
             });
 
             params.append('ente_type', this.ente_type);
+            params.append('family', JSON.stringify(this.guestFamily));
 
             axios.post(pathServer + 'aziende/ws/saveGuest', params)
                 .then(res => {
@@ -372,19 +384,18 @@ var app = new Vue({
 
         deleteGuest: function(index){
             if(confirm("Attenzione! Si è sicuri di voler eliminare l'ospite?")){
-                if(this.guestData.family[index].id == ''){
-                    this.guestData.family.splice(index, 1);
-                    this.serviceFree += 1;
+                if(this.guestFamily[index].id == ''){
+                    this.guestFamily.splice(index, 1);
                 }else{
                     let params = new URLSearchParams();
-                    params.append('id', this.guestData.family[index].id);
+                    params.append('id', this.guestFamily[index].id);
 
                     axios.post(pathServer + 'aziende/ws/deleteGuest', params)
                     .then(res => {
                         if (res.data.response == 'OK') {
                             alert(res.data.msg);
-                            this.guestData.family.splice(index, 1);
-                            this.isServiceFreeForSede(this.guestData.sede_id.value);
+                            this.guestFamily.splice(index, 1);
+                            this.loadedFamily = JSON.stringify(this.guestFamily);
                         } else {
                             alert(res.data.msg);
                         }
@@ -417,16 +428,56 @@ var app = new Vue({
             }
         },
 
-        searchGuest: function(search, loading){
+        removeGuestFromFamily: function(index = ""){ 
+            if(confirm("Attenzione! Si è sicuri di voler rimuovere l'ospite dalla famiglia?")){ 
+                if(index == ""){
+                    let params = new URLSearchParams();
+                    params.append('id', this.guestData.id.value);
+
+                    axios.post(pathServer + 'aziende/ws/removeGuestFromFamily', params)
+                    .then(res => {
+                        if (res.data.response == 'OK') {
+                            alert(res.data.msg);
+                            this.familyId = '';
+                            this.guestFamily = [];
+                        } else {
+                            alert(res.data.msg);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                }else{
+                    let params = new URLSearchParams();
+                    params.append('id', this.guestFamily[index].id);
+
+                    axios.post(pathServer + 'aziende/ws/removeGuestFromFamily', params)
+                    .then(res => {
+                        if (res.data.response == 'OK') {
+                            alert(res.data.msg);
+                            this.guestFamily.splice(index, 1);
+                            this.loadedFamily = JSON.stringify(this.guestFamily);
+                        } else {
+                            alert(res.data.msg);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                }
+            }
+        },
+
+        searchGuests: function(search, loading){
             if(search != ''){
                 loading(true);
-                axios.get(pathServer + 'aziende/ws/searchGuest/'+search+'/'+this.guestData.id.value)
+                axios.get(pathServer + 'aziende/ws/searchGuestsBySede/'+this.guestData.sede_id.value+'/'+search+'/'+this.guestData.id.value)
                 .then(res => { 
                     if (res.data.response == 'OK') {
-                        this.familyGuests = res.data.data;
+                        this.guestsForSearch = res.data.data; 
                         loading(false);
                     } else {
-                        this.familyGuests = [];
+                        this.guestsForSearch = [];
                         loading(false);
                     }
                 }).catch(error => {
@@ -434,7 +485,48 @@ var app = new Vue({
                     loading(false);
                 });
             }else{
-                this.familyGuests = [];
+                this.guestsForSearch = [];
+            }
+        },
+
+        addSearchedGuest: function(value){ 
+            if(value !== null){
+                var familyGuests = this.guestFamily;
+                var enabled = false
+                var wrongFamily = false;
+                for( var i = 0; i < familyGuests.length; i++) {
+                    if(familyGuests[i].id == value.id){
+                        enabled = true;
+                    } 
+                    if(value.family_id != null && familyGuests[i].family_id != null && familyGuests[i].family_id != value.family_id){
+                        wrongFamily = true;
+                    }
+                };
+
+                if(enabled){
+                    alert("L'ospite selezionato è gia stato associato alla famiglia.");
+                    value = null;
+                }else if(wrongFamily){
+                    alert("L'ospite selezionato appartiene ad una famiglia diversa da quella degli altri altri ospiti associati.");
+                    value = null;
+                }else{
+                    this.guestFamily.push(value);
+                }
+            }
+
+            this.searchedGuest = null;
+        },
+
+        showHideSearchGuestSelect: function(){ 
+            if(this.searchGuestSelectVisible){
+                this.searchedGuest = null;
+                this.guestsForSearch = [];
+                this.searchGuestSelectVisible = false;
+                $('#searchGuestSelect').hide('slide', {direction: 'right'});
+            }else{
+                this.searchGuestSelectVisible = true;
+                $('#searchGuestSelect').show('slide', {direction: 'right'});
+                setTimeout(function(){ $('#searchGuestSelect input').focus(); }, 400);
             }
         },
 
@@ -877,7 +969,14 @@ var app = new Vue({
 
 var beforeunload = true; 
 window.addEventListener('beforeunload', function (e) { 
-    if(beforeunload && (app.guestData.id.value === null || JSON.stringify(app.guestData) !== app.loadedData)){
+    if(
+        beforeunload && 
+        (
+            app.guestData.id.value === null || 
+            JSON.stringify(app.guestData) !== app.loadedData || 
+            JSON.stringify(app.guestFamily) !== app.loadedFamily
+        )
+    ){
         // Cancel the event
         e.preventDefault();
         // Chrome requires returnValue to be set

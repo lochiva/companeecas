@@ -108,6 +108,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <label :class="{'required': guestData.minor.required}" for="guestMinor"><?= __('Minore') ?></label>
                                     <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor" id="guestMinor" v-model="guestData.minor.value" @change="resetMinor()" />
                                 </div>
+                                <!--
                                 <div class="col-md-4">
                                     <div v-show="guestData.minor.value" class="div-input-check" :class="{'has-error': guestData.minor_family.hasError}">
                                         <label :class="{'required': guestData.minor_family.required}" for="guestMinorFamily"><?= __('Con riferimento al nucleo familiare') ?></label>
@@ -126,6 +127,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                         </v-select>
                                     </div>
                                 </div>
+                                -->
                                 <div v-show="guestData.minor.value"  class="col-md-3 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
                                     <label :class="{'required': guestData.minor_alone.required}" for="guestMinorAlone"><?= __('Si dichiara minore solo') ?></label>
                                     <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
@@ -206,6 +208,44 @@ $role = $this->request->session()->read('Auth.User.role');
     <section class="content no-min-height">
         <div class="row">
             <div class="col-xs-12">
+                <div id="box-guests-diary" class="box box-diary">
+                    <div class="box-header with-border">
+                        <i class="fa fa-users"></i>
+                        <h3 class="box-title"><?=__c('Famigliari')?></h3> 
+                        <button role="button" class="btn btn-primary pull-right" :disabled="(guestStatus != 1 || !familyId)" :title="!familyId ? 'L\'ospite non appartiene a nessuna famiglia': 'Rimuovi ospite dalla famiglia'" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
+                        <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="guestStatus != 1" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
+                        <v-select hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
+                            @search="searchGuests" @input="addSearchedGuest" placeholder="Seleziona un ospite">
+                            <template slot="no-options">Nessun ospite trovato.</template>
+                        </v-select>
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-striped table-bordered table-hover">
+                            <tbody>
+                                <tr v-for="(guest, index) in guestFamily">
+                                    <td><span v-if="guest.cui">{{guest.cui}} - </span>{{guest.name}} {{guest.surname}}<span v-if="guest.status_id == 3 || guest.status_id == 6" class="exit-icon"><i class="fa fa-sign-out"></i></span></td>
+                                    <td width="130px;">
+                                        <div class="button-group">
+                                            <a v-if="guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=')?>'+guest.id" target="_blank" role="button" 
+                                                class="btn btn-xs btn-warning" title="Modifica ospite">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a :class="{'disabled': (guest.status_id != 1 || guestStatus != 1)}" role="button" class="btn btn-xs btn-primary" title="Rimuovi ospite dalla famiglia" @click="removeGuestFromFamily(index)"><i class="fa fa-unlink"></i></a>
+                                            <a :class="{'disabled': (guest.status_id != 1 || guestStatus != 1)}" role="button" class="btn btn-xs btn-danger" title="Elimina ospite" @click="deleteGuest(index)"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content no-min-height">
+        <div class="row">
+            <div class="col-xs-12">
                 <div id="box-guests-history" class="box">
                     <div class="box-header with-border">
                         <i class="fa fa-history"></i>
@@ -273,5 +313,7 @@ $role = $this->request->session()->read('Auth.User.role');
     <?= $this->element('Aziende.modal_guest_exit') ?>
     <?= $this->element('Aziende.modal_confirm_guest_exit') ?>
     <?= $this->element('Aziende.modal_guest_transfer') ?>
+    <?= $this->element('Aziende.modal_confirm_exit_family') ?>
+    <?= $this->element('Aziende.modal_accept_transfer_family') ?>
 
 </div>
