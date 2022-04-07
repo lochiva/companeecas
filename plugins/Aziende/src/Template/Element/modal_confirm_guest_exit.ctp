@@ -21,7 +21,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-				<button type="button" class="btn btn-danger" @click="confirmExit()">Conferma uscita ospite</button>
+				<button type="button" class="btn btn-danger" @click="confirmExitProcedure()">Conferma uscita ospite</button>
 			</div>
 		</div>
 	</div>

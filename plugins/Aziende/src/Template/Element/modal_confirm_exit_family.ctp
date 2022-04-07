@@ -2,14 +2,11 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <p v-if="exitProcedure.procedure == 'exit'" class="text-confirm">Si desidera eseguire la procedura di uscita per tutti gli ospiti associati alla famiglia?</p>
-        <p v-if="exitProcedure.procedure == 'transfer'" class="text-confirm">Si desidera eseguire la procedura di trasferimento per tutti gli ospiti associati alla famiglia?</p>
+        <p class="text-confirm">Si desidera confermare l'uscita per tutti gli ospiti associati alla famiglia?</p>
       </div>
       <div class="modal-footer">
-        <button v-if="exitProcedure.procedure == 'exit'" type="button" class="btn btn-secondary confirm-no" @click="exitGuest(false)" data-dismiss="modal">No</button>
-        <button v-if="exitProcedure.procedure == 'exit'" type="button" class="btn btn-primary confirm-si" @click="exitGuest(true)" data-dismiss="modal">Sì</button>
-        <button v-if="exitProcedure.procedure == 'transfer'" type="button" class="btn btn-secondary confirm-no" @click="exitProcedure.transfer_volume = 1" data-dismiss="modal">No</button>
-        <button v-if="exitProcedure.procedure == 'transfer'" type="button" class="btn btn-primary confirm-si" @click="exitProcedure.transfer_volume = guestData.family.length + 1" data-dismiss="modal">Sì</button>
+        <button type="button" class="btn btn-secondary confirm-no" @click="confirmExitGuest(0)" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary confirm-si" @click="confirmExitGuest(1)" data-dismiss="modal">Sì</button>
       </div>
     </div>
   </div>

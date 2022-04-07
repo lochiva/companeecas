@@ -616,40 +616,60 @@ var app = new Vue({
                 }
             });                 
 
-            if(error){
+            if (error) {
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
-            }else{ 
-                let params = new URLSearchParams();
-                params.append('guest_id', this.guestData.id.value);
-                Object.keys(this.exitProcedureData).forEach((prop) => {
-                    params.append(prop, this.exitProcedureData[prop].value);
-                });
-    
-                axios.post(pathServer + 'aziende/ws/exitProcedure', params)
-                .then(res => {
-                    if (res.data.response == 'OK') {
-                        alert(res.data.msg);
-                        this.guestStatus = res.data.data.history_status;
-                        this.exitData.type = res.data.data.history_exit_type;
-                        this.exitData.date = res.data.data.check_out_date;
-                        this.exitData.note = res.data.data.history_note;
-    
-                        this.loadGuestHistory();
-    
-                        let modalGuestExit = this.$refs.modalGuestExit;
-                        $(modalGuestExit).modal('hide');
-
-                        //Aggiorna conteggio notifiche
-                        this.updateNotificationsCount();
-                    } else {
-                        alert(res.data.msg);
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            } else { 
+                if(this.guestFamily.length > 0){
+                    let exitFamily = this.$refs.exitFamily;
+                    $(exitFamily).modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }else{ 
+                    this.exitGuest(0);
+                }                
             }
+        },
+
+        exitGuest: function(exitFamily){
+            let params = new URLSearchParams();
+            params.append('guest_id', this.guestData.id.value);
+            Object.keys(this.exitProcedureData).forEach((prop) => {
+                params.append(prop, this.exitProcedureData[prop].value);
+            });
+            params.append('exit_family', exitFamily);
+
+            axios.post(pathServer + 'aziende/ws/exitProcedure', params)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                    this.guestStatus = res.data.data.history_status;
+                    this.exitData.type = res.data.data.history_exit_type;
+                    this.exitData.date = res.data.data.check_out_date;
+                    this.exitData.note = res.data.data.history_note;
+
+                    if(exitFamily){
+                        this.guestFamily.forEach((guest) => {
+                            guest.status_id = res.data.data.family_status[guest.id];
+                        });
+                        this.loadedFamily = JSON.stringify(this.guestFamily);
+                    }
+
+                    this.loadGuestHistory();
+
+                    let modalGuestExit = this.$refs.modalGuestExit;
+                    $(modalGuestExit).modal('hide');
+
+                    //Aggiorna conteggio notifiche
+                    this.updateNotificationsCount();
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
 
         clearExitProcedureData: function() {
@@ -674,7 +694,7 @@ var app = new Vue({
             $(modalConfirmGuestExit).modal('show');
         },
 
-        confirmExit: function() {
+        confirmExitProcedure: function() {
             var error = false;
 
             Object.keys(this.confirmExitProcedureData).forEach((prop) => {
@@ -690,36 +710,56 @@ var app = new Vue({
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
             }else{ 
-                let params = new URLSearchParams();
-                params.append('guest_id', this.guestData.id.value);
-                Object.keys(this.confirmExitProcedureData).forEach((prop) => {
-                    params.append(prop, this.confirmExitProcedureData[prop].value);
-                });
-
-                axios.post(pathServer + 'aziende/ws/confirmExit', params)
-                .then(res => {
-                    if (res.data.response == 'OK') {
-                        alert(res.data.msg);
-                        this.guestStatus = res.data.data.history_status;
-                        this.exitData.type = res.data.data.history_exit_type;
-                        this.exitData.date = res.data.data.check_out_date;
-                        this.exitData.note = res.data.data.history_note;
-
-                        this.loadGuestHistory();
-
-                        let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
-                        $(modalConfirmGuestExit).modal('hide');
-
-                        //Aggiorna conteggio notifiche
-                        this.updateNotificationsCount();
-                    } else {
-                        alert(res.data.msg);
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+                if(this.guestFamily.length > 0){
+                    let confirmExitFamily = this.$refs.confirmExitFamily;
+                    $(confirmExitFamily).modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }else{ 
+                    this.confirmExitGuest(0);
+                }
             }
+        },
+
+        confirmExitGuest: function(confirmExitFamily) {
+            let params = new URLSearchParams();
+            params.append('guest_id', this.guestData.id.value);
+            Object.keys(this.confirmExitProcedureData).forEach((prop) => {
+                params.append(prop, this.confirmExitProcedureData[prop].value);
+            });
+            params.append('confirm_exit_family', confirmExitFamily);
+
+            axios.post(pathServer + 'aziende/ws/confirmExit', params)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                    this.guestStatus = res.data.data.history_status;
+                    this.exitData.type = res.data.data.history_exit_type;
+                    this.exitData.date = res.data.data.check_out_date;
+                    this.exitData.note = res.data.data.history_note;
+
+                    if(confirmExitFamily){
+                        this.guestFamily.forEach((guest) => {
+                            guest.status_id = res.data.data.family_status[guest.id];
+                        });
+                        this.loadedFamily = JSON.stringify(this.guestFamily);
+                    }
+
+                    this.loadGuestHistory();
+
+                    let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
+                    $(modalConfirmGuestExit).modal('hide');
+
+                    //Aggiorna conteggio notifiche
+                    this.updateNotificationsCount();
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
 
         clearConfirmExitProcedureData: function() {
@@ -766,41 +806,58 @@ var app = new Vue({
             if(error){
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
-            }else{ 
-                let params = new URLSearchParams();
-                params.append('guest_id', this.guestData.id.value);
-                Object.keys(this.transferProcedureData).forEach((prop) => {
-                    if (prop == 'azienda' || prop == 'sede') {
-                        params.append(prop, this.transferProcedureData[prop].value.id);
-                    } else {
-                        params.append(prop, this.transferProcedureData[prop].value);
-                    }
-                });
-    
-                axios.post(pathServer + 'aziende/ws/transferProcedure', params)
-                .then(res => {
-                    if (res.data.response == 'OK') {
-                        alert(res.data.msg);
-                        this.guestStatus = res.data.data.history_status;
-                        this.transferData.destination = res.data.data.history_destination;
-                        this.transferData.date = res.data.data.check_out_date;
-                        this.transferData.note = res.data.data.history_note;
-    
-                        this.loadGuestHistory();
-    
-                        let modalGuestTransfer = this.$refs.modalGuestTransfer;
-                        $(modalGuestTransfer).modal('hide');
+            } else {
+                if(this.guestFamily.length > 0){
+                    let transferFamily = this.$refs.transferFamily;
+                    $(transferFamily).modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }else{ 
+                    this.transferGuest(0);
+                } 
+            }       
+        },
 
-                        //Aggiorna conteggio notifiche
-                        this.updateNotificationsCount();
-                    } else {
-                        alert(res.data.msg);
+        transferGuest: function(transferFamily) {
+            let params = new URLSearchParams();
+            params.append('guest_id', this.guestData.id.value);
+            Object.keys(this.transferProcedureData).forEach((prop) => {
+                if (prop == 'azienda' || prop == 'sede') {
+                    params.append(prop, this.transferProcedureData[prop].value.id);
+                } else {
+                    params.append(prop, this.transferProcedureData[prop].value);
+                }
+            });
+            params.append('transfer_family', transferFamily);
+
+            axios.post(pathServer + 'aziende/ws/transferProcedure', params)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                    this.guestStatus = res.data.data.history_status;
+                    this.transferData.destination = res.data.data.history_destination;
+                    this.transferData.date = res.data.data.check_out_date;
+                    this.transferData.note = res.data.data.history_note;
+
+                    if(transferFamily){
+                        location.reload();
                     }
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }
+
+                    this.loadGuestHistory();
+
+                    let modalGuestTransfer = this.$refs.modalGuestTransfer;
+                    $(modalGuestTransfer).modal('hide');
+
+                    //Aggiorna conteggio notifiche
+                    this.updateNotificationsCount();
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
 
         clearTransferProcedureData: function() {
@@ -825,10 +882,23 @@ var app = new Vue({
             };
         },
 
-        acceptTransfer: function() {
+        acceptTransferProcedure: function() { 
+            if(this.guestFamily.length > 0){
+                let acceptTransferFamily = this.$refs.acceptTransferFamily;
+                $(acceptTransferFamily).modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            }else{ 
+                this.acceptTransfer(0);
+            }       
+        },
+
+        acceptTransfer: function(acceptTransferFamily) {
             if (confirm('Si è sicuri di voler confermare l\'ingresso dell\'ospite?')) {
                 let params = new URLSearchParams();
                 params.append('guest_id', this.guestData.id.value);
+                params.append('accept_transfer_family', acceptTransferFamily);
 
                 axios.post(pathServer + 'aziende/ws/acceptTransfer', params)
                 .then(res => {
@@ -839,6 +909,13 @@ var app = new Vue({
                         this.transferData.provenance = '';
                         this.transferData.date = '';
                         this.transferData.note = '';
+
+                        if(acceptTransferFamily){
+                            this.guestFamily.forEach((guest) => {
+                                guest.status_id = res.data.data.family_status[guest.id];
+                            });
+                            this.loadedFamily = JSON.stringify(this.guestFamily);
+                        }
     
                         this.loadGuestHistory();
 
