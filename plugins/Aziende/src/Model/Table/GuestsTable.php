@@ -322,14 +322,11 @@ class GuestsTable extends AppTable
             'Guests.sede_id' => $sedeId, 
             'Guests.status_id' => 1,
             'Guests.minor_alone' => 0,
-            'OR' => [
-                'CONCAT(Guests.cui, " - ", Guests.name, " ", Guests.surname) LIKE' => '%'.$search.'%',
-                'CONCAT(Guests.cui, " ", Guests.name, " ", Guests.surname) LIKE' => '%'.$search.'%',
-                'CONCAT(Guests.cui, " ", Guests.surname, " ", Guests.name) LIKE' => '%'.$search.'%',
-                'CONCAT(Guests.name, " ", Guests.cui, " ", Guests.surname) LIKE' => '%'.$search.'%',
-                'CONCAT(Guests.name, " ", Guests.surname, " ", Guests.cui) LIKE' => '%'.$search.'%',
-                'CONCAT(Guests.surname, " ", Guests.cui, " ", Guests.name) LIKE' => '%'.$search.'%',
-                'CONCAT(Guests.surname, " ", Guests.name, " ", Guests.cui) LIKE' => '%'.$search.'%'
+             'OR'=>[
+               'Guests.surname LIKE ' => '%'.$search.'%',
+               'Guests.name LIKE ' => '%'.$search.'%',
+               'Guests.cui LIKE ' => '%'.$search.'%'
+             
             ]
         ];
 
