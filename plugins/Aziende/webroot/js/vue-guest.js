@@ -313,12 +313,6 @@ var app = new Vue({
                         this.guestData[prop].hasError = false;
                     }
                 }
-                if(prop == 'minor'){
-                    if(this.guestData[prop].value && !this.guestData.minor_family.value && !this.guestData.minor_alone.value){
-                        errors = true;
-                        msg += 'Avendo selezionato "Minore" è necessario indicare se con riferimento a nucleo familiare oppure solo.\n';
-                    }
-                }
                 if(prop == 'educational_qualification'){
                     if(this.guestData[prop].value && this.guestData[prop].value.have_children && !this.guestData.educational_qualification_child.value){
                         errors = true;

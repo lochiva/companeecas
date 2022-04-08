@@ -328,6 +328,7 @@ class GuestsTable extends AppTable
         $where = [
             'Guests.sede_id' => $sedeId, 
             'Guests.status_id' => 1,
+            'Guests.minor_alone' => 0,
             'OR' => [
                 'CONCAT(Guests.cui, " - ", Guests.name, " ", Guests.surname) LIKE' => '%'.$search.'%',
                 'CONCAT(Guests.cui, " ", Guests.name, " ", Guests.surname) LIKE' => '%'.$search.'%',
