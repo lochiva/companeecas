@@ -85,6 +85,7 @@ class GuestsFamiliesTable extends Table
         $where = [
             'GuestsFamilies.family_id' => $familyId,
             'GuestsFamilies.guest_id !=' => $guestId,
+            'g.sede_id' => $sedeId,
             'g.status_id IN' => [1, 2, 3, 5],
             'g.deleted' => '0'
         ];
