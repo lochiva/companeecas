@@ -214,15 +214,11 @@ class GuestsTable extends AppTable
             // Controllo CUI
             if (!empty($entity->cui)) {
                 $where = [
-                    'cui' => $entity->cui
+                    'cui' => $entity->cui,
+                    'status_id IN' => [1, 2, 5]
                 ];
                 if (!empty($entity->id)) {
                     $where[] = ['id !=' => $entity->id];
-                    $where[] = ['original_guest_id !=' => $entity->id];
-                }
-                if (!empty($entity->original_guest_id)) {
-                    $where[] = ['original_guest_id !=' => $entity->original_guest_id];
-                    $where[] = ['id !=' => $entity->original_guest_id];
                 }
                 $guest = $this->find()->where($where)->first();
                 if (!empty($guest)) {
@@ -235,14 +231,10 @@ class GuestsTable extends AppTable
                 $where = [
                     'vestanet_id' => $entity->vestanet_id,
                     'minor' => 0,
+                    'status_id IN' => [1, 2, 5]
                 ];
                 if (!empty($entity->id)) {
                     $where[] = ['id !=' => $entity->id];
-                    $where[] = ['original_guest_id !=' => $entity->id];
-                }
-                if (!empty($entity->original_guest_id)) {
-                    $where[] = ['original_guest_id !=' => $entity->original_guest_id];
-                    $where[] = ['id !=' => $entity->original_guest_id];
                 }
                 $guest = $this->find()->where($where)->first();
                 if (!empty($guest)) {
@@ -257,7 +249,8 @@ class GuestsTable extends AppTable
                 'surname' => $entity->surname,
                 'birthdate' => $entity->birthdate,
                 'country_birth' => $entity->country_birth,
-                'sex' => $entity->sex
+                'sex' => $entity->sex,
+                'status_id IN' => [1, 2, 5]
             ];
             if (!empty($entity->id)) {
                 $where[] = ['id !=' => $entity->id];
