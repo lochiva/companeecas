@@ -910,6 +910,8 @@ var app = new Vue({
                             });
                             this.loadedFamily = JSON.stringify(this.guestFamily);
                         }
+
+                        this.loadedData = JSON.stringify(this.guestData);
     
                         this.loadGuestHistory();
 
