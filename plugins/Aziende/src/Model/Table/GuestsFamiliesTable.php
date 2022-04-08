@@ -80,19 +80,14 @@ class GuestsFamiliesTable extends Table
         return $rules;
     }
 
-    public function getGuestsByFamily($familyId = "", $guestId = "", $originalGuestId = "")
+    public function getGuestsByFamily($familyId = "", $sedeId="", $guestId = "", $originalGuestId = "")
     {
-        $where['GuestsFamilies.family_id'] = $familyId;
-        if(!empty($guestId)){
-            $where['GuestsFamilies.guest_id !='] = $guestId;
-        }
-        $where['g.status_id IN'] = [1, 2, 3, 5];
-        if (empty($originalGuestId)) {
-            $where['g.original_guest_id !='] = $guestId;
-        } else {
-            $where['g.original_guest_id !='] = $originalGuestId;
-        }
-        $where['g.deleted'] = '0';
+        $where = [
+            'GuestsFamilies.family_id' => $familyId,
+            'GuestsFamilies.guest_id !=' => $guestId,
+            'g.status_id IN' => [1, 2, 3, 5],
+            'g.deleted' => '0'
+        ];
 
         return $this->find()
             ->select([

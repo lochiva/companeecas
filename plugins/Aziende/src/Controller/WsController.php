@@ -2001,7 +2001,7 @@ class WsController extends AppController
             if($guestHasFamily){
                 $familyId = $guestHasFamily['family_id'];
                 $guest['family_id'] = $familyId;
-                $guest['family'] = $guestsFamilies->getGuestsByFamily($familyId, $guest->id, $guest->original_guest_id);
+                $guest['family'] = $guestsFamilies->getGuestsByFamily($familyId, $guest->sede_id, $guest->id, $guest->original_guest_id);
             }
 
 			$this->_result['response'] = "OK";
