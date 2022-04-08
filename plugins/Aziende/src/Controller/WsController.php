@@ -1791,7 +1791,7 @@ class WsController extends AppController
                 // Salvataggio ospiti famiglia
                 $data['family'] = json_decode($data['family']);
 
-                if(count($data['family']) > 0){
+                if(count($data['family']) > 0 && !($entity->minor && $entity->minor_alone)){
                     $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
 
                     $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
@@ -1834,6 +1834,13 @@ class WsController extends AppController
                             $newGuestFamily->guest_id = $guest->id;
                             $guestsFamilies->save($newGuestFamily);
                         }
+                    }
+                } else {
+                    // Se ospite minore solo rimuovo famiglia se presente
+                    $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                    $guestFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
+                    if ($guestFamily) {
+                        $guestsFamilies->delete($guestFamily);
                     }
                 }
 

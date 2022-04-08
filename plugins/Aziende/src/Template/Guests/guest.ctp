@@ -205,7 +205,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </div>
     </section>
 
-    <section class="content no-min-height">
+    <section v-if="!(guestData.minor.value && guestData.minor_alone.value)" class="content no-min-height">
         <div class="row">
             <div class="col-xs-12">
                 <div id="box-guests-diary" class="box box-diary">

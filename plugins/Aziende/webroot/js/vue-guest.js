@@ -620,13 +620,13 @@ var app = new Vue({
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
             } else { 
-                if(this.guestFamily.length > 0){
+                if (this.guestFamily.length > 0) {
                     let exitFamily = this.$refs.exitFamily;
                     $(exitFamily).modal({
                         backdrop: 'static',
                         keyboard: false
                     });
-                }else{ 
+                } else { 
                     this.exitGuest(0);
                 }                
             }
@@ -710,13 +710,13 @@ var app = new Vue({
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
             }else{ 
-                if(this.guestFamily.length > 0){
+                if (this.guestFamily.length > 0) {
                     let confirmExitFamily = this.$refs.confirmExitFamily;
                     $(confirmExitFamily).modal({
                         backdrop: 'static',
                         keyboard: false
                     });
-                }else{ 
+                } else { 
                     this.confirmExitGuest(0);
                 }
             }
@@ -807,13 +807,13 @@ var app = new Vue({
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
             } else {
-                if(this.guestFamily.length > 0){
+                if (this.guestFamily.length > 0) {
                     let transferFamily = this.$refs.transferFamily;
                     $(transferFamily).modal({
                         backdrop: 'static',
                         keyboard: false
                     });
-                }else{ 
+                } else { 
                     this.transferGuest(0);
                 } 
             }       
@@ -883,13 +883,13 @@ var app = new Vue({
         },
 
         acceptTransferProcedure: function() { 
-            if(this.guestFamily.length > 0){
+            if (this.guestFamily.length > 0) {
                 let acceptTransferFamily = this.$refs.acceptTransferFamily;
                 $(acceptTransferFamily).modal({
                     backdrop: 'static',
                     keyboard: false
                 });
-            }else{ 
+            } else { 
                 this.acceptTransfer(0);
             }       
         },
