@@ -211,7 +211,7 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div id="box-guests-diary" class="box box-diary">
                     <div class="box-header with-border">
                         <i class="fa fa-users"></i>
-                        <h3 class="box-title"><?=__c('Famigliari')?></h3> 
+                        <h3 class="box-title"><?=__c('Componenti il nucleo familiare')?></h3> 
                         <button role="button" class="btn btn-primary pull-right" :disabled="(guestStatus != 1 || !familyId)" :title="!familyId ? 'L\'ospite non appartiene a nessuna famiglia': 'Rimuovi ospite dalla famiglia'" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
                         <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="guestStatus != 1" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
                         <v-select hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
