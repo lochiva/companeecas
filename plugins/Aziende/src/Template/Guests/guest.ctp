@@ -79,7 +79,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <div class="col-md-4" :class="{'has-error': guestData.check_in_date.hasError}">
                                     <label :class="{'required': guestData.check_in_date.required}" for="guestCheckInDate"><?= __('Check-in') ?></label>
                                     <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" 
-                                        :clear-button="true" :monday-first="true" input-class="form-control"
+                                        :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control"
                                         id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
                                 </div>
                             </div>
@@ -137,7 +137,8 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.birthdate.hasError}">
                                     <label :class="{'required': guestData.birthdate.required}" for="guestBirthdate"><?= __('Data di nascita') ?></label>
-                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="true" :monday-first="true" input-class="form-control" 
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" 
+                                        :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control" 
                                         id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.country_birth.hasError}">
@@ -250,7 +251,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-header with-border">
                         <i class="fa fa-history"></i>
                         <h3 class="box-title"><?=__c('Storico')?></h3>
-                        <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                        <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse"><i class="fa fa-minus"></i></button>
                     </div>
                     <div class="box-body">
                         <table class="table table-striped table-bordered table-hover">
@@ -300,11 +301,11 @@ $role = $this->request->session()->read('Auth.User.role');
                 </md-button>
             </a>
 
-            <md-button class="md-fab fab-success save-guest-stay" @click="checkFormGuest()" title="Salva">
+            <md-button v-if="!(guestData.id.value != '' && guestStatus != 1)" class="md-fab fab-success save-guest-stay" @click="checkFormGuest()" title="Salva">
                 <md-icon><i class="glyphicon glyphicon-floppy-disk fab-icon"></i></md-icon>
             </md-button>
 
-            <md-button class="md-fab fab-primary save-guest-exit" @click="checkFormGuest(true)" title="Salva ed esci">
+            <md-button v-if="!(guestData.id.value != '' && guestStatus != 1)" class="md-fab fab-primary save-guest-exit" @click="checkFormGuest(true)" title="Salva ed esci">
                 <md-icon><i class="glyphicon glyphicon-floppy-remove fab-icon"></i></md-icon>
             </md-button>
         </md-speed-dial-content>
