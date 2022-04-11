@@ -273,7 +273,7 @@ class GuestsTable extends AppTable
     {
         $guests = $this->find()
             ->select($this)
-            ->select(['presente' => 'p.presente', 'note' => 'p.note'])
+            ->select(['presente' => 'p.presente', 'note' => 'p.note', 'country_birth_name' => 'l.des_luo'])
             ->where([
                 'Guests.sede_id' => $sedeId, 
                 'Guests.check_in_date <=' => $date,
@@ -289,6 +289,12 @@ class GuestsTable extends AppTable
                     'alias' => 'p',
                     'type' => 'LEFT',
                     'conditions' => ['Guests.id = p.guest_id', 'p.date' => $date, 'p.sede_id' => $sedeId]
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'l',
+                    'type' => 'LEFT',
+                    'conditions' => ['l.c_luo = Guests.country_birth']
                 ]
             ])
             ->toArray();

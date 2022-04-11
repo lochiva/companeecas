@@ -355,3 +355,12 @@ a.contact-login:hover{
 .danger-presenze {
 	background-color: #fd9393;
 }
+
+.icon-guest-info {
+	cursor: pointer;
+	color: #0000FF;
+}
+
+.container-info-guest {
+	display: inline-block;
+}

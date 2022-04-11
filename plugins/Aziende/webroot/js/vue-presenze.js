@@ -4,6 +4,17 @@ var app = new Vue({
 		sede_id: '',
         date: new Date(),
         guests: [],
+        infoGuest: {
+            check_in_date: '',
+            cui: '',
+            vestanet_id: '',
+            name: '',
+            surname: '',
+            birthdate: '',
+            country_birth_name: '',
+            sex: '',
+            minor: ''
+        },
         check_all_guests: false,
         count_presenze_day: 0,
         count_presenze_month: 0,
@@ -89,6 +100,12 @@ var app = new Vue({
                     guest.presente = false;
                 });
             }
+        },
+
+        openModalInfoGuest (guest) {
+            this.infoGuest = guest;
+            let modalGuestInfo = this.$refs.modalGuestInfo;
+            $(modalGuestInfo).modal('show');
         }
         
     }

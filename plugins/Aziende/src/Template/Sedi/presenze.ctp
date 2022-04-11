@@ -58,11 +58,12 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <div class="clear-both"></div>
                                 </div>
                                 <div v-for="guest in guests" class="form-group">
-                                    <div class="col-sm-2 div-label-guest-presenza">
+                                    <div class="col-sm-3 div-label-guest-presenza">
                                         <div class="col-sm-2 div-label-guest-presenza">
                                             <input type="checkbox" :id="'inputGuest'+guest.id" v-model="guest.presente" class="check-presenza">
                                         </div>
                                         <div class="col-sm-10 div-label-guest-presenza" :class="{'warning-presenze': guest.warning_presenze, 'danger-presenze': guest.danger_presenze}">
+                                            <span class="icon-guest-info" @click="openModalInfoGuest(guest)"><i class="fa fa-info-circle"></i></span>
                                             <label class="control-label presenze-label" :for="'inputGuest'+guest.id">
                                                 {{guest.name}} {{guest.surname}}
                                                 <span v-if="guest.suspended">(sospeso)</span>
@@ -87,4 +88,6 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
         </div>
     </section>
+
+    <?= $this->element('Aziende.modal_guest_info') ?>
 </div>

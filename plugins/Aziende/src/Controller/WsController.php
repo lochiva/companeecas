@@ -2426,6 +2426,9 @@ class WsController extends AppController
                 }
                 $guest['warning_presenze'] = $warningPresenze;
                 $guest['danger_presenze'] = $dangerPresenze;
+
+                $guest['check_in_date'] = $guest['check_in_date'] ? $guest['check_in_date']->format('d/m/Y') : '';
+                $guest['birthdate'] = $guest['birthdate']->format('d/m/Y');
             }
 
             $presenzeTable = TableRegistry::get('Aziende.Presenze');
