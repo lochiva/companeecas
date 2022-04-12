@@ -348,21 +348,24 @@ class WsController extends AppController
 
     public function saveSede($idSede = 0){
 
-        //echo "<pre>"; print_r($this->request->data); echo "</pre>";
+        array_walk_recursive($this->request->data, array($this,'trimByReference') );
+        $data = $this->request->data;
+        
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($data['id_azienda']);
 
         $saveType = '';
         $new = false;
         if($idSede == 0){
-            unset($this->request->data['id']);
-            $saveType = 'CREATE_CENTER';
+            unset($data['id']);
+            if ($azienda->id_tipo == 2) {
+                $saveType = 'CREATE_CENTER_UKRAINE';
+            } else {
+                $saveType = 'CREATE_CENTER';
+            }
             $new = true;
         }
 
         $sede = $this->Sedi->_newEntity(); 
-        array_walk_recursive($this->request->data, array($this,'trimByReference') );
-        $data = $this->request->data;
-
-        $azienda = TableRegistry::get('Aziende.Aziende')->get($data['id_azienda']);
 
         if ($azienda->id_tipo == 2) {
             $data['id_tipo_capitolato'] = 0;

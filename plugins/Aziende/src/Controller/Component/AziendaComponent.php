@@ -293,7 +293,11 @@ class AziendaComponent extends Component
                 if ($entity = $sediTable->saveSede($sede)) {
                     if(empty($sede['id']) || !is_int($sede['id'])){
                         // Salvataggio notifica creazione struttura
-                        $saveType = 'CREATE_CENTER';
+                        if ($azienda->id_tipo == 2) {
+                            $saveType = 'CREATE_CENTER_UKRAINE';
+                        } else {
+                            $saveType = 'CREATE_CENTER';
+                        }
                         $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
                         $notification = $guestsNotifications->newEntity();
                         $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
