@@ -88,21 +88,24 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                     $.each(value, function(i, error) {
 
                         elem = error.$$element;
-                        if (!first) {
-                            first = elem;
-                            if(form.parentTab !== undefined && form.childTab !== undefined){
-                                tab.parentTab = form.parentTab.$$attr.value;
-                                tab.childTab = form.childTab.$$attr.value;
-                            }
-                            if(error.errorMsg != undefined && error.errorMsg != ''){
-                                msg = error.errorMsg;
-                            }else{
-                                msg = 'Il campo ' +error.$name+ ' risulta vuoto o errato.';
+
+                        if ($(elem).is(':visible')) {
+                            if (!first) {
+                                first = elem;
+                                if(form.parentTab !== undefined && form.childTab !== undefined){
+                                    tab.parentTab = form.parentTab.$$attr.value;
+                                    tab.childTab = form.childTab.$$attr.value;
+                                }
+                                if(error.errorMsg != undefined && error.errorMsg != ''){
+                                    msg = error.errorMsg;
+                                }else{
+                                    msg = 'Il campo ' +error.$name+ ' risulta vuoto o errato.';
+                                }
+
                             }
 
+                            $(elem).parentsUntil('div.form-group, div.input').parent().addClass('has-error');
                         }
-
-                        $(elem).parentsUntil('div.form-group, div.input').parent().addClass('has-error');
 
                     });
                 });

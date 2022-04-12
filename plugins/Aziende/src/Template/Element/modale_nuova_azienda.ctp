@@ -253,7 +253,7 @@ use Cake\Routing\Router;
                                     <div class="form-group ">
                                         <label class="col-sm-2 control-label required" for="inputTipoStrutturaMinistero">Tipologia struttura (per ministero)</label>
                                         <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipo_ministero" convert-to-number name="tipo" id="inputTipoStrutturaMinistero" data-prova="ccc" 
+                                            <select required ng-model="sede.id_tipo_ministero" convert-to-number name="tipologia struttura (per ministero)" id="inputTipoStrutturaMinistero" data-prova="ccc" 
                                                 class="form-control required">
                                                 <option value="">-- Seleziona una tipologia struttura --</option>
                                                 <?php foreach ($sediTipiMinistero as $key => $tipo): ?>
@@ -266,7 +266,7 @@ use Cake\Routing\Router;
                                     <div ng-show="vm.azienda.id_tipo == 1" class="form-group ">
                                         <label class="col-sm-2 control-label required" for="inputTipoStrutturaCapitolato">Tipologia struttura (da capitolato)</label>
                                         <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipo_capitolato" convert-to-number name="tipo" id="inputTipoStrutturaCapitolato" data-prova="ccc" class="form-control required" >
+                                            <select required ng-model="sede.id_tipo_capitolato" convert-to-number name="tipologia struttura (da capitolato)" id="inputTipoStrutturaCapitolato" data-prova="ccc" class="form-control required" >
                                                 <option value="">-- Seleziona una tipologia struttura --</option>
                                                 <?php foreach ($sediTipiCapitolato as $key => $tipo): ?>
                                                     <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
@@ -397,7 +397,7 @@ use Cake\Routing\Router;
                                     <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputCapienzaStruttura">Capienza (struttura)</label>
                                         <div class="col-sm-10">
-                                            <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (da convenzione)" id="inputCapienzaStruttura" class="form-control number-integer" >
+                                            <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (struttura)" id="inputCapienzaStruttura" class="form-control number-integer" >
                                         </div>
                                     </div>
 
