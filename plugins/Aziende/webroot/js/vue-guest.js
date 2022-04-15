@@ -360,6 +360,7 @@ var app = new Vue({
             axios.post(pathServer + 'aziende/ws/saveGuest', params)
                 .then(res => {
                     if (res.data.response == 'OK') {
+                        this.loadedData = JSON.stringify(this.guestData);
                         if(exit){
                             window.location = pathServer + 'aziende/guests/index/'+this.guestData.sede_id.value;
                         }else{ 

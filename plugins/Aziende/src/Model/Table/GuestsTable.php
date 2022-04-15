@@ -363,4 +363,46 @@ class GuestsTable extends AppTable
             ->toArray();
     }
 
+    public function countTitoliStudioEmergenzaUcraina($date, $titoloStudio)
+    {
+        return $this->find()
+            ->where([
+                'a.id_tipo' => 2,
+                'Guests.check_in_date <=' => $date,
+                [
+                    'OR' => [
+                        ['Guests.check_out_date >' => $date],
+                        ['Guests.check_out_date IS NULL']
+                    ]
+                ],
+                [
+                    'OR' => [
+                        ['geq.id' => $titoloStudio],
+                        ['geq.parent' => $titoloStudio]
+                    ]
+                ],
+            ])
+            ->join([
+                [
+                    'table' => 'sedi',
+                    'alias' => 's',
+                    'type' => 'left',
+                    'conditions' => 's.id = Guests.sede_id'
+                ],
+                [
+                    'table' => 'aziende',
+                    'alias' => 'a',
+                    'type' => 'left',
+                    'conditions' => 'a.id = s.id_azienda'
+                ],
+                [
+                    'table' => 'guests_educational_qualifications',
+                    'alias' => 'geq',
+                    'type' => 'left',
+                    'conditions' => 'geq.id = Guests.educational_qualification_id'
+                ]
+            ])
+            ->count();
+    }
+
 }

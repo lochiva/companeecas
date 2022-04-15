@@ -140,5 +140,129 @@ class SediTable extends AppTable
             ->order('label ASC')
             ->toArray();
     }
+
+    public function getDataForReportGuestsEmergenzaUcraina($date = "")
+    {
+        if (empty($date)) {
+            $date = date('Y-m-d');
+        }
+
+        $dateMinus17Years = date('Y-m-d', strtotime('-17 years', strtotime($date)));
+        $dateMinus6Years = date('Y-m-d', strtotime('-6 years', strtotime($date)));
+
+        $sedi = $this->find()
+            ->select([
+                'regione' => 'r.des_luo',
+                'provincia' => 'p.des_luo',
+                'comune' => 'c.des_luo',
+                'tipo' => 'stm.name',
+                'address' => 'CONCAT(Sedi.indirizzo, " ", Sedi.num_civico)', 
+                'ente' => 'a.denominazione',
+                'tot_guests' => "(
+                    SELECT COUNT(*) FROM guests g
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                )",
+                'tot_guests_male' => "(
+                    SELECT COUNT(*) FROM guests g
+                    LEFT JOIN guests_families gf ON gf.guest_id = g.id
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    AND g.sex = 'M' AND g.minor = 0 AND gf.id IS NULL
+                )",
+                'tot_guests_female' => "(
+                    SELECT COUNT(*) FROM guests g
+                    LEFT JOIN guests_families gf ON gf.guest_id = g.id
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    AND g.sex = 'F' AND g.minor = 0 AND gf.id IS NULL
+                )",
+                'tot_guests_family' => "(
+                    SELECT COUNT(*) FROM guests g
+                    LEFT JOIN guests_families gf ON gf.guest_id = g.id
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    AND gf.id IS NOT NULL
+                )",
+                'tot_guests_minor' => "(
+                    SELECT COUNT(*) FROM guests g
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    AND g.minor = 1 AND g.minor_alone = 1
+                )",
+                'tot_guests_school' => "(
+                    SELECT COUNT(*) FROM guests g
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    AND g.minor = 1 AND g.birthdate > '$dateMinus17Years' AND g.birthdate <= '$dateMinus6Years'
+                )",
+                'tot_guests_exited' => "(
+                    SELECT COUNT(*) FROM guests g
+                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date'
+                )",
+                'Sedi.note'
+            ])
+            ->where([ 
+                'a.id_tipo' => 2
+            ])
+            ->join([
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'p',
+                    'type' => 'left',
+                    'conditions' => 'p.c_luo = Sedi.provincia'
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'c',
+                    'type' => 'left',
+                    'conditions' => 'c.c_luo = Sedi.comune'
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'r',
+                    'type' => 'left',
+                    'conditions' => ['r.c_rgn = p.c_rgn', 'r.in_luo' => 2]
+                ],
+                [
+                    'table' => 'sedi_tipi_ministero',
+                    'alias' => 'stm',
+                    'type' => 'left',
+                    'conditions' => 'stm.id = Sedi.id_tipo_ministero'
+                ],
+                [
+                    'table' => 'aziende',
+                    'alias' => 'a',
+                    'type' => 'left',
+                    'conditions' => 'a.id = Sedi.id_azienda'
+                ]
+            ])
+            ->order('a.denominazione ASC')
+            ->toArray();
+
+        $data[0] = [
+            'REGIONE', 'PROVINCIA', 'COMUNE', 'TIPOLOGIA STRUTTURA', 'INDIRIZZO', 'ENTE GESTORE', 'CAPIENZA (POSTI RISERVATI PER UCRAINI)',
+            'N. CITTADINI UCRAINI (I+J+K+L)', 'DI CUI UOMINI SINGOLI', 'DI CUI DONNE SINGOLE', 'DI CUI COMPONENTI NUCLEI FAMILIARI',
+            'DI CUI MSNA', 'N. MINORI IN ETA\' SCOLARE (età compresa tra i 6 ed i 16 anni)', 'DISPONIBILITA\' DI POSTI REDISUA PER I CITTADINI UCRAINI',
+            'N. ALLONTANATI', 'NOTE'
+        ];
+
+        foreach ($sedi as $sede) {
+            $data[] = [
+                $sede['regione'],
+                $sede['provincia'],
+                $sede['comune'],
+                $sede['tipo'],
+                $sede['address'],
+                $sede['ente'],
+                '0',
+                $sede['tot_guests'],
+                $sede['tot_guests_male'],
+                $sede['tot_guests_female'],
+                $sede['tot_guests_family'],
+                $sede['tot_guests_minor'],
+                $sede['tot_guests_school'],
+                '0',
+                $sede['tot_guests_exited'],
+                $sede['note']
+            ];
+        }
+
+        return $data;
+    }
     
 }

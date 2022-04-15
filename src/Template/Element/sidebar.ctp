@@ -40,6 +40,17 @@ $menu = [
     'icon-class' => 'fa fa-home',
     'children' => []
   ],
+  [
+    'name' => 'Report',
+    'plugin' => ['Aziende'],
+    'controller' => ['Reports'],
+    'action' => ['index'],
+    'levels' => ['admin'],
+    'url' => Router::url('/aziende/reports/index/'),
+    'target' => '',
+    'icon-class' => 'fa fa-file',
+    'children' => []
+  ],
   /*[
     'name' => 'Gestione Scheda',
     'plugin' => ['Diary'],
