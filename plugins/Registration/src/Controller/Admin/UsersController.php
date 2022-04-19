@@ -7,9 +7,18 @@ use Cake\Event\Event;
 use Cake\Routing\Router;
 use Cake\Http\Client;
 use Cake\ORM\TableRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UsersController extends AppController
 {
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->loadComponent('Registration.User');
+    }
 
     public function isAuthorized($user)
     {
@@ -223,6 +232,54 @@ class UsersController extends AppController
         
         return $this->redirect('/'); 
 
+    }
+
+    public function export()
+    {
+		$spreadsheet = new Spreadsheet();
+
+        $users = $this->User->getDataForExport();
+		
+		//ultima colonna
+		$c = 'A';
+		for($i = 1; $i < count($users[0]); $i++){
+			++$c;
+		}
+
+		//filtri riga intestazione
+        $spreadsheet->getActiveSheet()->setAutoFilter('A1:'.$c.'1');
+
+		//grassetto riga intestazione
+		$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
+			->getFont()->setBold(true);
+
+
+		//dimensione automatica delle celle
+		$i = 'A';
+		foreach($users[0] as $col){
+			$spreadsheet->getActiveSheet()->getColumnDimension($i)->setAutoSize(true);
+			++$i;
+		}
+
+		$spreadsheet->getActiveSheet()->fromArray($users, NULL);
+		
+		$spreadsheet->getActiveSheet()->freezePane('A2');
+
+		$spreadsheet->setActiveSheetIndex(0);
+
+        $filename = "Utenti";
+
+		setcookie('downloadStarted', '1', false, '/');
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+		$writer->save('php://output');
+
+		exit;
     }
 
 }

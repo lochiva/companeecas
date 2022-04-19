@@ -64,6 +64,7 @@ $registrationType = Configure::read('dbconfig.registration.REGISTRATION_TYPE');
     </div>
     <div class="box-action">
         <a href="<?=Router::url('/admin/registration/Users/add');?>" class="btn btn-primary" title="Crea utente"><i class="glyphicon glyphicon-plus"></i></a>
+        <a href="<?=Router::url('/admin/registration/users/export');?>" target="_blank" class="btn btn-success"><i class="fa fa-file-excel-o"></i></a>
     </div>
     <div style="clear: both"></div>
     <table id="tbl-accessi" class="table table-striped table-hover ">
