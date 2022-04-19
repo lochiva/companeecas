@@ -534,17 +534,9 @@ class GuestComponent extends Component
 
 		$guestsTable = TableRegistry::get('Aziende.Guests');
 
-		// Titolo di studio non disponibile
-        $nonDisponibile = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 1);
-		$data[4] = [
-			'N. CITTADINI UCRAINI PER I QUALI NON è DISPONIBILE L\'INFORMAZIONE RELATIVA AL TITOLO DI STUDIO', 
-			'0', 
-			(empty($nonDisponibile) ? '0' : $nonDisponibile)
-		];
-
 		// Privo di titolo di studio
         $privo = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 2);
-		$data[5] = [
+		$data[4] = [
 			'N. CITTADINI UCRAINI PRIVI DI TITOLO DI STUDIO', 
 			'0', 
 			empty($privo) ? '0' : $privo
@@ -552,7 +544,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio scuola primaria
         $primaria = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 3);
-		$data[6] = [
+		$data[5] = [
 			'N. CITTADINI UCRAINI CON TITOLO DI STUDIO DI SCUOLA PRIMARIA', 
 			'0', 
 			empty($primaria) ? '0' : $primaria
@@ -560,7 +552,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio scuola secondaria primo grado
         $secondariaIGrado = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 4);
-		$data[7] = [
+		$data[6] = [
 			'N. CITTADINI UCRAINI CON TITOLO DI STUDIO DI SCUOLA SECONDARIA DI 1° GRADO', 
 			'0', 
 			empty($secondariaIGrado) ? '0' : $secondariaIGrado
@@ -568,7 +560,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio scuola secondaria secondo grado
         $secondariaIIGrado = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 5);
-		$data[8] = [
+		$data[7] = [
 			'N. CITTADINI UCRAINI CON TITOLO DI STUDIO DI SCUOLA SECONDARIA DI 2° GRADO (liceale, tecnica o professionale)', 
 			'0', 
 			empty($secondariaIIGrado) ? '0' : $secondariaIIGrado
@@ -576,7 +568,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio universitario
         $universitario = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 6);
-		$data[9] = [
+		$data[8] = [
 			'N. CITTADINI UCRAINI CON TITOLO DI STUDIO UNIVERSITARIO', 
 			'0', 
 			empty($universitario) ? '0' : $universitario
@@ -584,7 +576,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio area sanitaria
         $sanitaria = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 7);
-		$data[10] = [
+		$data[9] = [
 			'Di cui LAUREA AREA SANITARIA (professioni sanitarie, infermieristiche, ostetricia, riabilitative, medicina e chirurgia, medicina veterinaria...)', 
 			'0', 
 			empty($sanitaria) ? '0' : $sanitaria
@@ -592,7 +584,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio area scientifica
         $scientifica = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 13);
-		$data[11] = [
+		$data[10] = [
 			'Di cui LAUREA AREA SCIENTIFICA (scienze biologiche, chimiche, fisiche, matematiche, geologiche, zootecniche...)', 
 			'0', 
 			empty($scientifica) ? '0' : $scientifica
@@ -600,7 +592,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio area scientifico-tecnologica
         $scientificoTecnologica = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 8);
-		$data[12] = [
+		$data[11] = [
 			'Di cui LAUREA AREA SCIENTIFICO-TECNOLOGICA (architettura, ingegneria civile ed ambientale, industriale, meccanica, elettronica, delle telecomunicazioni, informatiche...)', 
 			'0', 
 			empty($scientificoTecnologica) ? '0' : $scientificoTecnologica
@@ -608,7 +600,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio area giuridico-economica
         $giuridicoEconomica = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 9);
-		$data[13] = [
+		$data[12] = [
 			'Di cui LAUREA AREA GIURIDICO-ECONOMICA (scienze dei servizi giuridici, scienze dell\'economia e della gestione azindale, relazioni internazionali, scienze politiche, cooperazione e sviluppo...)', 
 			'0', 
 			empty($giuridicoEconomica) ? '0' : $giuridicoEconomica
@@ -616,7 +608,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio area umanistica
         $umanistica = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 10);
-		$data[14] = [
+		$data[13] = [
 			'Di cui LAUREA AREA UMANISTICA (lettere, lingue, mediazione, linguistica, filologia, interpretariato...)', 
 			'0', 
 			empty($umanistica) ? '0' : $umanistica
@@ -624,7 +616,7 @@ class GuestComponent extends Component
 
 		// Titolo di studio area sociale
         $sociale = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 11);
-		$data[15] = [
+		$data[14] = [
 			'Di cui LAUREA AREA SOCIALE (psicologia, antropologia, filosofia, storia dell\'arte, scienze pedagogiche e della formazione primaria...)', 
 			'0', 
 			empty($sociale) ? '0' : $sociale
@@ -632,10 +624,18 @@ class GuestComponent extends Component
 
 		// Titolo di studio altra area
         $altra = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 12);
-		$data[16] = [
+		$data[15] = [
 			'ALTRA AREA DI RIFERIMENTO', 
 			'0', 
 			empty($altra) ? '0' : $altra
+		];
+
+		// Titolo di studio non disponibile
+        $nonDisponibile = $guestsTable->countTitoliStudioEmergenzaUcraina($date, 1);
+		$data[16] = [
+			'N. CITTADINI UCRAINI PER I QUALI NON è DISPONIBILE L\'INFORMAZIONE RELATIVA AL TITOLO DI STUDIO', 
+			'0', 
+			(empty($nonDisponibile) ? '0' : $nonDisponibile)
 		];
 
 		return $data;

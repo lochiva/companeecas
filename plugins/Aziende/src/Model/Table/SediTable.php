@@ -160,44 +160,48 @@ class SediTable extends AppTable
                 'ente' => 'a.denominazione',
                 'tot_guests' => "(
                     SELECT COUNT(*) FROM guests g
-                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                 )",
                 'tot_guests_male' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_families gf ON gf.guest_id = g.id
-                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                     AND g.sex = 'M' AND g.minor = 0 AND gf.id IS NULL
                 )",
                 'tot_guests_female' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_families gf ON gf.guest_id = g.id
-                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                     AND g.sex = 'F' AND g.minor = 0 AND gf.id IS NULL
                 )",
                 'tot_guests_family' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_families gf ON gf.guest_id = g.id
-                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                     AND gf.id IS NOT NULL
                 )",
                 'tot_guests_minor' => "(
                     SELECT COUNT(*) FROM guests g
-                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                     AND g.minor = 1 AND g.minor_alone = 1
                 )",
                 'tot_guests_school' => "(
                     SELECT COUNT(*) FROM guests g
-                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL)
+                    WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                     AND g.minor = 1 AND g.birthdate > '$dateMinus17Years' AND g.birthdate <= '$dateMinus6Years'
                 )",
                 'tot_guests_exited' => "(
                     SELECT COUNT(*) FROM guests g
-                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date'
+                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date' AND g.deleted = 0
                 )",
                 'Sedi.note'
             ])
             ->where([ 
                 'a.id_tipo' => 2
+                
+            ])
+            ->having([
+                'tot_guests >' => 0 
             ])
             ->join([
                 [
@@ -249,7 +253,7 @@ class SediTable extends AppTable
                 $sede['tipo'],
                 $sede['address'],
                 $sede['ente'],
-                '0',
+                $sede['tot_guests'],
                 $sede['tot_guests'],
                 $sede['tot_guests_male'],
                 $sede['tot_guests_female'],

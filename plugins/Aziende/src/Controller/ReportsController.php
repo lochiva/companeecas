@@ -46,7 +46,7 @@ class ReportsController extends AppController
 		$spreadsheet = new Spreadsheet();
 
 		// RIEPILOGO STRUTTURE
-		$spreadsheet->getActiveSheet()->setTitle("Riepilogo strutture");
+		$spreadsheet->getActiveSheet()->setTitle("Dettaglio Ucraini extra CAS");
 
 		$sediTable = TableRegistry::get('Aziende.Sedi');
         $dataSedi = $sediTable->getDataForReportGuestsEmergenzaUcraina($date);
@@ -80,7 +80,7 @@ class ReportsController extends AppController
 		// RIEPILOGO TITOLI DI STUDIO
 		$spreadsheet->createSheet(NULL, 1);
         $spreadsheet->setActiveSheetIndex(1);
-		$spreadsheet->getActiveSheet()->setTitle("Riepilogo titoli di studio");
+		$spreadsheet->getActiveSheet()->setTitle("Titolo di studio");
 
         $dataTitoliStudio = $this->Guest->getDataForReportGuestsEmergenzaUcraina($date);
 
@@ -128,7 +128,7 @@ class ReportsController extends AppController
 
 		$spreadsheet->setActiveSheetIndex(0);
 
-        $filename = "presenza_ospiti_emergenza_ucraina";
+        $filename = "REPORT SETTIMANALE";
 
 		setcookie('downloadStarted', '1', false, '/');
 
