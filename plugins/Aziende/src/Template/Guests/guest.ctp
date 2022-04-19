@@ -167,7 +167,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <label :class="{'required': guestData.educational_qualification.required}" for="guestEducationalQualification"><?= __('Titolo di studio') ?></label>
                                     <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification" id="guestEducationalQualification" 
                                         v-model="guestData.educational_qualification.value" @change="updateEducationalQualificationChildren()">
-                                        <option value=""></option>
                                         <option v-for="qualification in educationalQualifications" :value="qualification">{{ qualification.name }}</option>
                                     </select>
                                 </div>
@@ -175,7 +174,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <label :class="{'required': guestData.educational_qualification_child.required}" for="guestEducationalQualificationChild"><?= __('Dettaglio titolo di studio') ?></label>
                                     <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification_child" id="guestEducationalQualificationChild" 
                                         v-model="guestData.educational_qualification_child.value">
-                                        <option value=""></option>
                                         <option v-for="qualification in educationalQualificationChildren" :value="qualification">{{ qualification.name }}</option>
                                     </select>
                                 </div>

@@ -1019,6 +1019,10 @@ var app = new Vue({
                         this.educationalQualificationChildren = res.data.data;
                     } else {
                         this.educationalQualifications = res.data.data;
+                        if (this.guestData.educational_qualification.value == '') {
+                            this.guestData.educational_qualification.value = res.data.data[0];
+                            this.loadedData = JSON.stringify(this.guestData);
+                        }
                     }
                 } else {
                     alert(res.data.msg);
