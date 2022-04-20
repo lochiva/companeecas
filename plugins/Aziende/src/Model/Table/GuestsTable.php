@@ -368,6 +368,9 @@ class GuestsTable extends AppTable
         return $this->find()
             ->where([
                 'a.id_tipo' => 2,
+                'a.deleted' => 0,
+                's.deleted' => 0,
+                'Guests.deleted' => 0,
                 'Guests.check_in_date <=' => $date,
                 [
                     'OR' => [

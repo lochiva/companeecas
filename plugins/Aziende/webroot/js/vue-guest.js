@@ -20,7 +20,7 @@ var app = new Vue({
             check_in_date: {
                 hasError: false,
                 value: new Date(),
-                required: false
+                required: true
             },
             cui: {
                 hasError: false,

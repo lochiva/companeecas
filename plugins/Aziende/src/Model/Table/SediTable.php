@@ -197,7 +197,9 @@ class SediTable extends AppTable
                 'Sedi.note'
             ])
             ->where([ 
-                'a.id_tipo' => 2
+                'a.id_tipo' => 2,
+                'a.deleted' => 0,
+                'Sedi.deleted' => 0
                 
             ])
             ->having([

@@ -1762,7 +1762,10 @@ class WsController extends AppController
 		}else{
 			$entity = $guests->get($data['id']);
             $saveType = 'UPDATE_GUEST';
-        } 
+        }
+
+        $data['name'] = trim($data['name']);
+        $data['surname'] = trim($data['surname']);
 
         $data['check_in_date'] = empty($data['check_in_date']) || $data['check_in_date'] == 'null' ? NULL : new Time(substr($data['check_in_date'], 0, 33));
 
