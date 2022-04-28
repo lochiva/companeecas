@@ -66,7 +66,7 @@ class GuestComponent extends Component
 
     }
 
-	public function getGuestsNotifications($pass = [])
+	public function getGuestsNotifications($enteType = 1, $pass = [])
 	{
         $guests = TableRegistry::get('Aziende.GuestsNotifications');
 		
@@ -146,6 +146,8 @@ class GuestComponent extends Component
 			]
 		];
 
+		$opt['conditions']['AND']['t.ente_type'] = $enteType;
+
 		$all = filter_var($pass['query']['all'], FILTER_VALIDATE_BOOLEAN);
 
 		if (!$all) {
@@ -197,7 +199,12 @@ class GuestComponent extends Component
 					if ($guests->save($guest)) {
 						if ($status == 3) {
 							//creazione notifica uscita ospite
-							$saveType = 'EXITED_GUEST';
+							$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+							if ($azienda->id_tipo == 1) {
+								$saveType = 'EXITED_GUEST';
+							} else if ($azienda->id_tipo == 2) {
+								$saveType = 'EXITED_GUEST_UKRAINE';
+							}
 							$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
 							$notification = $guestsNotifications->newEntity();
 							$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
@@ -261,7 +268,12 @@ class GuestComponent extends Component
 
 				if ($guests->save($guest)) {
 					//creazione notifica uscita ospite
-					$saveType = 'EXITED_GUEST';
+					$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+					if ($azienda->id_tipo == 1) {
+						$saveType = 'EXITED_GUEST';
+					} else if ($azienda->id_tipo == 2) {
+						$saveType = 'EXITED_GUEST_UKRAINE';
+					}
 					$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
 					$notification = $guestsNotifications->newEntity();
 					$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
@@ -401,7 +413,12 @@ class GuestComponent extends Component
 								}
 								if ($status == 6) {
 									//creazione notifica trasferimento ospite
-									$saveType = 'TRANSFERRED_GUEST';
+									$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+									if ($azienda->id_tipo == 1) {
+										$saveType = 'TRANSFERRED_GUEST';
+									} else if ($azienda->id_tipo == 2) {
+										$saveType = 'TRANSFERRED_GUEST_UKRAINE';
+									}
 									$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
 									$notification = $guestsNotifications->newEntity();
 									$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
@@ -491,7 +508,12 @@ class GuestComponent extends Component
 	
 						if ($guests->save($originalGuest)) {
 							//creazione notifica trasferimento ospite
-							$saveType = 'TRANSFERRED_GUEST';
+							$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+							if ($azienda->id_tipo == 1) {
+								$saveType = 'TRANSFERRED_GUEST';
+							} else if ($azienda->id_tipo == 2) {
+								$saveType = 'TRANSFERRED_GUEST_UKRAINE';
+							}
 							$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
 							$notification = $guestsNotifications->newEntity();
 							$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();

@@ -69,9 +69,9 @@ class GuestsController extends AppController
         $this->set('azienda', $azienda);
     }
 
-    public function notifications()
+    public function notifications($enteType = 1)
     {
-        
+        $this->set('enteType', $enteType);
     }
 
 }

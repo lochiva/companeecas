@@ -8,7 +8,7 @@ var pathServer = '<?=Router::url('/')?>';
 $(document).ready(function(){
 
     $.ajax({
-        url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+        url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
         type: "GET",
         dataType: "json"
 	}).done(function(res) {
@@ -29,7 +29,7 @@ $(document).ready(function(){
 
 
 <li class="dropdown notifications-menu">
-	<a href="<?= Router::url('/aziende/guests/notifications');?>">
+	<a href="<?= Router::url('/aziende/guests/notifications/1');?>">
 	<i class="fa fa-bell-o"></i>
 	<span class="label label-info guests_notify_count_label"></span>
 	</a>

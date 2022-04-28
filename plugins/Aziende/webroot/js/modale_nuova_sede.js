@@ -124,7 +124,7 @@ function saveFormSede(){
 						if (role == 'admin') {
 							//Aggiorna conteggio notifiche
 							$.ajax({
-								url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+								url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
 								type: "GET",
 								dataType: "json"
 							}).done(function(res) {

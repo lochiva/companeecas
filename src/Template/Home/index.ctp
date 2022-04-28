@@ -39,6 +39,9 @@ $user = $this->request->session()->read('Auth.User');
 	</div>
 	<?php if ($user['role'] == 'admin') { ?>
 		<!-- Notifiche -->
-		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsCount, 'notifications' => $notifications]); ?>
+		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsCount, 'notifications' => $notifications, 'enteType' => 1]); ?>
+
+		<!-- Notifiche Emergenza Ucraina -->
+		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsUkraineCount, 'notifications' => $notificationsUkraine, 'enteType' => 2]); ?>
 	<?php } ?>
 </section>

@@ -13,7 +13,7 @@ class AlterSedi2 extends AbstractMigration
     public function change()
     {
         $table = $this->table('sedi');
-        $table->removeColumn('id_procedura_affidamento')
-            ->save();
+        $table->removeColumn('id_procedura_affidamento');
+        $table->update();
     }
 }

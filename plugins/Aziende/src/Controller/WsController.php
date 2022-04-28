@@ -1754,14 +1754,24 @@ class WsController extends AppController
         $data = $this->request->data;
 
         $guests = TableRegistry::get('Aziende.Guests');
+        $sede = TableRegistry::get('Aziende.Sedi')->get($data['sede_id']);
+        $azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
 
 		if(empty($data['id'])){
             $entity = $guests->newEntity();
             $data['status_id'] = 1;
-            $saveType = 'CREATE_GUEST';
+            if ($azienda->id_tipo == 1) {
+                $saveType = 'CREATE_GUEST';
+            } else if ($azienda->id_tipo == 2) {
+                $saveType = 'CREATE_GUEST_UKRAINE';
+            }
 		}else{
 			$entity = $guests->get($data['id']);
-            $saveType = 'UPDATE_GUEST';
+            if ($azienda->id_tipo == 1) {
+                $saveType = 'UPDATE_GUEST';
+            } else if ($azienda->id_tipo == 2) {
+                $saveType = 'UPDATE_GUEST_UKRAINE';
+            }
         }
 
         $data['name'] = trim($data['name']);
@@ -1854,7 +1864,6 @@ class WsController extends AppController
                 $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
                 $notification = $guestsNotifications->newEntity();
                 $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-                $sede = TableRegistry::get('Aziende.Sedi')->get($entity->sede_id);
                 $notificationData = [
                     'type_id' => $notificationType->id,
                     'azienda_id' => $sede->id_azienda,
@@ -1865,7 +1874,7 @@ class WsController extends AppController
                 $guestsNotifications->patchEntity($notification, $notificationData);
                 $guestsNotifications->save($notification);
 
-                if ($saveType == 'CREATE_GUEST') {
+                if ($saveType == 'CREATE_GUEST' || $saveType == 'CREATE_GUEST_UKRAINE') {
                     // Aggiornamento storico
                     $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
                     $history = $guestsHistory->newEntity();
@@ -2127,7 +2136,7 @@ class WsController extends AppController
 		}		
     }
 
-    public function getGuestsNotificationsCount()
+    public function getGuestsNotificationsCount($enteType)
     {
         $user = $this->request->session()->read('Auth.User');
         if($user['role'] != 'admin'){
@@ -2137,14 +2146,14 @@ class WsController extends AppController
         }
 
         $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-        $notificationsCount = $guestsNotifications->countGuestsNotifications();
+        $notificationsCount = $guestsNotifications->countGuestsNotifications($enteType);
 
         $this->_result['response'] = "OK";
         $this->_result['data'] = $notificationsCount;
         $this->_result['msg'] = 'Notifiche recuperate con sucesso.';
     }
 
-    public function getGuestsNotifications()
+    public function getGuestsNotifications($enteType)
     {
         $user = $this->request->session()->read('Auth.User');
 
@@ -2164,7 +2173,7 @@ class WsController extends AppController
 			}
 		}
 
-        $res = $this->Guest->getGuestsNotifications($pass);
+        $res = $this->Guest->getGuestsNotifications($enteType, $pass);
 
         $out['total_rows'] = $res['tot'];
 
@@ -2225,6 +2234,46 @@ class WsController extends AppController
         } else { 
             $this->_result['response'] = 'KO';
             $this->_result['msg'] = 'Errore nel salvataggio del valore: dati mancanti.';
+        }
+    }
+
+    public function saveAllGuestsNotificationsDone($enteType = '')
+    {
+        if (!empty($enteType)) {
+            $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+            $notifications = $guestsNotifications->getGuestsNotificationsByEnteType($enteType);
+
+            if (!empty($notifications)) {
+                $dataToSave = [
+                    'done' => 1,
+                    'user_done_id' => $this->request->session()->read('Auth.User.id'),
+                    'done_date' => date('Y-m-d')
+                ];
+
+                $error = false;
+
+                foreach ($notifications as $notification) {
+                    $guestsNotifications->patchEntity($notification, $dataToSave);
+
+                    if (!$guestsNotifications->save($notification)) {
+                        $error = true;
+                    }
+                }
+
+                if (!$error) {
+                    $this->_result['response'] = 'OK';
+                    $this->_result['msg'] = 'Notifiche salvate correttamente.';
+                } else { 
+                    $this->_result['response'] = 'KO';
+                    $this->_result['msg'] = 'Errore nel salvataggio di una o più notifiche.';
+                }
+            } else {
+                $this->_result['response'] = 'KO';
+                $this->_result['msg'] = 'Nessuna notifica trovata.';
+            }
+        } else { 
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'Errore nel salvataggio delle notifiche: tipologia ente mancante.';
         }
     }
 

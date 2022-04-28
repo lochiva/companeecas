@@ -68,6 +68,10 @@ class GuestsNotificationsTypesTable extends AppTable
             ->requirePresence('msg_plural', 'create')
             ->notEmptyString('msg_plural');
 
+        $validator
+            ->integer('ente_type')
+            ->allowEmptyString('ente_type');
+
         return $validator;
     }
 }

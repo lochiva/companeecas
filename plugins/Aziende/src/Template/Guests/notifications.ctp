@@ -4,9 +4,12 @@ use Cake\Routing\Router;
 <?php $this->assign('title', 'Notifiche') ?>
 <?= $this->Html->css('Aziende.guests'); ?>
 <?= $this->Html->script('Aziende.guests', ['block']); ?>
+<script>
+    var ente_type = '<?= $enteType ?>';
+</script>
 <section class="content-header">
     <h1>
-        Notifiche
+        Notifiche  <?= $enteType == 2 ? 'Emergenza Ucraina' : '' ?>
         <small>Gestione notifiche
         </small>
     </h1>
@@ -45,7 +48,10 @@ use Cake\Routing\Router;
                     </div>
 
                     <div class="text-right">
-                        <input type="checkbox" id="showAllNotifications"> Mostra anche le notifiche gestite
+                        <input type="checkbox" id="showAllNotifications"> Mostra anche le notifiche gestite<br>
+                        <?php if ($enteType == 2) { ?>
+                            <button id="markAllNotificationsDone" type="button" class="btn btn-xs btn-primary">Segna tutte come gestite</button>
+                        <?php } ?>
                     </div>
 
                     <div class="table-content">

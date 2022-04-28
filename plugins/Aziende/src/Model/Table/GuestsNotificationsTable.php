@@ -120,27 +120,54 @@ class GuestsNotificationsTable extends AppTable
         return $rules;
     }
 
-    public function countGuestsNotifications($all = false)
+    public function countGuestsNotifications($enteType = 1, $all = false)
     {
-        $where = [];
+        $where = [
+            'gnt.ente_type' => $enteType
+        ];
         if (!$all) {
-            $where['done'] = 0;
+            $where['GuestsNotifications.done'] = 0;
         }
-        return $this->find()->where($where)->count();
+        $joins = [
+            [
+                'table' => 'guests_notifications_types',
+                'alias' => 'gnt',
+                'type' => 'LEFT',
+                'conditions' => 'gnt.id = GuestsNotifications.type_id'
+            ]
+        ];
+        return $this->find()->where($where)->join($joins)->count();
     }
 
-    public function getGuestsNotificationsForHome()
+    public function getGuestsNotificationsForHome($enteType = 1)
     {
         $messages = $this->find()
             ->select([
                 'type_count' => 'COUNT(GuestsNotifications.id)',
                 'message' => 'IF(COUNT(GuestsNotifications.id) > 1, Types.msg_plural, Types.msg_singular)'
             ])
-            ->where(['GuestsNotifications.done' => 0])
+            ->where(['Types.ente_type' => $enteType, 'GuestsNotifications.done' => 0])
             ->contain(['Types'])
             ->group(['GuestsNotifications.type_id'])
             ->toArray();
 
         return $messages;
+    }
+
+    public function getGuestsNotificationsByEnteType($enteType)
+    {
+        $where = [
+            'gnt.ente_type' => $enteType,
+            'GuestsNotifications.done' => 0
+        ];
+        $joins = [
+            [
+                'table' => 'guests_notifications_types',
+                'alias' => 'gnt',
+                'type' => 'LEFT',
+                'conditions' => 'gnt.id = GuestsNotifications.type_id'
+            ]
+        ];
+        return $this->find()->where($where)->join($joins)->toArray();
     }
 }

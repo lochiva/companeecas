@@ -996,7 +996,7 @@ var app = new Vue({
 
         updateNotificationsCount: function() {
             //Aggiorna conteggio notifiche
-            axios.get(pathServer + 'aziende/ws/getGuestsNotificationsCount/')
+            axios.get(pathServer + 'aziende/ws/getGuestsNotificationsCount/1')
             .then(res => { 
                 if (res.data.response == 'OK') {
                     var count = res.data.data;

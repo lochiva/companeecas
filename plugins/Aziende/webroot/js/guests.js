@@ -274,7 +274,7 @@ $(document).ready(function(){
         }).tablesorterPager({
             container: $("#pager-guests-notifications"),
 
-            ajaxUrl: pathServer + 'aziende/ws/getGuestsNotifications/?{filterList:filter}&{sortList:column}&size={size}&page={page}',
+            ajaxUrl: pathServer + 'aziende/ws/getGuestsNotifications/'+ente_type+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
 
             // modify the url after all processing has been applied
             customAjaxUrl: function(table, url) {
@@ -365,6 +365,45 @@ $(document).ready(function(){
         $('#table-guests-notifications').trigger('update');
     });
 
+    //segna tutte le notifiche come gestite
+    $('#markAllNotificationsDone').click(function() {
+        if (confirm('Si è sicuri di voler marcare tutte le notifiche come "gestite"?')) {
+            $.ajax({
+                url: pathServer + 'aziende/ws/saveAllGuestsNotificationsDone/'+ente_type,
+                type: "POST",
+                dataType: 'json',
+            }).done(function(res) {
+                if (res.response == 'OK') {
+                    $('#table-guests-notifications').trigger('update');
+    
+                    //Aggiorna conteggio notifiche
+                    if (ente_type == 1) {
+                        $.ajax({
+                            url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
+                            type: "GET",
+                            dataType: "json"
+                        }).done(function(res) {
+                            if(res.response == 'OK'){
+                                var count = res.data;
+                                if(count > 0){
+                                    $('.guests_notify_count_label').html(count);
+                                } else {
+                                    $('.guests_notify_count_label').html('');
+                                }
+                            }
+                        }).fail(function(richiesta,stato,errori){
+                            alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+                        });
+                    }
+                } else {
+                    alert(res.msg);
+                }
+            }).fail(function(richiesta, stato, errori) {
+                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+            });
+        }
+    });
+
     //salvataggio check gestito
     $(document).on('change', '.inline-check-done', function(e) {
         var field = $(this);
@@ -391,22 +430,24 @@ $(document).ready(function(){
                     $('#table-guests-notifications').trigger('update');
     
                     //Aggiorna conteggio notifiche
-                    $.ajax({
-                        url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
-                        type: "GET",
-                        dataType: "json"
-                    }).done(function(res) {
-                        if(res.response == 'OK'){
-                            var count = res.data;
-                            if(count > 0){
-                                $('.guests_notify_count_label').html(count);
-                            } else {
-                                $('.guests_notify_count_label').html('');
+                    if (ente_type == 1) {
+                        $.ajax({
+                            url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
+                            type: "GET",
+                            dataType: "json"
+                        }).done(function(res) {
+                            if(res.response == 'OK'){
+                                var count = res.data;
+                                if(count > 0){
+                                    $('.guests_notify_count_label').html(count);
+                                } else {
+                                    $('.guests_notify_count_label').html('');
+                                }
                             }
-                        }
-                    }).fail(function(richiesta,stato,errori){
-                        alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
-                    });
+                        }).fail(function(richiesta,stato,errori){
+                            alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+                        });
+                    }
                 } else {
                     field.prop('checked', !value);
                     alert(res.msg);

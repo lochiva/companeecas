@@ -182,7 +182,7 @@ $(document).ready(function(){
                         //Aggiorna conteggio notifiche
                         if (role == 'admin') {
                             $.ajax({
-                                url : pathServer + "aziende/ws/getGuestsNotificationsCount/",
+                                url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
                                 type: "GET",
                                 dataType: "json"
                             }).done(function(res) {

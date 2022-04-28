@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property string $msg_singular
  * @property string $msg_plural
+ * @property int $ente_type
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */
@@ -28,6 +29,7 @@ class GuestsNotificationsType extends Entity
         'name' => true,
         'msg_singular' => true,
         'msg_plural' => true,
+        'ente_type' => true,
         'created' => true,
         'modified' => true
     ];

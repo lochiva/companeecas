@@ -34,19 +34,30 @@ class HomeController extends AppController
         $this->set('provincia', $provincia);
       }
 
-      // Notifiche
       $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-      $notificationsCount = $guestsNotifications->countGuestsNotifications();
-      $notifications = $guestsNotifications->getGuestsNotificationsForHome();
+      // Notifiche
+      $notificationsCount = $guestsNotifications->countGuestsNotifications(1);
+      $notifications = $guestsNotifications->getGuestsNotificationsForHome(1);
       
       for ($i = 0; $i < count($notifications); $i++) {
         if ($notifications[$i]['type_count'] > 0) {
           $notifications[$i]['message'] = str_replace('{N}', $notifications[$i]['type_count'], $notifications[$i]['message']);
         }
       }
+      // Notifiche emergenza ucraina
+      $notificationsUkraineCount = $guestsNotifications->countGuestsNotifications(2);
+      $notificationsUkraine = $guestsNotifications->getGuestsNotificationsForHome(2);
+      
+      for ($i = 0; $i < count($notificationsUkraine); $i++) {
+        if ($notificationsUkraine[$i]['type_count'] > 0) {
+          $notificationsUkraine[$i]['message'] = str_replace('{N}', $notificationsUkraine[$i]['type_count'], $notificationsUkraine[$i]['message']);
+        }
+      }
       
       $this->set('notifications', $notifications);
       $this->set('notificationsCount', $notificationsCount);
+      $this->set('notificationsUkraine', $notificationsUkraine);
+      $this->set('notificationsUkraineCount', $notificationsUkraineCount);
     }
 
     /*public function index2()

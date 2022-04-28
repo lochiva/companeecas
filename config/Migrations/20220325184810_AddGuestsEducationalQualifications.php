@@ -12,13 +12,7 @@ class AddGuestsEducationalQualifications extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('guests_educational_qualifications');
-        
-
         $rows = [
-           
-          
-           
             [
                 'id' => 13,
                 'name' => 'Area scientifica ',
@@ -28,8 +22,6 @@ class AddGuestsEducationalQualifications extends AbstractMigration
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ]
-          
-          
         ];
         $this->insert('guests_educational_qualifications', $rows);
     }
