@@ -20,7 +20,7 @@ class ReportsController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin'){
+        if($user['role'] == 'admin' || $user['role'] == 'ente'){
             return true;
         }else{
             $this->Flash->error('Accesso negato. Non sei autorizzato.');
@@ -36,7 +36,11 @@ class ReportsController extends AppController
      */
     public function index()
     {
-        
+        $user = $this->request->session()->read('Auth.User');
+		$azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($user['id']);
+
+		$this->set('role', $user['role']);
+		$this->set('azienda', $azienda);
     }
 
     public function reportGuestsEmergenzaUcraina()
@@ -63,7 +67,6 @@ class ReportsController extends AppController
 		//grassetto riga intestazione
 		$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
 			->getFont()->setBold(true);
-
 
 		//dimensione automatica delle celle
 		$i = 'A';
@@ -129,6 +132,58 @@ class ReportsController extends AppController
 		$spreadsheet->setActiveSheetIndex(0);
 
         $filename = "REPORT SETTIMANALE";
+
+		setcookie('downloadStarted', '1', false, '/');
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+		$writer->save('php://output');
+
+		exit;
+
+    }
+
+	public function exportGuestsEmergenzaUcraina()
+    {
+		$spreadsheet = new Spreadsheet();
+
+		// RIEPILOGO STRUTTURE
+		$spreadsheet->getActiveSheet()->setTitle("Lista ospiti Emergenza Ucraina");
+
+		$guestsTable = TableRegistry::get('Aziende.Guests');
+        $data = $guestsTable->getDataForExportGuestsEmergenzaUcraina();
+		
+		//ultima colonna
+		$c = 'A';
+		for($i = 1; $i < count($data[0]); $i++){
+			++$c;
+		}
+
+		//filtri riga intestazione
+        $spreadsheet->getActiveSheet()->setAutoFilter('A1:'.$c.'1');
+
+		//grassetto riga intestazione
+		$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
+			->getFont()->setBold(true);
+
+		//dimensione automatica delle celle
+		$i = 'A';
+		foreach($data[0] as $col){
+			$spreadsheet->getActiveSheet()->getColumnDimension($i)->setAutoSize(true);
+			++$i;
+		}
+
+		$spreadsheet->getActiveSheet()->fromArray($data, NULL);
+		
+		$spreadsheet->getActiveSheet()->freezePane('A2');
+
+		$spreadsheet->setActiveSheetIndex(0);
+
+        $filename = "LISTA OSPITI EMERGENZA UCRAINA";
 
 		setcookie('downloadStarted', '1', false, '/');
 

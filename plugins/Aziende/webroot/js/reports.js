@@ -15,13 +15,24 @@ $(document).ready(function(){
 	$('.datepicker').datepicker({language: 'it'});
 
     //Generazione report ospiti emergenza ucraina
-    $('#exportGuestsEmergenzaUcraina').click(function() {
+    $('#reportGuestsEmergenzaUcraina').click(function() {
         $('#template-spinner').show();
 
         var url = pathServer+'aziende/reports/reportGuestsEmergenzaUcraina';
 
         var date = $('#date').val();
         url += '?date=' + encodeURI(date);
+        
+        window.location = url;
+
+        checkCookieForLoader('downloadStarted', '1');
+    });
+
+    //Esporta tutti gli ospiti emergenza ucraina
+    $('#exportGuestsEmergenzaUcraina').click(function() {
+        $('#template-spinner').show();
+
+        var url = pathServer+'aziende/reports/exportGuestsEmergenzaUcraina';
         
         window.location = url;
 

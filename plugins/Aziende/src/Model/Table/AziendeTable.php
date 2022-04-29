@@ -188,4 +188,27 @@ class AziendeTable extends AppTable
               ->first();
       }
 
+      public function getAziendaByUser($userId)
+      {
+        return $this->find()
+              ->where([
+                'u.id' => $userId
+              ])
+              ->join([
+                [
+                  'table' => 'contatti',
+                  'alias' => 'c',
+                  'type' => 'INNER',
+                  'conditions' => 'c.id_azienda = Aziende.id'
+                ],
+                [
+                  'table' => 'users',
+                  'alias' => 'u',
+                  'type' => 'INNER',
+                  'conditions' => 'u.id = c.id_user'
+                ]
+              ])
+              ->first();
+      }
+
 }

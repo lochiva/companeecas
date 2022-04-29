@@ -417,4 +417,109 @@ class GuestsTable extends AppTable
             ->count();
     }
 
+    public function getDataForExportGuestsEmergenzaUcraina()
+    {
+        $guests = $this->find()
+            ->select($this)
+            ->select([
+                'a.denominazione',
+                's.code_centro',
+                's.indirizzo',
+                's.num_civico', 
+                'c.des_luo',
+                'c.s_prv',
+                'n.des_luo',
+                'geq.name',
+                'geq_parent.name',
+                'gs.name'
+            ])
+            ->where([ 
+                'a.id_tipo' => 2,
+                'a.deleted' => 0,
+                's.deleted' => 0
+                
+            ])
+            ->join([
+                [
+                    'table' => 'sedi',
+                    'alias' => 's',
+                    'type' => 'left',
+                    'conditions' => 's.id = Guests.sede_id'
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'c',
+                    'type' => 'left',
+                    'conditions' => 'c.c_luo = s.comune'
+                ],
+                [
+                    'table' => 'aziende',
+                    'alias' => 'a',
+                    'type' => 'left',
+                    'conditions' => 'a.id = s.id_azienda'
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'n',
+                    'type' => 'left',
+                    'conditions' => 'n.c_luo = Guests.country_birth'
+                ],
+                [
+                    'table' => 'guests_educational_qualifications',
+                    'alias' => 'geq',
+                    'type' => 'left',
+                    'conditions' => 'geq.id = Guests.educational_qualification_id'
+                ],
+                [
+                    'table' => 'guests_educational_qualifications',
+                    'alias' => 'geq_parent',
+                    'type' => 'left',
+                    'conditions' => 'geq_parent.id = geq.parent'
+                ],
+                [
+                    'table' => 'guests_statuses',
+                    'alias' => 'gs',
+                    'type' => 'left',
+                    'conditions' => 'gs.id = Guests.status_id'
+                ]
+            ])
+            ->order('a.denominazione ASC')
+            ->toArray();
+
+        $data[0] = [
+            'ENTE', 'CODICE CENTRO', 'INDIRIZZO CENTRO', 'CHECK-IN', 'CHECK-OUT', 'NOME', 'COGNOME', 'DATA DI NASCITA', 'SESSO', 
+            'MINORE', 'MINORE SOLO', 'NOTE', 'NAZIONALITA\'', 'TITOLO DI STUDIO', 'DETTAGLIO TITOLO DI STUDIO', 'STATO'
+        ];
+
+        foreach ($guests as $guest) {
+            if (empty($guest['geq_parent']['name'])) {
+                $educationaQualification = $guest['geq']['name'];
+                $educationaQualificationDetail = '';
+            } else {
+                $educationaQualification = $guest['geq_parent']['name'];
+                $educationaQualificationDetail = $guest['geq']['name'];
+            }
+            $data[] = [
+                $guest['a']['denominazione'],
+                $guest['s']['code_centro'],
+                $guest['s']['indirizzo'].' '.$guest['s']['num_civico'].', '.$guest['c']['des_luo'].' ('.$guest['c']['s_prv'].')',
+                empty($guest['check_in_date']) ? '' : $guest['check_in_date']->format('d/m/Y'),
+                empty($guest['check_out_date']) ? '' : $guest['check_out_date']->format('d/m/Y'),
+                $guest['name'],
+                $guest['surname'],
+                empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y'),
+                $guest['sex'],
+                $guest['minor'] ? 'Sì' : 'No',
+                $guest['minor_alone'] ? 'Sì' : 'No',
+                $guest['minor_note'],
+                $guest['n']['des_luo'],
+                $educationaQualification,
+                $educationaQualificationDetail,
+                $guest['gs']['name']
+            ];
+        }
+
+        return $data;
+    }
+
 }
