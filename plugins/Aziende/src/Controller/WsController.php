@@ -1916,8 +1916,24 @@ class WsController extends AppController
 
         $guest = $guests->get($guestId);
 
+        if (empty($guest['original_guest_id'])) {
+            $where = [
+                'OR' => [
+                    'Guests.id' => $guest['id'],
+                    'Guests.original_guest_id' => $guest['id']
+                ]
+            ];
+        } else {
+            $where = [
+                'OR' => [
+                    'Guests.id' => $guest['original_guest_id'],
+                    'Guests.original_guest_id' => $guest['original_guest_id']
+                ]
+            ];
+        }
+
         $res =  $guests->find()
-            ->where(['cui' => $guest['cui']])
+            ->where($where)
             ->contain(['Sedi.Aziende', 'GuestsStatuses'])  
             ->toArray();
 
@@ -2948,10 +2964,14 @@ class WsController extends AppController
 
         $guestsTable = TableRegistry::get('Aziende.Guests');
         $res = $guestsTable->find()
-            ->select(['id', 'text' => 'CONCAT(cui, " - ", vestanet_id, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")'])
+            ->select([
+                'id', 
+                'text' => 'CONCAT(cui, " - ", vestanet_id, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")', 
+                'original_guest' => 'IF(original_guest_id IS NULL, id, original_guest_id)'
+            ])
             ->where($where)
             ->order(['CONCAT(name, " ", surname)' => 'ASC'])
-            ->group(['cui'])
+            ->group(['original_guest'])
             ->toArray();
 
         $guests = [];
