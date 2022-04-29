@@ -185,7 +185,7 @@ $(document).ready(function(){
 		closeOnSelect: true,
 		dropdownParent: $("#divSearchGuest"),
 		ajax: {
-			url: (typeof partner_id == 'undefined') ? pathServer+'azinde/ws/autocompleteGuests' : pathServer+'aziende/ws/autocompleteGuests/'+partner_id,
+			url: pathServer+'aziende/ws/autocompleteGuests',
 			dataType: 'json',
 			delay: 250,
 			processResults: function (data) {
@@ -219,8 +219,8 @@ $(document).ready(function(){
                         html += '<tr class="clickable" onclick="window.location = \''+pathServer+'aziende/guests/guest?sede='+guest.sedi.id+'&guest='+guest.id+'\';">';
                         html += '<td>'+guest.sedi.azienda.denominazione+'</td>';
                         html += '<td>'+guest.sedi.indirizzo+' '+guest.sedi.num_civico+', '+guest.sedi.comune+' ('+guest.sedi.provincia+')'+'</td>';
-                        html += '<td>'+ new Date(guest.arrival_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'});+'</td>';
-                        html += '<td>'+ (guest.exit_date != null ? new Date(guest.exit_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'}) : '')+'</td>';
+                        html += '<td>'+ new Date(guest.check_in_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'});+'</td>';
+                        html += '<td>'+ (guest.check_out_date != null ? new Date(guest.check_out_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'}) : '')+'</td>';
                         html += '<td>'+guest.guests_status.name+'</td>';
                         html += '</tr>';
                     })

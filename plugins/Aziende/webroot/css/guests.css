@@ -351,3 +351,8 @@ label.required:after{
 .danger-presenze {
 	background-color: #fd9393;
 }
+
+.minor-textarea {
+    resize: none;
+    height: 50px !important;
+}

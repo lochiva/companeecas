@@ -139,6 +139,13 @@ class GuestsTable extends AppTable
             ->boolean('minor');
 
         $validator
+            ->boolean('minor_alone');
+
+        $validator
+            ->scalar('minor_note')
+            ->allowEmptyString('minor_note', true);
+
+        $validator
             ->boolean('suspended');
 
         $validator
@@ -193,6 +200,8 @@ class GuestsTable extends AppTable
             'country_birth' => 'Paese di nascita',
             'sex' => 'Sesso',
             'minor' => 'Minore',
+            'minor_alone' => 'Minore solo',
+            'minor_note' => 'Note minore',
             'educational_qualification_id' => 'ID titolo di studio',
             'suspended' => 'Sospeso',
             'draft' => 'Stato anagrafica in bozza',

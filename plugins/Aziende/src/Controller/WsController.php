@@ -1918,7 +1918,7 @@ class WsController extends AppController
 
         $res =  $guests->find()
             ->where(['cui' => $guest['cui']])
-            ->contain(['Sedi.Aziende'])  
+            ->contain(['Sedi.Aziende', 'GuestsStatuses'])  
             ->toArray();
 
         if($res){
@@ -2937,5 +2937,33 @@ class WsController extends AppController
         $this->_result['response'] = "OK";
         $this->_result['data'] = $qualifications;
         $this->_result['msg'] = 'Titoli di studio recuperati con successo.';
+    }
+
+    public function autocompleteGuests()
+    { 
+        $search = empty($this->request->query['q']) ? '' : $this->request->query['q'];
+        $guests = [];
+
+        $where['CONCAT(cui, " - ", vestanet_id, " - ", name, " ", surname) LIKE'] =  '%'.$search.'%';
+
+        $guestsTable = TableRegistry::get('Aziende.Guests');
+        $res = $guestsTable->find()
+            ->select(['id', 'text' => 'CONCAT(cui, " - ", vestanet_id, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")'])
+            ->where($where)
+            ->order(['CONCAT(name, " ", surname)' => 'ASC'])
+            ->group(['cui'])
+            ->toArray();
+
+        $guests = [];
+        foreach($res as $g){
+            $guests[] = [
+                'id' => $g['sede'].'|'.$g['id'],
+                'text' => $g['text']
+            ];
+        }
+
+        $this->_result['response'] = 'OK';
+        $this->_result['data'] = $guests;
+        $this->_result['msg'] = "Elenco risultati.";
     }
 }

@@ -37,6 +37,10 @@ $user = $this->request->session()->read('Auth.User');
 			</div>
 		</div>
 	</div>
+
+	<!-- Ricerca ospite -->
+	<?= $this->element('Aziende.box_search_guest'); ?>
+
 	<?php if ($user['role'] == 'admin') { ?>
 		<!-- Notifiche -->
 		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsCount, 'notifications' => $notifications, 'enteType' => 1]); ?>

@@ -47,6 +47,11 @@ var app = new Vue({
                 value: '',
                 required: false
             },
+            minor_note: {
+                hasError: false,
+                value: '',
+                required: false
+            },
             minor_family: {
                 hasError: false,
                 value: '',
@@ -230,6 +235,7 @@ var app = new Vue({
                             };
                         }
                         this.guestData.minor_alone.value = res.data.data.minor_alone;
+                        this.guestData.minor_note.value = res.data.data.minor_note;
                         this.guestData.birthdate.value = res.data.data.birthdate;
                         if (res.data.data.country) {
                             this.guestData.country_birth.value = {
@@ -536,6 +542,7 @@ var app = new Vue({
         },
 
         resetMinor: function() {
+            this.guestData.minor_note.value = '';
             this.guestData.minor_family.value = '';
             this.guestData.family_guest.value = '';
             this.guestData.family_guest.required = false;
