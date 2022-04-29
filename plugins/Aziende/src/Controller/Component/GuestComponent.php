@@ -68,8 +68,8 @@ class GuestComponent extends Component
 
 	public function getGuestsNotifications($enteType = 1, $pass = [])
 	{
-        $guests = TableRegistry::get('Aziende.GuestsNotifications');
-		
+        $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+
 		$columns = [
 			0 => ['val' => 'a.denominazione', 'type' => 'text'],
 			1 => ['val' => 'CONCAT(s.indirizzo, " ", s.num_civico, " - ", l.des_luo)', 'type' => 'text'],
@@ -154,10 +154,71 @@ class GuestComponent extends Component
 			$opt['conditions']['AND']['GuestsNotifications.done'] = 0;
 		}
 
-        $toRet['res'] = $guests->queryForTableSorter($columns, $opt, $pass);
-        $toRet['tot'] = $guests->queryForTableSorter($columns, $opt, $pass, true);
+        $toRet['res'] = $guestsNotifications->queryForTableSorter($columns, $opt, $pass);
+        $toRet['tot'] = $guestsNotifications->queryForTableSorter($columns, $opt, $pass, true);
 
         return $toRet;
+
+    }
+
+	public function getGuestsNotificationsForBulkMarking($enteType = 1, $pass = [])
+	{
+        $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+
+		$columns = [
+			0 => ['val' => 'a.denominazione', 'type' => 'text'],
+			1 => ['val' => 'CONCAT(s.indirizzo, " ", s.num_civico, " - ", l.des_luo)', 'type' => 'text'],
+			2 => ['val' => 'CONCAT(g.name, " ", g.surname)', 'type' => 'text'],
+			3 => ['val' => 'CONCAT(u.nome, " ", u.cognome)', 'type' => 'text'],
+			4 => ['val' => 't.msg_singular', 'type' => 'text'],
+			5 => ['val' => 'GuestsNotifications.done', 'type' => '']
+        ];
+
+		$opt['join'] = [
+			[
+				'table' => 'aziende',
+				'alias' => 'a',
+				'type' => 'LEFT',
+				'conditions' => ['GuestsNotifications.azienda_id = a.id']
+			],
+			[
+				'table' => 'sedi',
+				'alias' => 's',
+				'type' => 'LEFT',
+				'conditions' => ['GuestsNotifications.sede_id = s.id']
+			],
+			[
+				'table' => 'luoghi',
+				'alias' => 'l',
+				'type' => 'LEFT',
+				'conditions' => ['s.comune = l.c_luo']
+			],
+			[
+				'table' => 'guests',
+				'alias' => 'g',
+				'type' => 'LEFT',
+				'conditions' => ['GuestsNotifications.guest_id = g.id']
+			],
+			[
+				'table' => 'users',
+				'alias' => 'u',
+				'type' => 'LEFT',
+				'conditions' => ['GuestsNotifications.user_maker_id = u.id']
+			],
+			[
+				'table' => 'guests_notifications_types',
+				'alias' => 't',
+				'type' => 'LEFT',
+				'conditions' => ['GuestsNotifications.type_id = t.id']
+			]
+		];
+
+		$opt['conditions']['AND']['t.ente_type'] = $enteType;
+		$opt['conditions']['AND']['GuestsNotifications.done'] = 0;
+
+        $notifications = $guestsNotifications->queryForTableSorter($columns, $opt, $pass);
+
+        return $notifications;
 
     }
 

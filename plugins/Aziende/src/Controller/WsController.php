@@ -2240,8 +2240,10 @@ class WsController extends AppController
     public function saveAllGuestsNotificationsDone($enteType = '')
     {
         if (!empty($enteType)) {
+            $pass['query'] = $this->request->query;
+
             $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-            $notifications = $guestsNotifications->getGuestsNotificationsByEnteType($enteType);
+            $notifications = $this->Guest->getGuestsNotificationsForBulkMarking($enteType, $pass);
 
             if (!empty($notifications)) {
                 $dataToSave = [

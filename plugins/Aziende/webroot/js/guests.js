@@ -368,8 +368,31 @@ $(document).ready(function(){
     //segna tutte le notifiche come gestite
     $('#markAllNotificationsDone').click(function() {
         if (confirm('Si è sicuri di voler marcare tutte le notifiche come "gestite"?')) {
+            var url = pathServer + 'aziende/ws/saveAllGuestsNotificationsDone/'+ente_type;
+            //Filtri
+            var filterList = $.tablesorter.getFilters($('#table-guests-notifications'));
+            var filters = [];
+            $.each(filterList, function(i, v) {
+                if (v) {
+                    filters.push('filter[' + i + ']=' + encodeURIComponent(v));
+                }
+            });
+            url += '?'+(filters.length ? filters.join('&') : 'filter');
+            //Ordinamento
+            var sortList = $('#table-guests-notifications')[0].config.sortList;
+            var columns = [];
+            $.each(sortList, function(i, v) {
+                columns.push('column[' + v[0] + ']=' + v[1]);
+            });
+            url += '&'+(columns.length ? columns.join('&') : 'column');
+            //Numero righe per pagina
+            var size = $('#table-guests-notifications')[0].config.pager.size;
+            url += '&size='+size;
+            //Numero pagina
+            var page = $('#table-guests-notifications')[0].config.pager.page;
+            url += '&page='+page;
             $.ajax({
-                url: pathServer + 'aziende/ws/saveAllGuestsNotificationsDone/'+ente_type,
+                url: url,
                 type: "POST",
                 dataType: 'json',
             }).done(function(res) {
