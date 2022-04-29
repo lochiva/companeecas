@@ -2960,17 +2960,40 @@ class WsController extends AppController
         $search = empty($this->request->query['q']) ? '' : $this->request->query['q'];
         $guests = [];
 
-        $where['CONCAT(cui, " - ", vestanet_id, " - ", name, " ", surname) LIKE'] =  '%'.$search.'%';
+        $where['CONCAT(Guests.cui, " - ", Guests.vestanet_id, " - ", Guests.name, " ", Guests.surname) LIKE'] =  '%'.$search.'%';
+        $where['Sedi.deleted'] = 0;
+        $where['Aziende.deleted'] = 0;
+
+        // Se ruolo ente, ricerca ospiti solo per quell'ente
+        $user = $this->request->session()->read('Auth.User');
+        if ($user['role'] == 'ente') {
+            $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
+            $where['Aziende.id'] = $contatto['id_azienda'];
+        }
 
         $guestsTable = TableRegistry::get('Aziende.Guests');
         $res = $guestsTable->find()
             ->select([
-                'id', 
-                'text' => 'CONCAT(cui, " - ", vestanet_id, " - ", name, " ", surname)', 'sede' => 'GROUP_CONCAT(sede_id SEPARATOR ",")', 
-                'original_guest' => 'IF(original_guest_id IS NULL, id, original_guest_id)'
+                'Guests.id', 
+                'text' => 'CONCAT(Guests.cui, " - ", Guests.vestanet_id, " - ", Guests.name, " ", Guests.surname)', 'sede' => 'GROUP_CONCAT(Guests.sede_id SEPARATOR ",")', 
+                'original_guest' => 'IF(Guests.original_guest_id IS NULL, Guests.id, Guests.original_guest_id)'
             ])
             ->where($where)
             ->order(['CONCAT(name, " ", surname)' => 'ASC'])
+            ->join([
+                [
+                    'table' => 'sedi',
+                    'alias' => 'Sedi',
+                    'type' => 'LEFT',
+                    'conditions' => 'Sedi.id = Guests.sede_id'
+                ],
+                [
+                    'table' => 'aziende',
+                    'alias' => 'Aziende',
+                    'type' => 'LEFT',
+                    'conditions' => 'Aziende.id = Sedi.id_azienda'
+                ]
+            ])
             ->group(['original_guest'])
             ->toArray();
 
