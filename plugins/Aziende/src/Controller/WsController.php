@@ -2995,38 +2995,39 @@ class WsController extends AppController
         $search = empty($this->request->query['q']) ? '' : $this->request->query['q'];
         $guests = [];
 
-        $where['CONCAT(guests.cui, " - ", guests.vestanet_id, " - ", guests.name, " ", guests.surname) LIKE'] =  '%'.$search.'%';
-        $where['Sedi.deleted'] = 0;
-        $where['Aziende.deleted'] = 0;
+        $where['CONCAT(g.cui, " - ", g.vestanet_id, " - ", g.name, " ", g.surname) LIKE'] =  '%'.$search.'%';
+        $where['s.deleted'] = 0;
+        $where['a.deleted'] = 0;
 
         // Se ruolo ente, ricerca ospiti solo per quell'ente
         $user = $this->request->session()->read('Auth.User');
         if ($user['role'] == 'ente') {
             $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
-            $where['Aziende.id'] = $contatto['id_azienda'];
+            $where['a.id'] = $contatto['id_azienda'];
         }
 
-        $guestsTable = TableRegistry::get('Aziende.Guests', ['guests']);
+        $guestsTable = TableRegistry::get('Aziende.Guests');
+        $guestsTable->alias('g');
         $res = $guestsTable->find()
             ->select([
-                'guests.id', 
-                'text' => 'CONCAT(guests.cui, " - ", guests.vestanet_id, " - ", guests.name, " ", guests.surname)', 'sede' => 'GROUP_CONCAT(guests.sede_id SEPARATOR ",")', 
-                'original_guest' => 'IF(guests.original_guest_id IS NULL, guests.id, guests.original_guest_id)'
+                'g.id', 
+                'text' => 'CONCAT(g.cui, " - ", g.vestanet_id, " - ", g.name, " ", g.surname)', 'sede' => 'GROUP_CONCAT(g.sede_id SEPARATOR ",")', 
+                'original_guest' => 'IF(g.original_guest_id IS NULL, g.id, g.original_guest_id)'
             ])
             ->where($where)
             ->order(['CONCAT(name, " ", surname)' => 'ASC'])
             ->join([
                 [
                     'table' => 'sedi',
-                    'alias' => 'Sedi',
+                    'alias' => 's',
                     'type' => 'LEFT',
-                    'conditions' => 'Sedi.id = guests.sede_id'
+                    'conditions' => 's.id = g.sede_id'
                 ],
                 [
                     'table' => 'aziende',
-                    'alias' => 'Aziende',
+                    'alias' => 'a',
                     'type' => 'LEFT',
-                    'conditions' => 'Aziende.id = Sedi.id_azienda'
+                    'conditions' => 'a.id = s.id_azienda'
                 ]
             ])
             ->group(['original_guest'])
