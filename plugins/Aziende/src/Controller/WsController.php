@@ -1932,9 +1932,44 @@ class WsController extends AppController
             ];
         }
 
-        $res =  $guests->find()
+        // Se ruolo ente, ricerca ospiti solo per quell'ente
+        $user = $this->request->session()->read('Auth.User');
+        if ($user['role'] == 'ente') {
+            $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
+            $where['a.id'] = $contatto['id_azienda'];
+        }
+
+        $res = $guests->find()
+            ->select($guests)
+            ->select(['s.indirizzo', 's.num_civico', 'c.Des_luo', 'c.s_prv', 'a.denominazione', 'gs.name'])
             ->where($where)
-            ->contain(['Sedi.Aziende', 'GuestsStatuses'])  
+            ->join([
+                [
+                    'table' => 'sedi',
+                    'alias' => 's',
+                    'type' => 'LEFT',
+                    'conditions' => 's.id = Guests.sede_id'
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'c',
+                    'type' => 'LEFT',
+                    'conditions' => 'c.c_luo = s.comune'
+                ],
+                [
+                    'table' => 'aziende',
+                    'alias' => 'a',
+                    'type' => 'LEFT',
+                    'conditions' => 'a.id = s.id_azienda'
+                ],
+                [
+                    'table' => 'guests_statuses',
+                    'alias' => 'gs',
+                    'type' => 'LEFT',
+                    'conditions' => 'gs.id = Guests.status_id'
+                ]
+            ])
+            ->order(['Guests.check_in_date' => 'DESC', 'Guests.check_out_date' => 'DESC'])
             ->toArray();
 
         if($res){

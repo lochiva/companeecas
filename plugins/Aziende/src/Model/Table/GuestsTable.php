@@ -417,8 +417,18 @@ class GuestsTable extends AppTable
             ->count();
     }
 
-    public function getDataForExportGuestsEmergenzaUcraina()
+    public function getDataForExportGuestsEmergenzaUcraina($aziendaId = '')
     {
+        $where = [
+            'a.id_tipo' => 2,
+            'a.deleted' => 0,
+            's.deleted' => 0
+        ];
+
+        if (!empty($aziendaId)) {
+            $where['a.id'] = $aziendaId;
+        }
+        
         $guests = $this->find()
             ->select($this)
             ->select([
@@ -433,12 +443,7 @@ class GuestsTable extends AppTable
                 'geq_parent.name',
                 'gs.name'
             ])
-            ->where([ 
-                'a.id_tipo' => 2,
-                'a.deleted' => 0,
-                's.deleted' => 0
-                
-            ])
+            ->where([$where])
             ->join([
                 [
                     'table' => 'sedi',

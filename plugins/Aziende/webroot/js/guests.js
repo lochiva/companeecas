@@ -216,12 +216,12 @@ $(document).ready(function(){
                 if(res.response == 'OK'){
                     var html = '';
                     res.data.forEach(function(guest){  
-                        html += '<tr class="clickable" onclick="window.location = \''+pathServer+'aziende/guests/guest?sede='+guest.sedi.id+'&guest='+guest.id+'\';">';
-                        html += '<td>'+guest.sedi.azienda.denominazione+'</td>';
-                        html += '<td>'+guest.sedi.indirizzo+' '+guest.sedi.num_civico+', '+guest.sedi.comune+' ('+guest.sedi.provincia+')'+'</td>';
+                        html += '<tr class="clickable" onclick="window.location = \''+pathServer+'aziende/guests/guest?sede='+guest.sede_id+'&guest='+guest.id+'\';">';
+                        html += '<td>'+guest.a.denominazione+'</td>';
+                        html += '<td>'+guest.s.indirizzo+' '+guest.s.num_civico+', '+guest.c.des_luo+' ('+guest.c.s_prv+')'+'</td>';
                         html += '<td>'+ new Date(guest.check_in_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'});+'</td>';
                         html += '<td>'+ (guest.check_out_date != null ? new Date(guest.check_out_date).toLocaleDateString('it-IT', {year: 'numeric', month: '2-digit', day: '2-digit'}) : '')+'</td>';
-                        html += '<td>'+guest.guests_status.name+'</td>';
+                        html += '<td>'+guest.gs.name+'</td>';
                         html += '</tr>';
                     })
 

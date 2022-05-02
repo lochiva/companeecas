@@ -155,7 +155,16 @@ class ReportsController extends AppController
 		$spreadsheet->getActiveSheet()->setTitle("Lista ospiti Emergenza Ucraina");
 
 		$guestsTable = TableRegistry::get('Aziende.Guests');
-        $data = $guestsTable->getDataForExportGuestsEmergenzaUcraina();
+
+		// Se ruolo ente, ricerca ospiti solo per quell'ente
+        $user = $this->request->session()->read('Auth.User');
+        if ($user['role'] == 'ente') {
+            $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
+			$data = $guestsTable->getDataForExportGuestsEmergenzaUcraina($contatto['id_azienda']);
+        } else {
+			$data = $guestsTable->getDataForExportGuestsEmergenzaUcraina();
+		}
+        
 		
 		//ultima colonna
 		$c = 'A';
