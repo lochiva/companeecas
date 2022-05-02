@@ -2995,7 +2995,7 @@ class WsController extends AppController
         $search = empty($this->request->query['q']) ? '' : $this->request->query['q'];
         $guests = [];
 
-        $where['CONCAT(Guests.cui, " - ", Guests.vestanet_id, " - ", Guests.name, " ", Guests.surname) LIKE'] =  '%'.$search.'%';
+        $where['CONCAT(guests.cui, " - ", guests.vestanet_id, " - ", guests.name, " ", guests.surname) LIKE'] =  '%'.$search.'%';
         $where['Sedi.deleted'] = 0;
         $where['Aziende.deleted'] = 0;
 
@@ -3006,12 +3006,12 @@ class WsController extends AppController
             $where['Aziende.id'] = $contatto['id_azienda'];
         }
 
-        $guestsTable = TableRegistry::get('Aziende.Guests');
+        $guestsTable = TableRegistry::get('Aziende.Guests', ['guests']);
         $res = $guestsTable->find()
             ->select([
-                'Guests.id', 
-                'text' => 'CONCAT(Guests.cui, " - ", Guests.vestanet_id, " - ", Guests.name, " ", Guests.surname)', 'sede' => 'GROUP_CONCAT(Guests.sede_id SEPARATOR ",")', 
-                'original_guest' => 'IF(Guests.original_guest_id IS NULL, Guests.id, Guests.original_guest_id)'
+                'guests.id', 
+                'text' => 'CONCAT(guests.cui, " - ", guests.vestanet_id, " - ", guests.name, " ", guests.surname)', 'sede' => 'GROUP_CONCAT(guests.sede_id SEPARATOR ",")', 
+                'original_guest' => 'IF(guests.original_guest_id IS NULL, guests.id, guests.original_guest_id)'
             ])
             ->where($where)
             ->order(['CONCAT(name, " ", surname)' => 'ASC'])
@@ -3020,7 +3020,7 @@ class WsController extends AppController
                     'table' => 'sedi',
                     'alias' => 'Sedi',
                     'type' => 'LEFT',
-                    'conditions' => 'Sedi.id = Guests.sede_id'
+                    'conditions' => 'Sedi.id = guests.sede_id'
                 ],
                 [
                     'table' => 'aziende',
