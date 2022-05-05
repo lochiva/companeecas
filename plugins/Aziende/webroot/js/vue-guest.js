@@ -163,9 +163,11 @@ var app = new Vue({
         },
         transferData: {
             destination: '',
+            destination_id: '',
             provenance: '',
             date: '',
             note: '',
+            cloned_guest: ''
         },
         datepickerItalian: vdp_translation_it.js,
         guestsForSearch: [],
@@ -262,9 +264,11 @@ var app = new Vue({
                         this.exitData.date = res.data.data.check_out_date;
                         this.exitData.note = res.data.data.history_note;
                         this.transferData.destination = res.data.data.history_destination;
+                        this.transferData.destination_id = res.data.data.history_destination_id;
                         this.transferData.provenance = res.data.data.history_provenance;
                         this.transferData.date = res.data.data.check_out_date;
                         this.transferData.note = res.data.data.history_note;
+                        this.transferData.cloned_guest = res.data.data.history_cloned_guest;
 
                         this.familyId = res.data.data.family_id;
                         this.guestFamily = res.data.data.family; 
@@ -839,10 +843,12 @@ var app = new Vue({
                     alert(res.data.msg);
                     this.guestStatus = res.data.data.history_status;
                     this.transferData.destination = res.data.data.history_destination;
+                    this.transferData.destination_id = res.data.data.history_destination_id;
                     this.transferData.date = res.data.data.check_out_date;
                     this.transferData.note = res.data.data.history_note;
+                    this.transferData.cloned_guest = res.data.data.history_cloned_guest;
 
-                    if(transferFamily){
+                    if (transferFamily) {
                         location.reload();
                     }
 
@@ -908,9 +914,12 @@ var app = new Vue({
                         alert(res.data.msg);
                         this.guestStatus = res.data.data.status_id;
                         this.guestData.check_in_date.value = res.data.data.check_in_date
+                        this.transferData.destination = '';
+                        this.transferData.destination_id = '';
                         this.transferData.provenance = '';
                         this.transferData.date = '';
                         this.transferData.note = '';
+                        this.transferData.cloned_guest = '';
 
                         if(acceptTransferFamily){
                             this.guestFamily.forEach((guest) => {

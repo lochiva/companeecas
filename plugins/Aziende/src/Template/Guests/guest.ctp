@@ -60,6 +60,11 @@ $role = $this->request->session()->read('Auth.User.role');
         </div>
         <div v-if="guestStatus == 6" class="message-transferred alert">
             L'ospite è stato trasferito nella struttura {{transferData.destination}} in data {{transferData.date}}.
+            <?php if ($role == 'admin') { ?>
+                <a :href="'<?=Router::url('/aziende/guests/guest');?>?sede='+transferData.destination_id+'&guest='+transferData.cloned_guest" class="view-transferred-guest">
+                    <b>Visualizza ospite</b> <i class="fa fa-arrow-right"></i>
+                </a>
+            <?php } ?>
             <div><b>Note trasferimento:</b> {{transferData.note}}</div>
         </div>
     </div>

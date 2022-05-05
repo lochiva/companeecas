@@ -63,7 +63,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     </div>
 
                     <div class="table-actions col-sm-6">
-                        <input id="showOld" type="checkbox"> Mostra ospiti non più presenti in struttura
+                        <input id="showOld" type="checkbox"> Mostra anche ospiti non più presenti in struttura
                     </div>
 
                     <div class="table-content">

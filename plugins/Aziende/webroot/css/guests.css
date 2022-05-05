@@ -356,3 +356,7 @@ label.required:after{
     resize: none;
     height: 50px !important;
 }
+
+.view-transferred-guest {
+    margin-left: 30px;
+}

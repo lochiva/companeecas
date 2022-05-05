@@ -2038,8 +2038,10 @@ class WsController extends AppController
                 if ($lastHistory->destination_id) {
                     $sede = TableRegistry::get('Aziende.Sedi')->get($lastHistory->destination_id, ['contain' => ['Comuni', 'Aziende']]);
                     $guest['history_destination'] = $sede['azienda']['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['comune']['s_prv'].')';
+                    $guest['history_destination_id'] = $lastHistory->destination_id;
                 } else {
                     $guest['history_destination'] = '';
+                    $guest['history_destination_id'] = '';
                 }
                 if ($lastHistory->provenance_id) {
                     $sede = TableRegistry::get('Aziende.Sedi')->get($lastHistory->provenance_id, ['contain' => ['Comuni', 'Aziende']]);
@@ -2053,6 +2055,7 @@ class WsController extends AppController
                     $guest['check_out_date'] = '';
                 }
                 $guest['history_note'] = $lastHistory->note;
+                $guest['history_cloned_guest'] = $lastHistory->cloned_guest_id;
             }
             //Presenza oggi
             $guest['presenza'] = TableRegistry::get('Aziende.Presenze')->getGuestPresenzaByDate($guest->id, date('Y-m-d'));
@@ -2907,7 +2910,14 @@ class WsController extends AppController
         $res['history_status'] = $status;
         $res['check_out_date'] = $today->format('d/m/Y');
         $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].')';
+        $res['history_destination_id'] = $data['sede'];
         $res['history_note'] = $data['note'];
+        if ($status == 6) {
+            $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $status);
+            $res['history_cloned_guest'] = $lastHistory->cloned_guest_id;
+        } else {
+            $res['history_cloned_guest'] = '';
+        }
 
         if (!$errorMsg) {
             $this->_result['response'] = "OK";
