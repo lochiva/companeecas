@@ -1792,6 +1792,7 @@ class WsController extends AppController
             $data['minor_alone'] = filter_var($data['minor_alone'], FILTER_VALIDATE_BOOLEAN);
             $data['family_guest_id'] = $data['family_guest'];
             $data['birthdate'] = new Time(substr($data['birthdate'], 0, 33));
+            $data['electronic_residence_permit'] = filter_var($data['electronic_residence_permit'], FILTER_VALIDATE_BOOLEAN);
             if ($data['ente_type'] == 1) {
                 $data['draft'] = filter_var($data['draft'], FILTER_VALIDATE_BOOLEAN);
                 $data['suspended'] = filter_var($data['suspended'], FILTER_VALIDATE_BOOLEAN);
