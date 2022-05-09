@@ -92,6 +92,11 @@ var app = new Vue({
                 value: '',
                 required: false
             },
+            electronic_residence_permit: {
+                hasError: false,
+                value: false,
+                required: false
+            },
             draft: {
                 hasError: false,
                 value: true,
@@ -251,6 +256,7 @@ var app = new Vue({
                             this.guestData.educational_qualification_child.value = res.data.data.educational_qualification_child;
                             this.getEducationalQualifications(res.data.data.educational_qualification.id);
                         }
+                        this.guestData.electronic_residence_permit.value = res.data.data.electronic_residence_permit;
                         this.guestData.draft.value = res.data.data.draft;
                         this.guestData.draft_expiration.value = res.data.data.draft_expiration;
                         this.guestData.suspended.value = res.data.data.suspended;

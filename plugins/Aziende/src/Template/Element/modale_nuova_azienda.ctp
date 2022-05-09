@@ -203,7 +203,7 @@ use Cake\Routing\Router;
                             <div class="form-group ">
                                 <label class="col-sm-2 control-label required" for="inputTipoEnte">Tipologia ente</label>
                                 <div class="col-sm-10">
-                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required" >
+                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required">
                                         <option value="">-- Seleziona una tipologia ente --</option>
                                         <?php foreach ($tipi as $key => $tipo): ?>
                                             <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
@@ -247,6 +247,13 @@ use Cake\Routing\Router;
                                         <label class="col-sm-2 control-label required" for="inputCodeCentro">Codice centro</label>
                                         <div class="col-sm-10">
                                             <input required ng-model="sede.code_centro" type="text" maxlength="8" placeholder="Codice centro" name="codice centro" id="inputCodeCentro" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
+                                        <label class="col-sm-2 control-label" for="inputExDl">Struttura attivata EX DL 28.02.2022</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="sede.exdl_28022022" type="checkbox" name="exdl_28022022" id="inputExDl">
                                         </div>
                                     </div>
 

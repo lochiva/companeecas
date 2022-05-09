@@ -40,6 +40,14 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <input type="text" maxlength="8" placeholder="Codice centro" name="code_centro" id="inputCodeCentro" class="form-control required">
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="inputExDl">Struttura attivata EX DL 28.02.2022</label>
+                            <div class="col-sm-10">
+                                <input hidden name="exdl_28022022" value="0">
+                                <input type="checkbox" name="exdl_28022022" id="inputExDl" value="1">
+                            </div>
+                        </div>
                         
                         <div class="form-group">
                             <label class="col-sm-2 control-label required" for="inputTipoMinistero">Tipologia struttura (per ministero)</label>

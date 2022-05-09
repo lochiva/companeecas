@@ -27,6 +27,10 @@
             <td><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Destinazione SAI') ?></th>
+            <td><?= $guestsExitType->toSAI ? 'Sì' : 'No' ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Tipologia Ente') ?></th>
             <td><?= $guestsExitType->tipo->name ?></td>
         </tr>

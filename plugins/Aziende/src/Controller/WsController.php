@@ -368,6 +368,7 @@ class WsController extends AppController
         $sede = $this->Sedi->_newEntity(); 
 
         if ($azienda->id_tipo == 2) {
+            $data['exdl_28022022'] = 0;
             $data['id_tipo_capitolato'] = 0;
             $data['id_tipologia_centro'] = 0;
             $data['id_tipologia_ospiti'] = 0;

@@ -146,6 +146,9 @@ class GuestsTable extends AppTable
             ->allowEmptyString('minor_note', true);
 
         $validator
+            ->boolean('electronic_residence_permit');
+
+        $validator
             ->boolean('suspended');
 
         $validator
@@ -203,6 +206,7 @@ class GuestsTable extends AppTable
             'minor_alone' => 'Minore solo',
             'minor_note' => 'Note minore',
             'educational_qualification_id' => 'ID titolo di studio',
+            'electronic_residence_permit' => 'Permesso di soggiorno elettronico',
             'suspended' => 'Sospeso',
             'draft' => 'Stato anagrafica in bozza',
             'draft_expiration' => 'Scadenza stato bozza',

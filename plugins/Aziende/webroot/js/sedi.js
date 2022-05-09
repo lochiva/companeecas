@@ -173,6 +173,7 @@ $(document).ready(function(){
     //Input modale in base al tipo di ente
     $('#myModalSede').on('shown.bs.modal', function() {
       if (ente_tipo == 1) {
+        $('#inputExDl').closest('.form-group').show();
         $('#inputTipoCapitolato').closest('.form-group').show();
         $('#inputTipologieCentro').closest('.form-group').show();
         $('#inputTipologieOspiti').closest('.form-group').show();
@@ -184,6 +185,7 @@ $(document).ready(function(){
         $('#inputTipoMinistero option[data-type="1"]').show();
         $('#inputTipoMinistero option[data-type!="1"]').hide();
       } else if (ente_tipo == 2) {
+        $('#inputExDl').closest('.form-group').hide();
         $('#inputTipoCapitolato').closest('.form-group').hide();
         $('#inputTipologieCentro').closest('.form-group').hide();
         $('#inputTipologieOspiti').closest('.form-group').hide();
@@ -316,6 +318,7 @@ function loadInputModale(idSede){
                 $('#inputApproved').prop('checked', data.data.approved);
             }
             $('[name="code_centro"]').val(data.data.code_centro);
+            $('[name="exdl_28022022"]').prop('checked', data.data.exdl_28022022);
             $('[name="id_tipo_ministero"]').val(data.data.id_tipo_ministero);
             $('[name="id_tipo_capitolato"]').val(data.data.id_tipo_capitolato);
             $('[name="id_tipologia_centro"]').val(data.data.id_tipologia_centro);
@@ -381,6 +384,9 @@ function clearModale(){
   $('[name="code_centro"]').val("");
   $('[name="code_centro"]').prop("disabled", false);
   $('[name="code_centro"]').removeClass('disabled-approved');
+  $('[name="exdl_28022022"]').prop("checked", false);
+  $('[name="exdl_28022022"]').prop("disabled", false);
+  $('[name="exdl_28022022"]').removeClass('disabled-approved');
   $('[name="id_tipo_ministero"]').val("");
 	$('[name="id_tipo_ministero"]').prop("disabled", false);
   $('[name="id_tipo_ministero"]').removeClass('disabled-approved');
@@ -454,6 +460,8 @@ function clearModale(){
 function disableApprovedModal() {
   $('[name="code_centro"]').prop("disabled", true);
   $('[name="code_centro"]').addClass('disabled-approved');
+  $('[name="exdl_28022022"]').prop("disabled", true);
+  $('[name="exdl_28022022"]').addClass('disabled-approved');
 	$('[name="id_tipo_ministero"]').prop("disabled", true);
   $('[name="id_tipo_ministero"]').addClass('disabled-approved');
   $('[name="id_tipo_capitolato"]').prop("disabled", true);

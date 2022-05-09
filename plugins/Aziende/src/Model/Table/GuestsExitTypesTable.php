@@ -73,6 +73,9 @@ class GuestsExitTypesTable extends Table
             ->boolean('startable_by_ente');
 
         $validator
+            ->boolean('toSAI');
+
+        $validator
             ->integer('ente_type');
 
         $validator

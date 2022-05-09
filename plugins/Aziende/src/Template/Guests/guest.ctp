@@ -186,6 +186,11 @@ $role = $this->request->session()->read('Auth.User.role');
                                         <option v-for="qualification in educationalQualificationChildren" :value="qualification">{{ qualification.name }}</option>
                                     </select>
                                 </div>
+                                <div class="col-md-4 div-input-check" :class="{'has-error': guestData.electronic_residence_permit.hasError}">
+                                    <label :class="{'required': guestData.electronic_residence_permit.required}" for="guestElectronicResidencePermit"><?= __('Con permesso di soggiorno elettronico') ?></label>
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="electronic_residence_permit" id="guestElectronicResidencePermit" v-model="guestData.electronic_residence_permit.value" 
+                                        data-toggle="tooltip" data-position="top" title="Indicare unicamente se il soggetto ha il permesso di soggiorno elettronico, una delle determinanti della cessazione dell'accoglienza" />
+                                </div>
                             </div>
                             <div v-if="ente_type == 1" class="form-group">
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.draft.hasError}">

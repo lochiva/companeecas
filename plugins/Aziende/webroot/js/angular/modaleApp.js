@@ -56,7 +56,7 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                 id_tipologia_ospiti:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', 
                 referente:'', telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti_struttura:'', n_posti_effettivi:'', 
                 n_posti_convenzione:'', id_procedura_affidamento:'', operativita:1, id: 'sede-'+vm.azienda.sedi.length, code_centro:'', 
-                approved:0, note:''
+                approved:0, exdl_28022022:0, note:''
             };
         }
 
