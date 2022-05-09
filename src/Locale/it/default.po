@@ -573,6 +573,10 @@ msgid "Startable By Ente"
 msgstr "Avviabile Da Ente"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:17
+msgid "ToSAI"
+msgstr "Destinazione SAI"
+
+#: Template/Admin/GuestsExitTypes/index.ctp:18
 msgid "Ente Type"
 msgstr "Tipologia Ente"
 
