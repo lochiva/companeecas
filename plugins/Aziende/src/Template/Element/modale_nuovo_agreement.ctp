@@ -66,6 +66,10 @@ $role = $this->request->session()->read('Auth.User.role');
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label" for="inputCapacityIncrement0">Nessun incremento</label>
+                        <div class="col-sm-1">
+                            <input type="radio" name="capacity_increment" id="inputCapacityIncrement0" value="0" class="radio-agreement">
+                        </div>
                         <label class="col-sm-3 control-label" for="inputCapacityIncrement20">Incremento posti +20%</label>
                         <div class="col-sm-1">
                             <input type="radio" name="capacity_increment" id="inputCapacityIncrement20" value="20" class="radio-agreement">
