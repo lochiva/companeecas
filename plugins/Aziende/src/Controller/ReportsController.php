@@ -43,6 +43,78 @@ class ReportsController extends AppController
 		$this->set('azienda', $azienda);
     }
 
+	public function reportGuestsCas()
+    {
+        $date = implode('-', array_reverse(explode('/', $this->request->query['date'])));
+
+		$spreadsheet = new Spreadsheet();
+
+		// RIEPILOGO STRUTTURE
+		$spreadsheet->getActiveSheet()->setTitle("Report");
+
+		$sediTable = TableRegistry::get('Aziende.Sedi');
+        $dataReport = $sediTable->getDataForReportGuestsCas($date);
+		
+		//ultima colonna e dimensione automatica delle celle
+		$c = 'A';
+		for($i = 1; $i < count($dataReport[0]); $i++){
+			$spreadsheet->getActiveSheet()->getColumnDimension($c)->setAutoSize(true);
+			++$c;
+		}
+
+		//filtri riga intestazione
+        $spreadsheet->getActiveSheet()->setAutoFilter('A1:'.$c.'1');
+
+		//grassetto riga intestazione
+		$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
+			->getFont()->setBold(true);
+
+		$spreadsheet->getActiveSheet()->fromArray($dataReport, NULL);
+		
+		$spreadsheet->getActiveSheet()->freezePane('A2');
+
+
+		// DETTAGLIO STRUTTURE
+		$spreadsheet->createSheet(NULL, 1);
+        $spreadsheet->setActiveSheetIndex(1);
+		$spreadsheet->getActiveSheet()->setTitle("Dettaglio Ucraini in CAS");
+
+        $dataDettaglio = $sediTable->getDataForDettaglioGuestsCas($date);
+
+		//ultima colonna e dimensione automatica delle celle
+		$c = 'A';
+		for($i = 1; $i < count($dataDettaglio[0]); $i++){
+			$spreadsheet->getActiveSheet()->getColumnDimension($c)->setAutoSize(true);
+			++$c;
+		}
+
+		//filtri riga intestazione
+        $spreadsheet->getActiveSheet()->setAutoFilter('A1:'.$c.'1');
+
+		//grassetto riga intestazione
+		$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
+			->getFont()->setBold(true);
+
+		$spreadsheet->getActiveSheet()->fromArray($dataDettaglio, NULL);
+
+		$spreadsheet->setActiveSheetIndex(0);
+
+        $filename = str_replace('-', '.', $date)." TORINO";
+
+		setcookie('downloadStarted', '1', false, '/');
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+		$writer->save('php://output');
+
+		exit;
+
+    }
+
     public function reportGuestsEmergenzaUcraina()
     {
         $date = implode('-', array_reverse(explode('/', $this->request->query['date'])));

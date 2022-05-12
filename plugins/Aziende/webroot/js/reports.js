@@ -14,13 +14,27 @@ $(document).ready(function(){
 
 	$('.datepicker').datepicker({language: 'it'});
 
+    //Generazione report ospiti cas
+    $('#reportGuestsCas').click(function() {
+        $('#template-spinner').show();
+
+        var url = pathServer+'aziende/reports/reportGuestsCas';
+
+        var date = $('#dateReportGuestsCas').val();
+        url += '?date=' + encodeURI(date);
+        
+        window.location = url;
+
+        checkCookieForLoader('downloadStarted', '1');
+    });
+
     //Generazione report ospiti emergenza ucraina
     $('#reportGuestsEmergenzaUcraina').click(function() {
         $('#template-spinner').show();
 
         var url = pathServer+'aziende/reports/reportGuestsEmergenzaUcraina';
 
-        var date = $('#date').val();
+        var date = $('#dateReportGuestsEmergenzaUcraina').val();
         url += '?date=' + encodeURI(date);
         
         window.location = url;
