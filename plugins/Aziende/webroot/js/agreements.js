@@ -207,6 +207,11 @@ $(document).ready(function(){
             });
         }
     });
+
+    // Preset modale all'apertura per nuova convenzione
+    $('#newAgreement').click(function() {
+        $('#inputCapacityIncrement0').prop('checked', true);
+    });
 });
 
 $(document).on('click', '.edit-agreement', function(){
