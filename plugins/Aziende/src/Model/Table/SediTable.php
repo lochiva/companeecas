@@ -500,6 +500,7 @@ class SediTable extends AppTable
         $dateMinus6Years = date('Y-m-d', strtotime('-6 years', strtotime($date)));
 
         $sedi = $this->find()
+            ->select($this)
             ->select([
                 'regione' => 'r.des_luo',
                 'provincia' => 'p.des_luo',
@@ -551,8 +552,7 @@ class SediTable extends AppTable
                     LEFT JOIN guests_exit_types et ON et.id = h.exit_type_id 
                     WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date' AND g.status_id = 3 AND g.deleted = 0 AND g.electronic_residence_permit = 1 
                     AND g.country_birth = 100000243 AND et.toSAI = 1
-                )",
-                'Sedi.note'
+                )"
             ])
             ->where([ 
                 'a.id_tipo' => 1,
