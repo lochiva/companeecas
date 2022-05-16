@@ -566,7 +566,7 @@ class GuestComponent extends Component
 					if ($guestsHistory->save($originalHistory)) {
 						$originalGuest->status_id = 6;
 						$originalGuest->check_out_date = $today->format('Y-m-d');
-	
+
 						if ($guests->save($originalGuest)) {
 							//creazione notifica trasferimento ospite
 							$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
