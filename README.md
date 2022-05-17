@@ -43,3 +43,11 @@ Bisogna svuotare la cache di cake perchè i nuovi file di traduzione vengano car
 ## Select2 è stato modificato
 Select 2  è stato modificato da una pull request per la presenza di un bug sui disabled
 delle option. Indirizzo pull request https://github.com/select2/select2/pull/4537 
+
+## aggiornamento del progetto
+#aggiornare il codice dal repo con
+git pull
+#aggiornare il codice con compoere
+composer install
+#eseguire le migrazioni
+bin/cake migrations:migrate --no-lock
