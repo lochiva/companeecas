@@ -37,7 +37,7 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-sm-4">
                                     <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" 
-                                        id="inputDate" v-model="date" @closed="loadGuests()"></datepicker>
+                                        typeable="true" id="inputDate" ref="inputDate" v-model="date" @input="changedDate()"></datepicker>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Totale presenze del giorno</label>

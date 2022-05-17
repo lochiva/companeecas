@@ -99,7 +99,7 @@ $cakeDescription = "Companee";
   <?= $this->Html->script('../plugins/vue-draggable/vuedraggable.umd.min.js') ?>
   <?= $this->Html->script('../plugins/vue-intersection-observer/intersection-observer.js') ?>
   <?= $this->Html->script('../plugins/vue-observe-visibility/vue-observe-visibility.min.js') ?>
-  <?= $this->Html->script('../plugins/vuejs-datepicker/vuejs-datepicker.min.js') ?>
+  <?= $this->Html->script('../plugins/vuejs-datepicker/vuejs-datepicker.js') ?>
   <?= $this->Html->script('../plugins/vuejs-datepicker/it.js') ?>
 
     <?= $this->fetch('meta') ?>

@@ -39,6 +39,15 @@ var app = new Vue({
        
     methods: {
 
+        changedDate() {
+            var today = new Date();
+            if (this.date > today) {
+                this.$refs.inputDate.selectDate({timestamp: today.getTime()});
+            } else {
+                this.loadGuests();
+            }
+        },
+
         loadGuests () {
 			var formatted_date = moment(this.date).format('YYYY-MM-DD');
             axios.get(pathServer + 'aziende/ws/getGuestsForPresenze?sede='+this.sede_id+'&date='+formatted_date)

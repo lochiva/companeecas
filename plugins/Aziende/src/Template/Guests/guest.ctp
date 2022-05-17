@@ -85,7 +85,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <label :class="{'required': guestData.check_in_date.required}" for="guestCheckInDate"><?= __('Check-in') ?></label>
                                     <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" 
                                         :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control"
-                                        id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
+                                        typeable="true" id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -146,9 +146,9 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.birthdate.hasError}">
                                     <label :class="{'required': guestData.birthdate.required}" for="guestBirthdate"><?= __('Data di nascita') ?></label>
-                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" 
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy"
                                         :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control" 
-                                        id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
+                                        typeable="true" @input="" id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.country_birth.hasError}">
                                     <label :class="{'required': guestData.country_birth.required}" for="guestCountryBirth"><?= __('Nazionalità') ?></label>
