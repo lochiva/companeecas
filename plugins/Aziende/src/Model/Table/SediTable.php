@@ -290,15 +290,15 @@ class SediTable extends AppTable
                 'capienza_effettiva' => "Sedi.n_posti_effettivi - (
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243
+                    AND g.country_birth = 100000243
                 )",
                 'presenze' => "(
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND (g.electronic_residence_permit != 1 ||! g.country_birth = 100000243)
+                    AND g.country_birth != 100000243
                 )",
                 'tipo_ospiti' => 'sto.name',
-                'pec' => 'a.pec',
+                'pec' => 'a.pec_commissione',
                 'procedura' => 'spa.name',
                 'data_stipula' => 'ag.date_agreement',
                 'data_scadenza' => 'ag.date_agreement_expiration',
@@ -448,6 +448,22 @@ class SediTable extends AppTable
         ];
 
         foreach ($sedi as $sede) {
+            $dispo = '0';
+            if ($sede['operativita']) {
+                $dispo = $sede['n_posti_struttura'] - $sede['presenze'];
+                if ($dispo < 0) {
+                    $dispo = 0;
+                }
+            }
+
+            $dispoEffettiva = '0';
+            if ($sede['operativita']) {
+                $dispoEffettiva = $sede['capienza_effettiva'] - $sede['presenze'];
+                if ($dispoEffettiva < 0) {
+                    $dispoEffettiva = 0;
+                }
+            }
+
             $data[] = [
                 $sede['code_centro'],
                 $sede['regione'],
@@ -457,11 +473,11 @@ class SediTable extends AppTable
                 $sede['tipo_struttura'],
                 $sede['ente'],
                 $sede['address'],
-                $sede['n_posti_struttura'],
-                $sede['capienza_effettiva'],
-                $sede['presenze'],
-                $sede['n_posti_struttura'] - $sede['presenze'],
-                $sede['capienza_effettiva'] - $sede['presenze'],
+                strval($sede['n_posti_struttura']),
+                strval($sede['capienza_effettiva']),
+                strval($sede['presenze']),
+                strval($dispo),
+                strval($dispoEffettiva),
                 $sede['operativita'] ? 'ATTIVO' : 'CHIUSO',
                 $sede['tipo_ospiti'],
                 $sede['ente'],
@@ -471,7 +487,7 @@ class SediTable extends AppTable
                 empty($sede['data_scadenza']) ? '' : implode('/', array_reverse(explode('-', $sede['data_scadenza']))),
                 empty($sede['data_proroga']) ? '' : implode('/', array_reverse(explode('-', $sede['data_proroga']))),
                 $sede['prezzo_giornaliero'],
-                $sede['guests_minori'],
+                strval($sede['guests_minori']),
                 $sede['guests_siria'],
                 $sede['guests_iran'],
                 $sede['guests_iraq'],
@@ -512,45 +528,45 @@ class SediTable extends AppTable
                 'tot_guests' => "(
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243
+                    AND g.country_birth = 100000243
                 )",
                 'tot_guests_male' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_families gf ON gf.guest_id = g.id
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243 AND g.sex = 'M' AND g.minor = 0 AND gf.id IS NULL
+                    AND g.country_birth = 100000243 AND g.sex = 'M' AND g.minor = 0 AND gf.id IS NULL
                 )",
                 'tot_guests_female' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_families gf ON gf.guest_id = g.id
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243 AND g.sex = 'F' AND g.minor = 0 AND gf.id IS NULL
+                    AND g.country_birth = 100000243 AND g.sex = 'F' AND g.minor = 0 AND gf.id IS NULL
                 )",
                 'tot_guests_family' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_families gf ON gf.guest_id = g.id
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243 AND gf.id IS NOT NULL
+                    AND g.country_birth = 100000243 AND gf.id IS NOT NULL
                 )",
                 'tot_guests_minor' => "(
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243 AND g.minor = 1 AND g.minor_alone = 1
+                    AND g.country_birth = 100000243 AND g.minor = 1 AND g.minor_alone = 1
                 )",
                 'tot_guests_school' => "(
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243 AND g.minor = 1 AND g.birthdate > '$dateMinus17Years' AND g.birthdate <= '$dateMinus6Years'
+                    AND g.country_birth = 100000243 AND g.minor = 1 AND g.birthdate > '$dateMinus17Years' AND g.birthdate <= '$dateMinus6Years'
                 )",
                 'tot_guests_exited' => "(
                     SELECT COUNT(*) FROM guests g
-                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date' AND g.deleted = 0 AND g.electronic_residence_permit = 1 AND g.country_birth = 100000243
+                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date' AND g.deleted = 0 AND g.country_birth = 100000243
                 )",
                 'tot_guests_exited_sai' => "(
                     SELECT COUNT(*) FROM guests g
                     LEFT JOIN guests_histories h ON h.guest_id = g.id AND h.guest_status_id = 3 
                     LEFT JOIN guests_exit_types et ON et.id = h.exit_type_id 
-                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date' AND g.status_id = 3 AND g.deleted = 0 AND g.electronic_residence_permit = 1 
+                    WHERE g.sede_id = Sedi.id AND g.check_out_date <= '$date' AND g.status_id = 3 AND g.deleted = 0 
                     AND g.country_birth = 100000243 AND et.toSAI = 1
                 )"
             ])
