@@ -364,3 +364,7 @@ a.contact-login:hover{
 .container-info-guest {
 	display: inline-block;
 }
+
+.btn-save-presenze {
+	margin-right: 5px;
+}

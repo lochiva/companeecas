@@ -14,7 +14,7 @@ class SediComponent extends Component
 
         $opt['limit'] = 50;
         $opt['page'] = 1;
-        $opt['order'] = "";
+        $opt['order'] = ['Sedi.id' => 'ASC'];
         $opt['conditions'] = array();
 
         $col = [];

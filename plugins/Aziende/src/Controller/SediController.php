@@ -91,8 +91,11 @@ class SediController extends AppController
 
         $azienda = TableRegistry::get('Aziende.Aziende')->get($sede['id_azienda']);
 
+        $nextSede = TableRegistry::get('Aziende.Sedi')->getNextAziendaSede($this->request->query['sede']);
+
         $this->set('sede', $sede);
         $this->set('azienda', $azienda);
+        $this->set('nextSede', $nextSede ? $nextSede['id'] : '');
     }
 
 }

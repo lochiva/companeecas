@@ -18,6 +18,7 @@ var app = new Vue({
         check_all_guests: false,
         count_presenze_day: 0,
         count_presenze_month: 0,
+        next_sede: next_sede,
         datepickerItalian: vdp_translation_it.js
     },
 
@@ -26,7 +27,9 @@ var app = new Vue({
     },
 
     computed: {
-
+        noNextSedeMessage() {
+            return this.next_sede ? '' : "Questa è l'ultima struttura";
+        }
     },
       
     mounted: function () {
@@ -76,7 +79,7 @@ var app = new Vue({
                 });
         },
 
-        save () {
+        save (next) {
             let params = new URLSearchParams();
 
 			params.append('sede', this.sede_id);
@@ -86,9 +89,13 @@ var app = new Vue({
             axios.post(pathServer + 'aziende/ws/saveGuestsPresenze', params)
                 .then(res => {
                     if (res.data.response == 'OK') {
-						this.guests = res.data.data.guests;
-                        this.count_presenze_day = res.data.data.count_presenze_day;
-                        this.count_presenze_month = res.data.data.count_presenze_month;
+                        if (next) {
+                            window.location = pathServer + 'aziende/sedi/presenze?sede=' + this.next_sede;
+                        } else {
+                            this.guests = res.data.data.guests;
+                            this.count_presenze_day = res.data.data.count_presenze_day;
+                            this.count_presenze_month = res.data.data.count_presenze_month;
+                        }
                     } else {
                         alert(res.data.msg);
                     }

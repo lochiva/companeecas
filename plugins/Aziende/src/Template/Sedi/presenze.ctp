@@ -3,6 +3,9 @@ use Cake\Routing\Router;
 
 $role = $this->request->session()->read('Auth.User.role'); 
 ?>
+<script>
+    var next_sede = '<?= $nextSede ?>';
+</script>
 <?php $this->assign('title', 'Presenze') ?>
 <?= $this->Html->css('Aziende.aziende'); ?>
 <?= $this->Html->script('Aziende.vue-presenze', ['block' => 'script-vue']); ?>
@@ -82,7 +85,13 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div class="box-footer">
-                        <button type="button" class="btn btn-primary pull-right" id="savePresenze" @click="save()">Salva</button>
+                        <button type="button" class="btn btn-success pull-right" id="savePresenzeNext" @click="save(true)"
+                            :disabled="!next_sede" :title="noNextSedeMessage">
+                            Salva e prossimo
+                        </button>
+                        <button type="button" class="btn btn-primary pull-right btn-save-presenze" id="savePresenze" @click="save(false)">
+                            Salva
+                        </button>
                     </div>
                 </div>
             </div>

@@ -639,5 +639,16 @@ class SediTable extends AppTable
 
         return $data;
     }
+
+    public function getNextAziendaSede($sedeId)
+    {
+        return $this->find()
+            ->where([
+                'Sedi.id >' => $sedeId,
+                'Sedi.id_azienda = (SELECT id_azienda FROM sedi WHERE id ='.$sedeId.')'
+            ])
+            ->order(['Sedi.id' => 'ASC'])
+            ->first();
+    }
     
 }
