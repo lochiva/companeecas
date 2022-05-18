@@ -614,6 +614,16 @@ var app = new Vue({
             }
         },
 
+        changeMinorAlone: function() {
+            if (!this.guestData.minor_alone.value) {
+                if (confirm('Attenzione! Confermi che il minore è solo? Verrà rimosso dal nucleo familiare.')) {
+                    this.familyGuests = [];
+                } else {
+                    this.guestData.minor_alone.value = '';
+                }
+            }
+        },
+
         loadGuestHistory: function() {
             axios.get(pathServer + 'aziende/ws/loadGuestHistory/' + this.guestData.id.value)
             .then(res => { 

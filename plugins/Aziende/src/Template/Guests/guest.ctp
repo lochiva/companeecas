@@ -136,7 +136,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <div v-show="guestData.minor.value"  class="col-md-2 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
                                     <label :class="{'required': guestData.minor_alone.required}" for="guestMinorAlone"><?= __('Si dichiara minore solo') ?></label>
                                     <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
-                                        @change="changeMinorFamily(false)" />
+                                        @click="changeMinorAlone()" />
                                 </div>
                                 <div v-show="guestData.minor.value" class="col-md-7" :class="{'has-error': guestData.minor_note.hasError}">
                                     <label :class="{'required': guestData.minor_note.required}" for="minor_note"><?= __('Note minore') ?></label>
