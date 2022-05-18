@@ -287,11 +287,12 @@
             parseTypedDate: function (e) {
                 if (([27, 13].includes(e.keyCode) && this.input.blur(), this.typeable)) {
                     var t = moment(this.input.value, this.format.toUpperCase());
-                    isNaN(t) || ((this.typedDate = this.input.value), this.$emit("typedDate", new Date(t)));
+                    (!t.isValid() || isNaN(t)) || ((this.typedDate = this.input.value), this.$emit("typedDate", new Date(t)));
                 }
             },
             inputBlurred: function () {
-                this.typeable && isNaN(moment(this.input.value, this.format.toUpperCase())) && (this.clearDate(), (this.input.value = null), (this.typedDate = null)), this.$emit("closeCalendar");
+                var t = moment(this.input.value, this.format.toUpperCase());
+                this.typeable && (!t.isValid() || isNaN(t)) && (this.clearDate(), (this.input.value = null), (this.typedDate = null)), (this.typedDate = t.format('DD/MM/YYYY'), this.$emit("closeCalendar"));
             },
             clearDate: function () {
                 this.$emit("clearDate");
@@ -333,7 +334,7 @@
                         autocomplete: "off",
                     },
                     domProps: { value: e.formattedValue },
-                    on: { click: e.showCalendar, keyup: e.parseTypedDate, blur: e.inputBlurred },
+                    on: { focus: e.showCalendar, keyup: e.parseTypedDate, blur: e.inputBlurred },
                 }),
                 e._v(" "),
                 e.clearButton && e.selectedDate
@@ -1040,7 +1041,7 @@
                     null !== this.selectedDate ? this.setPageDate(this.selectedDate) : this.setPageDate();
                 },
                 showCalendar: function () {
-                    return !this.disabled && !this.isInline && (this.isOpen ? this.close(!0) : void this.setInitialView());
+                    return !this.disabled && !this.isInline && void this.setInitialView();
                 },
                 setInitialView: function () {
                     var e = this.computedInitialView;
