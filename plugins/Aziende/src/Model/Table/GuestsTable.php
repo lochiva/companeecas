@@ -370,7 +370,7 @@ class GuestsTable extends AppTable
         }
 
         return $this->find()
-            ->select(['Guests.id', 'Guests.name', 'Guests.surname', 
+            ->select(['Guests.id', 'Guests.name', 'Guests.surname', 'Guests.minor',
                     'label' => 'CONCAT(Guests.cui,  " - ", Guests.name, " ", Guests.surname)', 'family_id' => 'gf.family_id'
             ])
             ->where($where)

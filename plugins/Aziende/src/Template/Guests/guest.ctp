@@ -225,8 +225,8 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-header with-border">
                         <i class="fa fa-users"></i>
                         <h3 class="box-title"><?=__c('Componenti il nucleo familiare')?></h3> 
-                        <button role="button" class="btn btn-primary pull-right" :disabled="(guestStatus != 1 || !familyId)" :title="!familyId ? 'L\'ospite non appartiene a nessuna famiglia': 'Rimuovi ospite dalla famiglia'" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
-                        <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="guestStatus != 1" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
+                        <button role="button" class="btn btn-primary pull-right" :disabled="((guestStatus != '' && guestStatus != 1) || !familyId || guestData.minor.value || countFamilyAdults == 1)" :title="removeFamilyButtonMessage" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
+                        <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="guestStatus != '' && guestStatus != 1" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
                         <v-select hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
                             @search="searchGuests" @input="addSearchedGuest" placeholder="Seleziona un ospite">
                             <template slot="no-options">Nessun ospite trovato.</template>
@@ -239,12 +239,15 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <td><span v-if="guest.cui">{{guest.cui}} - </span>{{guest.name}} {{guest.surname}}<span v-if="guest.status_id == 3 || guest.status_id == 6" class="exit-icon"><i class="fa fa-sign-out"></i></span></td>
                                     <td width="130px;">
                                         <div class="button-group">
-                                            <a v-if="guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=')?>'+guest.id" target="_blank" role="button" 
+                                            <a v-if="role == 'admin'" v-if="guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=')?>'+guest.id" target="_blank" role="button" 
                                                 class="btn btn-xs btn-warning" title="Modifica ospite">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
-                                            <a :class="{'disabled': (guest.status_id != 1 || guestStatus != 1)}" role="button" class="btn btn-xs btn-primary" title="Rimuovi ospite dalla famiglia" @click="removeGuestFromFamily(index)"><i class="fa fa-unlink"></i></a>
-                                            <a :class="{'disabled': (guest.status_id != 1 || guestStatus != 1)}" role="button" class="btn btn-xs btn-danger" title="Elimina ospite" @click="deleteGuest(index)"><i class="fa fa-trash"></i></a>
+                                            <button :disabled="guest.status_id != 1 || guestStatus != 1 || guest.minor == 1 || countFamilyAdults == 1" role="button" class="btn btn-xs btn-primary" 
+                                                :title="guest.status_id == 1 && guestStatus == 1 && guest.minor == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: l\'ospite è un minore' : (guest.status_id == 1 && guestStatus == 1 && countFamilyAdults == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: unico adulto presente nel nucleo familiare' : 'Rimuovi ospite dal nucleo familiare')" 
+                                                @click="removeGuestFromFamily(index)">
+                                                <i class="fa fa-unlink"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

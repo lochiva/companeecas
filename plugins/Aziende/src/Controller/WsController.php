@@ -1803,108 +1803,123 @@ class WsController extends AppController
                 unset($data['draft_expiration']);
             }
 
-            $guests->patchEntity($entity, $data);
+            $data['family'] = json_decode($data['family']);
 
-            if($guests->save($entity)){
-                // Salvataggio ospiti famiglia
-                $data['family'] = json_decode($data['family']);
+            $familyAdult = false;
+            if (!empty($data['family'])) {
+                foreach($data['family'] as $familyGuest) {
+                    if (!$familyGuest->minor) {
+                        $familyAdult = true;
+                    }
+                }
+            }
 
-                if(count($data['family']) > 0 && !($entity->minor && $entity->minor_alone)){
-                    $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            // Ospiti minori non soli necessitano di una famiglia con adulto
+            if(!$data['minor'] || $data['minor_alone'] || $familyAdult) {
+                $guests->patchEntity($entity, $data);
 
-                    $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
+                if($guests->save($entity)){
+                    // Salvataggio ospiti famiglia
+                    if(count($data['family']) > 0 && !($entity->minor && $entity->minor_alone)){
+                        $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
 
-                    $familyId = '';
-                    if($guestHasFamily){
-                        // Ospite ha gia una famiglia a cui associare
-                        $familyId = $guestHasFamily['family_id'];
-                    }else{
-                        // Cerco se uno degli ospiti associati ha già una famiglia a cui associare
-                        foreach($data['family'] as $guest){ 
-                            if(!empty($guest->id)){
-                                $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
-                                if($guestHasFamily){
-                                    $familyId = $guestHasFamily['family_id'];
-                                    $newGuestFamily = $guestsFamilies->newEntity();
-                                    $newGuestFamily->family_id = $familyId;
-                                    $newGuestFamily->guest_id = $entity->id;
-                                    $guestsFamilies->save($newGuestFamily);
-                                    break;
+                        $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
+
+                        $familyId = '';
+                        if($guestHasFamily){
+                            // Ospite ha gia una famiglia a cui associare
+                            $familyId = $guestHasFamily['family_id'];
+                        }else{
+                            // Cerco se uno degli ospiti associati ha già una famiglia a cui associare
+                            foreach($data['family'] as $guest){ 
+                                if(!empty($guest->id)){
+                                    $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                                    if($guestHasFamily){
+                                        $familyId = $guestHasFamily['family_id'];
+                                        $newGuestFamily = $guestsFamilies->newEntity();
+                                        $newGuestFamily->family_id = $familyId;
+                                        $newGuestFamily->guest_id = $entity->id;
+                                        $guestsFamilies->save($newGuestFamily);
+                                        break;
+                                    }
                                 }
                             }
+                            if($familyId == ''){
+                                // Creo nuova famiglia a cui associare
+                                $newGuestFamily = $guestsFamilies->newEntity();
+                                $familyId = (int)$guestsFamilies->find()->order('family_id DESC')->first()['family_id'] + 1;
+                                $newGuestFamily->family_id = $familyId;
+                                $newGuestFamily->guest_id = $entity->id;
+                                $guestsFamilies->save($newGuestFamily);
+                            }
                         }
-                        if($familyId == ''){
-                            // Creo nuova famiglia a cui associare
-                            $newGuestFamily = $guestsFamilies->newEntity();
-                            $familyId = (int)$guestsFamilies->find()->order('family_id DESC')->first()['family_id'] + 1;
-                            $newGuestFamily->family_id = $familyId;
-                            $newGuestFamily->guest_id = $entity->id;
-                            $guestsFamilies->save($newGuestFamily);
+
+                        foreach($data['family'] as $guest){ 
+                            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+
+                            if(empty($guestHasFamily)){
+                                $newGuestFamily = $guestsFamilies->newEntity();
+                                $newGuestFamily->family_id = $familyId;
+                                $newGuestFamily->guest_id = $guest->id;
+                                $guestsFamilies->save($newGuestFamily);
+                            }
+                        }
+                    } else {
+                        // Se ospite minore solo rimuovo famiglia se presente
+                        $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                        $guestFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
+                        if ($guestFamily) {
+                            $guestsFamilies->removeGuestFromFamily($guestFamily, $entity->sede_id);
                         }
                     }
 
-                    foreach($data['family'] as $guest){ 
-                        $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                    // Creazione notifica
+                    $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                    $notification = $guestsNotifications->newEntity();
+                    $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                    $notificationData = [
+                        'type_id' => $notificationType->id,
+                        'azienda_id' => $sede->id_azienda,
+                        'sede_id' => $sede->id,
+                        'guest_id' => $entity->id,
+                        'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                    ];
+                    $guestsNotifications->patchEntity($notification, $notificationData);
+                    $guestsNotifications->save($notification);
 
-                        if(empty($guestHasFamily)){
-                            $newGuestFamily = $guestsFamilies->newEntity();
-                            $newGuestFamily->family_id = $familyId;
-                            $newGuestFamily->guest_id = $guest->id;
-                            $guestsFamilies->save($newGuestFamily);
+                    if ($saveType == 'CREATE_GUEST' || $saveType == 'CREATE_GUEST_UKRAINE') {
+                        // Aggiornamento storico
+                        $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+                        $history = $guestsHistory->newEntity();
+
+                        $historyData['guest_id'] = $entity->id;
+                        $historyData['azienda_id'] = $sede->id_azienda;
+                        $historyData['sede_id'] = $sede->id;
+                        $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+                        $historyData['operation_date'] = date('Y-m-d');
+                        $historyData['guest_status_id'] = 1;
+
+                        $guestsHistory->patchEntity($history, $historyData);
+                        $guestsHistory->save($history);
+                    }
+
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = $entity->id;
+                    $this->_result['msg'] = "Ospite salvato con successo.";
+                }else{
+                    $message = "Errore nel salvataggio dell'ospite."; 
+                    $fieldLabelsList = $guests->getFieldLabelsList();
+                    foreach($entity->errors() as $field => $errors){ 
+                        foreach($errors as $rule => $msg){ 
+                            $message .= "\n" . $fieldLabelsList[$field].': '.$msg;
                         }
-                    }
-                } else {
-                    // Se ospite minore solo rimuovo famiglia se presente
-                    $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-                    $guestFamily = $guestsFamilies->find()->where(['guest_id' => $entity->id])->first();
-                    if ($guestFamily) {
-                        $guestsFamilies->delete($guestFamily);
-                    }
+                    }  
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = $message;
                 }
-
-                // Creazione notifica
-                $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-                $notification = $guestsNotifications->newEntity();
-                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-                $notificationData = [
-                    'type_id' => $notificationType->id,
-                    'azienda_id' => $sede->id_azienda,
-                    'sede_id' => $sede->id,
-                    'guest_id' => $entity->id,
-                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                ];
-                $guestsNotifications->patchEntity($notification, $notificationData);
-                $guestsNotifications->save($notification);
-
-                if ($saveType == 'CREATE_GUEST' || $saveType == 'CREATE_GUEST_UKRAINE') {
-                    // Aggiornamento storico
-                    $guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
-                    $history = $guestsHistory->newEntity();
-
-                    $historyData['guest_id'] = $entity->id;
-                    $historyData['azienda_id'] = $sede->id_azienda;
-                    $historyData['sede_id'] = $sede->id;
-                    $historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-                    $historyData['operation_date'] = date('Y-m-d');
-                    $historyData['guest_status_id'] = 1;
-
-                    $guestsHistory->patchEntity($history, $historyData);
-                    $guestsHistory->save($history);
-                }
-
-                $this->_result['response'] = "OK";
-                $this->_result['data'] = $entity->id;
-                $this->_result['msg'] = "Ospite salvato con successo.";
-            }else{
-                $message = "Errore nel salvataggio dell'ospite."; 
-                $fieldLabelsList = $guests->getFieldLabelsList();
-                foreach($entity->errors() as $field => $errors){ 
-                    foreach($errors as $rule => $msg){ 
-                        $message .= "\n" . $fieldLabelsList[$field].': '.$msg;
-                    }
-                }  
+            } else {
                 $this->_result['response'] = "KO";
-                $this->_result['msg'] = $message;
+                $this->_result['msg'] = "Errore nel salvataggio dell'ospite: L'ospite è un minore e non si dichiara solo pertanto è necessario associarlo ad un nucleo familiare con adulto.";
             }
         } else { 
             $this->_result['response'] = "KO";
@@ -2072,7 +2087,7 @@ class WsController extends AppController
             if($guestHasFamily){
                 $familyId = $guestHasFamily['family_id'];
                 $guest['family_id'] = $familyId;
-                $guest['family'] = $guestsFamilies->getGuestsByFamily($familyId, $guest->sede_id, $guest->id, $guest->original_guest_id);
+                $guest['family'] = $guestsFamilies->getGuestsByFamily($familyId, $guest->sede_id, $guest->id);
             }
 
 			$this->_result['response'] = "OK";
@@ -2142,20 +2157,31 @@ class WsController extends AppController
         $id = $this->request->data['id'];
 
         if($id){
-            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $id])->first();
-
-            if($guestHasFamily){
-                if($guestsFamilies->delete($guestHasFamily)){
-                    $this->_result['response'] = "OK";
-                    $this->_result['msg'] = "Rimozione dell'ospite dalla famiglia avvenuta con successo";
-                }else{
+            $guest = TableRegistry::get('Aziende.Guests')->get($id);
+            if (!$guest['minor']) {
+                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $id])->first();
+                if($guestHasFamily){
+                    $countFamilyAdults = $guestsFamilies->countFamilyAdults($guestHasFamily['family_id'], $guest['sede_id']);
+                    if ($countFamilyAdults > 1) {
+                        if($guestsFamilies->removeGuestFromFamily($guestHasFamily, $guest['sede_id'])){
+                            $this->_result['response'] = "OK";
+                            $this->_result['msg'] = "Rimozione dell'ospite dalla famiglia avvenuta con successo";
+                        }else{
+                            $this->_result['response'] = "KO";
+                            $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia.";
+                        }
+                    }else{
+                        $this->_result['response'] = "KO";
+                        $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia: l'ospite è l'unico adulto.";
+                    }
+                } else {
                     $this->_result['response'] = "KO";
-                    $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia.";
+                    $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia: l'ospite non è associato a nessuna famiglia.";
                 }
-            }else{
+            } else {
                 $this->_result['response'] = "KO";
-                $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia: l'ospite non è associato a nessuna famiglia.";
+                $this->_result['msg'] = "Errore nella rimozione dell'ospite dalla famiglia: l'ospite è un minore.";
             }
         }else{
             $this->_result['response'] = "KO";

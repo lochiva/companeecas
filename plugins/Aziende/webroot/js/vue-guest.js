@@ -187,7 +187,37 @@ var app = new Vue({
     },
 
     computed: {
+        countFamilyAdults() {
+            var count = this.guestData.minor.value ? 0 : 1;
 
+            this.guestFamily.forEach((guest) => {
+                if (guest.minor == 0) {
+                    count++;
+                }
+            });
+
+            return count;
+        },
+
+        removeFamilyButtonMessage() {
+            if (this.guestStatus == 1 && !this.familyId) {
+                return "Rimozione ospite dal nucleo familiare disabilitata: l'ospite non appartiene a nessun nucleo familiare";
+            }
+            
+            if (this.guestStatus == 1 && this.guestData.minor.value) {
+                return "Rimozione ospite dal nucleo familiare disabilitata: l'ospite è un minore";
+            }
+
+            if (this.guestStatus == 1 && this.countFamilyAdults == 1) {
+                return "Rimozione ospite dal nucleo familiare disabilitata: unico adulto presente nel nucleo familiare";
+            }
+            
+            return "Rimuovi ospite dal nucleo familiare";
+        }
+    },
+
+    watch: {
+        
     },
       
     mounted: function () {
@@ -336,6 +366,16 @@ var app = new Vue({
                     }
                 }
             });
+            var familyAdult = false;
+            this.guestFamily.forEach((guest) => {
+                if (guest.minor == 0) {
+                    familyAdult = true;
+                }
+            });
+            if(this.guestData.minor.value && !this.guestData.minor_alone.value && !familyAdult){
+                errors = true;
+                msg += 'L\'ospite è un minore e non si dichiara solo pertanto è necessario associarlo ad un nucleo familiare con adulto.\n';
+            }
 
             if(errors){
                 alert(msg);
@@ -441,7 +481,7 @@ var app = new Vue({
 
         removeGuestFromFamily: function(index = ""){ 
             if(confirm("Attenzione! Si è sicuri di voler rimuovere l'ospite dalla famiglia?")){ 
-                if(index == ""){
+                if(index === ""){
                     let params = new URLSearchParams();
                     params.append('id', this.guestData.id.value);
 
@@ -451,6 +491,7 @@ var app = new Vue({
                             alert(res.data.msg);
                             this.familyId = '';
                             this.guestFamily = [];
+                            this.loadedFamily = JSON.stringify(this.guestFamily);
                         } else {
                             alert(res.data.msg);
                         }
@@ -522,6 +563,7 @@ var app = new Vue({
                     value = null;
                 }else{
                     this.guestFamily.push(value);
+                    this.loadedFamily = JSON.stringify(this.guestFamily);
                 }
             }
 

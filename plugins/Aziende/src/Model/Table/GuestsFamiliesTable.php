@@ -80,15 +80,18 @@ class GuestsFamiliesTable extends Table
         return $rules;
     }
 
-    public function getGuestsByFamily($familyId = "", $sedeId="", $guestId = "", $originalGuestId = "")
+    public function getGuestsByFamily($familyId = "", $sedeId="", $guestId = "")
     {
         $where = [
             'GuestsFamilies.family_id' => $familyId,
-            'GuestsFamilies.guest_id !=' => $guestId,
             'g.sede_id' => $sedeId,
             'g.status_id !=' => 6,
             'g.deleted' => '0'
         ];
+
+        if (!empty($guestId)) {
+            $where['GuestsFamilies.guest_id !='] = $guestId;
+        }
 
         return $this->find()
             ->select([
@@ -96,6 +99,7 @@ class GuestsFamiliesTable extends Table
                 'cui' => 'g.cui', 
                 'name' => 'g.name', 
                 'surname' => 'g.surname',
+                'minor' => 'g.minor',
                 'status_id' => 'g.status_id'
             ])
             ->where($where)
@@ -108,5 +112,54 @@ class GuestsFamiliesTable extends Table
                 ]
             ])
             ->toArray();
+    }
+
+    public function countFamilyAdults($familyId, $sedeId)
+    {
+        $guests = $this->getGuestsByFamily($familyId, $sedeId);
+
+        $count = 0;
+        if (!empty($guests)) {
+            foreach ($guests as $guest) {
+                if (!$guest['minor']) {
+                    $count++;
+                }
+            }
+        }
+
+        return $count;
+    }
+
+    public function removeGuestFromFamily($family, $sedeId)
+    {
+        $familyId = $family['family_id'];
+        
+        if ($this->delete($family)) {
+            $remainingFamily = $this->find()
+                ->where([
+                    'GuestsFamilies.family_id' => $familyId,
+                    'g.sede_id' => $sedeId,
+                    'g.status_id !=' => 6,
+                    'g.deleted' => '0'
+                ])
+                ->join([
+                    [
+                        'table' => 'guests',
+                        'alias' => 'g',
+                        'type' => 'left',
+                        'conditions' => 'g.id = GuestsFamilies.guest_id'
+                    ]
+                ])
+                ->toArray();
+                
+            // Se rimane un solo ospite nella famglia viene rimosso
+            if (count($remainingFamily) == 1) {
+                $this->delete($remainingFamily[0]);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }
