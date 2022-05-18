@@ -2003,22 +2003,43 @@ class WsController extends AppController
     {
         $id = $this->request->data['id'];
 
-        if($id){
-
+        if ($id) {
             $guests = TableRegistry::get('Aziende.Guests');
-
             $guest = $guests->get($id);
 
-            $guest->deleted = '1';
+            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $id])->first();
 
-            if($guests->save($guest)){
-                $this->_result['response'] = "OK";
-                $this->_result['msg'] = "Eliminazione dell'ospite avvenuta con successo";
-            }else{
-                $this->_result['response'] = "KO";
-                $this->_result['msg'] = "Errore nell'eliminazione dell'ospite";
+            //Controllo se ospite unico adulto di un nucleo familiare
+            $delete = true;
+            if (!$guest['minor']) {
+                if ($guestHasFamily) {
+                    $countFamilyAdults = $guestsFamilies->countFamilyAdults($guestHasFamily['family_id'], $guest['sede_id']);
+                    if ($countFamilyAdults == 1) {
+                        $delete = false;
+                    }
+                }
             }
-        }else{
+
+            if ($delete) {
+                $guest->deleted = 1;
+                if ($guests->save($guest)) {
+                    // Rimuovo relazione familiare
+                    if ($guestHasFamily) {
+                        $guestsFamilies->removeGuestFromFamily($guestHasFamily, $guest['sede_id']);
+                    }
+                    
+                    $this->_result['response'] = "OK";
+                    $this->_result['msg'] = "Eliminazione dell'ospite avvenuta con successo";
+                } else {
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = "Errore nell'eliminazione dell'ospite";
+                }
+            } else {
+                $this->_result['response'] = "KO";
+                    $this->_result['msg'] = "Errore nell'eliminazione dell'ospite: l'ospite è l'unico adulto del nucleo familiare";
+            }
+        } else {
             $this->_result['response'] = "KO";
             $this->_result['msg'] = "Errore nell'eliminazione dell'ospite: id mancante.";
         }
