@@ -405,7 +405,13 @@ class WsController extends AppController
 
             $this->_result = array('response' => 'OK', 'data' => $new, 'msg' => "Salvato");
         }else{
-            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio");
+            $errorMsg = '';
+            foreach($sede->errors() as $field => $errors){ 
+				foreach($errors as $rule => $msg){ 
+					$errorMsg .= ' '.$msg;
+				}
+			}  
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio. ".$errorMsg);
         }
 
     }

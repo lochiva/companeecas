@@ -37,7 +37,7 @@ class SediTable extends AppTable
         }
         $sede = $this->find()->where($where)->first();
         if (!empty($sede)) {
-            $entity->setError('code_centro', ['Il Codice Centro deve essere univoco.']);
+            $entity->setError('code_centro', ['Il Codice Centro è già usato per un\'altra struttura.']);
             return false;
         }
         return true;
