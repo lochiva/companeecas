@@ -128,7 +128,26 @@ class AziendaComponent extends Component
     {
         $az = TableRegistry::get('Aziende.Aziende');
 
-        return $az->softDelete($doc);
+        if ($az->softDelete($doc)) {
+            $sediTable = TableRegistry::get('Aziende.Sedi');
+            $guestsTable = TableRegistry::get('Aziende.Guests');
+
+            //Cancellazione sedi
+            $sedi = $sediTable->find()->where(['id_azienda' => $doc->id])->toArray();
+            foreach ($sedi as $sede) {
+                $sediTable->softDelete($sede);
+
+                //Cancellazione ospiti
+                $guests = $guestsTable->find()->where(['sede_id' => $sede->id])->toArray();
+                foreach ($guests as $guest) {
+                    $guestsTable->softDelete($guest);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function getAziendaAutocomplete($nome, $type)

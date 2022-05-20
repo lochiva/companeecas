@@ -284,7 +284,19 @@ class SediComponent extends Component
 
     public function _delete($doc){
         $az = TableRegistry::get('Aziende.Sedi');
-        return $az->softDelete($doc);
+        if ($az->softDelete($doc)) {
+            $guestsTable = TableRegistry::get('Aziende.Guests');
+
+            //Cancellazione ospiti
+            $guests = $guestsTable->find()->where(['sede_id' => $doc->id])->toArray();
+            foreach ($guests as $guest) {
+                $guestsTable->softDelete($guest);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 }
