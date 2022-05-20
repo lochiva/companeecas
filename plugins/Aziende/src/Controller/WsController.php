@@ -3060,7 +3060,7 @@ class WsController extends AppController
         $search = empty($this->request->query['q']) ? '' : $this->request->query['q'];
         $guests = [];
 
-        $where['CONCAT(g.cui, " - ", g.vestanet_id, " - ", g.name, " ", g.surname) LIKE'] =  '%'.$search.'%';
+        $where['CONCAT(g.cui, " - ", g.vestanet_id, " - ", g.name, " ", g.surname, " (", DATE_FORMAT(g.birthdate, "%d/%m/%Y"), ")") LIKE'] =  '%'.$search.'%';
         $where['s.deleted'] = 0;
         $where['a.deleted'] = 0;
 
@@ -3076,7 +3076,7 @@ class WsController extends AppController
         $res = $guestsTable->find()
             ->select([
                 'g.id', 
-                'text' => 'CONCAT(g.cui, " - ", g.vestanet_id, " - ", g.name, " ", g.surname)', 'sede' => 'GROUP_CONCAT(g.sede_id SEPARATOR ",")', 
+                'text' => 'CONCAT(g.cui, " - ", g.vestanet_id, " - ", g.name, " ", g.surname, " (", DATE_FORMAT(g.birthdate, "%d/%m/%Y"), ")")', 'sede' => 'GROUP_CONCAT(g.sede_id SEPARATOR ",")', 
                 'original_guest' => 'IF(g.original_guest_id IS NULL, g.id, g.original_guest_id)'
             ])
             ->where($where)
