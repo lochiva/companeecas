@@ -1964,7 +1964,7 @@ class WsController extends AppController
 
         $res = $guests->find()
             ->select($guests)
-            ->select(['s.indirizzo', 's.num_civico', 'c.Des_luo', 'c.s_prv', 'a.denominazione', 'gs.name'])
+            ->select(['s.indirizzo', 's.num_civico', 'c.des_luo', 'c.s_prv', 'a.denominazione', 'gs.name'])
             ->where($where)
             ->join([
                 [
