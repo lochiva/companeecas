@@ -259,6 +259,7 @@ $(document).ready(function(){
 
                                     </div>
                                 </div>
+                                <?php /*
                                 <div class="form-group">
                                     <a href="<?= $googleAuthLink ?>" class="" target="_blank" >
                                       <label class="col-md-3 control-label required" for="inputCognome" style="cursor:pointer !important;">
@@ -269,6 +270,7 @@ $(document).ready(function(){
                                       'placeholder'=>(empty($user['googleAccessToken']) ? 'Codice google' : 'Account già collegato' ) )) ?>
                                     </div>
                                 </div>
+                                */ ?>
                                 <div class="form-group">
                                   <label class="col-md-3 control-label " for="inputImage">Immagine profilo</label>
                                   <div class="col-md-9">
