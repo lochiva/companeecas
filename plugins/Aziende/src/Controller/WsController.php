@@ -2539,6 +2539,37 @@ class WsController extends AppController
         }
     }
 
+    public function deleteAgreement()
+    {
+        $data = $this->request->data;
+
+		if(!empty($data['id'])){
+
+            $activeSediCount = TableRegistry::get('Aziende.AgreementsToSedi')->countActiveSediForAgreement($data['id']);
+
+            if ($activeSediCount == 0) {
+
+                $agreements = TableRegistry::get('Aziende.Agreements');
+
+                $agreement = $agreements->get($data['id']);
+
+                if ($agreements->softDelete($agreement)) {
+                    $this->_result['response'] = "OK";
+                    $this->_result['msg'] = "Convenzione cancellata con successo.";
+                } else {
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = "Errore nella cancellazione della convenzione.";
+                }
+            }else{ 
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = "Errore nella cancellazione della convenzione: la convenzione ha delle sedi collegate.";
+            }
+        }else{ 
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = "Errore nella cancellazione della convenzione: ID mancante.";
+        }
+    }
+
     public function getAgreement($id)
 	{
         $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['AgreementsToSedi']]);

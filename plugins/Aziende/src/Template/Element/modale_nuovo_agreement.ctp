@@ -82,7 +82,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     <hr>
                     <?php foreach($sedi as $sede) { ?>
                         <div class="form-group">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <input type="checkbox" name="sedi[<?=$sede['id']?>][active]" id="inputSedeCheck<?=$sede['id']?>" data-id="<?=$sede['id']?>" class="agreement-sede-check">
                                 <label for="inputSedeCheck<?=$sede['id']?>"><?=$sede['indirizzo'].' '.$sede['num_civico'].' - '.$sede['comune']['des_luo']?></label>
                             </div>
@@ -95,6 +95,7 @@ $role = $this->request->session()->read('Auth.User.role');
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" id="deleteAgreement">Cancella</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
                 <button type="button" class="btn btn-primary" id="saveAgreement" >Salva</button>
             </div>

@@ -91,4 +91,14 @@ class AgreementsToSediTable extends AppTable
 
         return $rules;
     }
+
+    public function countActiveSediForAgreement($id)
+    {
+        return $this->find()
+            ->where([
+                'agreement_id' => $id,
+                'active' => 1
+            ])
+            ->count();
+    }
 }

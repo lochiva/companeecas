@@ -211,7 +211,30 @@ $(document).ready(function(){
     // Preset modale all'apertura per nuova convenzione
     $('#newAgreement').click(function() {
         $('#inputCapacityIncrement0').prop('checked', true);
+        $('#deleteAgreement').hide();
     });
+
+    $('#deleteAgreement').click(function(){
+        if(confirm('Si è sicuri di voler cancellare la convenzione?')){
+            var id = $('#agreementId').val();
+            $.ajax({
+                url : pathServer + "aziende/Ws/deleteAgreement",
+                type: "POST",
+                dataType: "json",
+                data: {id: id}
+            }).done(function (res) {
+                if(res.response == "OK"){
+                    $('#table-agreements').trigger('update');
+                    $('#modalAgreement').modal('hide');
+                }else{
+                    alert(res.msg);
+                }
+            }).fail(function(richiesta, stato, errori) {
+                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+            });
+        }
+    });
+
 });
 
 $(document).on('click', '.edit-agreement', function(){
@@ -232,6 +255,7 @@ $(document).on('click', '.edit-agreement', function(){
             $('#inputDateExtensionExpiration').datepicker('setDate', res.data.date_extension_expiration);
             $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
             $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
+            var countInactiveSedi = 0;
             res.data.agreements_to_sedi.forEach(function(sede) {
                 if (sede.active) {
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
@@ -246,6 +270,7 @@ $(document).on('click', '.edit-agreement', function(){
                     $('#inputSedeCapacity'+sede.sede_id).prop('disabled', true);
                     $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
                     $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                    countInactiveSedi++;
                 }
             })
 
@@ -253,6 +278,17 @@ $(document).on('click', '.edit-agreement', function(){
             if (role == 'ente' && res.data.approved) {
                 $('.approved-message').show();
                 disableApprovedModal();
+            }
+
+            // Se onvenzione non ha sedi attive abilito tasto di cancellazione
+            if (res.data.agreements_to_sedi.length == countInactiveSedi) {
+                $('#deleteAgreement').show();
+                $('#deleteAgreement').prop('disabled', false);
+                $('#deleteAgreement').attr('title', '');
+            } else {
+                $('#deleteAgreement').show();
+                $('#deleteAgreement').prop('disabled', true);
+                $('#deleteAgreement').attr('title', 'Non è possibile cancellare una convenzione che ha delle strutture collegate');
             }
 
             $('#modalAgreement').modal('show');
