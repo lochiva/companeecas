@@ -17,12 +17,21 @@ class AziendaComponent extends Component
           1 => ['val' => 'telefono', 'type' => 'text'],
           2 => ['val' => 'email_info', 'type' => 'text'],
           3 => ['val' => 'sito_web', 'type' => 'text'],
+          4 => ['val' => 'at.name', 'type' => 'text'],
 		  //5 => ['val' => 'piva', 'type' => 'text'],
 		  //6 => ['val' => 'pa_codice', 'type' => 'text'],
          ];
          $opt['fields'] = ['denominazione', 'nome_cognome' => 'CONCAT(nome,SPACE(1),cognome)', 'telefono',
-                    'email_info', 'sito_web', 'piva', 'id', 'cliente', 'fornitore', 'interno', 'id_cliente_fattureincloud',
-           		    'id_fornitore_fattureincloud', 'pa_codice', 'id_tipo'];
+                    'email_info', 'sito_web', 'piva', 'Aziende.id', 'cliente', 'fornitore', 'interno', 'id_cliente_fattureincloud',
+           		    'id_fornitore_fattureincloud', 'pa_codice', 'id_tipo', 'at.name'];
+        $opt['join'] = [
+            [
+                'table' => 'aziende_tipi',
+                'alias' => 'at',
+                'type' => 'left',
+                'conditions' => 'at.id = Aziende.id_tipo'
+            ]
+        ];
         $opt['order'] = ['Aziende.denominazione' => 'ASC', 'nome_cognome' => 'ASC'];
         $toRet['res'] = $az->queryForTableSorter($columns, $opt, $pass);
         $toRet['tot'] = $az->queryForTableSorter($columns, $opt, $pass, true);

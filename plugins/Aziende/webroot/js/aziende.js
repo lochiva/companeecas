@@ -5,7 +5,7 @@ $(document).ready(function(){
 	$("#table-aziende").tablesorter({
         theme: 'bootstrap',
         headerTemplate: '{content} {icon}',
-        widgets : [ 'zebra', 'cssStickyHeaders' , 'columns', 'filter', 'uitheme' ],
+        widgets : [ 'zebra', 'cssStickyHeaders' , 'columns', 'filter', 'saveSort', 'uitheme' ],
         widgetOptions: {
           cssStickyHeaders_offset        : $('header:first').height(),
           cssStickyHeaders_addCaption    : false,
@@ -14,12 +14,20 @@ $(document).ready(function(){
           cssStickyHeaders_filteredToTop : false,
           cssStickyHeaders_zIndex        : 99000,
 
+		  saveSort: true,
+          filter_saveFilters : true,
+
           filter_functions:{
               //1:function(e,n,f,i,$r){return e===f;},
               //2:provider,
-          }
+          },
+		  filter_formatter: {
+				'.filters-reset': function ($cell, indx) {
+					return $cell.html('<button type="button" class="btn btn-default btn-block btn-reset-filters-aziende"><i class="fa fa-eraser"></i></button>');
+				},
+			},
         },
-        headers: { 4: { filter: false, sorter:false}, 5: { filter: false, sorter:false} }
+        headers: { 5: { filter: false, sorter:false}, 6: { sorter:false} }
     }).tablesorterPager({
 
           // **********************************
@@ -159,6 +167,9 @@ $(document).ready(function(){
 					}
 				}
 		});
+
+		//resetto filtri al click
+		$('.btn-reset-filters-aziende').click(function () { $("#table-aziende").trigger('filterReset').trigger('sortReset').trigger('update'); return false; });
 
 
 

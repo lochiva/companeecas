@@ -48,15 +48,16 @@ use Cake\Routing\Router;
                         <table id="table-aziende" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Denominazione</th>
+                                    <th width="20%">Denominazione</th>
                                     <!--<th width="15%">Nome e Cognome</th>-->
-                                    <th>Telefono</th>
-                                    <th>Email</th>
-                                    <th>Sito Web</th>
-                                    <th>Posti</th>
+                                    <th width="15%">Telefono</th>
+                                    <th width="15%">Email</th>
+                                    <th width="15%">Sito Web</th>
+                                    <th width="15%">Tipo</th>
+                                    <th width="10%">Posti</th>
                                     <!--<th width="10%">Partita IVA</th>-->
 									<!--<th width="10%">Codice Destinatario</th>-->
-                                    <th style="width: 130px;"></th>
+                                    <th width="130px" class="filters-reset"></th>
                                 </tr>
                             </thead>
                             <tbody>

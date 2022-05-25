@@ -130,6 +130,7 @@ class WsController extends AppController
                     htmlspecialchars($azienda->telefono),
                     htmlspecialchars($azienda->email_info),
                     htmlspecialchars($azienda->sito_web),
+                    htmlspecialchars($azienda['at']['name']),
                     //htmlspecialchars($azienda->piva),
 					//htmlspecialchars($azienda->pa_codice),
                     $countGuestsAzienda.'/'.$countPostiForAzienda,
