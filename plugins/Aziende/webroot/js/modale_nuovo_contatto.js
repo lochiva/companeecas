@@ -27,7 +27,7 @@ $(document).ready(function(){
  			 placeholder: 'Selezione un user',
  			 closeOnSelect: true,
  			 dropdownParent: $("#idUserSelectParent"),
- 			 minimumInputLength: 3,
+ 			 minimumInputLength: 2,
  			 ajax: {
  				 url: pathServer+'ws/autocompleteUser',
  				 dataType: 'json',
