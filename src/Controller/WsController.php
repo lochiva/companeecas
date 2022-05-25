@@ -171,7 +171,7 @@ class WsController extends AppController
         $nome = $this->request->query['q'];
         $res = array();
 
-        if(strlen($nome) < 3){
+        if(strlen($nome) < 2){
           $this->_result = array('response' => 'KO', 'data' => $res, 'msg' => "Devi inserire almeno tre lettere.");
         }else{
           $luoghiTable = TableRegistry::get('Luoghi');
