@@ -215,23 +215,28 @@ $(document).ready(function(){
     });
 
     $('#deleteAgreement').click(function(){
-        if(confirm('Si è sicuri di voler cancellare la convenzione?')){
-            var id = $('#agreementId').val();
-            $.ajax({
-                url : pathServer + "aziende/Ws/deleteAgreement",
-                type: "POST",
-                dataType: "json",
-                data: {id: id}
-            }).done(function (res) {
-                if(res.response == "OK"){
-                    $('#table-agreements').trigger('update');
-                    $('#modalAgreement').modal('hide');
-                }else{
-                    alert(res.msg);
-                }
-            }).fail(function(richiesta, stato, errori) {
-                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-            });
+        var approved = $('#formAgreement #approved').val();
+        if (approved == 0) {
+            if(confirm('Si è sicuri di voler cancellare la convenzione?')){
+                var id = $('#agreementId').val();
+                $.ajax({
+                    url : pathServer + "aziende/Ws/deleteAgreement",
+                    type: "POST",
+                    dataType: "json",
+                    data: {id: id}
+                }).done(function (res) {
+                    if(res.response == "OK"){
+                        $('#table-agreements').trigger('update');
+                        $('#modalAgreement').modal('hide');
+                    }else{
+                        alert(res.msg);
+                    }
+                }).fail(function(richiesta, stato, errori) {
+                    alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+                });
+            }
+        } else {
+            alert("Attenzione! La convenzione è in stato approvato pertanto non può essere cancellata");
         }
     });
 
@@ -246,6 +251,7 @@ $(document).on('click', '.edit-agreement', function(){
     }).done(function (res) {
         if(res.response == "OK"){
             $('#agreementId').val(res.data.id);
+            $('#formAgreement #approved').val(Number(res.data.approved));
             if (role == 'admin') {
                 $('#inputApproved').prop('checked', res.data.approved);
             }

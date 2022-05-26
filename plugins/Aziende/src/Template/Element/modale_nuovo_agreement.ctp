@@ -15,6 +15,7 @@ $role = $this->request->session()->read('Auth.User.role');
                 <form class="form-horizontal" id="formAgreement">
                     <input type="hidden" name="id" id="agreementId" value="">
                     <input type="hidden" name="azienda_id" id="aziendaId" value="<?=$azienda['id']?>">
+                    <input type="hidden" id="approved">
 
                     <?php if ($role == 'admin') { ?>
                         <div class="form-group">

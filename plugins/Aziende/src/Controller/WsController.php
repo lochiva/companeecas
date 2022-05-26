@@ -2554,12 +2554,18 @@ class WsController extends AppController
 
                 $agreement = $agreements->get($data['id']);
 
-                if ($agreements->softDelete($agreement)) {
-                    $this->_result['response'] = "OK";
-                    $this->_result['msg'] = "Convenzione cancellata con successo.";
-                } else {
+                if ($agreement['approved'] == 0) {
+
+                    if ($agreements->softDelete($agreement)) {
+                        $this->_result['response'] = "OK";
+                        $this->_result['msg'] = "Convenzione cancellata con successo.";
+                    } else {
+                        $this->_result['response'] = "KO";
+                        $this->_result['msg'] = "Errore nella cancellazione della convenzione.";
+                    }
+                }else{ 
                     $this->_result['response'] = "KO";
-                    $this->_result['msg'] = "Errore nella cancellazione della convenzione.";
+                    $this->_result['msg'] = "Errore nella cancellazione della convenzione: la convenzione è in stato approvato pertanto non può essere cancellata.";
                 }
             }else{ 
                 $this->_result['response'] = "KO";
