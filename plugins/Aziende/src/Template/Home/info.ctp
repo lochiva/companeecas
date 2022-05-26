@@ -6,9 +6,6 @@ use Cake\Routing\Router;
 <?= $this->Html->script( 'Aziende.aziende_info', ['block' => 'script']); ?>
 <?= $this->Html->script( 'Aziende.fornitori' ); ?>
 <?= $this->Html->script( 'Aziende.clienti' ); ?>
-<?= $this->Html->script( 'Crm.offers' ); ?>
-<?= $this->Html->css('Leads.leads'); ?>
-<?= $this->Html->script( 'Leads.leads'); ?>
 <script>
     var id_azienda = <?= $azienda->id ?>;
 </script>
