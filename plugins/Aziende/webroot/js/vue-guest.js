@@ -655,6 +655,10 @@ var app = new Vue({
                 alert("L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di uscita.")
             } else {
                 let modalGuestExit = this.$refs.modalGuestExit;
+                $(modalGuestExit).modal({
+                    backdrop: false,
+                    keyboard: false
+                });
                 $(modalGuestExit).modal('show');
             }
         },
@@ -755,6 +759,10 @@ var app = new Vue({
             var date = this.exitData.date.split('/');
             this.confirmExitProcedureData.check_out_date.value = date[2]+'-'+date[1]+'-'+date[0];
             let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
+            $(modalConfirmGuestExit).modal({
+                backdrop: false,
+                keyboard: false
+            });
             $(modalConfirmGuestExit).modal('show');
         },
 
@@ -845,6 +853,10 @@ var app = new Vue({
                         if (res.data.response == 'OK') {
                             this.transferProcedureData.azienda.value = res.data.data; 
                             let modalGuestTransfer = this.$refs.modalGuestTransfer;
+                            $(modalGuestTransfer).modal({
+                                backdrop: false,
+                                keyboard: false
+                            });
                             $(modalGuestTransfer).modal('show');
                         } else {
                             alert(res.data.msg);
