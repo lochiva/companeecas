@@ -106,6 +106,10 @@ var app = new Vue({
 
         },
 
+        next () {
+            window.location = pathServer + 'aziende/sedi/presenze?sede=' + this.next_sede;
+        },
+
         checkAllGuests () {
             if (this.check_all_guests) {
                 this.guests.forEach(function(guest) {

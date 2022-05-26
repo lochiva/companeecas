@@ -85,13 +85,20 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div class="box-footer">
-                        <button type="button" class="btn btn-success pull-right" id="savePresenzeNext" @click="save(true)"
-                            :disabled="!next_sede" :title="noNextSedeMessage">
-                            Salva e prossimo
-                        </button>
-                        <button type="button" class="btn btn-primary pull-right btn-save-presenze" id="savePresenze" @click="save(false)">
-                            Salva
-                        </button>
+                        <div v-if="guests.length > 0">
+                            <button type="button" class="btn btn-success pull-right" id="savePresenzeNext" @click="save(true)"
+                                :disabled="!next_sede" :title="noNextSedeMessage">
+                                Salva e prossimo
+                            </button>
+                            <button type="button" class="btn btn-primary pull-right btn-save-presenze" id="savePresenze" @click="save(false)">
+                                Salva
+                            </button>
+                        </div>
+                        <div v-else>
+                            <button type="button" class="btn btn-success pull-right" id="nextSede" @click="next()">
+                                Prossimo
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

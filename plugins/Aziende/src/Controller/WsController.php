@@ -1669,19 +1669,19 @@ class WsController extends AppController
 
         $azienda = TableRegistry::get('Aziende.Aziende')->get($sede['id_azienda']);
 
-        if(isset($pass['query']['filter'][7])){
-			if($pass['query']['filter'][7] == 'No'){
-				$pass['query']['filter'][7] = 0;
-			}elseif($pass['query']['filter'][7] == 'Sì'){
-				$pass['query']['filter'][7] = 1;
+        if(isset($pass['query']['filter'][8])){
+			if($pass['query']['filter'][8] == 'No'){
+				$pass['query']['filter'][8] = 0;
+			}elseif($pass['query']['filter'][8] == 'Sì'){
+				$pass['query']['filter'][8] = 1;
 			}
 		}
 
-        if(isset($pass['query']['filter'][9])){
-			if($pass['query']['filter'][9] == 'No'){
-				$pass['query']['filter'][9] = 0;
-			}elseif($pass['query']['filter'][9] == 'Sì'){
-				$pass['query']['filter'][9] = 1;
+        if(isset($pass['query']['filter'][10])){
+			if($pass['query']['filter'][10] == 'No'){
+				$pass['query']['filter'][10] = 0;
+			}elseif($pass['query']['filter'][10] == 'Sì'){
+				$pass['query']['filter'][10] = 1;
 			}
 		}
 
@@ -1742,6 +1742,7 @@ class WsController extends AppController
                 $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['surname'];
                 $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.(empty($guest['birthdate']) ? '' : $guest['birthdate']->format('d/m/Y')).'</td>';
                 $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['sex'].'</td>';
+                $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$guest['l']['des_luo'].'</td>';
                 if ($azienda['id_tipo'] == 1) {
                     $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.($guest['draft'] ? 'Sì' : 'No').'</td>';
                     $out['rows'][$key][] = '<td class="'.$classPresenze.'">'.$alertDraftIcon.' '.(empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('d/m/Y')).'</td>';

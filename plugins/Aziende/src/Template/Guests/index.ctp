@@ -79,6 +79,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <th>Cognome</th>
                                     <th>Data di nascita</th>
                                     <th class="filter-select filter-sex">Sesso</th>
+                                    <th>Nazionalità</th>
                                     <?php if ($azienda['id_tipo'] == 1) { ?>
                                         <th class="filter-select filter-draft">Stato bozza</th>
                                         <th>Scadenza stato bozza</th>

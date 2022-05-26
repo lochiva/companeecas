@@ -20,6 +20,7 @@ class GuestComponent extends Component
 		$columns[] = ['val' => 'Guests.surname', 'type' => 'text'];
 		$columns[] = ['val' => 'Guests.birthdate', 'type' => 'date'];
 		$columns[] = ['val' => 'Guests.sex', 'type' => 'text'];
+		$columns[] = ['val' => 'l.des_luo', 'type' => 'text'];
 		if ($aziendaTipo == 1) {
 			$columns[] = ['val' => 'Guests.draft', 'type' => 'number'];
 			$columns[] = ['val' => 'Guests.draft_expiration', 'type' => 'date'];
@@ -41,7 +42,8 @@ class GuestComponent extends Component
 			'Guests.suspended',
 			'Guests.status_id',
 			'gs.name',
-			'gs.color'
+			'gs.color',
+			'l.des_luo'
 		];
 
 		$opt['join'] = [
@@ -50,6 +52,12 @@ class GuestComponent extends Component
 				'alias' => 'gs',
 				'type' => 'LEFT',
 				'conditions' => 'Guests.status_id = gs.id'
+			],
+			[
+				'table' => 'luoghi',
+				'alias' => 'l',
+				'type' => 'LEFT',
+				'conditions' => 'Guests.country_birth = l.c_luo'
 			]
 		];
         
