@@ -1003,22 +1003,23 @@ var app = new Vue({
         },
 
         searchTransferAziende: function(search, loading) { 
-            if(search != ''){
-                loading(true);
-                axios.get(pathServer + 'aziende/ws/searchTransferAziende/'+search)
-                .then(res => { 
-                    if (res.data.response == 'OK') {
-                        this.transferAziende = res.data.data; 
-                        loading(false);
-                    } else {
-                        this.transferAziende = [];
-                        loading(false);
-                    }
-                }).catch(error => {
-                    console.log(error);
+            search = search || this.$refs.selectAzienda.search;
+            loading = loading || this.$refs.selectAzienda.toggleLoading;
+
+            loading(true);
+            axios.get(pathServer + 'aziende/ws/searchTransferAziende/'+search)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.transferAziende = res.data.data; 
                     loading(false);
-                });
-            }
+                } else {
+                    this.transferAziende = [];
+                    loading(false);
+                }
+            }).catch(error => {
+                console.log(error);
+                loading(false);
+            });
         },
 
         setTransferAzienda: function(value) { 
@@ -1030,35 +1031,36 @@ var app = new Vue({
         },
 
         searchTransferSedi: function(search, loading) {
-            if(search != ''){
-                var error = false;
+            search = search || this.$refs.selectSede.search;
+            loading = loading || this.$refs.selectSede.toggleLoading;
 
-                if(this.transferProcedureData.azienda.value == "" || this.transferProcedureData.azienda.value == null){
-                    error = true;
-                    this.transferProcedureData.azienda.hasError = true;
-                }else{
-                    this.transferProcedureData.azienda.hasError = false;
-                }   
+            var error = false;
 
-                if(error){
-                    alert('Si prega di compilare il campo ENTE.');
-                    this.transferSedi = [];
-                }else{
-                    loading(true);
-                    axios.get(pathServer + 'aziende/ws/searchTransferSedi/'+this.guestData.sede_id.value+'/'+this.transferProcedureData.azienda.value.id+'/'+search)
-                    .then(res => { 
-                        if (res.data.response == 'OK') {
-                            this.transferSedi = res.data.data; 
-                            loading(false);
-                        } else {
-                            this.transferSedi = [];
-                            loading(false);
-                        }
-                    }).catch(error => {
-                        console.log(error);
+            if(this.transferProcedureData.azienda.value == "" || this.transferProcedureData.azienda.value == null){
+                error = true;
+                this.transferProcedureData.azienda.hasError = true;
+            }else{
+                this.transferProcedureData.azienda.hasError = false;
+            }   
+
+            if(error){
+                alert('Si prega di compilare il campo ENTE.');
+                this.transferSedi = [];
+            }else{
+                loading(true);
+                axios.get(pathServer + 'aziende/ws/searchTransferSedi/'+this.guestData.sede_id.value+'/'+this.transferProcedureData.azienda.value.id+'/'+search)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.transferSedi = res.data.data; 
                         loading(false);
-                    });
-                }
+                    } else {
+                        this.transferSedi = [];
+                        loading(false);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    loading(false);
+                });
             }
         },
 
