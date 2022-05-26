@@ -22,7 +22,7 @@ use Cake\Routing\Router;
                 <div class="box-header with-border">
                   <i class="fa fa-list-ul"></i>
                   <h3 class="box-title"><?=__c('Elenco degli Enti')?></h3>
-                  <a id="box-general-action" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalAzienda" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                  <a id="box-general-action" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-table-aziende box-body">

@@ -97,7 +97,7 @@ use Cake\Routing\Router;
                 <div class="box-footer clearfix">
 
                     <a class="btn btn-sm btn-default btn-flat pull-right edit"  data-id="<?= $azienda->id ?>"data-toggle="modal"
-                       data-target="#myModalAzienda" data-parentTab="#click_tab_1" >Modifica</a>
+                       data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false" data-parentTab="#click_tab_1" >Modifica</a>
 
                 </div><!-- /.box-footer -->
 
@@ -148,7 +148,7 @@ use Cake\Routing\Router;
                                             <td width="50px" style="padding-left: 0px; padding-right: 0px">
                                               <div class="tools-hover">
                                                 <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_2" data-childTab="#click_subtab_sede_<?=$sede->id?>"
-                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
+                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
                                                 &nbsp;
                                                 <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella struttura"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
                                               </div>
@@ -170,7 +170,7 @@ use Cake\Routing\Router;
                 <div class="box-footer clearfix">
 
                     <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_2" data-childTab=".add-tab-sede"
-                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda">Inserisci nuova struttura</a>
+                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false">Inserisci nuova struttura</a>
 
                 </div>
             </div>
@@ -202,7 +202,7 @@ use Cake\Routing\Router;
 
                                     <div class="product-info" style="position:relative">
                                         <a class="product-title edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
-                                            data-id="<?= $azienda->id ?>" data-target="#myModalAzienda">
+                                            data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false">
                                             <?=h($contatto->cognome . " " . $contatto->nome)?>
                                             <span class="label ruoliBG-<?=$contatto->id_ruolo?> pull-right">
                                               <?=h(!empty($contatto->ruolo->ruolo)? $contatto->ruolo->ruolo : '')?></span>
@@ -216,7 +216,7 @@ use Cake\Routing\Router;
                                         </span>
                                         <div class="tools-hover " style="margin-top:-20px">
                                             <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
-                                            data-id="<?= $azienda->id ?>" data-target="#myModalAzienda"><i data-toggle="tooltip" data-placement="left" title="Modifica contatto" class="text-red glyphicon glyphicon-pencil"></i></a>
+                                            data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica contatto" class="text-red glyphicon glyphicon-pencil"></i></a>
                                             &nbsp;
                                             <a class="delete-contatto pointer" data-id="<?= $contatto->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella contatto"><i class="text-red glyphicon glyphicon-trash pull-right"></i></a>
                                         </div>
@@ -238,7 +238,7 @@ use Cake\Routing\Router;
                 <div class="box-footer text-center">
                     <!--<a class="uppercase" href="javascript::;">View All Products</a>-->
                     <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_3" data-childTab=".add-tab-contatto"
-                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda">Inserisci nuovo Contatto</a>
+                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false">Inserisci nuovo Contatto</a>
                 </div><!-- /.box-footer -->
             </div>
         </div>
