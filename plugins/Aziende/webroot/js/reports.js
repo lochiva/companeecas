@@ -53,6 +53,23 @@ $(document).ready(function(){
         checkCookieForLoader('downloadStarted', '1');
     });
 
+    //Esporta tutti gli ospiti cas
+    $('#exportGuestsCas').click(function() {
+        $('#template-spinner').show();
+
+        var url = pathServer+'aziende/reports/exportGuestsCas';
+
+        var year = $('#yearExportGuestsCas').val();
+        url += '?year=' + year;
+
+        var month = $('#monthExportGuestsCas').val();
+        url += '&month=' + month;
+        
+        window.location = url;
+
+        checkCookieForLoader('downloadStarted', '1');
+    });
+
 });
 
 function checkCookieForLoader(name, value) {

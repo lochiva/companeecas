@@ -45,6 +45,8 @@ class ReportsController extends AppController
 
 	public function reportGuestsCas()
     {
+		set_time_limit(120);
+
         $date = implode('-', array_reverse(explode('/', $this->request->query['date'])));
 
 		$spreadsheet = new Spreadsheet();
@@ -117,6 +119,8 @@ class ReportsController extends AppController
 
     public function reportGuestsEmergenzaUcraina()
     {
+		set_time_limit(120);
+
         $date = implode('-', array_reverse(explode('/', $this->request->query['date'])));
 
 		$spreadsheet = new Spreadsheet();
@@ -221,6 +225,8 @@ class ReportsController extends AppController
 
 	public function exportGuestsEmergenzaUcraina()
     {
+		set_time_limit(120);
+
 		$spreadsheet = new Spreadsheet();
 
 		// RIEPILOGO STRUTTURE
@@ -265,6 +271,112 @@ class ReportsController extends AppController
 		$spreadsheet->setActiveSheetIndex(0);
 
         $filename = "LISTA OSPITI EMERGENZA UCRAINA";
+
+		setcookie('downloadStarted', '1', false, '/');
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+		$writer->save('php://output');
+
+		exit;
+
+    }
+
+	public function exportGuestsCas()
+    {
+		set_time_limit(120);
+		
+		$year = $this->request->query['year'];
+		$month = $this->request->query['month'];
+
+		$guestsTable = TableRegistry::get('Aziende.Guests');
+
+		$user = $this->request->session()->read('Auth.User');
+		$contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
+
+        $data = $guestsTable->getDataForExportGuestsCas($contatto['id_azienda'], $year, $month);
+
+		$spreadsheet = new Spreadsheet();
+
+		foreach ($data as $index => $sedeData) {
+			// DETTAGLIO STRUTTURE
+			if ($index > 0) {
+				$spreadsheet->createSheet(NULL, 1);
+			}
+			$spreadsheet->setActiveSheetIndex($index);
+			$spreadsheet->getActiveSheet()->setTitle($sedeData['name']);
+
+			//ultima colonna e dimensione automatica delle celle
+			$c = 'A';
+			for($i = 1; $i < count($sedeData['data'][0]); $i++){
+				$spreadsheet->getActiveSheet()->getColumnDimension($c)->setAutoSize(true);
+				++$c;
+			}
+
+			//unione righe instestazione
+			$spreadsheet->getActiveSheet()->mergeCells('A1:E1');
+			$spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('A2:E2');
+			$spreadsheet->getActiveSheet()->getStyle('A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('F1:W1');
+			$spreadsheet->getActiveSheet()->getStyle('F1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('F2:W2');
+			$spreadsheet->getActiveSheet()->getStyle('F2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('X1:Z1');
+			$spreadsheet->getActiveSheet()->getStyle('X1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('AA1:AG1');
+			$spreadsheet->getActiveSheet()->getStyle('AA1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('AH1:AJ1');
+			$spreadsheet->getActiveSheet()->getStyle('AH1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->mergeCells('AK1:AO1');
+			$spreadsheet->getActiveSheet()->getStyle('AK1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+			$spreadsheet->getActiveSheet()->mergeCells('A3:I3');
+			$spreadsheet->getActiveSheet()->mergeCells('J3:AO3');
+			$spreadsheet->getActiveSheet()->getStyle('J3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+			//Dimensione testo prima intestazione
+			$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')->getFont()->setSize(16);
+			$spreadsheet->getActiveSheet()->getStyle('A2:'.$c.'2')->getFont()->setSize(16);
+
+			//filtri riga intestazione
+			$spreadsheet->getActiveSheet()->setAutoFilter('A4:'.$c.'4');
+
+			//grassetto riga intestazione
+			$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
+				->getFont()->setBold(true);
+			$spreadsheet->getActiveSheet()->getStyle('A2:'.$c.'2')
+				->getFont()->setBold(true);
+			$spreadsheet->getActiveSheet()->getStyle('A3:'.$c.'3')
+				->getFont()->setBold(true);
+			$spreadsheet->getActiveSheet()->getStyle('A4:'.$c.'4')
+				->getFont()->setBold(true);
+
+			$spreadsheet->getActiveSheet()->fromArray($sedeData['data'], NULL);
+		}
+
+		$spreadsheet->setActiveSheetIndex(0);
+
+		$monthLabels = [
+			'01' => 'GENNAIO',
+			'02' => 'FEBBRAIO',
+			'03' => 'MARZO',
+			'04' => 'APRILE',
+			'05' => 'MAGGIO',
+			'06' => 'GIUGNO',
+			'07' => 'LUGLIO',
+			'08' => 'AGOSTO',
+			'09' => 'SETTEMBRE',
+			'10' => 'OTTOBRE',
+			'11' => 'NOVEMBRE',
+			'12' => 'DICEMBRE',
+		];
+
+        $filename = "LISTA OSPITI CAS ".$monthLabels[$month]." ".$year;
 
 		setcookie('downloadStarted', '1', false, '/');
 
