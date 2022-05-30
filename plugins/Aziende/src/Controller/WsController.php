@@ -2870,7 +2870,11 @@ class WsController extends AppController
         if (!$errorMsg) {
             $this->_result['response'] = "OK";
             $this->_result['data'] = $res;
-            $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
+            if ( $status == 2) {
+                $this->_result['msg'] = 'Procedura di uscita dell\'ospite avviata con successo.';
+            } else {
+                $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
+            }
         } else {
             $this->_result['response'] = $responseStatus;
             $this->_result['data'] = $res;

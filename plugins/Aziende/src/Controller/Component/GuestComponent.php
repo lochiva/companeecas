@@ -162,6 +162,8 @@ class GuestComponent extends Component
 			$opt['conditions']['AND']['GuestsNotifications.done'] = 0;
 		}
 
+		$opt['order'] = ['GuestsNotifications.created' => 'ASC'];
+
         $toRet['res'] = $guestsNotifications->queryForTableSorter($columns, $opt, $pass);
         $toRet['tot'] = $guestsNotifications->queryForTableSorter($columns, $opt, $pass, true);
 
@@ -266,27 +268,34 @@ class GuestComponent extends Component
 					$guest->check_out_date = $today->format('Y-m-d');  
 
 					if ($guests->save($guest)) {
-						if ($status == 3) {
-							//creazione notifica uscita ospite
-							$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+						//creazione notifica uscita ospite
+						$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+						if ($status == 2) {
+							if ($azienda->id_tipo == 1) {
+								$saveType = 'CONFIRM_EXIT_GUEST';
+							} else if ($azienda->id_tipo == 2) {
+								$saveType = 'CONFIRM_EXIT_GUEST_UKRAINE';
+							}
+
+						} else if ($status == 3) {
 							if ($azienda->id_tipo == 1) {
 								$saveType = 'EXITED_GUEST';
 							} else if ($azienda->id_tipo == 2) {
 								$saveType = 'EXITED_GUEST_UKRAINE';
 							}
-							$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-							$notification = $guestsNotifications->newEntity();
-							$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-							$notificationData = [
-								'type_id' => $notificationType->id,
-								'azienda_id' => $sede->id_azienda,
-								'sede_id' => $sede->id,
-								'guest_id' => $guest->id,
-								'user_maker_id' => $this->request->session()->read('Auth.User.id')
-							];
-							$guestsNotifications->patchEntity($notification, $notificationData);
-							$guestsNotifications->save($notification);
 						}
+						$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+						$notification = $guestsNotifications->newEntity();
+						$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+						$notificationData = [
+							'type_id' => $notificationType->id,
+							'azienda_id' => $sede->id_azienda,
+							'sede_id' => $sede->id,
+							'guest_id' => $guest->id,
+							'user_maker_id' => $this->request->session()->read('Auth.User.id')
+						];
+						$guestsNotifications->patchEntity($notification, $notificationData);
+						$guestsNotifications->save($notification);
 					} else {
 						$error = "Errore nell'aggiornamento dello stato dell'ospite.";
 					}
@@ -336,25 +345,36 @@ class GuestComponent extends Component
 				$guest->check_out_date = new Time(substr($data['check_out_date'], 0, 33));
 
 				if ($guests->save($guest)) {
-					//creazione notifica uscita ospite
 					$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
 					if ($azienda->id_tipo == 1) {
+						$getType = 'CONFIRM_EXIT_GUEST';
 						$saveType = 'EXITED_GUEST';
 					} else if ($azienda->id_tipo == 2) {
+						$getType = 'CONFIRM_EXIT_GUEST_UKRAINE';
 						$saveType = 'EXITED_GUEST_UKRAINE';
 					}
+
 					$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-					$notification = $guestsNotifications->newEntity();
-					$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+					$guestsNotificationsTypes = TableRegistry::get('Aziende.GuestsNotificationsTypes');
+
+					//notifica di conferma uscita segnata come gestita
+					$confirmNotificationType = $guestsNotificationsTypes->find()->where(['name' => $getType])->first();
+					$confirmNotification = $guestsNotifications->find()->where(['type_id' => $confirmNotificationType->id, 'guest_id' => $guest->id])->first();
+					$confirmNotification->done = 1;
+					$guestsNotifications->save($confirmNotification);
+
+					//creazione notifica uscita ospite
+					$exitedNotification = $guestsNotifications->newEntity();
+					$exitedNotificationType = $guestsNotificationsTypes->find()->where(['name' => $saveType])->first();
 					$notificationData = [
-						'type_id' => $notificationType->id,
+						'type_id' => $exitedNotificationType->id,
 						'azienda_id' => $sede->id_azienda,
 						'sede_id' => $sede->id,
 						'guest_id' => $guest->id,
 						'user_maker_id' => $this->request->session()->read('Auth.User.id')
 					];
-					$guestsNotifications->patchEntity($notification, $notificationData);
-					$guestsNotifications->save($notification);
+					$guestsNotifications->patchEntity($exitedNotification, $notificationData);
+					$guestsNotifications->save($exitedNotification);
 				} else {
 					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
 				}
