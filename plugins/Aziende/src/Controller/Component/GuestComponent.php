@@ -360,8 +360,10 @@ class GuestComponent extends Component
 					//notifica di conferma uscita segnata come gestita
 					$confirmNotificationType = $guestsNotificationsTypes->find()->where(['name' => $getType])->first();
 					$confirmNotification = $guestsNotifications->find()->where(['type_id' => $confirmNotificationType->id, 'guest_id' => $guest->id])->first();
-					$confirmNotification->done = 1;
-					$guestsNotifications->save($confirmNotification);
+					if ($confirmNotification) {
+						$confirmNotification->done = 1;
+						$guestsNotifications->save($confirmNotification);
+					}
 
 					//creazione notifica uscita ospite
 					$exitedNotification = $guestsNotifications->newEntity();
