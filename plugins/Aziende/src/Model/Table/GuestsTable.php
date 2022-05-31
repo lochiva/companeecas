@@ -541,4 +541,20 @@ class GuestsTable extends AppTable
         return $data;
     }
 
+    public function checkIfExistsFutureGuest($guest)
+    {
+        $where['created >'] = $guest->created;
+        if (!empty($guest->original_guest_id)) {
+            $where['original_guest_id'] = $guest->original_guest_id;
+        } else {
+            $where['original_guest_id'] = $guest->id;
+        }
+
+        $guest = $this->find()
+            ->where($where)
+            ->first();
+
+        return empty($guest) ? false : true;
+    }
+
 }

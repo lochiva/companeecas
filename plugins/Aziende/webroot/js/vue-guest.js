@@ -328,6 +328,8 @@ var app = new Vue({
                         this.familyId = res.data.data.family_id;
                         this.guestFamily = res.data.data.family; 
 
+                        this.existsInFuture = res.data.data.exists_in_future; 
+
                         this.loadedFamily = JSON.stringify(this.guestFamily);
 
                         this.loadGuestHistory();
@@ -1284,8 +1286,8 @@ var app = new Vue({
                     let modalGuestReadmission = this.$refs.modalGuestReadmission;
                     $(modalGuestReadmission).modal('hide');
 
-                    //Aggiorna conteggio notifiche
-                    this.updateNotificationsCount();
+                    //Apertura pagina ospite riammesso
+                    window.location = pathServer + 'aziende/guests/guest?sede='+res.data.data.sede_id+'&guest='+res.data.data.guest_id;
                 } else {
                     alert(res.data.msg);
                 }

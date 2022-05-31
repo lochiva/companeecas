@@ -2056,7 +2056,8 @@ class WsController extends AppController
     public function getGuest($id)
 	{
         $user = $this->request->session()->read('Auth.User');
-        $guest = TableRegistry::get('Aziende.Guests')->get($id, ['contain' => ['FamilyGuests', 'Countries', 'EducationalQualifications']]);
+        $guests = TableRegistry::get('Aziende.Guests');
+        $guest = $guests->get($id, ['contain' => ['FamilyGuests', 'Countries', 'EducationalQualifications']]);
         $sede = TableRegistry::get('Aziende.Sedi')->get($guest['sede_id']);
 
         if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
@@ -2118,6 +2119,9 @@ class WsController extends AppController
                 $guest['family_id'] = $familyId;
                 $guest['family'] = $guestsFamilies->getGuestsByFamily($familyId, $guest->sede_id, $guest->id);
             }
+
+            //Presenza di una declinazione futura dell'ospite
+            $guest['exists_in_future'] = $guests->checkIfExistsFutureGuest($guest);
 
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $guest;
@@ -3157,14 +3161,15 @@ class WsController extends AppController
         //trasferimento ospiti
         $errorMsg = '';
         $responseStatus = 'OK';
-        $error = $this->Guest->readmissionGuest($guest, $data, $today);
-        if ($error) {
-            $errorMsg .= $guest->name." ".$guest->surname.": ".$error."\n";
+        $res = $this->Guest->readmissionGuest($guest, $data, $today);
+        if ($res['error']) {
+            $errorMsg .= $guest->name." ".$guest->surname.": ".$res['error']."\n";
             $responseStatus = 'KO';
         }
 
         if (!$errorMsg) {
             $this->_result['response'] = "OK";
+            $this->_result['data'] = ['guest_id' => $res['id'], 'sede_id' => $data['sede']];
             $this->_result['msg'] = "Riammissione dell'ospite completata con successo.";
         }  else {
             $this->_result['response'] = $responseStatus;

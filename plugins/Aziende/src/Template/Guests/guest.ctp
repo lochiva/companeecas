@@ -212,7 +212,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-footer">
                         <button :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
                         <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
-                        <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 3" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()">Riammissione</button>
+                        <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 3 || existsInFuture" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()" :title="guestStatus == 3 && existsInFuture ? 'L\'ospite è gia stato riammesso' : ''">Riammissione</button>
                     </div>
                 </div>
             </div>
