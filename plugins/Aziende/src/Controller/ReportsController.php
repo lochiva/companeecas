@@ -293,12 +293,12 @@ class ReportsController extends AppController
 		$year = $this->request->query['year'];
 		$month = $this->request->query['month'];
 
-		$guestsTable = TableRegistry::get('Aziende.Guests');
+		$sediTable = TableRegistry::get('Aziende.Sedi');
 
 		$user = $this->request->session()->read('Auth.User');
 		$contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
 
-        $data = $guestsTable->getDataForExportGuestsCas($contatto['id_azienda'], $year, $month);
+        $data = $sediTable->getDataForExportGuestsCas($contatto['id_azienda'], $year, $month);
 
 		$spreadsheet = new Spreadsheet();
 

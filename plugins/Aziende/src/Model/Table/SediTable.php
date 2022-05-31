@@ -698,5 +698,280 @@ class SediTable extends AppTable
             ->order(['Sedi.id' => 'ASC'])
             ->first();
     }
+
+    public function getDataForExportGuestsCas($aziendaId, $year, $month)
+    {
+        $res = $this->find()
+            ->select($this)
+            ->select([
+                'a.denominazione', 'c.des_luo', 'g.id', 'g.vestanet_id', 'g.surname', 'g.name', 'g.birthdate', 'g.sex', 'n.des_luo', 
+                'g.check_in_date', 'g.check_out_date', 
+                'presenza_01' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-01" AND p.presente = 1)',
+                'presenza_02' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-02" AND p.presente = 1)',
+                'presenza_03' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-03" AND p.presente = 1)',
+                'presenza_04' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-04" AND p.presente = 1)',
+                'presenza_05' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-05" AND p.presente = 1)',
+                'presenza_06' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-06" AND p.presente = 1)',
+                'presenza_07' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-07" AND p.presente = 1)',
+                'presenza_08' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-08" AND p.presente = 1)',
+                'presenza_09' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-09" AND p.presente = 1)',
+                'presenza_10' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-10" AND p.presente = 1)',
+                'presenza_11' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-11" AND p.presente = 1)',
+                'presenza_12' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-12" AND p.presente = 1)',
+                'presenza_13' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-13" AND p.presente = 1)',
+                'presenza_14' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-14" AND p.presente = 1)',
+                'presenza_15' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-15" AND p.presente = 1)',
+                'presenza_16' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-16" AND p.presente = 1)',
+                'presenza_17' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-17" AND p.presente = 1)',
+                'presenza_18' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-18" AND p.presente = 1)',
+                'presenza_19' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-19" AND p.presente = 1)',
+                'presenza_20' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-20" AND p.presente = 1)',
+                'presenza_21' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-21" AND p.presente = 1)',
+                'presenza_22' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-22" AND p.presente = 1)',
+                'presenza_23' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-23" AND p.presente = 1)',
+                'presenza_24' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-24" AND p.presente = 1)',
+                'presenza_25' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-25" AND p.presente = 1)',
+                'presenza_26' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-26" AND p.presente = 1)',
+                'presenza_27' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-27" AND p.presente = 1)',
+                'presenza_28' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-28" AND p.presente = 1)',
+                'presenza_29' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-29" AND p.presente = 1)',
+                'presenza_30' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-30" AND p.presente = 1)',
+                'presenza_31' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date = "'.$year.'-'.$month.'-31" AND p.presente = 1)',
+                'tot_presenze' => '(SELECT COUNT(*) FROM presenze p WHERE p.guest_id = g.id AND p.date LIKE "'.$year.'-'.$month.'%" AND p.presente = 1)',
+            ])
+            ->where([
+                'a.id' => $aziendaId,
+                'Sedi.deleted' => 0
+            ])
+            ->join([
+                [
+                    'table' => 'aziende',
+                    'alias' => 'a',
+                    'type' => 'left',
+                    'conditions' => 'a.id = Sedi.id_azienda'
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'c',
+                    'type' => 'left',
+                    'conditions' => 'c.c_luo = Sedi.comune'
+                ],
+                [
+                    'table' => 'guests',
+                    'alias' => 'g',
+                    'type' => 'left',
+                    'conditions' => [
+                        'g.sede_id = Sedi.id',
+                        'g.check_in_date <=' => $year.'-'.$month.'-31',
+                        'OR' => [
+                            'g.check_out_date >' => $year.'-'.$month.'-01',
+                            'g.check_out_date IS NULL'
+                        ]
+                    ]
+                ],
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'n',
+                    'type' => 'left',
+                    'conditions' => 'n.c_luo = g.country_birth'
+                ],
+            ])
+            ->order(['Sedi.id' => 'ASC', 'g.surname' => 'ASC'])
+            ->toArray();
+
+        $sedi = [];
+
+        foreach ($res as $guest) {
+            if (!isset($sedi[$guest['id']])) {
+                $sedi[$guest['id']] = [
+                    'ente' => $guest['a']['denominazione'],
+                    'code_centro' => $guest['code_centro'],
+                    'address' => $guest['indirizzo'].' '.$guest['num_civico'].' '.$guest['des_luo'],
+                    'guests' => []
+                ];
+            }
+            if (!empty($guest['g']['id'])) {
+                $sedi[$guest['id']]['guests'][] = $guest;
+            }
+        }
+
+        $monthLabels = [
+            '01' => 'Gennaio',
+            '02' => 'Febbraio',
+            '03' => 'Marzo',
+            '04' => 'Aprile',
+            '05' => 'Maggio',
+            '06' => 'Giugno',
+            '07' => 'Luglio',
+            '08' => 'Agosto',
+            '09' => 'Settembre',
+            '10' => 'Ottobre',
+            '11' => 'Novembre',
+            '12' => 'Dicembre',
+        ];
+
+        $data = [];
+
+        foreach ($sedi as $sede) {
+            $dataSede = [];
+            $dataSede['name'] = $sede['code_centro'];
+
+            $dataSede['data'][0] = [
+                'ENTE','','','','',
+                'STRUTTURA','','','','','','','','','','','','','','','','','',
+                'MESE','','',$monthLabels[$month],'','','','','','',
+                'ANNO','','',$year,'','','','',
+            ];
+
+            $dataSede['data'][1] = [
+                $sede['ente'],'','','','',
+                $sede['code_centro'].' - '.$sede['address'],'','','','','','','','','','','','','','','','','',
+                '','','','','','','','','','',
+                '','','','','','','','',
+            ];
+
+            $dataSede['data'][2] = [
+                '','','','','','','','','',
+                'PRESENZE GIORNALIERE   (1 = PRESENTE, 0 = ASSENTE [oltre le 72 ore])','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+            ];
+
+            $dataSede['data'][3] = [
+                'N.','ID VESTANET','COGNOME','NOME','DATA DI NASCITA','NAZIONALITA\'','SESSO','DATA CHECK-IN','DATA CHECK-OUT',
+                '01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','20','30','31',
+                'TOT. PRESENZE MESE'
+            ];
+
+            if (!empty($sede['guests'])) {
+                $tot01 = 0;
+                $tot02 = 0;
+                $tot03 = 0;
+                $tot04 = 0;
+                $tot05 = 0;
+                $tot06 = 0;
+                $tot07 = 0;
+                $tot08 = 0;
+                $tot09 = 0;
+                $tot10 = 0;
+                $tot11 = 0;
+                $tot12 = 0;
+                $tot13 = 0;
+                $tot14 = 0;
+                $tot15 = 0;
+                $tot16 = 0;
+                $tot17 = 0;
+                $tot18 = 0;
+                $tot19 = 0;
+                $tot20 = 0;
+                $tot21 = 0;
+                $tot22 = 0;
+                $tot23 = 0;
+                $tot24 = 0;
+                $tot25 = 0;
+                $tot26 = 0;
+                $tot27 = 0;
+                $tot28 = 0;
+                $tot29 = 0;
+                $tot30 = 0;
+                $tot31 = 0;
+                $totTot = 0;
+
+                foreach ($sede['guests'] as $i => $guest) {
+                    $dataSede['data'][] = [
+                        $i+1,
+                        $guest['g']['vestanet_id'],
+                        $guest['g']['surname'],
+                        $guest['g']['name'],
+                        empty($guest['g']['birthdate']) ? '' : implode('/', array_reverse(explode('-', $guest['g']['birthdate']))),
+                        $guest['n']['des_luo'],
+                        $guest['g']['sex'],
+                        empty($guest['g']['check_in_date']) ? '' : implode('/', array_reverse(explode('-', $guest['g']['check_in_date']))),
+                        empty($guest['g']['check_out_date']) ? '' : implode('/', array_reverse(explode('-', $guest['g']['check_out_date']))),
+                        $guest['presenza_01'],
+                        $guest['presenza_02'],
+                        $guest['presenza_03'],
+                        $guest['presenza_04'],
+                        $guest['presenza_05'],
+                        $guest['presenza_06'],
+                        $guest['presenza_07'],
+                        $guest['presenza_08'],
+                        $guest['presenza_09'],
+                        $guest['presenza_10'],
+                        $guest['presenza_11'],
+                        $guest['presenza_12'],
+                        $guest['presenza_13'],
+                        $guest['presenza_14'],
+                        $guest['presenza_15'],
+                        $guest['presenza_16'],
+                        $guest['presenza_17'],
+                        $guest['presenza_18'],
+                        $guest['presenza_19'],
+                        $guest['presenza_20'],
+                        $guest['presenza_21'],
+                        $guest['presenza_22'],
+                        $guest['presenza_23'],
+                        $guest['presenza_24'],
+                        $guest['presenza_25'],
+                        $guest['presenza_26'],
+                        $guest['presenza_27'],
+                        $guest['presenza_28'],
+                        $guest['presenza_29'],
+                        $guest['presenza_30'],
+                        $guest['presenza_31'],
+                        $guest['tot_presenze'],
+                    ];
+
+                    $tot01 += $guest['presenza_01'];
+                    $tot02 += $guest['presenza_02'];
+                    $tot03 += $guest['presenza_03'];
+                    $tot04 += $guest['presenza_04'];
+                    $tot05 += $guest['presenza_05'];
+                    $tot06 += $guest['presenza_06'];
+                    $tot07 += $guest['presenza_07'];
+                    $tot08 += $guest['presenza_08'];
+                    $tot09 += $guest['presenza_09'];
+                    $tot10 += $guest['presenza_10'];
+                    $tot11 += $guest['presenza_11'];
+                    $tot12 += $guest['presenza_12'];
+                    $tot13 += $guest['presenza_13'];
+                    $tot14 += $guest['presenza_14'];
+                    $tot15 += $guest['presenza_15'];
+                    $tot16 += $guest['presenza_16'];
+                    $tot17 += $guest['presenza_17'];
+                    $tot18 += $guest['presenza_18'];
+                    $tot19 += $guest['presenza_19'];
+                    $tot20 += $guest['presenza_20'];
+                    $tot21 += $guest['presenza_21'];
+                    $tot22 += $guest['presenza_22'];
+                    $tot23 += $guest['presenza_23'];
+                    $tot24 += $guest['presenza_24'];
+                    $tot25 += $guest['presenza_25'];
+                    $tot26 += $guest['presenza_26'];
+                    $tot27 += $guest['presenza_27'];
+                    $tot28 += $guest['presenza_28'];
+                    $tot29 += $guest['presenza_29'];
+                    $tot30 += $guest['presenza_30'];
+                    $tot31 += $guest['presenza_31'];
+                    $totTot += $guest['tot_presenze'];
+                }
+
+                $dataSede['data'][] = [
+                    '','','','','','','','','TOTALE',
+                    strval($tot01), strval($tot02), strval($tot03), strval($tot04), strval($tot05), strval($tot06), strval($tot07), strval($tot08), strval($tot09), strval($tot10),
+                    strval($tot11), strval($tot12), strval($tot13), strval($tot14), strval($tot15), strval($tot16), strval($tot17), strval($tot18), strval($tot19), strval($tot20),
+                    strval($tot21), strval($tot22), strval($tot23), strval($tot24), strval($tot25), strval($tot26), strval($tot27), strval($tot28), strval($tot29), strval($tot30),
+                    strval($tot31), strval($totTot)
+                ];
+            } else {
+                $dataSede['data'][] = [
+                    'Nessun ospite trovato','','','','','','','','','','','','','','','','','','','','','','',
+                    '','','','','','','','','','','','','','','','','',''
+                ];
+            }
+
+            $data[] = $dataSede;
+        }
+
+        return $data;
+    }
     
 }
