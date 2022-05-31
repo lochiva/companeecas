@@ -14,7 +14,7 @@
 							<label class="required" for="transferAzienda">Ente</label>
 							<v-select class="fomr-control" id="transferAzienda" :clearable="false" :options="transferAziende" 
 								:value="transferProcedureData.azienda.value" @search:focus="searchTransferAziende" @search="searchTransferAziende" 
-								@input="setTransferAzienda" placeholder="Seleziona un ente - digita per filtrare" ref="selectAzienda">
+								@input="setTransferAzienda" placeholder="Seleziona un ente - digita per filtrare" ref="selectTransferAzienda">
 								<template #no-options="{ search, searching }">
 									<template v-if="searching">
 										Nessun ente trovato per <em>{{ search }}</em>.
@@ -29,7 +29,7 @@
 							<label class="required" for="transferSede">Struttura</label>
 							<v-select :disabled="transferProcedureData.azienda.value == ''" class="fomr-control" id="transferSede" :clearable="false" 
 								:options="transferSedi" :value="transferProcedureData.sede.value" @search:focus="searchTransferSedi" @search="searchTransferSedi" 
-								@input="setTransferSede" placeholder="Seleziona una struttura - digita per filtrare" ref="selectSede">
+								@input="setTransferSede" placeholder="Seleziona una struttura - digita per filtrare" ref="selectTransferSede">
 								<template #no-options="{ search, searching }">
 									<template v-if="searching">
 										Nessuna struttura trovata per <em>{{ search }}</em>.
@@ -42,7 +42,7 @@
 					<div class="form-group"> 
 						<div class="col-sm-12">
 							<label for="transferNote">Note</label>
-							<textarea v-model="transferProcedureData.note.value" id="transferNote" class="form-control exit-note"></textarea>
+							<textarea v-model="transferProcedureData.note.value" id="transferNote" class="form-control trasnfer-note"></textarea>
 						</div>
 					</div>
 				</form>

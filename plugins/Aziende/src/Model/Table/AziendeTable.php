@@ -153,7 +153,7 @@ class AziendeTable extends AppTable
           return false;
       }
 
-      public function searchTransferAziende($search)
+      public function searchAziende($search)
       {
           return $this->find()
               ->select([
@@ -167,7 +167,7 @@ class AziendeTable extends AppTable
               ->toArray();
       }
 
-      public function getTransferAziendaDefault($sedeId)
+      public function getAziendaBySede($sedeId)
       {
           return $this->find()
               ->select([

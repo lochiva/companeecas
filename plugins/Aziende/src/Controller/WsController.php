@@ -2765,7 +2765,7 @@ class WsController extends AppController
 
     public function getTransferAziendaDefault($sedeId) 
     {
-        $azienda = TableRegistry::get('Aziende.Aziende')->getTransferAziendaDefault($sedeId);
+        $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaBySede($sedeId);
 
 		if($azienda){
 			$this->_result['response'] = "OK";
@@ -2779,7 +2779,7 @@ class WsController extends AppController
 
     public function searchTransferAziende($search = "") 
     {
-        $aziende = TableRegistry::get('Aziende.Aziende')->searchTransferAziende($search);
+        $aziende = TableRegistry::get('Aziende.Aziende')->searchAziende($search);
 
 		if($aziende){
 			$this->_result['response'] = "OK";
@@ -2793,7 +2793,63 @@ class WsController extends AppController
 
     public function searchTransferSedi($sedeId, $aziendaId, $search = "") 
     {
-        $sedi = TableRegistry::get('Aziende.Sedi')->searchTransferSedi($sedeId, $aziendaId, $search);
+        $sedi = TableRegistry::get('Aziende.Sedi')->searchSedi($aziendaId, $search, $sedeId);
+
+		if($sedi){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $sedi;
+			$this->_result['msg'] = 'Strutture recuperate con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessuna struttura trovata.';
+		}		
+    }
+
+    public function getReadmissionAziendaDefault($sedeId) 
+    {
+        $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaBySede($sedeId);
+
+		if($azienda){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $azienda;
+			$this->_result['msg'] = 'Ente recuperato con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ente trovato.';
+		}		
+    }
+
+    public function getReadmissionSedeDefault($sedeId) 
+    {
+        $azienda = TableRegistry::get('Aziende.Sedi')->getSedeForSearch($sedeId);
+
+		if($azienda){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $azienda;
+			$this->_result['msg'] = 'Ente recuperato con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ente trovato.';
+		}		
+    }
+
+    public function searchReadmissionAziende($search = "") 
+    {
+        $aziende = TableRegistry::get('Aziende.Aziende')->searchAziende($search);
+
+		if($aziende){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $aziende;
+			$this->_result['msg'] = 'Enti recuperati con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessun ente trovato.';
+		}		
+    }
+
+    public function searchReadmissionSedi($aziendaId, $search = "") 
+    {
+        $sedi = TableRegistry::get('Aziende.Sedi')->searchSedi($aziendaId, $search);
 
 		if($sedi){
 			$this->_result['response'] = "OK";
@@ -3085,6 +3141,33 @@ class WsController extends AppController
         }  else {
             $this->_result['response'] = $responseStatus;
             $this->_result['data'] = $guest;
+            $this->_result['msg'] = $errorMsg;
+        }
+    }
+
+    public function readmissionProcedure()
+    {
+        $data = $this->request->data;
+
+        $guests = TableRegistry::get('Aziende.Guests');
+        $guest = $guests->get($data['guest_id']);
+
+        $today = new Time();
+
+        //trasferimento ospiti
+        $errorMsg = '';
+        $responseStatus = 'OK';
+        $error = $this->Guest->readmissionGuest($guest, $data, $today);
+        if ($error) {
+            $errorMsg .= $guest->name." ".$guest->surname.": ".$error."\n";
+            $responseStatus = 'KO';
+        }
+
+        if (!$errorMsg) {
+            $this->_result['response'] = "OK";
+            $this->_result['msg'] = "Riammissione dell'ospite completata con successo.";
+        }  else {
+            $this->_result['response'] = $responseStatus;
             $this->_result['msg'] = $errorMsg;
         }
     }

@@ -634,6 +634,77 @@ class GuestComponent extends Component
 		return $error;
 	}
 
+	public function readmissionGuest($guest, $data, $today)
+	{
+		$error = '';
+
+		// Se stato diverso da "Uscito" non eseguo nessuna operazione sull'ospite
+		if ($guest->status_id == 3) {
+			$guests = TableRegistry::get('Aziende.Guests');
+			
+			// Inserimento nuovo ospite per struttura di destinazione
+			$dataGuest = clone $guest;
+			$dataClonedGuest = $dataGuest->toArray();
+			$dataClonedGuest['sede_id'] = $data['sede'];
+			$dataClonedGuest['status_id'] = 1;
+			$dataClonedGuest['original_guest_id'] = empty($guest->original_guest_id) ? $guest->id : $guest->original_guest_id;
+			$dataClonedGuest['check_in_date'] = $today->format('Y-m-d');
+			unset($dataClonedGuest['id']);
+			unset($dataClonedGuest['created']);
+			unset($dataClonedGuest['modified']);
+			unset($dataClonedGuest['check_out_date']);
+
+			$clonedGuest = $guests->newEntity($dataClonedGuest);
+
+			if ($guests->save($clonedGuest)) {
+				//clonazione storico
+				$guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+				$oldHistory = $guestsHistory->find()
+					->where(['guest_id' => $guest->id])
+					->toArray();
+
+				foreach ($oldHistory as $h) {
+					$clonedHistory = $guestsHistory->newEntity();
+					$oldHistoryData = $h->toArray();
+					unset($oldHistoryData['id']);
+					unset($oldHistoryData['created']);
+					unset($oldHistoryData['modified']);
+					$oldHistoryData['guest_id'] = $clonedGuest->id;
+
+					$clonedHistory = $guestsHistory->patchEntity($clonedHistory, $oldHistoryData); 
+
+					$guestsHistory->save($clonedHistory);
+				}
+
+				//aggiornamento storico ospite clonato
+				$historyClonedGuest = $guestsHistory->newEntity();
+
+				$sedeClonedGuest = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
+		
+				$historyClonedGuestData['guest_id'] = $clonedGuest->id;
+				$historyClonedGuestData['azienda_id'] = $sedeClonedGuest->id_azienda;
+				$historyClonedGuestData['sede_id'] = $data['sede'];
+				$historyClonedGuestData['operator_id'] = $this->request->session()->read('Auth.User.id');
+				$historyClonedGuestData['operation_date'] = $today->format('Y-m-d');
+				$historyClonedGuestData['guest_status_id'] = $clonedGuest->status_id;
+				$historyClonedGuestData['cloned_guest_id'] = $guest->id;
+				$historyClonedGuestData['note'] = $data['note'];
+		
+				$guestsHistory->patchEntity($historyClonedGuest, $historyClonedGuestData);
+		
+				if (!$guestsHistory->save($historyClonedGuest)) {
+					$error = "Errore nell'aggiornamento dello storico dell'ospite clonato per la struttura di destinazione.";
+				}
+			} else {
+				$error = "Errore nella clonazione dell'ospite nella struttura di destinazione.";
+			}
+		} else {
+			$error = "L'ospite risulta in stato diverso da 'Uscito'. Non è possibile avviare la procedura di riammissione.";
+		}
+
+		return $error;
+	}
+
 	public function getDataForReportGuestsEmergenzaUcraina($date = "")
 	{
 		if (empty($date)) {

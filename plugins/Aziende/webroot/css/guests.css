@@ -186,6 +186,8 @@ label.required:after{
 }
 
 .exit-note,
+.transfer-note,
+.readmission-note,
 .absence-note{
     height: 130px !important;
     resize: none;
@@ -340,7 +342,8 @@ label.required:after{
     width: 650px;
 }
 
-.btn-transfer {
+.btn-transfer,
+.btn-exit {
     margin-left: 10px;
 }
 

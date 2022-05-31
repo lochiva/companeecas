@@ -211,7 +211,8 @@ $role = $this->request->session()->read('Auth.User.role');
                     </div>
                     <div class="box-footer">
                         <button :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
-                        <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-danger pull-right" @click="openExitModal()">Uscita</button>
+                        <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                        <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 3" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()">Riammissione</button>
                     </div>
                 </div>
             </div>
@@ -333,5 +334,5 @@ $role = $this->request->session()->read('Auth.User.role');
     <?= $this->element('Aziende.modal_guest_transfer') ?>
     <?= $this->element('Aziende.modal_transfer_family') ?>
     <?= $this->element('Aziende.modal_accept_transfer_family') ?>
-
+    <?= $this->element('Aziende.modal_guest_readmission') ?>
 </div>

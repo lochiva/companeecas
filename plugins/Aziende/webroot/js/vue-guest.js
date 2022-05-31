@@ -174,6 +174,25 @@ var app = new Vue({
             note: '',
             cloned_guest: ''
         },
+        readmissionAziende: [],
+        readmissionSedi: [],
+        readmissionProcedureData: {
+            azienda: {
+                required: true,
+                hasError: false,
+                value: ''
+            },
+            sede: {
+                required: true,
+                hasError: false,
+                value: ''
+            },
+            note: {
+                required: false,
+                hasError: false,
+                value: ''
+            }
+        },
         datepickerItalian: vdp_translation_it.js,
         guestsForSearch: [],
         searchedGuest: null,
@@ -1015,8 +1034,8 @@ var app = new Vue({
         },
 
         searchTransferAziende: function(search, loading) { 
-            search = search || this.$refs.selectAzienda.search;
-            loading = loading || this.$refs.selectAzienda.toggleLoading;
+            search = search || this.$refs.selectTransferAzienda.search;
+            loading = loading || this.$refs.selectTransferAzienda.toggleLoading;
 
             loading(true);
             axios.get(pathServer + 'aziende/ws/searchTransferAziende/'+search)
@@ -1043,8 +1062,8 @@ var app = new Vue({
         },
 
         searchTransferSedi: function(search, loading) {
-            search = search || this.$refs.selectSede.search;
-            loading = loading || this.$refs.selectSede.toggleLoading;
+            search = search || this.$refs.selectTransferSede.search;
+            loading = loading || this.$refs.selectTransferSede.toggleLoading;
 
             var error = false;
 
@@ -1127,7 +1146,176 @@ var app = new Vue({
             } else {
                 this.educationalQualificationChildren = [];
             }
-        }
+        },
+
+        searchReadmissionAziende: function(search, loading) { 
+            search = search || this.$refs.selectReadmissionAzienda.search;
+            loading = loading || this.$refs.selectReadmissionAzienda.toggleLoading;
+
+            loading(true);
+            axios.get(pathServer + 'aziende/ws/searchReadmissionAziende/'+search)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.readmissionAziende = res.data.data; 
+                    loading(false);
+                } else {
+                    this.readmissionAziende = [];
+                    loading(false);
+                }
+            }).catch(error => {
+                console.log(error);
+                loading(false);
+            });
+        },
+
+        setReadmissionAzienda: function(value) { 
+            if(value != null){
+                this.readmissionProcedureData.azienda.value = value;
+                this.readmissionSedi = [];
+                this.readmissionProcedureData.sede.value = '';
+            }
+        },
+
+        searchReadmissionSedi: function(search, loading) {
+            search = search || this.$refs.selectReadmissionSede.search;
+            loading = loading || this.$refs.selectReadmissionSede.toggleLoading;
+
+            var error = false;
+
+            if(this.readmissionProcedureData.azienda.value == "" || this.readmissionProcedureData.azienda.value == null){
+                error = true;
+                this.readmissionProcedureData.azienda.hasError = true;
+            }else{
+                this.readmissionProcedureData.azienda.hasError = false;
+            }   
+
+            if(error){
+                alert('Si prega di compilare il campo ENTE.');
+                this.readmissionSedi = [];
+            }else{
+                loading(true);
+                axios.get(pathServer + 'aziende/ws/searchReadmissionSedi/'+this.readmissionProcedureData.azienda.value.id+'/'+search)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.readmissionSedi = res.data.data; 
+                        loading(false);
+                    } else {
+                        this.readmissionSedi = [];
+                        loading(false);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    loading(false);
+                });
+            }
+        },
+
+        setReadmissionSede: function(value) { 
+            if(value != null){
+                this.readmissionProcedureData.sede.value = value;
+            }            
+        },
+
+        openReadmissionModal: function() {
+            axios.get(pathServer + 'aziende/ws/getReadmissionAziendaDefault/'+this.guestData.sede_id.value)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.readmissionProcedureData.azienda.value = res.data.data; 
+                        axios.get(pathServer + 'aziende/ws/getReadmissionSedeDefault/'+this.guestData.sede_id.value)
+                        .then(res => { 
+                            if (res.data.response == 'OK') {
+                                this.readmissionProcedureData.sede.value = res.data.data; 
+                                let modalGuestReadmission = this.$refs.modalGuestReadmission;
+                                $(modalGuestReadmission).modal({
+                                    backdrop: false,
+                                    keyboard: false
+                                });
+                                $(modalGuestReadmission).modal('show');
+                            } else {
+                                alert(res.data.msg);
+                            }
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+        },
+
+        executeReadmissionProcedure: function() { 
+            var error = false;
+
+            Object.keys(this.readmissionProcedureData).forEach((prop) => {
+                if (this.readmissionProcedureData[prop].required && (this.readmissionProcedureData[prop].value == "" || this.readmissionProcedureData[prop].value == null)) {
+                    error = true;
+                    this.readmissionProcedureData[prop].hasError = true;
+                } else {
+                    this.readmissionProcedureData[prop].hasError = false;
+                }
+            });                 
+
+            if(error){
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            } else {
+                this.readmitGuest();
+            }       
+        },
+
+        readmitGuest: function() {
+            let params = new URLSearchParams();
+            params.append('guest_id', this.guestData.id.value);
+            Object.keys(this.readmissionProcedureData).forEach((prop) => {
+                if (prop == 'azienda' || prop == 'sede') {
+                    params.append(prop, this.readmissionProcedureData[prop].value.id);
+                } else {
+                    params.append(prop, this.readmissionProcedureData[prop].value);
+                }
+            });
+
+            axios.post(pathServer + 'aziende/ws/readmissionProcedure', params)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                
+                    let modalGuestReadmission = this.$refs.modalGuestReadmission;
+                    $(modalGuestReadmission).modal('hide');
+
+                    //Aggiorna conteggio notifiche
+                    this.updateNotificationsCount();
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+
+        clearReadmissionProcedureData: function() {
+            this.readmissionAziende = [];
+            this.readmissionSedi = [];
+            this.readmissionProcedureData = {
+                azienda: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                sede: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                note: {
+                    required: false,
+                    hasError: false,
+                    value: ''
+                }
+            };
+        },
         
     }
 

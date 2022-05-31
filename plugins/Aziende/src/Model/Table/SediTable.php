@@ -108,7 +108,42 @@ class SediTable extends AppTable
 
     }
 
-    public function searchTransferSedi($sedeId, $aziendaId, $search)
+    public function searchSedi($aziendaId, $search = "", $sedeId = "")
+    {
+        $where = ['Sedi.id_azienda' => $aziendaId];
+        if (!empty($sedeId)) {
+            $where['Sedi.id !='] = $sedeId;
+        }
+        
+        return $this->find()
+            ->select([
+                'Sedi.id',
+                'label' => 'CONCAT(
+                    Sedi.indirizzo, 
+                    " ", 
+                    Sedi.num_civico, 
+                    ", ", 
+                    l.des_luo, 
+                    " (", 
+                    l.s_prv, 
+                    ")"
+                )'
+            ])
+            ->where($where)
+            ->join([
+                [
+                    'table' => 'luoghi',
+                    'alias' => 'l',
+                    'type' => 'left',
+                    'conditions' => 'l.c_luo = Sedi.comune'
+                ],
+            ])
+            ->having(['label LIKE' => '%'.$search.'%'])
+            ->order('label ASC')
+            ->toArray();
+    }
+
+    public function getSedeForSearch($sedeId)
     {
         return $this->find()
             ->select([
@@ -125,8 +160,7 @@ class SediTable extends AppTable
                 )'
             ])
             ->where([ 
-                'Sedi.id !=' => $sedeId,
-                'Sedi.id_azienda' => $aziendaId
+                'Sedi.id' => $sedeId,
             ])
             ->join([
                 [
@@ -136,9 +170,7 @@ class SediTable extends AppTable
                     'conditions' => 'l.c_luo = Sedi.comune'
                 ],
             ])
-            ->having(['label LIKE' => '%'.$search.'%'])
-            ->order('label ASC')
-            ->toArray();
+            ->first();
     }
 
     public function getDataForReportGuestsEmergenzaUcraina($date = "")
