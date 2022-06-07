@@ -766,7 +766,8 @@ class SediTable extends AppTable
                         'OR' => [
                             'g.check_out_date >' => $year.'-'.$month.'-01',
                             'g.check_out_date IS NULL'
-                        ]
+                        ],
+                        'g.deleted' => 0
                     ]
                 ],
                 [

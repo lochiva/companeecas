@@ -297,6 +297,7 @@ class ReportsController extends AppController
 
 		$user = $this->request->session()->read('Auth.User');
 		$contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
+		$azienda = TableRegistry::get('Aziende.Aziende')->get($contatto['id_azienda']);
 
         $data = $sediTable->getDataForExportGuestsCas($contatto['id_azienda'], $year, $month);
 
@@ -376,7 +377,7 @@ class ReportsController extends AppController
 			'12' => 'DICEMBRE',
 		];
 
-        $filename = "LISTA OSPITI CAS ".$monthLabels[$month]." ".$year;
+        $filename = "LISTA OSPITI ".$azienda['denominazione']." ".$monthLabels[$month]." ".$year;
 
 		setcookie('downloadStarted', '1', false, '/');
 
