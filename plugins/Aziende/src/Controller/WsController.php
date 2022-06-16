@@ -2618,21 +2618,24 @@ class WsController extends AppController
                 //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
                 $warningPresenze = 0;
                 $dangerPresenze = 0;
-                $lastPresenzaDate = '';
-                $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $data['date']);
-                if (!empty($lastPresenza)) {
-                    $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
-                } elseif (!empty($guest['check_in_date'])) {
-                    $lastPresenzaDate = $guest['check_in_date']->format('Y-m-d');
-                }
-                if (!empty($lastPresenzaDate)) {
-                    $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
-                    if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
-                        $warningPresenze = 1;
-                    } elseif ($lastPresenzaDate < $threeDaysBefore) {
-                        $dangerPresenze = 1;
+                if (!$guest['suspended']) {
+                    $lastPresenzaDate = '';
+                    $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $data['date']);
+                    if (!empty($lastPresenza)) {
+                        $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+                    } elseif (!empty($guest['check_in_date'])) {
+                        $lastPresenzaDate = $guest['check_in_date']->format('Y-m-d');
+                    }
+                    if (!empty($lastPresenzaDate)) {
+                        $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
+                        if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
+                            $warningPresenze = 1;
+                        } elseif ($lastPresenzaDate < $threeDaysBefore) {
+                            $dangerPresenze = 1;
+                        }
                     }
                 }
+
                 $guest['warning_presenze'] = $warningPresenze;
                 $guest['danger_presenze'] = $dangerPresenze;
 
@@ -2685,19 +2688,21 @@ class WsController extends AppController
                 //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
                 $warningPresenze = 0;
                 $dangerPresenze = 0;
-                $lastPresenzaDate = '';
-                $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest->id, $data['date']);
-                if (!empty($lastPresenza)) {
-                    $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
-                } elseif (!empty($guest->check_in_date)) {
-                    $lastPresenzaDate = substr($guest->check_in_date, 0, 10);
-                }
-                if (!empty($lastPresenzaDate)) {
-                    $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
-                    if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
-                        $warningPresenze = 1;
-                    } elseif ($lastPresenzaDate < $threeDaysBefore) {
-                        $dangerPresenze = 1;
+                if (!$guest->suspended) {
+                    $lastPresenzaDate = '';
+                    $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest->id, $data['date']);
+                    if (!empty($lastPresenza)) {
+                        $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+                    } elseif (!empty($guest->check_in_date)) {
+                        $lastPresenzaDate = substr($guest->check_in_date, 0, 10);
+                    }
+                    if (!empty($lastPresenzaDate)) {
+                        $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
+                        if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
+                            $warningPresenze = 1;
+                        } elseif ($lastPresenzaDate < $threeDaysBefore) {
+                            $dangerPresenze = 1;
+                        }
                     }
                 }
                 $guest->warning_presenze = $warningPresenze;

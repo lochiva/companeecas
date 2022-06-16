@@ -63,19 +63,19 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <div v-for="guest in guests" class="form-group">
                                     <div class="col-sm-3 div-label-guest-presenza">
                                         <div class="col-sm-2 div-label-guest-presenza">
-                                            <input type="checkbox" :id="'inputGuest'+guest.id" v-model="guest.presente" class="check-presenza">
+                                            <input :disabled="guest.suspended" type="checkbox" :id="'inputGuest'+guest.id" v-model="guest.presente" class="check-presenza">
                                         </div>
                                         <div class="col-sm-10 div-label-guest-presenza" :class="{'warning-presenze': guest.warning_presenze, 'danger-presenze': guest.danger_presenze}">
                                             <span class="icon-guest-info" @click="openModalInfoGuest(guest)"><i class="fa fa-info-circle"></i></span>
                                             <label class="control-label presenze-label" :for="'inputGuest'+guest.id">
                                                 {{guest.name}} {{guest.surname}}
                                                 <span v-if="guest.suspended">(sospeso)</span>
-                                                <span v-if="guest.not_saved" class="text-small-presenza">(da salvare)</span>
+                                                <span v-if="guest.not_saved && !guest.suspended" class="text-small-presenza">(da salvare)</span>
                                             </label>
                                         </div>
                                     </div>
                                     <div class="col-sm-8">
-                                        <input type="text" v-model="guest.note" class="form-control">
+                                        <input :disabled="guest.suspended" type="text" v-model="guest.note" class="form-control">
                                     </div>
                                 </div>
                             </div>

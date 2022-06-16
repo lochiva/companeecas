@@ -113,11 +113,15 @@ var app = new Vue({
         checkAllGuests () {
             if (this.check_all_guests) {
                 this.guests.forEach(function(guest) {
-                    guest.presente = true;
+                    if (!guest.suspended) {
+                        guest.presente = true;
+                    }
                 });
             } else {
                 this.guests.forEach(function(guest) {
-                    guest.presente = false;
+                    if (!guest.suspended) {
+                        guest.presente = false;
+                    }
                 });
             }
         },
