@@ -67,6 +67,12 @@ $role = $this->request->session()->read('Auth.User.role');
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-4 control-label" for="inputCig">CIG</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="cig" id="inputCig" minlength="10" maxlength="10" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label" for="inputCapacityIncrement0">Nessun incremento</label>
                         <div class="col-sm-1">
                             <input type="radio" name="capacity_increment" id="inputCapacityIncrement0" value="0" class="radio-agreement">
@@ -79,6 +85,13 @@ $role = $this->request->session()->read('Auth.User.role');
                         <div class="col-sm-1">
                             <input type="radio" name="capacity_increment" id="inputCapacityIncrement50" value="50" class="radio-agreement">
                         </div>
+                    </div>
+                    <hr>
+                    <div id="div-attachments">
+                        <span hidden id="contextForAttachment">agreements</span>
+                        <span hidden id="idItemForAttachment"></span>
+                        <span hidden id="attachmentReadOnly">0</span>
+                        <?= $this->element('AttachmentManager.button_attachment', ['id' => 'button_attachment', 'buttonLabel' => 'Allegati convenzione']); ?>
                     </div>
                     <hr>
                     <?php foreach($sedi as $sede) { ?>
@@ -103,3 +116,5 @@ $role = $this->request->session()->read('Auth.User.role');
         </div>
     </div>
 </div>
+
+<?= $this->element('AttachmentManager.modal_attachment'); ?>

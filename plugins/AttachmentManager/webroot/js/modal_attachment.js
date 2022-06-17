@@ -4,12 +4,22 @@ $(document).ready(function(){
     $('.open-overlay-attachment').click(function(){
         var context = $(this).parent().find('#contextForAttachment').html();
         var id_item = $(this).parent().find('#idItemForAttachment').html();
+        var elementReadOnly = $(this).parent().find('#attachmentReadOnly');
+        var read_only = 0;
+        if (elementReadOnly.length > 0 && elementReadOnly.html().length > 0) {
+            read_only = elementReadOnly.html();
+        }
+        if (read_only) {
+            $('#saveAttachment').prop('disabled', true);
+        } else {
+            $('#saveAttachment').prop('disabled', false);
+        }
         $('#disabled_background_attachment').fadeIn('200');
         $('#overlay_attachment').fadeIn('200');
         $('#contextAttachment').val(context);
         $('#idItemAttachment').val(id_item);
         $('#dropZone #inputAttachment').attr('title', '');
-        getUploadedAttachments(context, id_item);
+        getUploadedAttachments(context, id_item, read_only);
         $(this).addClass('button-attachment-opened');
     });
 
@@ -167,7 +177,7 @@ $(document).ready(function(){
 
 });
 
-function getUploadedAttachments(context, id_item) {
+function getUploadedAttachments(context, id_item, read_only = 0) {
     $.ajax({
         url: pathServer + 'attachment-manager/ws/getAttachments/' + context + '/' + id_item,
         type: 'GET',
@@ -189,7 +199,17 @@ function getUploadedAttachments(context, id_item) {
                     html += '<div class="col-md-4">';
                     html += '<a href="" class="download-saved-attach" data-id="'+attachment.id+'" title="Scarica allegato"><i class="text-blue fa fa-download"></i></a>';
                     html += '&nbsp;';
-                    html += '<a href="" class="delete-saved-attach" data-id="'+attachment.id+'" title="Elimina allegato"><i class="text-red glyphicon glyphicon-trash"></i></a>';
+                    if (read_only) {
+                        html += '<div class="div-disabled-delete">';
+                    }
+                    html += '<a href="" class="delete-saved-attach';
+                    if (read_only) {
+                        html += ' disabled-delete'; 
+                    }
+                    html += '" data-id="'+attachment.id+'" title="Elimina allegato"><i class="text-red glyphicon glyphicon-trash"></i></a>';
+                    if (read_only) {
+                        html += '</div>';
+                    }
                     html += '</div>';
                     html += '</div>';
                     html += '</div>';

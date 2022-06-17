@@ -164,53 +164,79 @@ $(document).ready(function(){
 
     $('#saveAgreement').click(function(){
         if(formValidation('formAgreement')){
-            var formData= new FormData($('#formAgreement')[0]);
-            
-            $.ajax({
-                url : pathServer + "aziende/Ws/saveAgreement",
-                type: "POST",
-                processData: false,
-                contentType: false,
-                dataType: "json",
-                data: formData
-            }).done(function (res) {
-                if(res.response == "OK"){
-                    $('#table-agreements').trigger('update');
-                    $('#modalAgreement').modal('hide');
-                    if (res.data) {
-                        alert('Attenzione! Una o più strutture non sono associate ad una convenzione.');
-                        //Aggiorna conteggio notifiche
-                        if (role == 'admin') {
-                            $.ajax({
-                                url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
-                                type: "GET",
-                                dataType: "json"
-                            }).done(function(res) {
-                                if(res.response == 'OK'){
-                                    var count = res.data;
-                                    if(count > 0){
-                                        $('.guests_notify_count_label').html(count);
-                                    } else {
-                                        $('.guests_notify_count_label').html('');
-                                    }
-                                }
-                            }).fail(function(richiesta,stato,errori){
-                                alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
-                            });
-                        }
+            //Validazione campi
+            var valid = true;
+            var firstElem = '';
+            var errorMsg = '';
+
+            //Validazione CIG
+            $('#inputCig').parentsUntil('.form-group').parent().removeClass('has-error');
+            var cig = $('#inputCig').val();
+            if (cig.length > 0) {
+                var regex = new RegExp('[0-9]{7}[0-9A-F]{3}|[V-Z]{1}[0-9A-F]{9}|[A-U]{1}[0-9A-F]{9}');
+                if (!regex.test(cig)) {
+                    errorMsg += "Il CIG inserito non è valido.\n";
+                    valid = false;
+                    if (firstElem == '') {
+                        firstElem = $('#inputCig');
                     }
-                }else{
-                    alert(res.msg);
                 }
-            }).fail(function(richiesta, stato, errori) {
-                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-            });
+            }
+
+            if (valid) {
+                var formData= new FormData($('#formAgreement')[0]);
+                
+                $.ajax({
+                    url : pathServer + "aziende/Ws/saveAgreement",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    data: formData
+                }).done(function (res) {
+                    if(res.response == "OK"){
+                        $('#table-agreements').trigger('update');
+                        $('#modalAgreement').modal('hide');
+                        if (res.data) {
+                            alert('Attenzione! Una o più strutture non sono associate ad una convenzione.');
+                            //Aggiorna conteggio notifiche
+                            if (role == 'admin') {
+                                $.ajax({
+                                    url : pathServer + "aziende/ws/getGuestsNotificationsCount/1",
+                                    type: "GET",
+                                    dataType: "json"
+                                }).done(function(res) {
+                                    if(res.response == 'OK'){
+                                        var count = res.data;
+                                        if(count > 0){
+                                            $('.guests_notify_count_label').html(count);
+                                        } else {
+                                            $('.guests_notify_count_label').html('');
+                                        }
+                                    }
+                                }).fail(function(richiesta,stato,errori){
+                                    alert("E' evvenuto un errore. Lo stato della chiamata: "+stato);
+                                });
+                            }
+                        }
+                    }else{
+                        alert(res.msg);
+                    }
+                }).fail(function(richiesta, stato, errori) {
+                    alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+                });
+            } else {
+                $(firstElem).parentsUntil('.form-group').parent().addClass('has-error');
+                $(firstElem).focus();
+                alert(errorMsg)
+            }
         }
     });
 
     // Preset modale all'apertura per nuova convenzione
     $('#newAgreement').click(function() {
         $('#inputCapacityIncrement0').prop('checked', true);
+        $('#div-attachments').hide();
         $('#deleteAgreement').hide();
     });
 
@@ -260,6 +286,7 @@ $(document).on('click', '.edit-agreement', function(){
             $('#inputDateAgreementExpiration').datepicker('setDate', res.data.date_agreement_expiration);
             $('#inputDateExtensionExpiration').datepicker('setDate', res.data.date_extension_expiration);
             $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
+            $('#inputCig').val(res.data.cig);
             $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
             var countInactiveSedi = 0;
             res.data.agreements_to_sedi.forEach(function(sede) {
@@ -286,7 +313,7 @@ $(document).on('click', '.edit-agreement', function(){
                 disableApprovedModal();
             }
 
-            // Se onvenzione non ha sedi attive abilito tasto di cancellazione
+            // Se convenzione non ha sedi attive abilito tasto di cancellazione
             if (res.data.agreements_to_sedi.length == countInactiveSedi) {
                 $('#deleteAgreement').show();
                 $('#deleteAgreement').prop('disabled', false);
@@ -296,6 +323,14 @@ $(document).on('click', '.edit-agreement', function(){
                 $('#deleteAgreement').prop('disabled', true);
                 $('#deleteAgreement').attr('title', 'Non è possibile cancellare una convenzione che ha delle strutture collegate');
             }
+
+            //Mostro tasto allegati
+            $('#idItemForAttachment').html(res.data.id);
+            $('#attachmentReadOnly').html(res.data.approved);
+            $('#div-attachments').show();
+
+            //mostro badge attachments e conto numero allegati
+	        attachmentsNumberForBadge('agreements', res.data.id, 'button_attachment');
 
             $('#modalAgreement').modal('show');
         }else{
@@ -328,6 +363,9 @@ function clearModal(){
     $('#inputGuestDailyPrice').val("");
     $('#inputGuestDailyPrice').prop("disabled", false);
     $('#inputGuestDailyPrice').removeClass('disabled-approved');
+    $('#inputCig').val("");
+    $('#inputCig').prop("disabled", false);
+    $('#inputCig').removeClass('disabled-approved');
     $('#inputCapacityIncrement20').prop("checked", false);
     $('#inputCapacityIncrement20').prop("disabled", false);
     $('#inputCapacityIncrement20').removeClass('disabled-approved');
@@ -361,6 +399,8 @@ function disableApprovedModal() {
     $('#inputDateExtensionExpiration').addClass('disabled-approved');
     $('#inputGuestDailyPrice').prop("disabled", true);
     $('#inputGuestDailyPrice').addClass('disabled-approved');
+    $('#inputCig').prop("disabled", true);
+    $('#inputCig').addClass('disabled-approved');
     $('#inputCapacityIncrement20').prop("disabled", false);
     $('#inputCapacityIncrement20').removeClass('disabled-approved');
     $('#inputCapacityIncrement50').prop("disabled", false);

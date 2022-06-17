@@ -32,7 +32,7 @@ class WsController extends AppController
 
     public function isAuthorized($user = null)
     {
-		if($user['role'] == 'admin'){
+		if($user['role'] == 'admin' || $user['role'] == 'ente'){
 			return true;
 		}
 

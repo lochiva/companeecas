@@ -89,6 +89,18 @@ class AgreementsTable extends AppTable
             ->notEmptyString('guest_daily_price');
 
         $validator
+            ->scalar('cig')
+            ->maxLength('cig', 10)
+            ->minLength('cig', 10)
+            ->allowEmptyString('cig');
+
+        $validator->add('cig', 'custom', [
+            'rule' => 'validateCig',
+            'provider' => 'table',
+            'message' => 'Il CIG inserito non è valido.'
+        ]);
+
+        $validator
             ->integer('capacity_increment');
 
         $validator
@@ -124,11 +136,22 @@ class AgreementsTable extends AppTable
             'date_agreement_expiration' => 'Data scadenza convenzione',
             'date_extension_expiration' => 'Data scadenza proroga',
             'guest_daily_ptice' => 'Prezzo giornaliero ospiti',
+            'cig' => 'CIG',
             'capacity_increment' => 'Incremento posti',
             'approved' => 'Approvato',
             'deleted' => 'Cancellato',
             'created' => 'Data creazione',
             'modified' => 'Data modifica'
         ];
+    }
+
+    public function validateCig($value, array $context)
+    {
+        $regex = '/[0-9]{7}[0-9A-F]{3}|[V-Z]{1}[0-9A-F]{9}|[A-U]{1}[0-9A-F]{9}/';
+        if (preg_match($regex, $value)) {
+            return true;
+        }
+
+        return false;
     }
 }

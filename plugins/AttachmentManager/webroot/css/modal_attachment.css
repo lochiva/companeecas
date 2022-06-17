@@ -159,3 +159,12 @@
     max-height: 250px;
     overflow-x: hidden;
 }
+
+.div-disabled-delete {
+    display: inline-block;
+    cursor: not-allowed;
+}
+
+.disabled-delete {
+    pointer-events: none;
+}
