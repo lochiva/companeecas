@@ -8,6 +8,9 @@
 				</button>
 			</div>
 			<div class="modal-body">
+				<div v-if="role != 'admin'">
+					<p class="exit-trasnfer-warning">NOTA: Non usare questo strumento per trasferire un ospite ad un altro ente. Il trasferimento viene avviato da Prefettura.</p>
+				</div>
 				<form class="form-horizontal" id="formGuestExit">
 					<div class="form-group"> 
 						<div class="col-sm-12" :class="{'has-error': exitProcedureData.exit_type_id.hasError}">
