@@ -43,8 +43,11 @@ $(document).ready(function(){
             theme: 'bootstrap',
             headerTemplate: '{content} {icon}',
             widthFixed: false,
-            widgets: ['zebra', 'cssStickyHeaders' , 'columns', 'filter', 'uitheme'],
+            widgets: ['zebra', 'cssStickyHeaders' , 'columns', 'filter', 'saveSort', 'uitheme'],
             widgetOptions: {
+                saveSort: true,
+                filter_saveFilters : true,
+
                 filter_functions:{
                     '.filter-sex': {
                         'F': function(e,n,f,i,$r){return e===f},
@@ -61,7 +64,13 @@ $(document).ready(function(){
                 },
                 filter_selectSource: {
                     '.filter-status': statusesList
-                }
+                },
+
+                filter_formatter: {
+                    '.filters-reset': function ($cell, indx) {
+                        return $cell.html('<button type="button" class="btn btn-default btn-block btn-reset-filters-guests"><i class="fa fa-eraser"></i></button>');
+                    },
+                },
             },
         }).tablesorterPager({
             container: $("#pager-guests"),
@@ -150,10 +159,20 @@ $(document).ready(function(){
             calculateTableDropdownPosition();
 
         });
+
+        //resetto filtri al click
+		$('.btn-reset-filters-guests').click(function () { 
+            $("#table-guests").trigger('filterReset').trigger('sortReset'); 
+            $('#showOld').prop('checked', false).trigger('change');
+            return false; 
+        });
     }
+
+    $('#showOld').prop('checked', parseInt(localStorage.getItem('table-guests-show-old')));
 
     $('#showOld').change(function() {
         $('#table-guests').trigger('update');
+        localStorage.setItem('table-guests-show-old', $('#showOld').is(':checked') ? 1 : 0);
     });
     
     $(document).on('click', '.delete-guest', function(){
