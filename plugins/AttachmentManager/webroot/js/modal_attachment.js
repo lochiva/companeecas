@@ -121,6 +121,7 @@ $(document).ready(function(){
                     location.reload();
                 }else{
                     var id = $('.open-overlay-attachment.button-attachment-opened').attr('id'); 
+                    $('#inputAttachment').val('');
                     $('#displayUploadedAttachments').html('');
                     getUploadedAttachments($('#contextAttachment').val(), $('#idItemAttachment').val());
                     attachmentsNumberForBadge($('#contextAttachment').val(), $('#idItemAttachment').val(), id); 
