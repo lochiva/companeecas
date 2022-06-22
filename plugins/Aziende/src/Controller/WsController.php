@@ -373,7 +373,6 @@ class WsController extends AppController
             $data['id_tipo_capitolato'] = 0;
             $data['id_tipologia_centro'] = 0;
             $data['id_tipologia_ospiti'] = 0;
-            $data['n_posti_struttura'] = 0;
             $data['n_posti_effettivi'] = 0;
             $data['operativita'] = 1;
         }
@@ -2446,6 +2445,7 @@ class WsController extends AppController
             $entity = $agreements->newEntity();
 		}else{
 			$entity = $agreements->get($data['id']);
+            $oldData = $entity->toArray();
         } 
 
         if (!empty($data['date_agreement'])) {
@@ -2484,7 +2484,8 @@ class WsController extends AppController
                         'agreement_id' => $entity->id,
                         'sede_id' => $sedeId,
                         'active' => 1,
-                        'capacity' => $sede['capacity']
+                        'capacity' => $sede['capacity'],
+                        'capacity_increment' => $sede['capacity_increment']
                     ];
                     $agreementsSedi->patchEntity($agreementSede, $dataToSave);
                     if ($agreementsSedi->save($agreementSede)) {
@@ -2528,6 +2529,25 @@ class WsController extends AppController
                     }
                 }
             }
+
+            /*
+            // Notifica nuovo processo di approvazione
+            $role = $this->request->session()->read('Auth.User.role');
+            if ($role == 'ente' && $entity->approved && ($oldData != $entity->toArray())) {
+                $notifications = TableRegistry::get('Aziende.GuestsNotifications');
+                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => 'APPROVE_NEEDED_AGREEMENT'])->first();
+                $notification = $notifications->newEntity();
+                $notificationData = [
+                    'type_id' => $notificationType->id,
+                    'azienda_id' => $entity->azienda_id,
+                    'sede_id' => 0,
+                    'guest_id' => 0,
+                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                ];
+                $notifications->patchEntity($notification, $notificationData);
+                $notifications->save($notification);
+           }
+           */
 
             $this->_result['response'] = "OK";
             $this->_result['data'] = $missing;

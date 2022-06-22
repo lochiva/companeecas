@@ -368,3 +368,16 @@ a.contact-login:hover{
 .btn-save-presenze {
 	margin-right: 5px;
 }
+
+.warning-capacity-increment {
+	color: #FF0000;
+}
+
+.success-capacity-increment {
+	color: #04b904;
+}
+
+#incrementMessageContainer {
+	margin-top: 10px;
+    text-align: center;
+}

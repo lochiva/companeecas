@@ -177,9 +177,9 @@ $(document).ready(function(){
         $('#inputTipoCapitolato').closest('.form-group').show();
         $('#inputTipologieCentro').closest('.form-group').show();
         $('#inputTipologieOspiti').closest('.form-group').show();
-        $('#inputCapienzaStruttura').closest('.form-group').show();
         $('#inputCapienzaEffettiva').closest('.form-group').show();
         $('#inputCapienzaConvenzione').closest('.form-group').show();
+        $('#inputCapienzaIncremento').closest('.form-group').show();
         $('#inputProceduraAffidamento').closest('.form-group').show();
         $('#inputOperativita').closest('.form-group').show();
         $('#inputTipoMinistero option[data-type="1"]').show();
@@ -189,9 +189,9 @@ $(document).ready(function(){
         $('#inputTipoCapitolato').closest('.form-group').hide();
         $('#inputTipologieCentro').closest('.form-group').hide();
         $('#inputTipologieOspiti').closest('.form-group').hide();
-        $('#inputCapienzaStruttura').closest('.form-group').hide();
         $('#inputCapienzaEffettiva').closest('.form-group').hide();
         $('#inputCapienzaConvenzione').closest('.form-group').hide();
+        $('#inputCapienzaIncremento').closest('.form-group').hide();
         $('#inputProceduraAffidamento').closest('.form-group').hide();
         $('#inputOperativita').closest('.form-group').hide();
         $('#inputTipoMinistero option[data-type="2"]').show();
@@ -335,9 +335,9 @@ function loadInputModale(idSede){
             $('[name="fax"]').val(data.data.fax);
             $('[name="email"]').val(data.data.email);
             $('[name="skype"]').val(data.data.skype);
-            $('[name="n_posti_struttura"]').val(data.data.n_posti_struttura);
             $('[name="n_posti_effettivi"]').val(data.data.n_posti_effettivi);
             $('[name="n_posti_convenzione"]').val(data.data.n_posti_convenzione);
+            $('[name="n_posti_incremento"]').val(data.data.n_posti_incremento);
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
             $('[name="note"]').val(data.data.note);
@@ -351,6 +351,7 @@ function loadInputModale(idSede){
             }
 
             $('#inputCapienzaConvenzione').prop('disabled', true);
+            $('#inputCapienzaIncremento').prop('disabled', true);
             $('#inputProceduraAffidamento').prop('disabled', true);
 
 	        }else{
@@ -438,14 +439,13 @@ function clearModale(){
   $('[name="skype"]').val("");
 	$('[name="skype"]').prop("disabled", false);
   $('[name="skype"]').removeClass('disabled-approved');
-  $('[name="n_posti_struttura"]').val("");
-  $('[name="n_posti_struttura"]').prop("disabled", false);
-  $('[name="n_posti_struttura"]').removeClass('disabled-approved');
   $('[name="n_posti_effettivi"]').val("");
   $('[name="n_posti_effettivi"]').prop("disabled", false);
   $('[name="n_posti_effettivi"]').removeClass('disabled-approved');
   $('[name="n_posti_convenzione"]').val("");
   $('[name="n_posti_convenzione"]').removeClass('disabled-approved');
+  $('[name="n_posti_incremento"]').val("");
+  $('[name="n_posti_incremento"]').removeClass('disabled-approved');
   $('[name="id_procedura_affidamento"]').val("");
   $('[name="id_procedura_affidamento"]').removeClass('disabled-approved');
   $('[name="operativita"]').val(1);
@@ -496,11 +496,10 @@ function disableApprovedModal() {
   $('[name="email"]').addClass('disabled-approved');
 	$('[name="skype"]').prop("disabled", true);
   $('[name="skype"]').addClass('disabled-approved');
-  $('[name="n_posti_struttura"]').prop("disabled", true);
-  $('[name="n_posti_struttura"]').addClass('disabled-approved');
   $('[name="n_posti_effettivi"]').prop("disabled", true);
   $('[name="n_posti_effettivi"]').addClass('disabled-approved');
   $('[name="n_posti_convenzione"]').addClass('disabled-approved');
+  $('[name="n_posti_incremento"]').addClass('disabled-approved');
   $('[name="id_procedura_affidamento"]').addClass('disabled-approved');
   $('[name="operativita"]').prop("disabled", true);
   $('[name="operativita"]').addClass('disabled-approved');

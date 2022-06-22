@@ -150,16 +150,61 @@ $(document).ready(function(){
         });
     }
 
+    //Attivazione/disattivazione sede
     $('.agreement-sede-check').change(function() {
         var id = $(this).attr('data-id');
         if ($(this).is(':checked')) {
             $('#inputSedeCapacity'+id).prop('disabled', false);
             $('#inputSedeCapacity'+id).addClass('required');
+            if ($('input[name="capacity_increment"]:checked').val() > 0) {
+                $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
+            }
         } else {
             $('#inputSedeCapacity'+id).prop('disabled', true);
             $('#inputSedeCapacity'+id).removeClass('required');
             $('#inputSedeCapacity'+id).val('');
+            $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
+            $('#inputSedeCapacityIncrement'+id).val('');
         }
+
+        //Aggiornamento totali
+        computeTotalCapacity();
+        computeMaxCapacityIncrement();
+        computeTotalCapacityIncrement();
+    });
+
+    //Cambio percentuale incremento posti
+    $('input[name="capacity_increment"]').change(function() {
+        if ($(this).val() > 0) {
+            $('.agreement-sede-check:checked').each(function(index, element) {
+                var id = $(element).attr('data-id');
+                $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
+            });
+        } else {
+            $('.agreement-sede-check:checked').each(function(index, element) {
+                var id = $(element).attr('data-id');
+                $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
+                $('#inputSedeCapacityIncrement'+id).val('');
+            });
+        }
+
+        //Aggiornamento totali
+        computeMaxCapacityIncrement();
+        computeTotalCapacityIncrement();
+    })
+
+    //Cambio posti da convenzione sede
+    $('.agreement-sede-capacity').change(function() {
+        //Aggiornamento totali
+        computeTotalCapacity();
+        computeMaxCapacityIncrement();
+        computeTotalCapacityIncrement();
+    });
+
+    //Cambio posti da incremento sede
+    $('.agreement-sede-capacity-increment').change(function() {
+        //Aggiornamento totali
+        computeTotalCapacityIncrement();
     });
 
     $('#saveAgreement').click(function(){
@@ -295,6 +340,10 @@ $(document).on('click', '.edit-agreement', function(){
                     $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
                     $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
                     $('#inputSedeCapacity'+sede.sede_id).addClass('required');
+                    if (res.data.capacity_increment > 0) {
+                        $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
+                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
+                    }
                 } else {
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
                     $('#inputSedeCheck'+sede.sede_id).prop('disabled', true);
@@ -303,6 +352,8 @@ $(document).on('click', '.edit-agreement', function(){
                     $('#inputSedeCapacity'+sede.sede_id).prop('disabled', true);
                     $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
                     $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
+                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
                     countInactiveSedi++;
                 }
             })
@@ -331,6 +382,11 @@ $(document).on('click', '.edit-agreement', function(){
 
             //mostro badge attachments e conto numero allegati
 	        attachmentsNumberForBadge('agreements', res.data.id, 'button_attachment');
+
+            //Calcolo totali posti
+            computeTotalCapacity();
+            computeMaxCapacityIncrement();
+            computeTotalCapacityIncrement();
 
             $('#modalAgreement').modal('show');
         }else{
@@ -386,6 +442,14 @@ function clearModal(){
         $(this).prop("title", '');
         $(this).removeClass('disabled-approved');
     });
+
+    $('.agreement-sede-capacity-increment').each(function() {
+        $(this).val("");
+        $(this).removeClass("required");
+        $(this).prop("disabled", true);
+        $(this).prop("title", '');
+        $(this).removeClass('disabled-approved');
+    });
 }
 
 function disableApprovedModal() {
@@ -414,4 +478,54 @@ function disableApprovedModal() {
         $(this).prop("disabled", true);
         $(this).addClass('disabled-approved');
     });
+
+    $('.agreement-sede-capacity-increment').each(function() {
+        $(this).prop("disabled", true);
+        $(this).addClass('disabled-approved');
+    });
+}
+
+function computeTotalCapacity() {
+    var tot = 0;
+    $('.agreement-sede-capacity').each(function(index, element) {
+        var val = $(element).val().length > 0 ? $(element).val() : 0;
+        tot += parseInt(val);
+    }); 
+    $('#totalCapacity').html(tot);
+}
+
+function computeMaxCapacityIncrement() {
+    var totalCapacity = $('#totalCapacity').html().length > 0 ? $('#totalCapacity').html() : 0;
+    var increment = $('input[name="capacity_increment"]:checked').val().length > 0 ? $('input[name="capacity_increment"]:checked').val() : 0;
+    var max = parseInt(totalCapacity) * parseInt(increment) / 100;
+    $('#maxCapacityIncrement').html(Math.round(max));
+}
+
+function computeTotalCapacityIncrement() {
+    var tot = 0;
+    $('.agreement-sede-capacity-increment').each(function(index, element) {
+        var val = $(element).val().length > 0 ? $(element).val() : 0;
+        tot += parseInt(val);
+    });
+    $('#totalCapacityIncrement').html(tot);
+    var maxCapacityIncrement = parseInt($('#maxCapacityIncrement').html());
+    if (tot == maxCapacityIncrement) {
+        $('#totalCapacityIncrement').removeClass('warning-capacity-increment');
+        $('#incrementCorrectMessage').show();
+        $('#incrementErrorExcessMessage').hide();
+        $('#incrementErrorDeficitMessage').hide();
+    } else {
+        $('#totalCapacityIncrement').addClass('warning-capacity-increment');
+        $('#incrementCorrectMessage').hide();
+        var diff = maxCapacityIncrement - tot;
+        if (diff > 0) {
+            $('#incrementErrorDeficitMessage').show();
+            $('#incrementErrorDeficitMessage .number').html(Math.abs(diff));
+            $('#incrementErrorExcessMessage').hide();
+        } else {
+            $('#incrementErrorExcessMessage').show();
+            $('#incrementErrorExcessMessage .number').html(Math.abs(diff));
+            $('#incrementErrorDeficitMessage').hide();
+        }
+    }
 }

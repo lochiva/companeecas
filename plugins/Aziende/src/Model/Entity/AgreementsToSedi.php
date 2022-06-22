@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
  * @property int $agreement_id
  * @property int $sede_id
  * @property int $capacity
+ * @property int $capacity_increment
  * @property bool $active
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
@@ -32,6 +33,7 @@ class AgreementsToSedi extends Entity
         'agreement_id' => true,
         'sede_id' => true,
         'capacity' => true,
+        'capacity_increment' => true,
         'active' => true,
         'created' => true,
         'modified' => true,

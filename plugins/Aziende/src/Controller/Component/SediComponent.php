@@ -266,7 +266,7 @@ class SediComponent extends Component
         $sede = $az->get($id);
         $agreements = TableRegistry::get('Aziende.Agreements');
         $agreement = $agreements->find()
-            ->select(['Agreements.procedure_id', 'ats.capacity'])
+            ->select(['Agreements.procedure_id', 'ats.capacity', 'ats.capacity_increment'])
             ->where(['ats.sede_id' => $id, 'ats.active' => 1])
             ->join([
                 [
@@ -278,6 +278,7 @@ class SediComponent extends Component
             ])
             ->first();
         $sede['n_posti_convenzione'] = empty($agreement) ? '' : $agreement['ats']['capacity'];
+        $sede['n_posti_incremento'] = empty($agreement) ? '' : $agreement['ats']['capacity_increment'];
         $sede['id_procedura_affidamento'] = empty($agreement) ? '' : $agreement['procedure_id'];
         return $sede;
     }

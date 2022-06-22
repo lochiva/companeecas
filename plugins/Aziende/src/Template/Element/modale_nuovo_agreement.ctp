@@ -27,7 +27,10 @@ $role = $this->request->session()->read('Auth.User.role');
                         </div>
                     <?php } else { ?>
                         <div hidden class="approved-message col-sm-12">
-                            <span>La convenzione è stata approvata pertanto non è più modificabile.</span>
+                            <span>
+                                La convenzione è stata approvata pertanto non è più modificabile.
+                                <!--La convenzione è in stato approvato. Eseguendo una modifica si sottomette la convenzione ad un nuovo processo di approvazione.-->
+                            </span>
                         </div>
                     <?php } ?>
 
@@ -85,6 +88,11 @@ $role = $this->request->session()->read('Auth.User.role');
                         <div class="col-sm-1">
                             <input type="radio" name="capacity_increment" id="inputCapacityIncrement50" value="50" class="radio-agreement">
                         </div>
+                        <div class="col-sm-12" id="incrementMessageContainer">
+                            <span hidden id="incrementCorrectMessage" class="success-capacity-increment">L'incremento da convenzione è assegnato correttamente.</span>
+                            <span hidden id="incrementErrorExcessMessage" class="warning-capacity-increment">L'incremento da convenzione non è assegnato correttamente, sono stati assegnati <span class="number"></span> posti in eccesso.</span>
+                            <span hidden id="incrementErrorDeficitMessage" class="warning-capacity-increment">L'incremento da convenzione non è assegnato correttamente, ci sono ancora <span class="number"></span> posti da assegnare.</span>
+                        </div>
                     </div>
                     <hr>
                     <div id="div-attachments">
@@ -94,15 +102,30 @@ $role = $this->request->session()->read('Auth.User.role');
                         <?= $this->element('AttachmentManager.button_attachment', ['id' => 'button_attachment', 'buttonLabel' => 'Allegati convenzione']); ?>
                     </div>
                     <hr>
+                    <div class="form-group">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-3">
+                            <label>Posti da convenzione</label><br>
+                            Totale: <span id="totalCapacity"></span>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Posti da incremento</label><br>
+                            Totale: <span id="totalCapacityIncrement"></span>/<span id="maxCapacityIncrement"></span>
+                        </div>
+                    </div>
                     <?php foreach($sedi as $sede) { ?>
                         <div class="form-group">
                             <div class="col-sm-6">
                                 <input type="checkbox" name="sedi[<?=$sede['id']?>][active]" id="inputSedeCheck<?=$sede['id']?>" data-id="<?=$sede['id']?>" class="agreement-sede-check">
                                 <label for="inputSedeCheck<?=$sede['id']?>"><?=$sede['indirizzo'].' '.$sede['num_civico'].' - '.$sede['comune']['des_luo']?></label>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <input disabled type="text" name="sedi[<?=$sede['id']?>][capacity]" id="inputSedeCapacity<?=$sede['id']?>" 
                                     class="form-control number-integer agreement-sede-capacity" placeholder="Capienza da convenzione">
+                            </div>
+                            <div class="col-sm-3">
+                                <input disabled type="text" name="sedi[<?=$sede['id']?>][capacity_increment]" id="inputSedeCapacityIncrement<?=$sede['id']?>" 
+                                    class="form-control number-integer agreement-sede-capacity-increment" placeholder="Capienza da incremento">
                             </div>
                         </div>
                     <?php } ?>

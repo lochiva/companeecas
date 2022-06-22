@@ -109,7 +109,7 @@ class AziendaComponent extends Component
 
                 $agreements = TableRegistry::get('Aziende.Agreements');
                 $agreement = $agreements->find()
-                    ->select(['Agreements.procedure_id', 'ats.capacity'])
+                    ->select(['Agreements.procedure_id', 'ats.capacity', 'ats.capacity_increment'])
                     ->where(['ats.sede_id' => $sede['id'], 'ats.active' => 1])
                     ->join([
                         [
@@ -121,6 +121,7 @@ class AziendaComponent extends Component
                     ])
                     ->first();
                 $res['sedi'][$key]['n_posti_convenzione'] = empty($agreement) ? '' : $agreement['ats']['capacity'];
+                $res['sedi'][$key]['n_posti_incremento'] = empty($agreement) ? '' : $agreement['ats']['capacity_increment'];
                 $res['sedi'][$key]['id_procedura_affidamento'] = empty($agreement) ? '' : $agreement['procedure_id'];
             }
         }

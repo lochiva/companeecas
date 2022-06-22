@@ -402,13 +402,6 @@ use Cake\Routing\Router;
                                     <hr>
 
                                     <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCapienzaStruttura">Capienza (struttura)</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.n_posti_struttura" type="text" placeholder="Capienza (struttura)" name="capienza (struttura)" id="inputCapienzaStruttura" class="form-control number-integer" >
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
                                         <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
                                         <div class="col-sm-10">
                                             <input required ng-model="sede.n_posti_effettivi" type="text" placeholder="Capienza (effettiva)" name="capienza (effettiva)" id="inputCapienzaEffettiva" class="form-control number-integer" >
@@ -419,6 +412,13 @@ use Cake\Routing\Router;
                                         <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                                         <div class="col-sm-10">
                                             <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
+                                        </div>
+                                    </div>
+
+                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
+                                        <label class="col-sm-2 control-label" for="inputCapienzaIncremento">Capienza (da incremento)</label>
+                                        <div class="col-sm-10">
+                                            <input disabled ng-model="sede.n_posti_incremento" type="text" name="capienza (da incremento)" id="inputCapienzaIncremento" class="form-control number-integer" >
                                         </div>
                                     </div>
 

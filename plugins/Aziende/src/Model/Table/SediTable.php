@@ -336,6 +336,7 @@ class SediTable extends AppTable
                 'data_scadenza' => 'ag.date_agreement_expiration',
                 'data_proroga' => 'ag.date_extension_expiration',
                 'prezzo_giornaliero' => 'ag.guest_daily_price',
+                'posti_struttura' => 'ats.capacity + ats.capacity_increment',
                 'guests_minori' => "IF(
                     sto.id IN (1, 7, 8),
                     (SELECT COUNT(*) FROM guests g
@@ -482,7 +483,7 @@ class SediTable extends AppTable
         foreach ($sedi as $sede) {
             $dispo = '0';
             if ($sede['operativita']) {
-                $dispo = $sede['n_posti_struttura'] - $sede['presenze'];
+                $dispo = $sede['posti_struttura'] - $sede['presenze'];
                 if ($dispo < 0) {
                     $dispo = 0;
                 }
@@ -505,7 +506,7 @@ class SediTable extends AppTable
                 $sede['tipo_struttura'],
                 $sede['ente'],
                 $sede['address'],
-                strval($sede['n_posti_struttura']),
+                empty($sede['posti_struttura']) ? '0' : $sede['posti_struttura'],
                 strval($sede['capienza_effettiva']),
                 strval($sede['presenze']),
                 strval($dispo),

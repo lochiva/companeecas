@@ -191,13 +191,6 @@ $role = $this->request->session()->read('Auth.User.role');
                         <hr>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label required" for="inputCapienzaStruttura">Capienza (struttura)</label>
-                            <div class="col-sm-10">
-                                <input type="text" placeholder="Capienza (struttura)" name="n_posti_struttura" id="inputCapienzaStruttura" class="form-control number-integer required" >
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
                             <div class="col-sm-10">
                                 <input type="text" placeholder="Capienza (effettiva)" name="n_posti_effettivi" id="inputCapienzaEffettiva" class="form-control number-integer required" >
@@ -208,6 +201,13 @@ $role = $this->request->session()->read('Auth.User.role');
                             <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
                             <div class="col-sm-10">
                                 <input disabled type="text" name="n_posti_convenzione" id="inputCapienzaConvenzione" class="form-control number-integer" >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="inputCapienzaIncremento">Capienza (da incremento)</label>
+                            <div class="col-sm-10">
+                                <input disabled type="text" name="n_posti_incremento" id="inputCapienzaIncremento" class="form-control number-integer" >
                             </div>
                         </div>
 
