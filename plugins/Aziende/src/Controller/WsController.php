@@ -2485,7 +2485,7 @@ class WsController extends AppController
                         'sede_id' => $sedeId,
                         'active' => 1,
                         'capacity' => $sede['capacity'],
-                        'capacity_increment' => $sede['capacity_increment']
+                        'capacity_increment' => empty($sede['capacity_increment']) ? 0 : $sede['capacity_increment']
                     ];
                     $agreementsSedi->patchEntity($agreementSede, $dataToSave);
                     if ($agreementsSedi->save($agreementSede)) {

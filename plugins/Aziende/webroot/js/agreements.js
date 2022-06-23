@@ -511,7 +511,12 @@ function computeTotalCapacityIncrement() {
     var maxCapacityIncrement = parseInt($('#maxCapacityIncrement').html());
     if (tot == maxCapacityIncrement) {
         $('#totalCapacityIncrement').removeClass('warning-capacity-increment');
-        $('#incrementCorrectMessage').show();
+        var increment = $('input[name="capacity_increment"]:checked').val().length > 0 ? $('input[name="capacity_increment"]:checked').val() : 0;
+        if (increment > 0) {
+            $('#incrementCorrectMessage').show();
+        } else {
+            $('#incrementCorrectMessage').hide();
+        }
         $('#incrementErrorExcessMessage').hide();
         $('#incrementErrorDeficitMessage').hide();
     } else {
