@@ -40,7 +40,7 @@ $user = $this->request->session()->read('Auth.User');
                     <?php if ($azienda->id_tipo == 1) { ?>
                         <a class="btn btn-primary btn-xs pull-right" href="<?= Router::url('/aziende/agreements/index/' . $azienda->id)?>" style="margin-left: 10px;"><i class="fa fa-file-text-o"></i> Convenzioni</a>
                     <?php } ?>
-                    <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" data-backdrop="static" data-keyboard="false" onclick="clearModale()" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                    <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" data-backdrop="false" data-keyboard="false" onclick="clearModale()" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                   </div>
                 </div>

@@ -388,6 +388,10 @@ $(document).on('click', '.edit-agreement', function(){
             computeMaxCapacityIncrement();
             computeTotalCapacityIncrement();
 
+            $('#modalAgreement').modal({
+                backdrop: false,
+                keyboard: false
+            });
             $('#modalAgreement').modal('show');
         }else{
             alert(res.msg);
