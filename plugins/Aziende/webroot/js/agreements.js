@@ -426,6 +426,9 @@ function clearModal(){
     $('#inputCig').val("");
     $('#inputCig').prop("disabled", false);
     $('#inputCig').removeClass('disabled-approved');
+    $('#inputCapacityIncrement0').prop("checked", false);
+    $('#inputCapacityIncrement0').prop("disabled", false);
+    $('#inputCapacityIncrement0').removeClass('disabled-approved');
     $('#inputCapacityIncrement20').prop("checked", false);
     $('#inputCapacityIncrement20').prop("disabled", false);
     $('#inputCapacityIncrement20').removeClass('disabled-approved');
@@ -469,10 +472,12 @@ function disableApprovedModal() {
     $('#inputGuestDailyPrice').addClass('disabled-approved');
     $('#inputCig').prop("disabled", true);
     $('#inputCig').addClass('disabled-approved');
-    $('#inputCapacityIncrement20').prop("disabled", false);
-    $('#inputCapacityIncrement20').removeClass('disabled-approved');
-    $('#inputCapacityIncrement50').prop("disabled", false);
-    $('#inputCapacityIncrement50').removeClass('disabled-approved');
+    $('#inputCapacityIncrement0').prop("disabled", true);
+    $('#inputCapacityIncrement0').addClass('disabled-approved');
+    $('#inputCapacityIncrement20').prop("disabled", true);
+    $('#inputCapacityIncrement20').addClass('disabled-approved');
+    $('#inputCapacityIncrement50').prop("disabled", true);
+    $('#inputCapacityIncrement50').addClass('disabled-approved');
 
     $('.agreement-sede-check').each(function() {
         $(this).prop("disabled", true);
