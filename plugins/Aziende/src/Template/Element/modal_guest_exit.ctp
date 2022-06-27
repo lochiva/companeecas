@@ -15,9 +15,15 @@
 					<div class="form-group"> 
 						<div class="col-sm-12" :class="{'has-error': exitProcedureData.exit_type_id.hasError}">
 							<label :class="{'required': exitProcedureData.exit_type_id.required}" for="exitType">Motivazione</label>
-							<select v-model="exitProcedureData.exit_type_id.value" id="exitType" class="form-control" @change="updateExitNote()">
+							<select v-model="exitProcedureData.exit_type_id.value" id="exitType" class="form-control" @change="updateExitRequirements()">
 								<option v-for="type in exitTypes" :value="type.id">{{type.name}}</option>
 							</select>
+						</div>
+					</div>
+					<div class="form-group"> 
+						<div class="col-sm-12" :class="{'has-error': exitProcedureData.file.hasError}">
+							<label :class="{'required': exitProcedureData.file.required}" for="exitFile">Documento</label>
+							<input type="file" value="exitProcedureData.file.value" @input="exitProcedureData.file.value = $event.target.files[0]" id="exitFile" class="form-control exit-file">
 						</div>
 					</div>
 					<div class="form-group"> 

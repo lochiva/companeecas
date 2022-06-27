@@ -67,6 +67,9 @@ class GuestsExitTypesTable extends Table
             ->boolean('required_confirmation');
 
         $validator
+            ->boolean('required_file');
+
+        $validator
             ->boolean('required_note');
 
         $validator

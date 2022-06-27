@@ -9,6 +9,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string $name
  * @property bool $required_confirmation
+ * @property bool $required_file
  * @property bool $required_note
  * @property bool $startable_by_ente
  * @property bool $toSAI
@@ -31,6 +32,7 @@ class GuestsExitType extends Entity
     protected $_accessible = [
         'name' => true,
         'required_confirmation' => true,
+        'required_file' => true,
         'required_note' => true,
         'startable_by_ente' => true,
         'toSAI' => true,

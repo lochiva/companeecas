@@ -46,6 +46,7 @@ $role = $this->request->session()->read('Auth.User.role');
         <div v-if="guestStatus == 3" class="message-exited alert">
             L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
+            <button v-if="this.exitData.file" class="btn btn-primary download-exit-file" @click="downloadExitDocument(exitData.file)"><i class="fa fa-download"></i> Scarica documento</button>
         </div>
         <div v-if="guestStatus == 4" class="message-transferring alert">
             L'ospite è in stato "Trasferimento in uscita" con destinazione {{transferData.destination}}.
@@ -281,6 +282,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <th>Provenienza</th>
                                 <th>Note</th>
                                 <th>Operatore</th>
+                                <th>Documento</th>
                             </thead>
                             <tbody>
                                 <tr v-for="history in guestHistory">
@@ -293,6 +295,12 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <td>{{ history.provenance }}</td>
                                     <td>{{ history.note }}</td>
                                     <td>{{ history.operator }}</td>
+                                    <td>
+                                        <button v-if="history.guest_status_id == 3 && history.file" type="button" class="btn btn-primary btn-xs" 
+                                            @click="downloadExitDocument(history.file)">
+                                            <i class="fa fa-download"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

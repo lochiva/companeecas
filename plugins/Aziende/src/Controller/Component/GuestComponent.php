@@ -4,6 +4,7 @@ namespace Aziende\Controller\Component;
 use Cake\Controller\Component;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
+use Cake\Core\Configure;
 
 class GuestComponent extends Component
 {
@@ -232,7 +233,7 @@ class GuestComponent extends Component
 
     }
 
-	public function exitGuest($guest, $data, $today, $status)
+	public function exitGuest($guest, $data, $today, $status, $filePath)
 	{
 		$error = '';
 
@@ -256,6 +257,7 @@ class GuestComponent extends Component
 				$historyData['operation_date'] = $today->format('Y-m-d');
 				$historyData['guest_status_id'] = $status;
 				$historyData['exit_type_id'] = $data['exit_type_id'];
+				$historyData['file'] = $filePath;
 				$historyData['note'] = $data['note'];
 
 				$guestsHistory->patchEntity($history, $historyData);
@@ -301,7 +303,7 @@ class GuestComponent extends Component
 					}
 				} else {
 					$error = "Errore nell'aggiornamento dello storico dell'ospite.";
-				}  
+				}
 			} else {
 				$error = "L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di uscita.";
 			}
@@ -332,6 +334,7 @@ class GuestComponent extends Component
 			$historyData['operation_date'] = $today->format('Y-m-d');
 			$historyData['guest_status_id'] = 3;
 			$historyData['exit_type_id'] = $lastHistory->exit_type_id;
+			$historyData['file'] = $lastHistory->file;
 			$historyData['note'] = $lastHistory->note;
 	
 			$guestsHistory->patchEntity($history, $historyData);

@@ -367,3 +367,7 @@ label.required:after{
 .exit-trasnfer-warning {
     font-style: italic;
 }
+
+.message-exited .download-exit-file {
+    margin-top: 10px;
+}

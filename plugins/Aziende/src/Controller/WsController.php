@@ -2100,6 +2100,7 @@ class WsController extends AppController
                 } else {
                     $guest['check_out_date'] = '';
                 }
+                $guest['history_file'] = $lastHistory->file;
                 $guest['history_note'] = $lastHistory->note;
                 $guest['history_cloned_guest'] = $lastHistory->cloned_guest_id;
             }
@@ -2894,8 +2895,6 @@ class WsController extends AppController
     {
         $data = $this->request->data;
 
-        $data = $this->request->data;
-    
         $guests = TableRegistry::get('Aziende.Guests');
         $guest = $guests->get($data['guest_id']);
 
@@ -2910,47 +2909,69 @@ class WsController extends AppController
 
         $today = new Time();
 
-        $guestsToExit = [$guest];
+        //salvataggio file
+        $filePath = '';
+        $errorFile = false;
+        if (!empty($data['file']) && !empty($data['file']['tmp_name'])) {
+            $basePath = ROOT.DS.Configure::read('dbconfig.aziende.EXIT_FILES_PATH');
+            $fileName = uniqid().'_'.$data['file']['name'];
+            $path = date('Y').DS.date('m').DS;
+            $filePath = $path.$fileName;
 
-        //uscita famigliari
-        if ($data['exit_family']) {
-            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-            $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
-            $familyGuests = $guests->find()
-                ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
-                ->join([
-                    [
-                        'table' => 'guests_families',
-                        'alias' => 'gf',
-                        'type' => 'left',
-                        'conditions' => 'gf.guest_id = Guests.id'
-                    ]
-                ])
-                ->toArray();
-
-            $guestsToExit = array_merge($guestsToExit, $familyGuests);
-        }
-
-        //uscita ospiti
-        $errorMsg = '';
-        $responseStatus = 'OK';
-        foreach ($guestsToExit as $g) {
-            $error = $this->Guest->exitGuest($g, $data, $today, $status);
-            if ($error) {
-                $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                if ($g->id == $guest->id) {
-                    $responseStatus = 'KO';
-                }
-                $res['family_status'][$g->id] = 1;
-            } else {
-                $res['family_status'][$g->id] = $status;
+            if (!is_dir($basePath.$path) && !mkdir($basePath.$path, 0755, true)) {
+                $errorFile = true;
+            } else if (!move_uploaded_file($data['file']['tmp_name'], $basePath.$filePath)) {
+                $errorFile = true;
             }
         }
 
-        $res['history_status'] = $status;
-        $res['history_exit_type'] = $exitType['name'];
-        $res['check_out_date'] = $today->format('d/m/Y');
-        $res['history_note'] = $data['note'];
+        if (!$errorFile) {
+            $guestsToExit = [$guest];
+
+            //uscita famigliari
+            if ($data['exit_family']) {
+                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                $familyGuests = $guests->find()
+                    ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
+                    ->join([
+                        [
+                            'table' => 'guests_families',
+                            'alias' => 'gf',
+                            'type' => 'left',
+                            'conditions' => 'gf.guest_id = Guests.id'
+                        ]
+                    ])
+                    ->toArray();
+
+                $guestsToExit = array_merge($guestsToExit, $familyGuests);
+            }
+
+            //uscita ospiti
+            $errorMsg = '';
+            $responseStatus = 'OK';
+            foreach ($guestsToExit as $g) {
+                $error = $this->Guest->exitGuest($g, $data, $today, $status, $filePath);
+                if ($error) {
+                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                    if ($g->id == $guest->id) {
+                        $responseStatus = 'KO';
+                    }
+                    $res['family_status'][$g->id] = 1;
+                } else {
+                    $res['family_status'][$g->id] = $status;
+                }
+            }
+
+            $res['history_status'] = $status;
+            $res['history_exit_type'] = $exitType['name'];
+            $res['check_out_date'] = $today->format('d/m/Y');
+            $res['history_file'] = $filePath;
+            $res['history_note'] = $data['note'];
+        } else {
+            $errorMsg = "Errore nel salvataggio del documento di uscita.";
+            $responseStatus = 'KO';
+        }
 
         if (!$errorMsg) {
             $this->_result['response'] = "OK";
@@ -3019,6 +3040,7 @@ class WsController extends AppController
         $res['history_status'] = 3;
         $res['history_exit_type'] = $exitType['name'];
         $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+        $res['history_file'] = $lastHistory->file;
         $res['history_note'] = $lastHistory->note;
 
         if (!$errorMsg) {
@@ -3265,5 +3287,31 @@ class WsController extends AppController
         $this->_result['response'] = 'OK';
         $this->_result['data'] = $guests;
         $this->_result['msg'] = "Elenco risultati.";
+    }
+
+    public function downloadGuestExitFile()
+    {
+        $filePath = $this->request->query['file'];
+
+        if (!empty($filePath)) {
+            $basePath = ROOT.DS.Configure::read('dbconfig.aziende.EXIT_FILES_PATH');
+
+            $name = implode('_', array_slice(explode('_', $filePath), 1));
+
+            if(file_exists($basePath.$filePath)){
+                $this->response->file($basePath.$filePath , array(
+                    'download'=> true,
+                    'name'=> $name
+                ));
+                setcookie('downloadStarted', '1', false, '/');
+                return $this->response;
+            }else{
+                setcookie('downloadStarted', '1', false, '/');
+                $this->_result['msg'] = 'Il file richiesto non esiste.';
+            }
+        } else {
+            setcookie('downloadStarted', '1', false, '/');
+            $this->_result['msg'] = 'Parametro mancante.';
+        }
     }
 }

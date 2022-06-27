@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  * @property int $cloned_guest_id
  * @property int $destination_id
  * @property int $provenance_id
+ * @property string $file
  * @property string $note
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
@@ -52,6 +53,7 @@ class GuestsHistory extends Entity
         'cloned_guest_id' => true,
         'destination_id' => true,
         'provenance_id' => true,
+        'file' => true,
         'note' => true,
         'created' => true,
         'modified' => true,

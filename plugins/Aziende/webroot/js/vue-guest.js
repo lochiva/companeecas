@@ -129,6 +129,11 @@ var app = new Vue({
                 hasError: false,
                 value: ''
             },
+            file:  {
+                required: false,
+                hasError: false,
+                value: ''
+            },
             note:  {
                 required: false,
                 hasError: false,
@@ -145,6 +150,7 @@ var app = new Vue({
         exitData: {
             type: '',
             date: '',
+            file: '',
             note: '',
         },
         transferAziende: [],
@@ -317,6 +323,7 @@ var app = new Vue({
 
                         this.exitData.type = res.data.data.history_exit_type;
                         this.exitData.date = res.data.data.check_out_date;
+                        this.exitData.file = res.data.data.history_file;
                         this.exitData.note = res.data.data.history_note;
                         this.transferData.destination = res.data.data.history_destination;
                         this.transferData.destination_id = res.data.data.history_destination_id;
@@ -684,7 +691,13 @@ var app = new Vue({
             }
         },
 
-        updateExitNote: function() {
+        updateExitRequirements: function() {
+            if (this.exitProcedureData.exit_type_id.value && this.exitTypes[this.exitProcedureData.exit_type_id.value].required_file) {
+                this.exitProcedureData.file.required = true;
+            } else {
+                this.exitProcedureData.file.hasError = false;
+                this.exitProcedureData.file.required = false;
+            }
             if (this.exitProcedureData.exit_type_id.value && this.exitTypes[this.exitProcedureData.exit_type_id.value].required_note) {
                 this.exitProcedureData.note.required = true;
             } else {
@@ -722,20 +735,25 @@ var app = new Vue({
         },
 
         exitGuest: function(exitFamily){
-            let params = new URLSearchParams();
-            params.append('guest_id', this.guestData.id.value);
+            let formData = new FormData();
+            formData.append('guest_id', this.guestData.id.value);
             Object.keys(this.exitProcedureData).forEach((prop) => {
-                params.append(prop, this.exitProcedureData[prop].value);
+                formData.append(prop, this.exitProcedureData[prop].value);
             });
-            params.append('exit_family', exitFamily);
+            formData.append('exit_family', exitFamily);
 
-            axios.post(pathServer + 'aziende/ws/exitProcedure', params)
+            axios.post(pathServer + 'aziende/ws/exitProcedure', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
             .then(res => {
                 if (res.data.response == 'OK') {
                     alert(res.data.msg);
                     this.guestStatus = res.data.data.history_status;
                     this.exitData.type = res.data.data.history_exit_type;
                     this.exitData.date = res.data.data.check_out_date;
+                    this.exitData.file = res.data.data.history_file;
                     this.exitData.note = res.data.data.history_note;
 
                     if(exitFamily){
@@ -764,6 +782,11 @@ var app = new Vue({
         clearExitProcedureData: function() {
             this.exitProcedureData = {
                 exit_type_id: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                file: {
                     required: true,
                     hasError: false,
                     value: ''
@@ -830,6 +853,7 @@ var app = new Vue({
                     this.guestStatus = res.data.data.history_status;
                     this.exitData.type = res.data.data.history_exit_type;
                     this.exitData.date = res.data.data.check_out_date;
+                    this.exitData.file = res.data.data.history_file;
                     this.exitData.note = res.data.data.history_note;
 
                     if(confirmExitFamily){
@@ -1318,6 +1342,13 @@ var app = new Vue({
                 }
             };
         },
+
+        downloadExitDocument: function(file) {
+            $('#template-spinner').show();
+            document.cookie = 'downloadStarted=0;path=/';    
+            window.location = pathServer + 'aziende/ws/downloadGuestExitFile?file=' + encodeURIComponent(file);
+            checkCookieForLoader('downloadStarted', '1');
+        }
         
     }
 

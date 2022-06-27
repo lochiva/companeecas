@@ -17,6 +17,11 @@
 							</datepicker>
 						</div>
 					</div>
+					<div v-if="exitData.file" class="form-group">
+						<div class="col-md-12">
+							<button type="button" class="btn btn-primary" @click="downloadExitDocument(exitData.file)"><i class="fa fa-download"></i> Scarica documento</button>
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">

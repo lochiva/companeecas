@@ -19,6 +19,10 @@
             <td><?= $guestsExitType->required_confirmation ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Richiesto documento') ?></th>
+            <td><?= $guestsExitType->required_file ? 'Sì' : 'No' ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Richieste note') ?></th>
             <td><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>
         </tr>

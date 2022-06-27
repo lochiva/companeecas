@@ -565,18 +565,22 @@ msgid "Required Confirmation"
 msgstr "Richiesta Conferma"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:15
+msgid "Required File"
+msgstr "Richiesto Documento"
+
+#: Template/Admin/GuestsExitTypes/index.ctp:16
 msgid "Required Note"
 msgstr "Richieste Note"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:16
+#: Template/Admin/GuestsExitTypes/index.ctp:17
 msgid "Startable By Ente"
 msgstr "Avviabile Da Ente"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:17
+#: Template/Admin/GuestsExitTypes/index.ctp:18
 msgid "ToSAI"
 msgstr "Destinazione SAI"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:18
+#: Template/Admin/GuestsExitTypes/index.ctp:19
 msgid "Ente Type"
 msgstr "Tipologia Ente"
 

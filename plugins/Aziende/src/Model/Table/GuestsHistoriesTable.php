@@ -112,6 +112,10 @@ class GuestsHistoriesTable extends Table
             ->allowEmptyDate('exit_date');
 
         $validator
+            ->scalar('file')
+            ->allowEmptyString('file');
+
+        $validator
             ->scalar('note')
             ->allowEmptyString('note');
 
@@ -150,6 +154,8 @@ class GuestsHistoriesTable extends Table
                 'GuestsHistories.exit_type_id', 
                 'GuestsHistories.destination_id', 
                 'GuestsHistories.provenance_id',
+                'GuestsHistories.guest_status_id',
+                'GuestsHistories.file',
                 'GuestsHistories.note', 
                 'azienda' => 'a.denominazione',
                 'sede' => 'CONCAT(s.indirizzo, " ", s.num_civico, " ", ls.des_luo, " (", ls.s_prv, ")")',

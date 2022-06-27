@@ -15,6 +15,10 @@
             echo $this->Form->checkbox('required_confirmation', ['class' => 'input-checkbox']);
             echo '</div>';
             echo '<div class="input checkbox">';
+            echo $this->Form->label('required_file','Richiesto Documento');
+            echo $this->Form->checkbox('required_file', ['class' => 'input-checkbox']);
+            echo '</div>';
+            echo '<div class="input checkbox">';
             echo $this->Form->label('required_note','Richieste Note');
             echo $this->Form->checkbox('required_note', ['class' => 'input-checkbox']);
             echo '</div>';
