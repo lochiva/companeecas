@@ -248,8 +248,7 @@ class GuestsTable extends AppTable
                         ]
                     ];
                 }
-                $guest = $this->find()->where($where);//->first();
-debug($guest);die;
+                $guest = $this->find()->where($where)->first();
                 if (!empty($guest)) {
                     $entity->setError('cui', ['Il CUI deve essere univoco.']);
                     return false;
