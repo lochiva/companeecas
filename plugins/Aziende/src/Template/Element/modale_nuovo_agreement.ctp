@@ -104,9 +104,9 @@ $role = $this->request->session()->read('Auth.User.role');
                     <hr>
                     <table class="table-agreement-sedi">
                         <tr>
-                            <td width="6%"><label>Attiva</label></td>
+                            <td width="6%"><label>Operativa</label></td>
                             <td width="8%"><label>Associata</label></td>
-                            <td width="40%"><label>Struttura</label></td>
+                            <td width="40%"><label>Indirizzo Struttura</label></td>
                             <td width="23%">
                                 <label>Posti da convenzione</label><br>
                                 Totale: <span id="totalCapacity"></span>
