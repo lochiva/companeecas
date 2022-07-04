@@ -151,20 +151,44 @@ $(document).ready(function(){
     }
 
     //Attivazione/disattivazione sede
-    $('.agreement-sede-check').change(function() {
+    $('.agreement-sede-active').change(function() {
         var id = $(this).attr('data-id');
         if ($(this).is(':checked')) {
+            $('#inputSedeCapacity'+id).prop('readonly', false);
+            if ($('input[name="capacity_increment"]:checked').val() > 0) {
+                $('#inputSedeCapacityIncrement'+id).prop('readonly', false);
+            }
+        } else {
+            $('#inputSedeCapacity'+id).prop('readonly', true);
+            $('#inputSedeCapacity'+id).prop('title', 'Convenzione non più attiva per questo centro');
+            if ($('input[name="capacity_increment"]:checked').val() > 0) {
+                $('#inputSedeCapacityIncrement'+id).prop('readonly', true);
+                $('#inputSedeCapacityIncrement'+id).prop('title', 'Convenzione non più attiva per questo centro');
+            }
+        }
+    });
+
+    //Associazione/disassociazione sede
+    $('.agreement-sede-checked').change(function() {
+        var id = $(this).attr('data-id');
+        if ($(this).is(':checked')) {
+            $('#inputSedeActive'+id).prop('disabled', false);
+            $('#inputSedeActive'+id).prop('checked', true);
             $('#inputSedeCapacity'+id).prop('disabled', false);
             $('#inputSedeCapacity'+id).addClass('required');
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
             }
         } else {
+            $('#inputSedeActive'+id).prop('disabled', true);
+            $('#inputSedeActive'+id).prop('checked', false);
             $('#inputSedeCapacity'+id).prop('disabled', true);
             $('#inputSedeCapacity'+id).removeClass('required');
             $('#inputSedeCapacity'+id).val('');
-            $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
-            $('#inputSedeCapacityIncrement'+id).val('');
+            if ($('input[name="capacity_increment"]:checked').val() > 0) {
+                $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
+                $('#inputSedeCapacityIncrement'+id).val('');
+            }
         }
 
         //Aggiornamento totali
@@ -176,12 +200,12 @@ $(document).ready(function(){
     //Cambio percentuale incremento posti
     $('input[name="capacity_increment"]').change(function() {
         if ($(this).val() > 0) {
-            $('.agreement-sede-check:checked').each(function(index, element) {
+            $('.agreement-sede-checked:checked').each(function(index, element) {
                 var id = $(element).attr('data-id');
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
             });
         } else {
-            $('.agreement-sede-check:checked').each(function(index, element) {
+            $('.agreement-sede-checked:checked').each(function(index, element) {
                 var id = $(element).attr('data-id');
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
                 $('#inputSedeCapacityIncrement'+id).val('');
@@ -335,25 +359,34 @@ $(document).on('click', '.edit-agreement', function(){
             $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
             var countInactiveSedi = 0;
             res.data.agreements_to_sedi.forEach(function(sede) {
+                $('#inputSedeActive'+sede.sede_id).prop('disabled', false);
+                $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
+                if (res.data.capacity_increment > 0) {
+                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
+                }
                 if (sede.active) {
+                    $('#inputSedeActive'+sede.sede_id).prop('checked', true);
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
+                    $('#inputSedeCheck'+sede.sede_id).prop('readonly', false);
                     $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
-                    $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
                     $('#inputSedeCapacity'+sede.sede_id).addClass('required');
                     if (res.data.capacity_increment > 0) {
                         $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
-                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
+                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', false);
                     }
                 } else {
+                    $('#inputSedeActive'+sede.sede_id).prop('checked', false);
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
-                    $('#inputSedeCheck'+sede.sede_id).prop('disabled', true);
-                    $('#inputSedeCheck'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                    $('#inputSedeCheck'+sede.sede_id).prop('readonly', true);
                     $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
-                    $('#inputSedeCapacity'+sede.sede_id).prop('disabled', true);
+                    $('#inputSedeCapacity'+sede.sede_id).prop('readonly', true);
                     $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
                     $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
-                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
-                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                    if (res.data.capacity_increment > 0) {
+                        $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
+                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', true);
+                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                    }
                     countInactiveSedi++;
                 }
             })
@@ -436,15 +469,20 @@ function clearModal(){
     $('#inputCapacityIncrement50').prop("disabled", false);
     $('#inputCapacityIncrement50').removeClass('disabled-approved');
 
-    $('.agreement-sede-check').each(function() {
+    $('.agreement-sede-active').each(function() {
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+    });
+
+    $('.agreement-sede-checked').each(function() {
         $(this).prop('checked', false);
         $(this).prop("disabled", false);
-        $(this).prop("title", '');
     });
 
     $('.agreement-sede-capacity').each(function() {
         $(this).val("");
         $(this).removeClass("required");
+        $(this).prop("readonly", false);
         $(this).prop("disabled", true);
         $(this).prop("title", '');
         $(this).removeClass('disabled-approved');
@@ -453,6 +491,7 @@ function clearModal(){
     $('.agreement-sede-capacity-increment').each(function() {
         $(this).val("");
         $(this).removeClass("required");
+        $(this).prop("readonly", false);
         $(this).prop("disabled", true);
         $(this).prop("title", '');
         $(this).removeClass('disabled-approved');
@@ -479,7 +518,7 @@ function disableApprovedModal() {
     $('#inputCapacityIncrement50').prop("disabled", true);
     $('#inputCapacityIncrement50').addClass('disabled-approved');
 
-    $('.agreement-sede-check').each(function() {
+    $('.agreement-sede-checked').each(function() {
         $(this).prop("disabled", true);
     });
 

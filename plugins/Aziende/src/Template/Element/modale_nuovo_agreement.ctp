@@ -102,33 +102,42 @@ $role = $this->request->session()->read('Auth.User.role');
                         <?= $this->element('AttachmentManager.button_attachment', ['id' => 'button_attachment', 'buttonLabel' => 'Allegati convenzione']); ?>
                     </div>
                     <hr>
-                    <div class="form-group">
-                        <div class="col-sm-6"></div>
-                        <div class="col-sm-3">
-                            <label>Posti da convenzione</label><br>
-                            Totale: <span id="totalCapacity"></span>
-                        </div>
-                        <div class="col-sm-3">
-                            <label>Posti da incremento</label><br>
-                            Totale: <span id="totalCapacityIncrement"></span>/<span id="maxCapacityIncrement"></span>
-                        </div>
-                    </div>
-                    <?php foreach($sedi as $sede) { ?>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <input type="checkbox" name="sedi[<?=$sede['id']?>][active]" id="inputSedeCheck<?=$sede['id']?>" data-id="<?=$sede['id']?>" class="agreement-sede-check">
+                    <table class="table-agreement-sedi">
+                        <tr>
+                            <td width="6%"><label>Attiva</label></td>
+                            <td width="8%"><label>Associata</label></td>
+                            <td width="40%"><label>Struttura</label></td>
+                            <td width="23%">
+                                <label>Posti da convenzione</label><br>
+                                Totale: <span id="totalCapacity"></span>
+                            </td>
+                            <td width="23%">
+                                <label>Posti da incremento</label><br>
+                                Totale: <span id="totalCapacityIncrement"></span>/<span id="maxCapacityIncrement"></span>
+                            </td>
+                        </tr>
+                        <?php foreach($sedi as $sede) { ?>
+                        <tr>
+                            <td class="text-center">
+                                <input disabled type="checkbox" name="sedi[<?=$sede['id']?>][active]" id="inputSedeActive<?=$sede['id']?>" data-id="<?=$sede['id']?>" class="agreement-sede-active">
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="sedi[<?=$sede['id']?>][checked]" id="inputSedeCheck<?=$sede['id']?>" data-id="<?=$sede['id']?>" class="agreement-sede-checked">
+                            </td>
+                            <td>
                                 <label for="inputSedeCheck<?=$sede['id']?>"><?=$sede['indirizzo'].' '.$sede['num_civico'].' - '.$sede['comune']['des_luo']?></label>
-                            </div>
-                            <div class="col-sm-3">
+                            </td>
+                            <td class="input">
                                 <input disabled type="text" name="sedi[<?=$sede['id']?>][capacity]" id="inputSedeCapacity<?=$sede['id']?>" 
                                     class="form-control number-integer agreement-sede-capacity" placeholder="Capienza da convenzione">
-                            </div>
-                            <div class="col-sm-3">
+                            </td>
+                            <td class="input">
                                 <input disabled type="text" name="sedi[<?=$sede['id']?>][capacity_increment]" id="inputSedeCapacityIncrement<?=$sede['id']?>" 
                                     class="form-control number-integer agreement-sede-capacity-increment" placeholder="Capienza da incremento">
-                            </div>
-                        </div>
-                    <?php } ?>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                    </table>
                 </form>
             </div>
             <div class="modal-footer">

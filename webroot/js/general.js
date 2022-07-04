@@ -45,7 +45,7 @@ function formValidation(idForm)
    }
  	//Controllo i campi obbligatori
  		$('#'+idForm+' input:visible, #'+idForm+' select:visible, #'+idForm+' textarea:visible').each(function(){
-      $(this).parentsUntil('.input').parent().removeClass('has-error');
+      $(this).closest('.input').removeClass('has-error');
  			if($(this).val() == "" || $(this).val() == null ){
         if($(this).hasClass('required')){
             ckError = true;

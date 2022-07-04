@@ -277,10 +277,6 @@ a.contact-login:hover{
 	max-height: 150px;
 }
 
-.agreement-sede-check {
-	margin-right: 10px !important;
-}
-
 .check-presenza {
 	position: relative;
     top: 9px;
@@ -380,4 +376,8 @@ a.contact-login:hover{
 #incrementMessageContainer {
 	margin-top: 10px;
     text-align: center;
+}
+
+.table-agreement-sedi td {
+	padding: 5px;
 }

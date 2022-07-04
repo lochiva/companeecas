@@ -2469,22 +2469,26 @@ class WsController extends AppController
             $agreementsSedi = TableRegistry::get('Aziende.AgreementsToSedi');
             $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $entity->azienda_id])->toArray();
 
-            $agreementsSedi->deleteAll(['agreement_id' => $entity->id, 'active' => 1]);
+            $agreementsSedi->deleteAll(['agreement_id' => $entity->id]);
 
             if (!empty($data['sedi'])) {
                 foreach ($data['sedi'] as $sedeId => $sede) {
-                    // Imposto non attive le relazioni della sede con altre convenzioni
-                    $agreementsSedi->updateAll(
-                        ['active' => false],
-                        ['agreement_id !=' => $entity->id, 'sede_id' => $sedeId]
-                    );
+                    $active = isset($sede['active']);
+
+                    if ($active) {
+                        // Imposto non attive le relazioni della sede con altre convenzioni
+                        $agreementsSedi->updateAll(
+                            ['active' => false],
+                            ['agreement_id !=' => $entity->id, 'sede_id' => $sedeId]
+                        );
+                    }
 
                     // Salvo i dati della relazione della sede con la convenzione
                     $agreementSede = $agreementsSedi->newEntity();
                     $dataToSave = [
                         'agreement_id' => $entity->id,
                         'sede_id' => $sedeId,
-                        'active' => 1,
+                        'active' => $active,
                         'capacity' => $sede['capacity'],
                         'capacity_increment' => empty($sede['capacity_increment']) ? 0 : $sede['capacity_increment']
                     ];
