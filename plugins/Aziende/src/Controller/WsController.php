@@ -2100,6 +2100,7 @@ class WsController extends AppController
                 } else {
                     $guest['check_out_date'] = '';
                 }
+                $guest['history_date'] = $lastHistory->operation_date->format('d/m/Y');
                 $guest['history_file'] = $lastHistory->file;
                 $guest['history_note'] = $lastHistory->note;
                 $guest['history_cloned_guest'] = $lastHistory->cloned_guest_id;
@@ -3061,142 +3062,158 @@ class WsController extends AppController
     public function transferProcedure()
     {
         $data = $this->request->data;
-    
+
         $guests = TableRegistry::get('Aziende.Guests');
         $guest = $guests->get($data['guest_id']);
-        $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-        // se rimane nello stesso ente non serve conferma trasferimento
-        if ($sede->id_azienda == $data['azienda']) {
-            $status = 6;
-            $statusCloned = 1;
-        } else {
-            $status = 4;
-            $statusCloned = 5;
-        }
+        $checkOutDate = new Time(substr($data['check_out_date'], 0, 33));
 
-        $today = new Time();
+        if (
+            (empty($guest['check_in_date']) || $checkOutDate->format('Y-m-d') >= $guest['check_in_date']->format('Y-m-d')) && 
+            $checkOutDate->format('Y-m-d') <= date('Y-m-d')
+        ) {
+            $guests = TableRegistry::get('Aziende.Guests');
+            $guest = $guests->get($data['guest_id']);
+            $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-        $guestsToTransfer = [$guest];
-
-        //trasferimento famigliari
-        if ($data['transfer_family']) {
-            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-            $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
-            $familyGuests = $guests->find()
-                ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
-                ->join([
-                    [
-                        'table' => 'guests_families',
-                        'alias' => 'gf',
-                        'type' => 'left',
-                        'conditions' => 'gf.guest_id = Guests.id'
-                    ]
-                ])
-                ->toArray();
-
-            $guestsToTransfer = array_merge($guestsToTransfer, $familyGuests);
-        }
-
-        //trasferimento ospiti
-        $errorMsg = '';
-        $responseStatus = 'OK';
-        foreach ($guestsToTransfer as $g) {
-            $error = $this->Guest->transferGuest($g, $data, $today);
-            if ($error) {
-                $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                if ($g->id == $guest->id) {
-                    $responseStatus = 'KO';
-                }
-                $res['family_status'][$g->id] = 1;
+            // se rimane nello stesso ente non serve conferma trasferimento
+            if ($sede->id_azienda == $data['azienda']) {
+                $status = 6;
+                $statusCloned = 1;
             } else {
-                $res['family_status'][$g->id] = $status;
+                $status = 4;
+                $statusCloned = 5;
             }
-        }
 
-        $destination = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
+            $guestsToTransfer = [$guest];
 
-        $res['history_status'] = $status;
-        $res['check_out_date'] = $today->format('d/m/Y');
-        $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].')';
-        $res['history_destination_id'] = $data['sede'];
-        $res['history_note'] = $data['note'];
-        if ($status == 6) {
-            $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $status);
-            $res['history_cloned_guest'] = $lastHistory->cloned_guest_id;
+            //trasferimento famigliari
+            if ($data['transfer_family']) {
+                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                $familyGuests = $guests->find()
+                    ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
+                    ->join([
+                        [
+                            'table' => 'guests_families',
+                            'alias' => 'gf',
+                            'type' => 'left',
+                            'conditions' => 'gf.guest_id = Guests.id'
+                        ]
+                    ])
+                    ->toArray();
+
+                $guestsToTransfer = array_merge($guestsToTransfer, $familyGuests);
+            }
+
+            //trasferimento ospiti
+            $errorMsg = '';
+            $responseStatus = 'OK';
+            foreach ($guestsToTransfer as $g) {
+                $error = $this->Guest->transferGuest($g, $data, $checkOutDate);
+                if ($error) {
+                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                    if ($g->id == $guest->id) {
+                        $responseStatus = 'KO';
+                    }
+                    $res['family_status'][$g->id] = 1;
+                } else {
+                    $res['family_status'][$g->id] = $status;
+                }
+            }
+
+            $destination = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
+
+            $res['history_status'] = $status;
+            $res['history_date'] = $checkOutDate;
+            $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].')';
+            $res['history_destination_id'] = $data['sede'];
+            $res['history_note'] = $data['note'];
+            if ($status == 6) {
+                $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $status);
+                $res['history_cloned_guest'] = empty($lastHistory) ? '' : $lastHistory->cloned_guest_id;
+            } else {
+                $res['history_cloned_guest'] = '';
+            }
+
+            if (!$errorMsg) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $res;
+                $this->_result['msg'] = "Trasferimento dell'ospite avviato con successo.";
+            }  else {
+                $this->_result['response'] = $responseStatus;
+                $this->_result['data'] = $res;
+                $this->_result['msg'] = $errorMsg;
+            }
         } else {
-            $res['history_cloned_guest'] = '';
-        }
-
-        if (!$errorMsg) {
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $res;
-            $this->_result['msg'] = "Trasferimento dell'ospite avviato con successo.";
-        }  else {
-            $this->_result['response'] = $responseStatus;
-            $this->_result['data'] = $res;
-            $this->_result['msg'] = $errorMsg;
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = "Errore: la data di check-out deve essere maggiore o uguale alla data di check-in e non può essere nel futuro.";
         }
     }
 
     public function acceptTransfer()
     {
         $data = $this->request->data;
-    
-        $guests = TableRegistry::get('Aziende.Guests');
-        $guest = $guests->get($data['guest_id']);
-        $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-        $today = new Time();
+        $checkInDate = new Time(substr($data['check_in_date'], 0, 33));
 
-        $guestsToTransfer = [$guest];
+        if ($checkInDate->format('Y-m-d') <= date('Y-m-d')) {
+            $guests = TableRegistry::get('Aziende.Guests');
+            $guest = $guests->get($data['guest_id']);
+            $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-        //trasferimento famigliari
-        if ($data['accept_transfer_family']) {
-            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-            $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
-            $familyGuests = $guests->find()
-                ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '5'])
-                ->join([
-                    [
-                        'table' => 'guests_families',
-                        'alias' => 'gf',
-                        'type' => 'left',
-                        'conditions' => 'gf.guest_id = Guests.id'
-                    ]
-                ])
-                ->toArray();
+            $guestsToTransfer = [$guest];
 
-            $guestsToTransfer = array_merge($guestsToTransfer, $familyGuests);
-        }
+            //trasferimento famigliari
+            if ($data['accept_transfer_family']) {
+                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                $familyGuests = $guests->find()
+                    ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '5'])
+                    ->join([
+                        [
+                            'table' => 'guests_families',
+                            'alias' => 'gf',
+                            'type' => 'left',
+                            'conditions' => 'gf.guest_id = Guests.id'
+                        ]
+                    ])
+                    ->toArray();
 
-        //accetta trasferimento ospiti
-        $errorMsg = '';
-        $responseStatus = 'OK';
-        foreach ($guestsToTransfer as $g) {
-            $error = $this->Guest->acceptTransferGuest($g, $data, $today);
-            if ($error) {
-                $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                if ($g->id == $guest->id) {
-                    $responseStatus = 'KO';
-                }
-                $guest['family_status'][$g->id] = 5;
-            } else {
-                $guest['family_status'][$g->id] = 1;
+                $guestsToTransfer = array_merge($guestsToTransfer, $familyGuests);
             }
-        }
 
-        $guest->status_id = 1;
-		$guest->check_in_date = $today->format('Y-m-d');
+            //accetta trasferimento ospiti
+            $errorMsg = '';
+            $responseStatus = 'OK';
+            foreach ($guestsToTransfer as $g) {
+                $error = $this->Guest->acceptTransferGuest($g, $data, $checkInDate);
+                if ($error) {
+                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                    if ($g->id == $guest->id) {
+                        $responseStatus = 'KO';
+                    }
+                    $guest['family_status'][$g->id] = 5;
+                } else {
+                    $guest['family_status'][$g->id] = 1;
+                }
+            }
 
-        if (!$errorMsg) {
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $guest;
-            $this->_result['msg'] = "Ingresso dell'ospite confermato con successo.";
-        }  else {
-            $this->_result['response'] = $responseStatus;
-            $this->_result['data'] = $guest;
-            $this->_result['msg'] = $errorMsg;
+            $guest->status_id = 1;
+            $guest->check_in_date = $checkInDate;
+
+            if (!$errorMsg) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $guest;
+                $this->_result['msg'] = "Ingresso dell'ospite confermato con successo.";
+            }  else {
+                $this->_result['response'] = $responseStatus;
+                $this->_result['data'] = $guest;
+                $this->_result['msg'] = $errorMsg;
+            }
+        } else {
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = "Errore: la data di check-in non può essere nel futuro.";
         }
     }
 

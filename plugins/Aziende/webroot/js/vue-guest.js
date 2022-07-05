@@ -166,6 +166,11 @@ var app = new Vue({
                 hasError: false,
                 value: ''
             },
+            check_out_date: {
+                required: true,
+                hasError: false,
+                value: new Date()
+            },
             note: {
                 required: false,
                 hasError: false,
@@ -179,6 +184,13 @@ var app = new Vue({
             date: '',
             note: '',
             cloned_guest: ''
+        },
+        acceptTransferProcedureData: {
+            check_in_date: {
+                required: true,
+                hasError: false,
+                value: ''
+            }
         },
         readmissionAziende: [],
         readmissionSedi: [],
@@ -274,6 +286,11 @@ var app = new Vue({
             this.clearTransferProcedureData();
         });
 
+        let modalConfirmGuestTransfer = this.$refs.modalConfirmGuestTransfer; 
+        $(modalConfirmGuestTransfer).on('hidden.bs.modal', () => {
+            this.clearAcceptTransferProcedureData();
+        });
+
     },
        
     methods: {
@@ -328,7 +345,7 @@ var app = new Vue({
                         this.transferData.destination = res.data.data.history_destination;
                         this.transferData.destination_id = res.data.data.history_destination_id;
                         this.transferData.provenance = res.data.data.history_provenance;
-                        this.transferData.date = res.data.data.check_out_date;
+                        this.transferData.date = res.data.data.history_date;
                         this.transferData.note = res.data.data.history_note;
                         this.transferData.cloned_guest = res.data.data.history_cloned_guest;
 
@@ -959,7 +976,7 @@ var app = new Vue({
                     this.guestStatus = res.data.data.history_status;
                     this.transferData.destination = res.data.data.history_destination;
                     this.transferData.destination_id = res.data.data.history_destination_id;
-                    this.transferData.date = res.data.data.check_out_date;
+                    this.transferData.date = res.data.data.history_date;
                     this.transferData.note = res.data.data.history_note;
                     this.transferData.cloned_guest = res.data.data.history_cloned_guest;
 
@@ -997,6 +1014,11 @@ var app = new Vue({
                     hasError: false,
                     value: ''
                 },
+                check_out_date: {
+                    required: true,
+                    hasError: false,
+                    value: new Date()
+                },
                 note: {
                     required: false,
                     hasError: false,
@@ -1005,58 +1027,99 @@ var app = new Vue({
             };
         },
 
-        acceptTransferProcedure: function() { 
-            if (this.guestFamily.length > 0) {
-                let acceptTransferFamily = this.$refs.acceptTransferFamily;
-                $(acceptTransferFamily).modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            } else { 
-                this.acceptTransfer(0);
-            }       
+        openConfirmTransferModal: function() {
+            var date = this.transferData.date.split('/');
+            this.acceptTransferProcedureData.check_in_date.value = date[2]+'-'+date[1]+'-'+date[0];
+            let modalConfirmGuestTransfer = this.$refs.modalConfirmGuestTransfer;
+            $(modalConfirmGuestTransfer).modal({
+                backdrop: false,
+                keyboard: false
+            });
+            $(modalConfirmGuestTransfer).modal('show');
+        },
+
+        acceptTransferProcedure: function() {
+            var error = false;
+
+            Object.keys(this.acceptTransferProcedureData).forEach((prop) => {
+                if (this.acceptTransferProcedureData[prop].required && (this.acceptTransferProcedureData[prop].value == "" || this.acceptTransferProcedureData[prop].value == null)) {
+                    error = true;
+                    this.acceptTransferProcedureData[prop].hasError = true;
+                } else {
+                    this.acceptTransferProcedureData[prop].hasError = false;
+                }
+            });                 
+
+            if(error){
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            }else{ 
+                if (this.guestFamily.length > 0) {
+                    let acceptTransferFamily = this.$refs.acceptTransferFamily;
+                    $(acceptTransferFamily).modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                } else { 
+                    this.acceptTransfer(0);
+                }
+            }
         },
 
         acceptTransfer: function(acceptTransferFamily) {
-            if (confirm('Si è sicuri di voler confermare l\'ingresso dell\'ospite?')) {
-                let params = new URLSearchParams();
-                params.append('guest_id', this.guestData.id.value);
-                params.append('accept_transfer_family', acceptTransferFamily);
+            let params = new URLSearchParams();
+            params.append('guest_id', this.guestData.id.value);
+            params.append('accept_transfer_family', acceptTransferFamily);
+            Object.keys(this.acceptTransferProcedureData).forEach((prop) => {
+                params.append(prop, this.acceptTransferProcedureData[prop].value);
+            });
 
-                axios.post(pathServer + 'aziende/ws/acceptTransfer', params)
-                .then(res => {
-                    if (res.data.response == 'OK') {
-                        alert(res.data.msg);
-                        this.guestStatus = res.data.data.status_id;
-                        this.guestData.check_in_date.value = res.data.data.check_in_date
-                        this.transferData.destination = '';
-                        this.transferData.destination_id = '';
-                        this.transferData.provenance = '';
-                        this.transferData.date = '';
-                        this.transferData.note = '';
-                        this.transferData.cloned_guest = '';
+            axios.post(pathServer + 'aziende/ws/acceptTransfer', params)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                    this.guestStatus = res.data.data.status_id;
+                    this.guestData.check_in_date.value = res.data.data.check_in_date
+                    this.transferData.destination = '';
+                    this.transferData.destination_id = '';
+                    this.transferData.provenance = '';
+                    this.transferData.date = '';
+                    this.transferData.note = '';
+                    this.transferData.cloned_guest = '';
 
-                        if(acceptTransferFamily){
-                            this.guestFamily.forEach((guest) => {
-                                guest.status_id = res.data.data.family_status[guest.id];
-                            });
-                            this.loadedFamily = JSON.stringify(this.guestFamily);
-                        }
-
-                        this.loadedData = JSON.stringify(this.guestData);
-    
-                        this.loadGuestHistory();
-
-                        //Aggiorna conteggio notifiche
-                        this.updateNotificationsCount();
-                    } else {
-                        alert(res.data.msg);
+                    if(acceptTransferFamily){
+                        this.guestFamily.forEach((guest) => {
+                            guest.status_id = res.data.data.family_status[guest.id];
+                        });
+                        this.loadedFamily = JSON.stringify(this.guestFamily);
                     }
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }
+
+                    this.loadedData = JSON.stringify(this.guestData);
+
+                    this.loadGuestHistory();
+
+                    //Aggiorna conteggio notifiche
+                    this.updateNotificationsCount();
+
+                    let modalConfirmGuestTransfer = this.$refs.modalConfirmGuestTransfer;
+                    $(modalConfirmGuestTransfer).modal('hide');
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+
+        clearAcceptTransferProcedureData: function() {
+            this.acceptTransferProcedureData = {
+                check_in_date: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                }
+            };
         },
 
         searchTransferAziende: function(search, loading) { 

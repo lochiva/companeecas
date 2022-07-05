@@ -56,7 +56,7 @@ $role = $this->request->session()->read('Auth.User.role');
             <div>L'ospite è in stato "Trasferimento in ingresso" con provenienza {{transferData.provenance}}.</div>
             <div><b>Note trasferimento:</b> {{transferData.note}}</div>
             <div class="transfer-buttons">
-                <button type="button" class="btn btn-accept-transfer" @click="acceptTransferProcedure()">Conferma ingresso</button>
+                <button type="button" class="btn btn-accept-transfer" @click="openConfirmTransferModal()">Conferma ingresso</button>
             </div>
         </div>
         <div v-if="guestStatus == 6" class="message-transferred alert">
@@ -341,6 +341,7 @@ $role = $this->request->session()->read('Auth.User.role');
     <?= $this->element('Aziende.modal_confirm_exit_family') ?>
     <?= $this->element('Aziende.modal_guest_transfer') ?>
     <?= $this->element('Aziende.modal_transfer_family') ?>
+    <?= $this->element('Aziende.modal_confirm_guest_transfer') ?>
     <?= $this->element('Aziende.modal_accept_transfer_family') ?>
     <?= $this->element('Aziende.modal_guest_readmission') ?>
 </div>

@@ -42,6 +42,14 @@
 							</v-select>
 						</div>
 					</div>
+					<div class="form-group">
+						<div class="col-md-12" :class="{'has-error': transferProcedureData.check_out_date.hasError}">
+							<label :class="{'required': transferProcedureData.check_out_date.required}" for="checkOutDate"><?= __('Check-out') ?></label>
+							<datepicker :language="datepickerItalian" format="dd/MM/yyyy" :monday-first="true" input-class="form-control" 
+								typeable="true" id="checkOutDate" v-model="transferProcedureData.check_out_date.value">
+							</datepicker>
+						</div>
+					</div>
 					<div class="form-group"> 
 						<div class="col-sm-12">
 							<label for="transferNote">Note</label>
