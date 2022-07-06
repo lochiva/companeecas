@@ -557,7 +557,7 @@ class GuestComponent extends Component
 
 			$lastHistory = $guestsHistory->getLastGuestHistoryByStatus($guest->id, 5);
 
-			if ($checkInDate >= $lastHistory->operation_date) {
+			if ($checkInDate->format('Y-m-d') >= $lastHistory->operation_date->format('Y-m-d')) {
 				$history = $guestsHistory->newEntity();	
 				
 				$sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
