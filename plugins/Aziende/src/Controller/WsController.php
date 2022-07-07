@@ -8,6 +8,10 @@ use Cake\ORM\TableRegistry;
 use Cake\Http\Client;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
+use Cake\Collection\Collection;
+use Cake\I18n\Date;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 
 /**
  * Aziende Controller
@@ -3333,6 +3337,135 @@ class WsController extends AppController
         } else {
             setcookie('downloadStarted', '1', false, '/');
             $this->_result['msg'] = 'Parametro mancante.';
+        }
+    }
+
+    public function getFiles($sedeId = null) {
+        if(isset($sedeId)) {
+            $data = $this->request->data['data'];
+            $files = TableRegistry::get('Aziende.PresenzeUpload')->find('all')->where(['sede_id' => $sedeId, 'date' => $data, 'deleted' => false])->toArray();
+
+            $collection = new Collection($files);
+            $ret = $collection->map(function ($value, $key) {
+                $value['fullPath'] = $value->full_path;
+                $value['date'] = $value['date']->format('Y-m-d');
+                return $value;
+            });
+
+            if ($ret) {
+                $this->_result['response'] = 'OK';
+                $this->_result['data'] = $ret;
+                $this->_result['msg'] = "Elenco risultati.";
+            } else {
+                $this->_result['response'] = 'KO';
+                $this->_result['data'] = -1;
+                $this->_result['msg'] = "Impossibile caricare i file";
+            }
+        }
+    }
+
+    public function deleteFile() {
+        $fileData = json_decode($this->request->data['file'], true);
+
+        $table = TableRegistry::get('Aziende.PresenzeUpload');
+        $entity = $table->get($fileData['id']);
+
+        $file = new File(ROOT . DS . $entity->filepath, false);
+
+        if($file->delete()) {
+            $entity = $table->patchEntity($entity, $fileData);
+
+            $ret = TableRegistry::get('Aziende.PresenzeUpload')->softDelete($entity);
+    
+            if ($ret) {
+                $this->_result['response'] = 'OK';
+                $this->_result['data'] = 1;
+                $this->_result['msg'] = "File cancellato";
+            } else {
+                $this->_result['response'] = 'KO';
+                $this->_result['data'] = -1;
+                $this->_result['msg'] = "Impossibile cancellare il file";
+            }
+
+        } else {
+            $this->_result['response'] = 'KO';
+            $this->_result['data'] = -1;
+            $this->_result['msg'] = "Impossibile eliminare il file";
+
+        }
+    }
+
+    public function saveFiles() {
+        $att = $this->request->data('attachment');
+        $fileData = json_decode($this->request->data('file'), true);
+
+        if(empty($att['tmp_name'])){
+            $this->_result['msg'] = 'Nessun file caricato.';
+            $this->_result['response'] = 'KO';
+            $this->_result['data'] = -1;
+
+        } else {
+            $table = TableRegistry::get('Aziende.PresenzeUpload');
+
+            $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLAOD_PATH');
+
+            $error = false;
+
+            $fileName = uniqid().'_'.$att['name'];
+
+            $path = date('Y').DS.date('m').DS.date('d');
+
+            $dir = new Folder(ROOT.DS.$basePath.$path, true, 0755);
+
+            if(!$dir) {
+                $dir = new Folder($basePath.$path);
+            }
+
+
+            if(!move_uploaded_file($att['tmp_name'], $dir->pwd() . DS . $fileName) ){
+                $error = true;
+            }
+
+            if(!$error){
+                $entity = $table->newEntity($fileData);
+
+                $entity->filepath = $basePath.$path.DS.$fileName;
+
+                if(!$save = $table->save($entity)){
+                    $error = true;
+                } else {
+                    $save->fullPath = $save->full_path;
+                }
+            }
+
+            if($error){
+                $this->_result['msg'] = 'Errore nel caricamento di un file.';
+            }else{
+                $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'File caricati con successo.';
+                $this->_result['data'] = $save;
+            }
+        }
+    }
+
+    public function downloadFile($id)
+    {
+        $table = TableRegistry::get('Aziende.PresenzeUpload');
+
+        $fileData = $table->get($id);
+
+        $file = new File(ROOT . DS . $fileData['filepath'], false);
+
+        if($file->exists()){
+            $this->response->file($file->path , array(
+                'download'=> true,
+                'name'=> $file->name
+            ));
+            setcookie('downloadStarted', '1', false, '/');
+            return $this->response;
+        }else{
+            setcookie('downloadStarted', '1', false, '/');
+            $this->_result['msg'] = 'Il file richiesto non esiste.';
         }
     }
 }

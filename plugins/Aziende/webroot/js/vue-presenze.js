@@ -4,6 +4,7 @@ var app = new Vue({
 		sede_id: '',
         date: new Date(),
         guests: [],
+        files: [],
         infoGuest: {
             check_in_date: '',
             cui: '',
@@ -19,7 +20,13 @@ var app = new Vue({
         count_presenze_day: 0,
         count_presenze_month: 0,
         next_sede: next_sede,
-        datepickerItalian: vdp_translation_it.js
+        datepickerItalian: vdp_translation_it.js,
+        fileUploaded: {
+            file: null,
+            date: null,
+            sede_id: null
+        },
+        fileCheck: null
     },
 
     components: {
@@ -29,6 +36,15 @@ var app = new Vue({
     computed: {
         noNextSedeMessage() {
             return this.next_sede ? '' : "Questa è l'ultima struttura";
+        },
+        disableButton() {
+
+            if(this.fileUploaded.file===null || this.fileUploaded.file.length<1 || this.fileCheck === null) {
+                return true;
+            } else {
+                return false;
+            }
+
         }
     },
       
@@ -37,7 +53,11 @@ var app = new Vue({
         var url = new URL(window.location.href);
         this.sede_id = url.searchParams.get("sede");
 
+        this.fileUploaded.date = moment(this.date).format('YYYY-MM-DD');
+        this.fileUploaded.sede_id = this.sede_id;
+
         this.loadGuests();
+        this.loadFiles();
     },
        
     methods: {
@@ -48,7 +68,9 @@ var app = new Vue({
                 this.$refs.inputDate.selectDate({timestamp: today.getTime()});
             } else {
                 this.loadGuests();
+                this.loadFiles();
             }
+            this.fileUploaded.date = moment(this.date).format('YYYY-MM-DD');
         },
 
         loadGuests () {
@@ -71,6 +93,21 @@ var app = new Vue({
                         } else {
                             this.check_all_guests = false;
                         }
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+        },
+
+        loadFiles () {
+            let params = new URLSearchParams();
+            params.append('data', moment(this.date).format('YYYY-MM-DD'));
+            axios.post(pathServer + 'aziende/ws/getFiles/' + this.sede_id, params)
+                .then(res => {  
+                    if (res.data.response == 'OK') { 
+						this.files = res.data.data;
                     } else {
                         alert(res.data.msg);
                     }
@@ -130,6 +167,61 @@ var app = new Vue({
             this.infoGuest = guest;
             let modalGuestInfo = this.$refs.modalGuestInfo;
             $(modalGuestInfo).modal('show');
+        },
+
+        deleteFile(file) {
+            file.deleted = 1; 
+
+            let arrayFiles = this.files.filter((f) => {
+                if (file.id !== f.id) {
+                    return f
+                }
+            });
+
+            let params = new URLSearchParams();
+
+            params.append('file', JSON.stringify(file));
+
+            axios.post(pathServer + 'aziende/ws/deleteFile', params)
+                .then(res => {
+                    if (res.data.response == 'OK') {
+                        this.files = arrayFiles;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+        },
+
+        submitFile() {
+            let attachment = this.$refs.attachment.files[0];
+            let formData = new FormData();
+            formData.append('file', JSON.stringify(this.fileUploaded));
+            formData.append('attachment', (attachment));
+
+            let headers = { 'Content-Type': 'multipart/form-data' };
+
+
+            axios.post(pathServer + 'aziende/ws/saveFiles', formData)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    this.fileUploaded.file = null;
+                    this.fileUploaded.attachment = null;
+                    this.$refs.attachment.files[0] = null;
+                    this.fileCheck = null;
+                    this.files.push(res.data.data);
+
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
         }
         
     }
