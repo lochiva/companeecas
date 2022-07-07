@@ -57,7 +57,7 @@ class AgreementsTable extends AppTable
             'className' => 'Aziende.AgreementsToSedi'
         ]);
 
-        $this->belongsTo('AgreementsCompanies', [
+        $this->hasMany('AgreementsCompanies', [
             'foreignKey' => 'agreement_id',
             'className' => 'Aziende.AgreementsCompanies',
             'dependent' => true,

@@ -2614,7 +2614,7 @@ class WsController extends AppController
 
     public function getAgreement($id)
 	{
-        $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['AgreementsToSedi']]);
+        $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['AgreementsToSedi', 'AgreementsCompanies', 'Aziende']]);
 
         $agreement['date_agreement'] = empty($agreement['date_agreement']) ? '' : $agreement['date_agreement']->format('d/m/Y');
         $agreement['date_agreement_expiration'] = empty($agreement['date_agreement_expiration']) ? '' : $agreement['date_agreement_expiration']->format('d/m/Y');
