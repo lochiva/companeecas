@@ -4,7 +4,7 @@ var app = new Vue({
 		sede_id: '',
         date: new Date(),
         guests: [],
-        files: [],
+        file: null,
         infoGuest: {
             check_in_date: '',
             cui: '',
@@ -22,7 +22,6 @@ var app = new Vue({
         next_sede: next_sede,
         datepickerItalian: vdp_translation_it.js,
         fileUploaded: {
-            file: null,
             date: null,
             sede_id: null
         },
@@ -36,15 +35,6 @@ var app = new Vue({
     computed: {
         noNextSedeMessage() {
             return this.next_sede ? '' : "Questa è l'ultima struttura";
-        },
-        disableButton() {
-
-            if(this.fileUploaded.file===null || this.fileUploaded.file.length<1 || this.fileCheck === null) {
-                return true;
-            } else {
-                return false;
-            }
-
         }
     },
       
@@ -107,9 +97,9 @@ var app = new Vue({
             axios.post(pathServer + 'aziende/ws/getFiles/' + this.sede_id, params)
                 .then(res => {  
                     if (res.data.response == 'OK') { 
-						this.files = res.data.data;
+						this.file = res.data.data;
                     } else {
-                        alert(res.data.msg);
+                        this.file = null;
                     }
                 }).catch(error => {
                     console.log(error);
@@ -172,20 +162,10 @@ var app = new Vue({
         deleteFile(file) {
             file.deleted = 1; 
 
-            let arrayFiles = this.files.filter((f) => {
-                if (file.id !== f.id) {
-                    return f
-                }
-            });
-
-            let params = new URLSearchParams();
-
-            params.append('file', JSON.stringify(file));
-
-            axios.post(pathServer + 'aziende/ws/deleteFile', params)
+            axios.post(pathServer + 'aziende/ws/deleteFile/' + this.file.id)
                 .then(res => {
                     if (res.data.response == 'OK') {
-                        this.files = arrayFiles;
+                        this.file = null;
                     } else {
                         alert(res.data.msg);
                     }
@@ -208,11 +188,9 @@ var app = new Vue({
             axios.post(pathServer + 'aziende/ws/saveFiles', formData)
             .then(res => {
                 if (res.data.response == 'OK') {
-                    this.fileUploaded.file = null;
-                    this.fileUploaded.attachment = null;
                     this.$refs.attachment.files[0] = null;
                     this.fileCheck = null;
-                    this.files.push(res.data.data);
+                    this.file = res.data.data;
 
                 } else {
                     alert(res.data.msg);

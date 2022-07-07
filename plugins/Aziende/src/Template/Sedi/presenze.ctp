@@ -38,7 +38,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-body">
                         <form id="formPresenze" class="form-horizontal">
                             <div class="form-group">
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" 
                                         typeable="true" id="inputDate" ref="inputDate" v-model="date" @input="changedDate()"></datepicker>
                                 </div>
@@ -50,51 +50,23 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <label class="control-label">Totale presenze del mese</label>
                                     <span class="count-presenze">{{ count_presenze_month }}</span>
                                 </div>
-                                <div class="col-md-4">
 
-                                    <button class="btn btn-sm btn-foursquare" type="button" data-toggle="collapse" data-target="#collapseUpload" aria-expanded="false" aria-controls="collapseUpload">
-                                        Upload firme
-                                    </button>
+                                <div class="col-md-3">
 
-                                    <button v-if=files.length class="btn btn-sm btn-microsoft" type="button" data-toggle="collapse" data-target="#collapseFiles" aria-expanded="false" aria-controls="collapseFiles">
-                                        Gestisci file
-                                    </button>
-
-                                    <div id="collapseUpload" class="collapse">
-
-                                        <div class="well container-fluid">
-
-                                            <div class="form-group col-md-12">
-                                                <input type="text" class="form-control" placeholder="Nome" v-model="fileUploaded.file">
-                                            </div>
-
-                                            <div class="form-group col-md-12">
-                                                <input type="file"  ref="attachment" v-model="fileCheck">
-                                            </div>
-
-                                            <div class="form-group col-md-12">
-                                                <input type="button" value="Carica" class="btn btn-primary" v-on:click="submitFile" v-bind:disabled="disableButton">
-                                            </div>
-
-                                            
-                                            
+                                    <div class="panel" v-bind:class="{ 'panel-default' : file == null, 'panel-info' : file != null }">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Upload Firme</h3>
                                         </div>
-
-                                    </div>
-
-                                    <div v-if=files.length class="collapse" id="collapseFiles">
-                                        <div class="well">
-                                            <ul class="list-group">
-                                                <li class="list-group-item" v-for="(file, index) in files">
-                                                    {{file.file}}
-                                                    <div class="btn-group" role="group" aria-label="...">
-
-                                                        <a v-bind:href=file.fullPath target="_blank"><span class="text-green"><span class="glyphicon glyphicon glyphicon-download" aria-hidden="true"></span></span></a>
-                                                        <span v-on:click="deleteFile(file)" class="text-red" style="cursor: pointer;"><span class="glyphicon glyphicon glyphicon-remove-sign" aria-hidden="true"></span></span>
-
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                        <div v-if="file == null" class="panel-body">
+                                            <div class="form-group col-md-12">
+                                                <input type="file"  ref="attachment" v-model="fileCheck" v-on:change="submitFile">
+                                            </div>
+                                        </div>
+                                        <div v-else class="panel-body">
+                                            {{file.file}}                                                         
+                                            
+                                            <a v-bind:href=file.fullPath target="_blank"><span class="text-green"><span class="glyphicon glyphicon glyphicon-download" aria-hidden="true"></span></span></a>
+                                            <span v-on:click="deleteFile(file)" class="text-red" style="cursor: pointer;"><span class="glyphicon glyphicon glyphicon-remove-sign" aria-hidden="true"></span></span>
                                         </div>
                                     </div>
 

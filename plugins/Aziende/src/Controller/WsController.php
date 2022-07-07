@@ -3343,37 +3343,30 @@ class WsController extends AppController
     public function getFiles($sedeId = null) {
         if(isset($sedeId)) {
             $data = $this->request->data['data'];
-            $files = TableRegistry::get('Aziende.PresenzeUpload')->find('all')->where(['sede_id' => $sedeId, 'date' => $data, 'deleted' => false])->toArray();
+            $file = TableRegistry::get('Aziende.PresenzeUpload')->find('all')->where(['sede_id' => $sedeId, 'date' => $data, 'deleted' => false])->first();
 
-            $collection = new Collection($files);
-            $ret = $collection->map(function ($value, $key) {
-                $value['fullPath'] = $value->full_path;
-                $value['date'] = $value['date']->format('Y-m-d');
-                return $value;
-            });
-
-            if ($ret) {
+            if ($file) {
+                $file->fullPath = $file->full_path;
+                $file->date = $file['date']->format('Y-m-d');
                 $this->_result['response'] = 'OK';
-                $this->_result['data'] = $ret;
+                $this->_result['data'] = $file;
                 $this->_result['msg'] = "Elenco risultati.";
             } else {
                 $this->_result['response'] = 'KO';
                 $this->_result['data'] = -1;
-                $this->_result['msg'] = "Impossibile caricare i file";
+                $this->_result['msg'] = "Nessun file presente";
             }
         }
     }
 
-    public function deleteFile() {
-        $fileData = json_decode($this->request->data['file'], true);
+    public function deleteFile($fileId) {
 
         $table = TableRegistry::get('Aziende.PresenzeUpload');
-        $entity = $table->get($fileData['id']);
+        $entity = $table->get($fileId);
 
         $file = new File(ROOT . DS . $entity->filepath, false);
 
         if($file->delete()) {
-            $entity = $table->patchEntity($entity, $fileData);
 
             $ret = TableRegistry::get('Aziende.PresenzeUpload')->softDelete($entity);
     
@@ -3396,10 +3389,10 @@ class WsController extends AppController
     }
 
     public function saveFiles() {
-        $att = $this->request->data('attachment');
+        $att = $this->request->getUploadedFile('attachment');
         $fileData = json_decode($this->request->data('file'), true);
 
-        if(empty($att['tmp_name'])){
+        if(empty($att)){
             $this->_result['msg'] = 'Nessun file caricato.';
             $this->_result['response'] = 'KO';
             $this->_result['data'] = -1;
@@ -3411,7 +3404,7 @@ class WsController extends AppController
 
             $error = false;
 
-            $fileName = uniqid().'_'.$att['name'];
+            $fileName = uniqid().'_'.$att->getClientFilename();
 
             $path = date('Y').DS.date('m').DS.date('d');
 
@@ -3422,13 +3415,13 @@ class WsController extends AppController
             }
 
 
-            if(!move_uploaded_file($att['tmp_name'], $dir->pwd() . DS . $fileName) ){
+            if(!move_uploaded_file($att->getStream()->getMetadata('uri'), $dir->pwd() . DS . $fileName) ){
                 $error = true;
             }
 
             if(!$error){
                 $entity = $table->newEntity($fileData);
-
+                $entity->file = $att->getClientFilename();
                 $entity->filepath = $basePath.$path.DS.$fileName;
 
                 if(!$save = $table->save($entity)){
