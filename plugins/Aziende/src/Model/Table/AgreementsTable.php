@@ -56,6 +56,13 @@ class AgreementsTable extends AppTable
             'foreignKey' => 'agreement_id',
             'className' => 'Aziende.AgreementsToSedi'
         ]);
+
+        $this->belongsTo('AgreementsCompanies', [
+            'foreignKey' => 'agreement_id',
+            'className' => 'Aziende.AgreementsCompanies',
+            'dependent' => true,
+            'propertyName' => 'companies'
+        ]);
     }
 
     /**

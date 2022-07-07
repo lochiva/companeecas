@@ -50,6 +50,7 @@ class Agreement extends Entity
         'modified' => true,
         'azienda' => true,
         'procedure' => true,
-        'agreements_to_sedi' => true
+        'agreements_to_sedi' => true,
+        'companies' => true
     ];
 }
