@@ -3400,7 +3400,7 @@ class WsController extends AppController
         } else {
             $table = TableRegistry::get('Aziende.PresenzeUpload');
 
-            $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLAOD_PATH');
+            $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
 
             $error = false;
 
