@@ -19,7 +19,7 @@ class InsertConfigurations2 extends AbstractMigration
                 'key_conf' => 'SIGNATURE_UPLAOD_PATH',
                 'label' => 'Path per i file delle firme',
                 'tooltip' => 'La cartella relativa alla document root, con lo / finale , ad esempio files/',
-                'value' => 'files/signature',
+                'value' => 'FILES/signature/',
                 'value_type' => 'text',
                 'level' => 900,
                 'created' => date('Y-m-d H:i:s'),
