@@ -52,6 +52,12 @@ class AgreementsToSediTable extends AppTable
             'joinType' => 'INNER',
             'className' => 'Aziende.Sedi'
         ]);
+        $this->belongsTo('AgreementsCompanies', [
+            'foreignKey' => 'agreement_company_id',
+            'bindingKey' => 'id',
+            'className' => 'Aziende.AgreementsCompanies',
+            'propertyName' => 'agreement_company_data'
+        ]);
     }
 
     /**

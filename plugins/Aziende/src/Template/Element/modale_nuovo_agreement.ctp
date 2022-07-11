@@ -112,14 +112,19 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <tr>
                                     <td width="6%"><label>Operativa</label></td>
                                     <td width="8%"><label>Associata</label></td>
-                                    <td width="40%"><label>Indirizzo Struttura</label></td>
-                                    <td width="23%">
+                                    <td width="22%"><label>Indirizzo Struttura</label></td>
+                                    <td width="18%">
                                         <label>Posti da convenzione</label><br>
                                         Totale: <span id="totalCapacity"></span>
                                     </td>
-                                    <td width="23%">
+                                    <td width="18%">
                                         <label>Posti da incremento</label><br>
                                         Totale: <span id="totalCapacityIncrement"></span>/<span id="maxCapacityIncrement"></span>
+                                    </td>
+                                    <td width="18%">
+                                        <label>Rendiconto</label><br>
+                                        <span></span>
+
                                     </td>
                                 </tr>
                                 <?php foreach($sedi as $sede) { ?>
@@ -141,6 +146,12 @@ $role = $this->request->session()->read('Auth.User.role');
                                         <input disabled type="text" name="sedi[<?=$sede['id']?>][capacity_increment]" id="inputSedeCapacityIncrement<?=$sede['id']?>" 
                                             class="form-control number-integer agreement-sede-capacity-increment" placeholder="Capienza da incremento">
                                     </td>
+                                    <td>
+                                        <select name="sedi[<?=$sede['id']?>][agreement_company_id]" id="inputSedeCompany<?=$sede['id']?>" class="form-control" disabled>
+                                            <option></option>
+
+                                        </select>
+                                    </td>
                                 </tr>
                                 <?php } ?>
                             </table>
@@ -149,24 +160,31 @@ $role = $this->request->session()->read('Auth.User.role');
 
                     <div class="tab-pane" id="tab_2">
 
-                        <div class="col-md-11">
-                            <div class="checkbox">
-                                <label>
-                                <input type="checkbox" name="rendiconto" data-denominazione=""> Abilita rendicontazione ATI
-                                </label>
+                        <form class="container-fluid" id="formRendiconto">
+
+                            <div class="col-md-11">
+                                <div class="checkbox">
+                                    <label>
+                                    <input type="checkbox" name="rendiconto" data-denominazione="<?= $azienda['denominazione'] ?>"> Abilita rendicontazione ATI
+                                    </label>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="col-md-11" id="rendiconti">
+
+                        </form>
+
+                    </div>
                         
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger pull-left" id="deleteAgreement">Cancella</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                        <button type="button" class="btn btn-primary" id="saveAgreement" >Salva</button>
-                    </div>
-
                 </div>
             </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" id="deleteAgreement">Cancella</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+                <button type="button" class="btn btn-primary" id="saveAgreement" >Salva</button>
+            </div>
+
         </div>
     </div>
 </div>

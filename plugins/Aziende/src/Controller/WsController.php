@@ -2421,7 +2421,8 @@ class WsController extends AppController
 
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
-                $buttons .= '<a href="#" class="btn btn-xs btn-warning edit-agreement" data-id="'.$agreement['id'].'" data-toggle="tooltip" title="Modifica convenzione"><i class="fa fa-pencil"></i></a>'; 
+                $buttons .= '<a href="#" class="btn btn-xs btn-warning edit-agreement" data-id="'.$agreement['id'].'" data-denominazione="' . $agreement['Aziende']['denominazione'] . '" 
+                data-toggle="tooltip" title="Modifica convenzione"><i class="fa fa-pencil"></i></a>'; 
 				$buttons .= '</div>';
 
 				$out['rows'][] = [
@@ -2448,9 +2449,9 @@ class WsController extends AppController
         $agreements = TableRegistry::get('Aziende.Agreements');
 
 		if(empty($data['id'])){
-            $entity = $agreements->newEntity();
+            $entity = $agreements->newEntity(['associated' => ['AgreementsCompanies']]);
 		}else{
-			$entity = $agreements->get($data['id']);
+			$entity = $agreements->get($data['id'], ['contain' => ['AgreementsCompanies']]);
             $oldData = $entity->toArray();
         } 
 
@@ -2467,9 +2468,13 @@ class WsController extends AppController
             $data['guest_daily_price'] = str_replace(',', '.', $data['guest_daily_price']);
         }
 
-        $agreements->patchEntity($entity, $data);
+        if(!isset($data['companies'])) {
+            $data['companies'] = [];
+        }
 
-		if($agreements->save($entity)){
+        $entity = $agreements->patchEntity($entity, $data, ['associated' => ['AgreementsCompanies']]);
+
+		if($agreements->save($entity, ['associated' => ['AgreementsCompanies']])){
             // Relazione convenzione - sede
             $agreementsSedi = TableRegistry::get('Aziende.AgreementsToSedi');
             $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $entity->azienda_id])->toArray();
@@ -2495,7 +2500,8 @@ class WsController extends AppController
                         'sede_id' => $sedeId,
                         'active' => $active,
                         'capacity' => $sede['capacity'],
-                        'capacity_increment' => empty($sede['capacity_increment']) ? 0 : $sede['capacity_increment']
+                        'capacity_increment' => empty($sede['capacity_increment']) ? 0 : $sede['capacity_increment'],
+                        'agreement_company_id' => isset($sede['agreement_company_id']) ? $sede['agreement_company_id'] : 0
                     ];
                     $agreementsSedi->patchEntity($agreementSede, $dataToSave);
                     if ($agreementsSedi->save($agreementSede)) {
@@ -2614,7 +2620,7 @@ class WsController extends AppController
 
     public function getAgreement($id)
 	{
-        $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['AgreementsToSedi', 'AgreementsCompanies', 'Aziende']]);
+        $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['AgreementsToSedi' => 'AgreementsCompanies', 'AgreementsCompanies', 'Aziende']]);
 
         $agreement['date_agreement'] = empty($agreement['date_agreement']) ? '' : $agreement['date_agreement']->format('d/m/Y');
         $agreement['date_agreement_expiration'] = empty($agreement['date_agreement_expiration']) ? '' : $agreement['date_agreement_expiration']->format('d/m/Y');
@@ -3459,6 +3465,30 @@ class WsController extends AppController
         }else{
             setcookie('downloadStarted', '1', false, '/');
             $this->_result['msg'] = 'Il file richiesto non esiste.';
+        }
+    }
+
+    public function saveSingleCompany($id = null) {
+        $table = TableRegistry::get('Aziende.AgreementsCompanies');
+        
+        if(isset($id)) {
+            $entity = $table->get($id);
+
+        } else {
+            $entity = $table->newEntity();
+        }
+        $entity = $table->patchEntity($entity, $this->request->data);
+
+        $ret = $table->save($entity);
+
+        if ($ret) {
+            $this->_result['response'] = 'OK';
+            $this->_result['data'] = $ret;
+            $this->_result['msg'] = "";
+        } else {
+            $this->_result['response'] = 'KO';
+            $this->_result['data'] = -1;
+            $this->_result['msg'] = "Impossibile salvare il rendiconto";
         }
     }
 }

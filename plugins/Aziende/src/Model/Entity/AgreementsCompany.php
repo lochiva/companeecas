@@ -31,6 +31,6 @@ class AgreementsCompany extends Entity
         'name' => true,
         'created' => true,
         'modified' => true,
-        'agreement' => true,
+        'agreement' => true
     ];
 }

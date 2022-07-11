@@ -232,7 +232,7 @@ $(document).ready(function(){
     });
 
     $('#saveAgreement').click(function(){
-        if(formValidation('formAgreement')){
+        if(formValidation('formAgreement') && formValidation('formRendiconto')){
             //Validazione campi
             var valid = true;
             var firstElem = '';
@@ -254,6 +254,12 @@ $(document).ready(function(){
 
             if (valid) {
                 var formData= new FormData($('#formAgreement')[0]);
+
+                var rendiconti = $('input[name^=companies]');
+
+                $(rendiconti).each(function () {
+                    formData.append($(this).attr('name'), $(this).val());
+                });
                 
                 $.ajax({
                     url : pathServer + "aziende/Ws/saveAgreement",
@@ -335,6 +341,20 @@ $(document).ready(function(){
         }
     });
 
+    $('input[name=rendiconto]').change(function() {
+        let checked = $(this).prop('checked');
+        let denominazione = $(this).data('denominazione');
+        if(checked) {
+            createInputForRendiconto(false, denominazione);
+            saveRendiconto($('input[type=text][name^=companies]')[0]);
+            createButton();
+        } else {
+            emptyRendiconti();
+        }
+    });
+
+
+
 });
 
 $(document).on('click', '.edit-agreement', function(){
@@ -357,6 +377,7 @@ $(document).on('click', '.edit-agreement', function(){
             $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
             $('#inputCig').val(res.data.cig);
             $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
+
             var countInactiveSedi = 0;
             res.data.agreements_to_sedi.forEach(function(sede) {
                 $('#inputSedeActive'+sede.sede_id).prop('disabled', false);
@@ -389,7 +410,15 @@ $(document).on('click', '.edit-agreement', function(){
                     }
                     countInactiveSedi++;
                 }
-            })
+                if(res.data.companies.length > 0) {
+                    $('select[name*=agreement_company_id]').prop('disabled', false);
+                    for(let company of res.data.companies) {
+                        $('#inputSedeCompany'+sede.sede_id).append(
+                            new Option(company.name, company.id, false, company.id == sede.agreement_company_id ? true : false)
+                        );
+                    }
+                }
+            });
 
             // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
             if (role == 'ente' && res.data.approved) {
@@ -421,6 +450,18 @@ $(document).on('click', '.edit-agreement', function(){
             computeMaxCapacityIncrement();
             computeTotalCapacityIncrement();
 
+            //Rendiconti
+            res.data.companies.forEach((rendiconto) => {
+                addRendiconto(rendiconto.name, rendiconto.id);
+            });
+            createButton();
+
+            if(res.data.companies.length > 0) {
+                $('input[name=rendiconto]').prop('checked', true);
+            } else {
+                $('input[name=rendiconto]').prop('checked', false);
+            }
+
             $('#modalAgreement').modal({
                 backdrop: false,
                 keyboard: false
@@ -437,6 +478,158 @@ $(document).on('click', '.edit-agreement', function(){
 $(document).on('hidden.bs.modal', '#modalAgreement', function() {
     clearModal();
 });
+
+function addRendiconto(denominazione, id) {
+    let count = $('input[type=text][name^=companies]').length;
+    let agrId = $('#agreementId').val();
+
+    $('#rendiconti').append(  
+            $('<div>',
+                {
+                    class: 'input-group margin-bottom input',
+                    'data-id': id ? id : ''
+                }
+            ).append(
+                [
+                    $('<input>', 
+                        {
+                            type: 'hidden',
+                            value: id ? id : '',
+                            name: 'companies['+count+'][id]'
+                        }
+                    ),
+                    $('<input>',
+                        {
+                            class: 'form-control required',
+                            placeholder: 'Azienda',
+                            type: 'text',
+                            name: 'companies['+count+'][name]',
+                            value: denominazione,
+                            onblur: agrId ? 'saveRendiconto(this)' : ''
+                        }
+                    ),
+                    $('<a>',
+                    {
+                        class: 'btn btn-danger input-group-addon',
+                        onclick: 'deleteRendiconto(this)'
+                    }
+                    ).append(
+                        $('<i>',
+                        { class: 'fa fa-remove'}
+                        )
+                    )
+                ]
+            )
+    );
+
+}
+
+function createInputForRendiconto(element, denominazione) {
+    addRendiconto(denominazione, false);
+    if(element) {
+        $(element).remove();
+    }
+    createButton();
+    
+}
+
+function emptyRendiconti() {
+    $('#rendiconti').html('');
+    $('input[name=rendiconto]').prop('checked', false);
+
+    $('select[id^=inputSedeCompany]').each(function () {
+        $(this).prop('disabled', true);
+        $(this).html('')
+        $(this).append(new Option());
+    }); 
+
+}
+
+function deleteRendiconto(ele) {
+    let id = $(ele).parent().data('id');
+    $('select[id^=inputSedeCompany] option').each( function() {
+        if($(this).val() == id) {
+            $(this).remove();
+        }
+    } );
+
+    $(ele).parent().remove();
+
+    var rendiconti = $('input[name^=companies]');
+
+    if(rendiconti.length > 0) {
+        createButton();
+    } else {
+        emptyRendiconti();
+    }
+}
+
+function saveRendiconto(ele) {
+    let url = pathServer;
+
+    if($(ele).prev().val().length){
+        
+        url+= 'aziende/Ws/saveSingleCompany/' + $(ele).prev().val();
+    } else {
+        url+= 'aziende/Ws/saveSingleCompany';
+    }
+
+    if ( $(ele).val().length  > 0 ) {
+        
+        $.ajax({
+            url : url,
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: $(ele).prev().val(),
+                name: $(ele).val(),
+                agreement_id:  $('#agreementId').val()
+            }
+        }).done(function (res) {
+            if(res.response == "OK"){
+                if($(ele).prev().val().length){
+                    $('select[id^=inputSedeCompany] option').each( function() {
+                        if($(this).val() == res.data.id) {
+                            $(this).text(res.data.name);
+                        }
+                    } );
+                } else {
+                    $(ele).prev().val(res.data.id);
+                    $(ele).parent().val(res.data.id);
+
+                    $('select[id^=inputSedeCompany]').each( function() {
+                        $(this).append(
+                            new Option(res.data.name, res.data.id, false, false)
+                        );
+                    } );
+                }
+
+            }else{
+                alert(res.msg);
+            }
+        }).fail(function(richiesta, stato, errori) {
+            alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+        });
+
+    }
+}
+
+function createButton() {
+    let list = $('.btn.btn-success.input-group-addon');
+    if(list.length < 1) {
+        $('.btn.btn-danger.input-group-addon').last().after(
+            $('<a>',
+                {
+                    class: 'btn btn-success input-group-addon',
+                    onclick: 'createInputForRendiconto(this)'
+                }
+            ).append(
+                $('<i>',
+                { class: 'fa fa-plus'})
+            )
+        );
+    }
+}
 
 function clearModal(){
     $('.approved-message').hide();
@@ -496,6 +689,8 @@ function clearModal(){
         $(this).prop("title", '');
         $(this).removeClass('disabled-approved');
     });
+
+    emptyRendiconti();
 }
 
 function disableApprovedModal() {

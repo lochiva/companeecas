@@ -38,6 +38,8 @@ class AgreementsToSedi extends Entity
         'created' => true,
         'modified' => true,
         'agreement' => true,
-        'sede' => true
+        'sede' => true,
+        'agreement_company_id' => true,
+        'agreement_company_data' => true
     ];
 }

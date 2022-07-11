@@ -61,7 +61,8 @@ class AgreementsTable extends AppTable
             'foreignKey' => 'agreement_id',
             'className' => 'Aziende.AgreementsCompanies',
             'dependent' => true,
-            'propertyName' => 'companies'
+            'propertyName' => 'companies',
+            'saveStrategy' => 'replace'
         ]);
     }
 

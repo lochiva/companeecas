@@ -26,7 +26,8 @@ class AgreementComponent extends Component
 			'Agreements.date_extension_expiration',
 			'Agreements.guest_daily_price',
 			'Agreements.capacity_increment',
-			'spa.name'
+			'spa.name',
+			'Aziende.denominazione'
 		];
 
 		$opt['join'] = [
@@ -35,6 +36,12 @@ class AgreementComponent extends Component
 				'alias' => 'spa',
 				'type' => 'LEFT',
 				'conditions' => 'Agreements.procedure_id = spa.id'
+			],
+			[
+				'table' => 'aziende',
+				'alias' => 'Aziende',
+				'type' => 'LEFT',
+				'conditions' => 'Agreements.azienda_id = Aziende.id'
 			]
 		];
         
