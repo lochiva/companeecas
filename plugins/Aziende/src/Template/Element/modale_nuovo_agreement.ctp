@@ -12,7 +12,7 @@ $role = $this->request->session()->read('Auth.User.role');
 
                 <ul class="nav nav-tabs">
                     <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab"><b><?=__c('Convenzione')?></b></a></li>
-                    <li><a id="click_tab_2" href="#tab_2" data-toggle="tab"><b>Rendiconto AT</b></a></li>
+                    <li><a id="click_tab_2" href="#tab_2" data-toggle="tab"><b>Rendiconto ATI</b></a></li>
                     <li class="pull-right"><button type="button" class="close" style="padding: 10px 15px;" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>
                 </ul>
 
