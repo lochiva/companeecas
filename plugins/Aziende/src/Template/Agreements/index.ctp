@@ -77,6 +77,6 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
         </div>
     </div>
+    <?= $this->element('modale_nuovo_agreement'); ?>
 </section>
 
-<?= $this->element('modale_nuovo_agreement'); ?>
