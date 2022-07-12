@@ -158,6 +158,7 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', false);
             }
+            $('#inputSedeCompany' + id).prop('disabled', false);
         } else {
             $('#inputSedeCapacity'+id).prop('readonly', true);
             $('#inputSedeCapacity'+id).prop('title', 'Convenzione non più attiva per questo centro');
@@ -165,6 +166,7 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', true);
                 $('#inputSedeCapacityIncrement'+id).prop('title', 'Convenzione non più attiva per questo centro');
             }
+            $('#inputSedeCompany' + id).prop('disabled', true);
         }
     });
 
@@ -179,6 +181,7 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
             }
+            $('#inputSedeCompany' + id).prop('disabled', false);
         } else {
             $('#inputSedeActive'+id).prop('disabled', true);
             $('#inputSedeActive'+id).prop('checked', false);
@@ -189,6 +192,7 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
                 $('#inputSedeCapacityIncrement'+id).val('');
             }
+            $('#inputSedeCompany' + id).prop('disabled', true);
         }
 
         //Aggiornamento totali
@@ -348,6 +352,13 @@ $(document).ready(function(){
             createInputForRendiconto(false, denominazione);
             saveRendiconto($('input[type=text][name^=companies]')[0]);
             createButton();
+
+            $('select[id^=inputSedeCompany]').each(function () {
+                if( $(this).parents('tr').find('input[id^=inputSedeActive]').prop('checked') && $(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked') ) {
+                    $(this).prop('disabled', false);
+                }
+                
+            }); 
         } else {
             emptyRendiconti();
         }
@@ -378,6 +389,16 @@ $(document).on('click', '.edit-agreement', function(){
             $('#inputCig').val(res.data.cig);
             $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
 
+            if(res.data.companies.length > 0) {
+                $('select[id^=inputSedeCompany]').each(function () {
+                    for(let company of res.data.companies) {
+                        $(this).append(
+                            new Option(company.name, company.id, false, false)
+                        );
+                    }
+                }); 
+            }
+
             var countInactiveSedi = 0;
             res.data.agreements_to_sedi.forEach(function(sede) {
                 $('#inputSedeActive'+sede.sede_id).prop('disabled', false);
@@ -395,6 +416,7 @@ $(document).on('click', '.edit-agreement', function(){
                         $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
                         $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', false);
                     }
+                    $('#inputSedeCompany' + sede.sede_id).prop('disabled', false);
                 } else {
                     $('#inputSedeActive'+sede.sede_id).prop('checked', false);
                     $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
@@ -408,15 +430,18 @@ $(document).on('click', '.edit-agreement', function(){
                         $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', true);
                         $('#inputSedeCapacityIncrement'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
                     }
+                    $('#inputSedeCompany' + sede.sede_id).prop('disabled', true);
                     countInactiveSedi++;
                 }
                 if(res.data.companies.length > 0) {
-                    $('select[name*=agreement_company_id]').prop('disabled', false);
-                    for(let company of res.data.companies) {
-                        $('#inputSedeCompany'+sede.sede_id).append(
-                            new Option(company.name, company.id, false, company.id == sede.agreement_company_id ? true : false)
-                        );
-                    }
+                     $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
+                            if($(this).val() == sede.agreement_company_id) {
+                                $(this).prop('selected', true);
+
+                            }
+                        }); 
+
+
                 }
             });
 
