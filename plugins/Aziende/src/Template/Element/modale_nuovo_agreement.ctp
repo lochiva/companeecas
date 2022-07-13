@@ -12,7 +12,7 @@ $role = $this->request->session()->read('Auth.User.role');
 
                 <ul class="nav nav-tabs">
                     <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab"><b><?=__c('Convenzione')?></b></a></li>
-                    <li><a id="click_tab_2" href="#tab_2" data-toggle="tab"><b>Rendiconto ATI</b></a></li>
+                    <li class="hide"><a id="click_tab_2" href="#tab_2" data-toggle="tab"><b>Rendiconto ATI</b></a></li>
                     <li class="pull-right"><button type="button" class="close" style="padding: 10px 15px;" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>
                 </ul>
 
@@ -172,7 +172,7 @@ $role = $this->request->session()->read('Auth.User.role');
 
                                 <div class="input-group margin-bottom input" style="width:100%" data-default="1">
                                     <input type="hidden" value="" name="companies[0][id]">
-                                    <input type="hidden" value=1 name="companies[0][default]">
+                                    <input type="hidden" value=1 name="companies[0][isDefault]">
                                     <input class="form-control" placeholder="Azienda" type="text" name="companies[0][name]" value="" readonly>
                                 </div>
                             </div>

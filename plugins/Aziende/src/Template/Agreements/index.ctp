@@ -33,7 +33,7 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div class="box-header with-border">
                   <i class="fa fa-list-alt"></i>
                   <h3 class="box-title"><?=__c('Lista convenzioni')?></h3>
-                  <a id="newAgreement" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#modalAgreement" data-backdrop="false" data-keyboard="false" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                  <a id="newAgreement" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#modalAgreement" data-backdrop="false" data-keyboard="false" style="margin-left:10px" data-denominazione="<?=$azienda['denominazione']?>"><i class="fa fa-plus"></i> Nuovo</a>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-table-agreements box-body">

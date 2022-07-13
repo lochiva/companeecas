@@ -158,7 +158,11 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', false);
             }
-            $('#inputSedeCompany' + id).prop('disabled', false);
+            //Attivo anche la scelta selezione dell'azienda per il rendiconto (solamente se la rendicontazione è attiva)
+            if($('input[name=rendiconto]').is('checked')) {
+                $('#inputSedeCompany' + id).prop('disabled', false);
+            }
+            
         } else {
             $('#inputSedeCapacity'+id).prop('readonly', true);
             $('#inputSedeCapacity'+id).prop('title', 'Convenzione non più attiva per questo centro');
@@ -166,6 +170,7 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', true);
                 $('#inputSedeCapacityIncrement'+id).prop('title', 'Convenzione non più attiva per questo centro');
             }
+            //Disattivo anche la scelta selezione dell'azienda per il rendiconto
             $('#inputSedeCompany' + id).prop('disabled', true);
         }
     });
@@ -181,7 +186,11 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
             }
-            $('#inputSedeCompany' + id).prop('disabled', false);
+            //Attivo anche la scelta selezione dell'azienda per il rendiconto (solamente se la rendicontazione è attiva)
+            if($('input[name=rendiconto]').is('checked')) {
+                $('#inputSedeCompany' + id).prop('disabled', false);
+            }
+            
         } else {
             $('#inputSedeActive'+id).prop('disabled', true);
             $('#inputSedeActive'+id).prop('checked', false);
@@ -192,6 +201,7 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', true);
                 $('#inputSedeCapacityIncrement'+id).val('');
             }
+            //Disattivo anche la scelta selezione dell'azienda per il rendiconto 
             $('#inputSedeCompany' + id).prop('disabled', true);
         }
 
@@ -259,8 +269,8 @@ $(document).ready(function(){
             if (valid) {
                 var formData= new FormData($('#formAgreement')[0]);
 
+                // Aggiungo anche le aziende create nel tab per i rendiconti
                 var rendiconti = $('input[name^=companies]');
-
                 $(rendiconti).each(function () {
                     formData.append($(this).attr('name'), $(this).val());
                 });
@@ -317,6 +327,7 @@ $(document).ready(function(){
         $('#inputCapacityIncrement0').prop('checked', true);
         $('#div-attachments').hide();
         $('#deleteAgreement').hide();
+        $("div[data-default=1] input[name='companies[0][name]']").val($(this).data('denominazione'));
     });
 
     $('#deleteAgreement').click(function(){
@@ -345,159 +356,216 @@ $(document).ready(function(){
         }
     });
 
+    // Checkbox ABILITA RENDICONTAZIONE ATI
     $('input[name=rendiconto]').change(function() {
-        let checked = $(this).prop('checked');
-        let denominazione = $(this).data('denominazione');
-        if(checked) {
-            createInputForRendiconto(false, denominazione);
-            saveRendiconto($('input[type=text][name^=companies]')[0]);
-            createButton();
-
-            $('select[id^=inputSedeCompany]').each(function () {
-                if( $(this).parents('tr').find('input[id^=inputSedeActive]').prop('checked') && $(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked') ) {
-                    $(this).prop('disabled', false);
-                }
-                
-            }); 
+        if($(this).prop('checked')) {
+            enableRendiconti();
         } else {
-            emptyRendiconti();
+            disableRendiconti();
         }
     });
+
+    //Disabilita click in caso di readOnly
+    $('select[id^=inputSedeCompany]').click( function () {
+        if ($(this).attr('readonly')) {
+            $(this).blur();
+            window.focus;
+        }
+
+        }
+    );
 
 
 
 });
 
 $(document).on('click', '.edit-agreement', function(){
+    $('#click_tab_2').parent().removeClass('hide');
+
     var id = $(this).attr('data-id');
-    $.ajax({
-        url : pathServer + "aziende/Ws/getAgreement/"+id,
-        type: "GET",
-        dataType: "json"
-    }).done(function (res) {
-        if(res.response == "OK"){
-            $('#agreementId').val(res.data.id);
-            $('#formAgreement #approved').val(Number(res.data.approved));
-            if (role == 'admin') {
-                $('#inputApproved').prop('checked', res.data.approved);
-            }
-            $('#inputProceduraAffidamento').val(res.data.procedure_id);
-            $('#inputDateAgreement').datepicker('setDate', res.data.date_agreement);
-            $('#inputDateAgreementExpiration').datepicker('setDate', res.data.date_agreement_expiration);
-            $('#inputDateExtensionExpiration').datepicker('setDate', res.data.date_extension_expiration);
-            $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
-            $('#inputCig').val(res.data.cig);
-            $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
+    $.ajax( 
+        {
+            url : pathServer + "aziende/Ws/checkRendiconti/"+id,
+            type: "GET",
+            dataType: "json"
+        }
+    ).done(function (res) {
+            if(res.response == "OK") {
 
-            if(res.data.companies.length > 0) {
-                $('select[id^=inputSedeCompany]').each(function () {
-                    for(let company of res.data.companies) {
-                        $(this).append(
-                            new Option(company.name, company.id, false, false)
-                        );
-                    }
-                }); 
-            }
+                $.ajax({
+                    url : pathServer + "aziende/Ws/getAgreement/"+id,
+                    type: "GET",
+                    dataType: "json"
+                }).done(function (res) {
+                    if(res.response == "OK"){
+                        $('#agreementId').val(res.data.id);
+                        $('#formAgreement #approved').val(Number(res.data.approved));
+                        if (role == 'admin') {
+                            $('#inputApproved').prop('checked', res.data.approved);
+                        }
+                        $('#inputProceduraAffidamento').val(res.data.procedure_id);
+                        $('#inputDateAgreement').datepicker('setDate', res.data.date_agreement);
+                        $('#inputDateAgreementExpiration').datepicker('setDate', res.data.date_agreement_expiration);
+                        $('#inputDateExtensionExpiration').datepicker('setDate', res.data.date_extension_expiration);
+                        $('#inputGuestDailyPrice').val(res.data.guest_daily_price).trigger('change');
+                        $('#inputCig').val(res.data.cig);
+                        $('#inputCapacityIncrement'+res.data.capacity_increment).prop('checked', true);
+            
+                        // Popolo le tendine accanto alle sedi
 
-            var countInactiveSedi = 0;
-            res.data.agreements_to_sedi.forEach(function(sede) {
-                $('#inputSedeActive'+sede.sede_id).prop('disabled', false);
-                $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
-                if (res.data.capacity_increment > 0) {
-                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
-                }
-                if (sede.active) {
-                    $('#inputSedeActive'+sede.sede_id).prop('checked', true);
-                    $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
-                    $('#inputSedeCheck'+sede.sede_id).prop('readonly', false);
-                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
-                    $('#inputSedeCapacity'+sede.sede_id).addClass('required');
-                    if (res.data.capacity_increment > 0) {
-                        $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
-                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', false);
-                    }
-                    $('#inputSedeCompany' + sede.sede_id).prop('disabled', false);
-                } else {
-                    $('#inputSedeActive'+sede.sede_id).prop('checked', false);
-                    $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
-                    $('#inputSedeCheck'+sede.sede_id).prop('readonly', true);
-                    $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
-                    $('#inputSedeCapacity'+sede.sede_id).prop('readonly', true);
-                    $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
-                    $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
-                    if (res.data.capacity_increment > 0) {
-                        $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
-                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', true);
-                        $('#inputSedeCapacityIncrement'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
-                    }
-                    $('#inputSedeCompany' + sede.sede_id).prop('disabled', true);
-                    countInactiveSedi++;
-                }
-                if(res.data.companies.length > 0) {
-                     $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
-                            if($(this).val() == sede.agreement_company_id) {
-                                $(this).prop('selected', true);
+                        $('select[id^=inputSedeCompany]').each(function () {
+                            for(let company of res.data.companies) {
+                                let opt = new Option(company.name, company.id, false, false);
+
+                                $(this).append(
+                                    $('<option>',
+                                        {
+                                            value: company.id,
+                                            text: company.name,
+                                            'data-default': company.isDefault
+                                        }
+                                    )
+                                );
 
                             }
                         }); 
+            
+                        var countInactiveSedi = 0;
+                        res.data.agreements_to_sedi.forEach(function(sede) {
+                            $('#inputSedeActive'+sede.sede_id).prop('disabled', false);
+                            $('#inputSedeCapacity'+sede.sede_id).prop('disabled', false);
+                            if (res.data.capacity_increment > 0) {
+                                $('#inputSedeCapacityIncrement'+sede.sede_id).prop('disabled', false);
+                            }
+                            if (sede.active) {
+                                $('#inputSedeActive'+sede.sede_id).prop('checked', true);
+                                $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
+                                $('#inputSedeCheck'+sede.sede_id).prop('readonly', false);
+                                $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
+                                $('#inputSedeCapacity'+sede.sede_id).addClass('required');
+                                if (res.data.capacity_increment > 0) {
+                                    $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
+                                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', false);
+                                }
+                                $('#inputSedeCompany' + sede.sede_id).prop('disabled', false);
+                            } else {
+                                $('#inputSedeActive'+sede.sede_id).prop('checked', false);
+                                $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
+                                $('#inputSedeCheck'+sede.sede_id).prop('readonly', true);
+                                $('#inputSedeCapacity'+sede.sede_id).val(sede.capacity);
+                                $('#inputSedeCapacity'+sede.sede_id).prop('readonly', true);
+                                $('#inputSedeCapacity'+sede.sede_id).removeClass('required');
+                                $('#inputSedeCapacity'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                                if (res.data.capacity_increment > 0) {
+                                    $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
+                                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', true);
+                                    $('#inputSedeCapacityIncrement'+sede.sede_id).prop('title', 'Convenzione non più attiva per questo centro');
+                                }
+                                $('#inputSedeCompany' + sede.sede_id).prop('disabled', true);
+                                countInactiveSedi++;
+                            }
 
+                            // Imposto la selezione nelle opzioni delle tendine accanto alle sedi
 
-                }
-            });
+                            let count = $('#inputSedeCompany' + sede.sede_id + ' option');
 
-            // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
-            if (role == 'ente' && res.data.approved) {
-                $('.approved-message').show();
-                disableApprovedModal();
-            }
+                            if(count.length > 1) {
+                                $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
 
-            // Se convenzione non ha sedi attive abilito tasto di cancellazione
-            if (res.data.agreements_to_sedi.length == countInactiveSedi) {
-                $('#deleteAgreement').show();
-                $('#deleteAgreement').prop('disabled', false);
-                $('#deleteAgreement').attr('title', '');
+                                    if(sede.agreement_company_id) {
+                                        if($(this).val() == sede.agreement_company_id) {
+                                            $(this).prop('selected', true);
+                                        }
+
+                                    } else {
+                                        if($(this).data('default') == 1) {
+                                            $(this).prop('selected', true);
+                                        }
+
+                                    }
+
+                                }); 
+                            } else {
+                                $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
+                                    $(this).prop('selected', true);
+                                });
+                                $('#inputSedeCompany' + sede.sede_id).prop('readonly', true);
+                            }
+
+                        });
+            
+                        // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
+                        if (role == 'ente' && res.data.approved) {
+                            $('.approved-message').show();
+                            disableApprovedModal();
+                        }
+            
+                        // Se convenzione non ha sedi attive abilito tasto di cancellazione
+                        if (res.data.agreements_to_sedi.length == countInactiveSedi) {
+                            $('#deleteAgreement').show();
+                            $('#deleteAgreement').prop('disabled', false);
+                            $('#deleteAgreement').attr('title', '');
+                        } else {
+                            $('#deleteAgreement').show();
+                            $('#deleteAgreement').prop('disabled', true);
+                            $('#deleteAgreement').attr('title', 'Non è possibile cancellare una convenzione che ha delle strutture collegate');
+                        }
+            
+                        //Mostro tasto allegati
+                        $('#idItemForAttachment').html(res.data.id);
+                        $('#attachmentReadOnly').html(res.data.approved);
+                        $('#div-attachments').show();
+            
+                        //mostro badge attachments e conto numero allegati
+                        attachmentsNumberForBadge('agreements', res.data.id, 'button_attachment');
+            
+                        //Calcolo totali posti
+                        computeTotalCapacity();
+                        computeMaxCapacityIncrement();
+                        computeTotalCapacityIncrement();
+            
+                        //Tab dei Rendiconti
+                        res.data.companies.forEach((rendiconto) => {
+                            if (rendiconto.isDefault) {
+                                $("div[data-default=1] input[name='companies[0][id]']").val(rendiconto.id);
+                                $("div[data-default=1] input[name='companies[0][name]']").val(rendiconto.name);
+                            } else {
+                                addRendiconto(rendiconto.name, rendiconto.id);
+                            }
+                            
+                        });
+                        createButton();
+            
+                        if(res.data.companies.length > 1) {
+                            $('input[name=rendiconto]').prop('checked', true);
+                            enableRendiconti();
+                        } else {
+                            $('input[name=rendiconto]').prop('checked', false);
+                            disableRendiconti();
+                        }
+            
+                        $('#modalAgreement').modal({
+                            backdrop: false,
+                            keyboard: false
+                        });
+                        $('#modalAgreement').modal('show');
+                    }else{
+                        alert(res.msg);
+                    }
+                }).fail(function(richiesta, stato, errori) {
+                    alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+                });
+
             } else {
-                $('#deleteAgreement').show();
-                $('#deleteAgreement').prop('disabled', true);
-                $('#deleteAgreement').attr('title', 'Non è possibile cancellare una convenzione che ha delle strutture collegate');
+                alert(res.msg);
             }
-
-            //Mostro tasto allegati
-            $('#idItemForAttachment').html(res.data.id);
-            $('#attachmentReadOnly').html(res.data.approved);
-            $('#div-attachments').show();
-
-            //mostro badge attachments e conto numero allegati
-	        attachmentsNumberForBadge('agreements', res.data.id, 'button_attachment');
-
-            //Calcolo totali posti
-            computeTotalCapacity();
-            computeMaxCapacityIncrement();
-            computeTotalCapacityIncrement();
-
-            //Rendiconti
-            res.data.companies.forEach((rendiconto) => {
-                addRendiconto(rendiconto.name, rendiconto.id);
-            });
-            createButton();
-
-            if(res.data.companies.length > 0) {
-                $('input[name=rendiconto]').prop('checked', true);
-            } else {
-                $('input[name=rendiconto]').prop('checked', false);
-            }
-
-            $('#modalAgreement').modal({
-                backdrop: false,
-                keyboard: false
-            });
-            $('#modalAgreement').modal('show');
-        }else{
-            alert(res.msg);
+        } 
+    ).fail(function (richiesta, stato, errori) {
+            alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
         }
-    }).fail(function(richiesta, stato, errori) {
-        alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-    });
+    );
+
+
 });
 
 $(document).on('hidden.bs.modal', '#modalAgreement', function() {
@@ -512,7 +580,8 @@ function addRendiconto(denominazione, id) {
             $('<div>',
                 {
                     class: 'input-group margin-bottom input',
-                    'data-id': id ? id : ''
+                    'data-id': id ? id : '',
+                    'data-default': 0
                 }
             ).append(
                 [
@@ -529,13 +598,13 @@ function addRendiconto(denominazione, id) {
                             placeholder: 'Azienda',
                             type: 'text',
                             name: 'companies['+count+'][name]',
-                            value: denominazione,
+                            value: denominazione ? denominazione : '',
                             onblur: agrId ? 'saveRendiconto(this)' : ''
                         }
                     ),
                     $('<a>',
                     {
-                        class: 'btn btn-danger input-group-addon',
+                        class: 'btn btn-danger input-group-addon manage-rendiconto',
                         onclick: 'deleteRendiconto(this)'
                     }
                     ).append(
@@ -549,8 +618,51 @@ function addRendiconto(denominazione, id) {
 
 }
 
-function createInputForRendiconto(element, denominazione) {
-    addRendiconto(denominazione, false);
+function enableRendiconti() {
+    // Abilito i menù a tendina nella tab CONVENZIONE
+    $('select[id^=inputSedeCompany]').each(function () {
+        if( $(this).parents('tr').find('input[id^=inputSedeActive]').prop('checked') && $(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked') ) {
+            $(this).attr('readonly', false);
+            $(this).attr('disabled', false);
+        } else {
+            $(this).attr('readonly', true);
+            $(this).attr('disabled', true);
+        }
+    }); 
+
+    // Abilito i pulsanti di aggiunta e rimozione nel tab RENDICONTI
+    $('.manage-rendiconto').each(function () {
+        $(this).attr('disabled', false);
+    });
+
+    //Disattivo i campi di input delle aziende della rendicontazione
+    $('div[data-default=0]').each( function() {
+        $(this).find("input[type=text][name^=companies]").prop('disabled', false);
+    });
+}
+
+function disableRendiconti() {
+    // Disattivo i menù a tendina nella tab CONVENZIONE
+    $('select[id^=inputSedeCompany]').each(function () {
+        $(this).attr('readonly', true);
+        $(this).val($(this).find('option[data-default=true]').val());
+    }); 
+
+    // Disattivo i pulsanti di aggiunta e rimozione nel tab RENDICONTI
+    $('.manage-rendiconto').each(function () {
+        $(this).attr('disabled', true);
+    });
+
+    //Disattivo i campi di input delle aziende della rendicontazione
+    $('div[data-default=0]').each( function() {
+        $(this).find("input[type=text][name^=companies]").prop('disabled', true);
+    });
+
+
+}
+
+function createInputForRendiconto(element) {
+    addRendiconto(false, false);
     if(element) {
         $(element).remove();
     }
@@ -559,19 +671,38 @@ function createInputForRendiconto(element, denominazione) {
 }
 
 function emptyRendiconti() {
-    $('#rendiconti').html('');
+    $('div[data-default=0]').each( function() {
+        $(this).remove();
+    });
+
     $('input[name=rendiconto]').prop('checked', false);
 
     $('select[id^=inputSedeCompany]').each(function () {
         $(this).prop('disabled', true);
         $(this).html('')
-        $(this).append(new Option());
     }); 
+
+    $("div[data-default=1] input[name='companies[0][id]']").val('');
+    $("div[data-default=1] input[name='companies[0][name]']").val('');
 
 }
 
 function deleteRendiconto(ele) {
     let id = $(ele).parent().data('id');
+    
+    $('select[id^=inputSedeCompany]').each( function (select) {
+
+        $(select).children().each( function () {
+
+            if($(option).val() == id) {
+                if($(option).is('selected')) {
+                    $(select).val($(select).find('option[data-default=true]').val());
+                }
+                $(option).remove();
+            }
+        } );
+
+    } );
     $('select[id^=inputSedeCompany] option').each( function() {
         if($(this).val() == id) {
             $(this).remove();
@@ -584,8 +715,6 @@ function deleteRendiconto(ele) {
 
     if(rendiconti.length > 0) {
         createButton();
-    } else {
-        emptyRendiconti();
     }
 }
 
@@ -624,7 +753,13 @@ function saveRendiconto(ele) {
 
                     $('select[id^=inputSedeCompany]').each( function() {
                         $(this).append(
-                            new Option(res.data.name, res.data.id, false, false)
+                            $('<option>',
+                                {
+                                    value: company.id,
+                                    text: company.name,
+                                    'data-default': false
+                                }
+                            )
                         );
                     } );
                 }
@@ -639,13 +774,30 @@ function saveRendiconto(ele) {
     }
 }
 
+// Creo un pulsante per aggiungere i rendiconti da inserire accanto all'ultimo pulsante della lista
 function createButton() {
-    let list = $('.btn.btn-success.input-group-addon');
-    if(list.length < 1) {
-        $('.btn.btn-danger.input-group-addon').last().after(
+
+    let list = $('.btn.btn-success.input-group-addon.manage-rendiconto');
+
+    if($("input[type=text][name^='companies']").length > 1) {
+        if(list.length < 1) {
+            $('.btn.btn-danger.input-group-addon.manage-rendiconto').last().after(
+                $('<a>',
+                    {
+                        class: 'btn btn-success input-group-addon manage-rendiconto',
+                        onclick: 'createInputForRendiconto(this)'
+                    }
+                ).append(
+                    $('<i>',
+                    { class: 'fa fa-plus'})
+                )
+            );
+        }
+    } else {
+        $("input[name='companies[0][name]']").after(
             $('<a>',
                 {
-                    class: 'btn btn-success input-group-addon',
+                    class: 'btn btn-success input-group-addon manage-rendiconto',
                     onclick: 'createInputForRendiconto(this)'
                 }
             ).append(
@@ -654,9 +806,11 @@ function createButton() {
             )
         );
     }
+
 }
 
 function clearModal(){
+    $('#click_tab_1').trigger("click");
     $('.approved-message').hide();
 	$('#agreementId').val("");
     $('#inputProceduraAffidamento').val("");
@@ -716,6 +870,8 @@ function clearModal(){
     });
 
     emptyRendiconti();
+    $('#click_tab_2').parent().addClass('hide');
+
 }
 
 function disableApprovedModal() {
