@@ -3495,7 +3495,7 @@ class WsController extends AppController
     public function checkRendiconti($id)
 	{
         $table = TableRegistry::get('Aziende.AgreementsCompanies');
-        $rendiconti = $table->findByAgreementId($id)->toArray();
+        $rendiconti = $table->find('all')->where(['agreement_id' => $id, 'isDefault' => true])->toArray();
 
 
         if(empty($rendiconti)) {
@@ -3504,7 +3504,7 @@ class WsController extends AppController
             $new = $table->newEntity();
             $new->agreement_id = $id;
             $new->name = $agreement->aziende->denominazione;
-            $new->default = 1;
+            $new->isDefault = 1;
 
             if ($table->save($new)) {
                 $this->_result['response'] = "OK";

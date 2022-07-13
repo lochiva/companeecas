@@ -148,8 +148,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                     </td>
                                     <td>
                                         <select name="sedi[<?=$sede['id']?>][agreement_company_id]" id="inputSedeCompany<?=$sede['id']?>" class="form-control" disabled>
-                                            <option></option>
-
                                         </select>
                                     </td>
                                 </tr>
@@ -165,13 +163,19 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="col-md-11">
                                 <div class="checkbox">
                                     <label>
-                                    <input type="checkbox" name="rendiconto" data-denominazione="<?= $azienda['denominazione'] ?>"> Abilita rendicontazione ATI
+                                    <input type="checkbox" name="rendiconto"> Abilita rendicontazione ATI
                                     </label>
                                 </div>
                             </div>
 
                             <div class="col-md-11" id="rendiconti">
 
+                                <div class="input-group margin-bottom input" style="width:100%" data-default="1">
+                                    <input type="hidden" value="" name="companies[0][id]">
+                                    <input type="hidden" value=1 name="companies[0][default]">
+                                    <input class="form-control" placeholder="Azienda" type="text" name="companies[0][name]" value="" readonly>
+                                </div>
+                            </div>
                         </form>
 
                     </div>
