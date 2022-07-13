@@ -3491,4 +3491,36 @@ class WsController extends AppController
             $this->_result['msg'] = "Impossibile salvare il rendiconto";
         }
     }
+
+    public function checkRendiconti($id)
+	{
+        $table = TableRegistry::get('Aziende.AgreementsCompanies');
+        $rendiconti = $table->findByAgreementId($id)->toArray();
+
+
+        if(empty($rendiconti)) {
+            $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['Aziende']]);
+
+            $new = $table->newEntity();
+            $new->agreement_id = $id;
+            $new->name = $agreement->aziende->denominazione;
+            $new->default = 1;
+
+            if ($table->save($new)) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $new;
+                $this->_result['msg'] = '';
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile salvare il rendiconto di default';
+
+            }
+                        
+        } else {
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $rendiconti;
+            $this->_result['msg'] = '';
+        }
+	
+    }
 }
