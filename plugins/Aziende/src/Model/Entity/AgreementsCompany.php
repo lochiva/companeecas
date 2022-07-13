@@ -29,7 +29,7 @@ class AgreementsCompany extends Entity
     protected $_accessible = [
         'agreement_id' => true,
         'name' => true,
-        'isDefault' => true
+        'isDefault' => true,
         'created' => true,
         'modified' => true,
         'agreement' => true
