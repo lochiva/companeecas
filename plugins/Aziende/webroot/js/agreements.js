@@ -158,6 +158,8 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', false);
             }
+            $('#inputSedeCompany' + id).prop('disabled', false);
+            $('#inputSedeCompany' + id).val($('#inputSedeCompany' + id).find('option[data-default=true]').val());
 
         } else {
             $('#inputSedeCapacity'+id).prop('readonly', true);
@@ -166,7 +168,8 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', true);
                 $('#inputSedeCapacityIncrement'+id).prop('title', 'Convenzione non più attiva per questo centro');
             }
-
+            $('#inputSedeCompany' + id).prop('disabled', true);
+            $('#inputSedeCompany' + id).val('');
         }
     });
 
@@ -449,6 +452,34 @@ $(document).on('click', '.edit-agreement', function(){
                                     $('#inputSedeCapacityIncrement'+sede.sede_id).val(sede.capacity_increment);
                                     $('#inputSedeCapacityIncrement'+sede.sede_id).prop('readonly', false);
                                 }
+
+                                // Imposto la selezione nelle opzioni delle tendine accanto alle sedi
+
+                                let count = $('#inputSedeCompany' + sede.sede_id + ' option');
+
+                                if(count.length > 1) {
+                                    $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
+
+                                        if(sede.agreement_company_id) {
+                                            if($(this).val() == sede.agreement_company_id) {
+                                                $(this).prop('selected', true);
+                                            }
+
+                                        } else {
+                                            if($(this).data('default') == 1) {
+                                                $(this).prop('selected', true);
+                                            }
+
+                                        }
+
+                                    }); 
+                                } else {
+                                    $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
+                                        $(this).prop('selected', true);
+                                    });
+                                    $('#inputSedeCompany' + sede.sede_id).prop('readonly', true);
+                                }
+
                             } else {
                                 $('#inputSedeActive'+sede.sede_id).prop('checked', false);
                                 $('#inputSedeCheck'+sede.sede_id).prop('checked', true);
@@ -464,34 +495,6 @@ $(document).on('click', '.edit-agreement', function(){
                                 }
                                 countInactiveSedi++;
                             }
-
-                            // Imposto la selezione nelle opzioni delle tendine accanto alle sedi
-
-                            let count = $('#inputSedeCompany' + sede.sede_id + ' option');
-
-                            if(count.length > 1) {
-                                $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
-
-                                    if(sede.agreement_company_id) {
-                                        if($(this).val() == sede.agreement_company_id) {
-                                            $(this).prop('selected', true);
-                                        }
-
-                                    } else {
-                                        if($(this).data('default') == 1) {
-                                            $(this).prop('selected', true);
-                                        }
-
-                                    }
-
-                                }); 
-                            } else {
-                                $('#inputSedeCompany' + sede.sede_id + ' option').each(function () {
-                                    $(this).prop('selected', true);
-                                });
-                                $('#inputSedeCompany' + sede.sede_id).prop('readonly', true);
-                            }
-
                         });
             
                         // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
@@ -622,7 +625,7 @@ function addRendiconto(denominazione, id) {
 function enableRendiconti() {
     // Abilito i menù a tendina nella tab CONVENZIONE
     $('select[id^=inputSedeCompany]').each(function () {
-        if( $(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked') ) {
+        if( $(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked') && $(this).parents('tr').find('input[id^=inputSedeActive]').prop('checked') ) {
             $(this).attr('readonly', false);
             $(this).attr('disabled', false);
         } else {
@@ -647,7 +650,7 @@ function disableRendiconti() {
     $('select[id^=inputSedeCompany]').each(function () {
         $(this).attr('readonly', true);
         
-        if ($(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked')) {
+        if ($(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked') && $(this).parents('tr').find('input[id^=inputSedeActive]').prop('checked')) {
             $(this).val($(this).find('option[data-default=true]').val());
         }
         
