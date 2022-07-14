@@ -2475,6 +2475,8 @@ class WsController extends AppController
         $entity = $agreements->patchEntity($entity, $data, ['associated' => ['AgreementsCompanies']]);
 
 		if($agreements->save($entity, ['associated' => ['AgreementsCompanies']])){
+            $rendiconto = $this->Agreement->checkRendiconti($entity->id);
+
             // Relazione convenzione - sede
             $agreementsSedi = TableRegistry::get('Aziende.AgreementsToSedi');
             $sedi = TableRegistry::get('Aziende.Sedi')->find()->where(['id_azienda' => $entity->azienda_id])->toArray();
@@ -2491,6 +2493,9 @@ class WsController extends AppController
                             ['active' => false],
                             ['agreement_id !=' => $entity->id, 'sede_id' => $sedeId]
                         );
+                        $company_id = isset($sede['agreement_company_id']) && !empty($sede['agreement_company_id']) ? $sede['agreement_company_id'] : $rendiconto[0]->id;
+                    } else {
+                        $company_id = 0;
                     }
 
                     // Salvo i dati della relazione della sede con la convenzione
@@ -2501,7 +2506,7 @@ class WsController extends AppController
                         'active' => $active,
                         'capacity' => $sede['capacity'],
                         'capacity_increment' => empty($sede['capacity_increment']) ? 0 : $sede['capacity_increment'],
-                        'agreement_company_id' => isset($sede['agreement_company_id']) ? $sede['agreement_company_id'] : 0
+                        'agreement_company_id' => $company_id
                     ];
                     $agreementsSedi->patchEntity($agreementSede, $dataToSave);
                     if ($agreementsSedi->save($agreementSede)) {
@@ -3502,33 +3507,19 @@ class WsController extends AppController
 
     public function checkRendiconti($id)
 	{
-        $table = TableRegistry::get('Aziende.AgreementsCompanies');
-        $rendiconti = $table->find('all')->where(['agreement_id' => $id, 'isDefault' => true])->toArray();
-
-
-        if(empty($rendiconti)) {
-            $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['Aziende']]);
-
-            $new = $table->newEntity();
-            $new->agreement_id = $id;
-            $new->name = $agreement->aziende->denominazione;
-            $new->isDefault = 1;
-
-            if ($table->save($new)) {
+        if(isset($id)) {
+            $ret = $this->Agreement->checkRendiconti($id);
+            if($ret) {
                 $this->_result['response'] = "OK";
-                $this->_result['data'] = $new;
+                $this->_result['data'] = $ret;
                 $this->_result['msg'] = '';
             } else {
                 $this->_result['response'] = "KO";
                 $this->_result['msg'] = 'Impossibile salvare il rendiconto di default';
-
             }
-                        
         } else {
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $rendiconti;
-            $this->_result['msg'] = '';
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Id nullo, impossibile recuperare i rendiconti';
         }
-	
     }
 }

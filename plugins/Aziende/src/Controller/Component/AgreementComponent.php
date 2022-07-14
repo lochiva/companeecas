@@ -54,4 +54,30 @@ class AgreementComponent extends Component
 
     }
 
+	public function checkRendiconti($id)
+	{
+        $table = TableRegistry::get('Aziende.AgreementsCompanies');
+        $rendiconti = $table->find('all')->where(['agreement_id' => $id, 'isDefault' => true])->toArray();
+
+
+        if(empty($rendiconti)) {
+            $agreement = TableRegistry::get('Aziende.Agreements')->get($id, ['contain' => ['Aziende']]);
+
+            $new = $table->newEntity();
+            $new->agreement_id = $id;
+            $new->name = $agreement->aziende->denominazione;
+            $new->isDefault = 1;
+
+            if ($table->save($new)) {
+				return $new;
+            } else {
+                return false;
+            }
+                        
+        } else {
+            return $rendiconti;
+        }
+	
+    }
+
 }

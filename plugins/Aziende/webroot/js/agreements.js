@@ -186,7 +186,7 @@ $(document).ready(function(){
             }
             //Attivo anche la scelta selezione dell'azienda per il rendiconto (solamente se la rendicontazione è attiva)
             $('#inputSedeCompany' + id).prop('disabled', false);
-            $('#inputSedeCompany' + id).val($('#inputSedeCompany' + id).find('option[data-default=true]').val());
+            $('#inputSedeCompany' + id + ' option[data-default=true]').prop('selected', true);
             
         } else {
             $('#inputSedeActive'+id).prop('disabled', true);
@@ -251,6 +251,7 @@ $(document).ready(function(){
 
 
         if(multipleFormValidation(forms)){
+            $('#click_tab_1').trigger("click");
             //Validazione campi
             var valid = true;
             var firstElem = '';
@@ -328,10 +329,33 @@ $(document).ready(function(){
 
     // Preset modale all'apertura per nuova convenzione
     $('#newAgreement').click(function() {
+        disableRendiconti();
         $('#inputCapacityIncrement0').prop('checked', true);
         $('#div-attachments').hide();
         $('#deleteAgreement').hide();
-        $("div[data-default=1] input[name='companies[0][name]']").val($(this).data('denominazione'));
+        $('input[name=rendiconto]').prop('checked', false);
+
+        let denominazione = $(this).data('denominazione');
+        $("div[data-default=1] input[name='companies[0][name]']").val(denominazione);
+
+        // Popolo le tendine accanto alle sedi
+        $('select[id^=inputSedeCompany]').each(function () {
+            $(this).append(
+                [
+                    $('<option>'),
+                    $('<option>',
+                        {
+                            value: '',
+                            text: denominazione,
+                            'data-default': true,
+                            selected: false
+                        }
+                    )
+                ]
+            );
+            // inizialitto con un valore nullo
+            //$(this).val('');
+        }); 
     });
 
     $('#deleteAgreement').click(function(){
