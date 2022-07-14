@@ -173,7 +173,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <div class="input-group margin-bottom input" style="width:100%" data-default="1">
                                     <input type="hidden" value="" name="companies[0][id]">
                                     <input type="hidden" value=1 name="companies[0][isDefault]">
-                                    <input class="form-control" placeholder="Azienda" type="text" name="companies[0][name]" value="" readonly>
+                                    <input class="form-control required" placeholder="Azienda" type="text" name="companies[0][name]" value="" required>
                                 </div>
                             </div>
                         </form>

@@ -559,3 +559,110 @@ function checkCookieForLoader(name, value) {
       setTimeout(function () { checkCookieForLoader(name, value); }, 300);
   }
 }
+
+function multipleFormValidation(forms)
+{
+  var errors = [];
+
+   function searchElementAddError(elem){
+      if($(elem).parent().hasClass('input') || $(elem).parent().hasClass('form-group')){
+          $(elem).parent().addClass('has-error');
+          return;
+      }else{
+          searchElementAddError($(elem).parent());
+      }
+   }
+
+   for (let f of forms) {
+
+    ckError = false;
+ 	  f.msgError = "";
+ 	  f.firstElem = '';
+    let idForm = f.form;
+    $(f.el).trigger("click");
+
+     	//Controllo i campi obbligatori
+ 		$('#'+idForm+' input:visible, #'+idForm+' select:visible, #'+idForm+' textarea:visible').each(function(){
+      $(this).closest('.input').removeClass('has-error');
+ 			if($(this).val() == "" || $(this).val() == null ){
+        if($(this).hasClass('required')){
+            ckError = true;
+     				f.msgError = "Si prega di compilare tutti i campi obbligatori";
+            searchElementAddError(this);
+     				if(f.firstElem == ""){
+     					f.firstElem = this;
+     				}
+        }
+ 			}else{
+          if($(this).attr('name') == 'cf' || $(this).attr('name') == 'fiscalcode' || $(this).hasClass('check-cf')){
+              var msgCf = '';
+              if(isNaN($(this).val()) ){
+                msgCf = ControllaCF($(this).val());
+              }else{
+                msgCf = ControllaPIVA($(this).val(), 'Il codice fiscale di una persona giuridica');
+              }
+              if(msgCf != "OK"){
+
+         				ckError = true;
+                if(f.firstElem == ""){
+                  f.firstElem = this;
+                  f.msgError = msgCf;
+                }
+         				searchElementAddError(this);
+         			}
+          }else if($(this).attr('name') == 'email' || $(this).attr('type') == 'email' || $(this).hasClass('check-email')){
+            if(!validateEmail($(this).val())){
+              ckError = true;
+              if(f.firstElem == ""){
+                 f.firstElem = this;
+                 f.msgError = "Si prega di inserire una mail valida";
+              }
+              searchElementAddError(this);
+            }
+          }else if($(this).attr('name') == 'piva'){
+              var msgIva = ControllaPIVA($(this).val());
+              if(msgIva != "OK"){
+         				ckError = true;
+                if(f.firstElem == ""){
+                  f.firstElem = this;
+                  f.msgError = msgIva;
+                }
+         				searchElementAddError(this);
+         			}
+          }else if($(this).hasClass('not-zero')){
+              if($(this).val() == 0){
+                ckError = true;
+                f.msgError = "Si prega di compilare tutti i campi obbligatori";
+                searchElementAddError(this);
+                if(f.firstElem == ""){
+                  f.firstElem = this;
+                }
+              }
+          }
+      }
+
+ 		});
+    if(ckError) {
+      errors.push(f);
+    }
+
+   }
+
+    if (errors.length) {
+      if(errors.length > 1) {
+        $(errors[0].el).trigger("click");
+        alert('Si prega di controllare i campi in rosso');
+        $(errors[0].firstElem).focus();
+        return false;
+      } else {
+        $(errors[0].el).trigger("click");
+
+          alert(errors[0].msgError);
+          $(errors[0].firstElem).focus();
+          return false;
+      }
+    } else {
+      return true;
+    }
+
+}
