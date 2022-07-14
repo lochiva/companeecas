@@ -3404,46 +3404,54 @@ class WsController extends AppController
             $this->_result['data'] = -1;
 
         } else {
-            $table = TableRegistry::get('Aziende.PresenzeUpload');
+            if (mime_content_type($att->getStream()->getMetadata('uri')) != "application/pdf") {
+                $this->_result['msg'] = 'Il formato del file selezionato non è supportato';
+                $this->_result['response'] = 'KO';
+                $this->_result['data'] = -1;
+            } else {
+                $table = TableRegistry::get('Aziende.PresenzeUpload');
 
-            $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
-
-            $error = false;
-
-            $fileName = uniqid().'_'.$att->getClientFilename();
-
-            $path = date('Y').DS.date('m').DS.date('d');
-
-            $dir = new Folder(ROOT.DS.$basePath.$path, true, 0755);
-
-            if(!$dir) {
-                $dir = new Folder($basePath.$path);
-            }
-
-
-            if(!move_uploaded_file($att->getStream()->getMetadata('uri'), $dir->pwd() . DS . $fileName) ){
-                $error = true;
-            }
-
-            if(!$error){
-                $entity = $table->newEntity($fileData);
-                $entity->file = $att->getClientFilename();
-                $entity->filepath = $basePath.$path.DS.$fileName;
-
-                if(!$save = $table->save($entity)){
-                    $error = true;
-                } else {
-                    $save->fullPath = $save->full_path;
+                $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
+    
+                $error = false;
+    
+                $fileName = uniqid().'_'.$att->getClientFilename();
+    
+                $path = date('Y').DS.date('m').DS.date('d');
+    
+                $dir = new Folder(ROOT.DS.$basePath.$path, true, 0755);
+    
+                if(!$dir) {
+                    $dir = new Folder($basePath.$path);
                 }
+    
+    
+                if(!move_uploaded_file($att->getStream()->getMetadata('uri'), $dir->pwd() . DS . $fileName) ){
+                    $error = true;
+                }
+    
+                if(!$error){
+                    $entity = $table->newEntity($fileData);
+                    $entity->file = $att->getClientFilename();
+                    $entity->filepath = $basePath.$path.DS.$fileName;
+    
+                    if(!$save = $table->save($entity)){
+                        $error = true;
+                    } else {
+                        $save->fullPath = $save->full_path;
+                    }
+                }
+    
+                if($error){
+                    $this->_result['msg'] = 'Errore nel caricamento di un file.';
+                }else{
+                    $this->_result['response'] = 'OK';
+                    $this->_result['msg'] = 'File caricati con successo.';
+                    $this->_result['data'] = $save;
+                }
+
             }
 
-            if($error){
-                $this->_result['msg'] = 'Errore nel caricamento di un file.';
-            }else{
-                $this->_result['response'] = 'OK';
-                $this->_result['msg'] = 'File caricati con successo.';
-                $this->_result['data'] = $save;
-            }
         }
     }
 

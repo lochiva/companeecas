@@ -55,11 +55,12 @@ $role = $this->request->session()->read('Auth.User.role');
 
                                     <div class="panel" v-bind:class="{ 'panel-default' : file == null, 'panel-info' : file != null }">
                                         <div class="panel-heading">
-                                            <h3 class="panel-title">Upload Firme</h3>
+                                            <h3 class="panel-title">Upload Firme</h3><sub>Solo file .pdf</sub>
+
                                         </div>
                                         <div v-if="file == null" class="panel-body">
                                             <div class="form-group col-md-12">
-                                                <input type="file"  ref="attachment" v-model="fileCheck" v-on:change="submitFile">
+                                                <input type="file"  ref="attachment" v-model="fileCheck" accept=".pdf" v-on:change="submitFile">
                                             </div>
                                         </div>
                                         <div v-else class="panel-body">

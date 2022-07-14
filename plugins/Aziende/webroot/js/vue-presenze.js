@@ -178,28 +178,33 @@ var app = new Vue({
 
         submitFile() {
             let attachment = this.$refs.attachment.files[0];
-            let formData = new FormData();
-            formData.append('file', JSON.stringify(this.fileUploaded));
-            formData.append('attachment', (attachment));
 
-            let headers = { 'Content-Type': 'multipart/form-data' };
-
-
-            axios.post(pathServer + 'aziende/ws/saveFiles', formData)
-            .then(res => {
-                if (res.data.response == 'OK') {
+            if(attachment.type == 'application/pdf') {
+                let formData = new FormData();
+                formData.append('file', JSON.stringify(this.fileUploaded));
+                formData.append('attachment', (attachment));
+    
+                let headers = { 'Content-Type': 'multipart/form-data' };
+    
+                axios.post(pathServer + 'aziende/ws/saveFiles', formData)
+                .then(res => {
                     this.$refs.attachment.files[0] = null;
                     this.fileCheck = null;
                     this.file = res.data.data;
+                    if (res.data.response == 'KO') {
+                        alert(res.data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
 
-                } else {
-                    alert(res.data.msg);
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            } else {
+                alert('Il formato del file selezionato non è supportato');
+                this.$refs.attachment.files[0] = null;
+                this.fileCheck = null;
 
+            }
         }
         
     }
