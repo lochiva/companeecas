@@ -150,7 +150,7 @@ $(document).ready(function(){
         });
     }
 
-    //Attivazione/disattivazione sede
+    //Attivazione/disattivazione sede CHECK su Operativa
     $('.agreement-sede-active').change(function() {
         var id = $(this).attr('data-id');
         if ($(this).is(':checked')) {
@@ -170,7 +170,7 @@ $(document).ready(function(){
         }
     });
 
-    //Associazione/disassociazione sede
+    //Associazione/disassociazione sede CHECK su Associata
     $('.agreement-sede-checked').change(function() {
         var id = $(this).attr('data-id');
         if ($(this).is(':checked')) {
@@ -182,9 +182,8 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
             }
             //Attivo anche la scelta selezione dell'azienda per il rendiconto (solamente se la rendicontazione è attiva)
-            if($('input[name=rendiconto]').is('checked')) {
-                $('#inputSedeCompany' + id).prop('disabled', false);
-            }
+            $('#inputSedeCompany' + id).prop('disabled', false);
+            $('#inputSedeCompany' + id).val($('#inputSedeCompany' + id).find('option[data-default=true]').val());
             
         } else {
             $('#inputSedeActive'+id).prop('disabled', true);
@@ -198,6 +197,7 @@ $(document).ready(function(){
             }
             //Disattivo anche la scelta selezione dell'azienda per il rendiconto 
             $('#inputSedeCompany' + id).prop('disabled', true);
+            $('#inputSedeCompany' + id).val('');
         }
 
         //Aggiornamento totali
@@ -416,7 +416,6 @@ $(document).on('click', '.edit-agreement', function(){
 
                         $('select[id^=inputSedeCompany]').each(function () {
                             for(let company of res.data.companies) {
-                                let opt = new Option(company.name, company.id, false, false);
 
                                 $(this).append(
                                     $('<option>',
@@ -427,8 +426,9 @@ $(document).on('click', '.edit-agreement', function(){
                                         }
                                     )
                                 );
-
                             }
+                            // inizialitto con un valore nullo
+                            $(this).val('');
                         }); 
             
                         var countInactiveSedi = 0;
@@ -646,7 +646,11 @@ function disableRendiconti() {
     // Disattivo i menù a tendina nella tab CONVENZIONE
     $('select[id^=inputSedeCompany]').each(function () {
         $(this).attr('readonly', true);
-        $(this).val($(this).find('option[data-default=true]').val());
+        
+        if ($(this).parents('tr').find('input[id^=inputSedeCheck]').prop('checked')) {
+            $(this).val($(this).find('option[data-default=true]').val());
+        }
+        
     }); 
 
     // Disattivo i pulsanti di aggiunta e rimozione nel tab RENDICONTI
