@@ -2504,7 +2504,7 @@ class WsController extends AppController
                         'agreement_id' => $entity->id,
                         'sede_id' => $sedeId,
                         'active' => $active,
-                        'capacity' => $sede['capacity'],
+                        'capacity' => empty($sede['capacity']) ? 0 : $sede['capacity'],
                         'capacity_increment' => empty($sede['capacity_increment']) ? 0 : $sede['capacity_increment'],
                         'agreement_company_id' => $company_id
                     ];

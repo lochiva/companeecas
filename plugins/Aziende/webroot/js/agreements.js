@@ -448,6 +448,16 @@ $(document).on('click', '.edit-agreement', function(){
                         // Popolo le tendine accanto alle sedi
 
                         $('select[id^=inputSedeCompany]').each(function () {
+                            
+                            $(this).append(
+                                $('<option>',
+                                    {
+                                        disabled: true,
+                                        selected: true
+                                    }
+                                )
+                            );
+
                             for(let company of res.data.companies) {
 
                                 $(this).append(
@@ -460,8 +470,6 @@ $(document).on('click', '.edit-agreement', function(){
                                     )
                                 );
                             }
-                            // inizialitto con un valore nullo
-                            $(this).val('');
                         }); 
             
                         var countInactiveSedi = 0;
@@ -779,28 +787,21 @@ function saveRendiconto(ele) {
             }
         }).done(function (res) {
             if(res.response == "OK"){
-                if($(ele).prev().val().length){
-                    $('select[id^=inputSedeCompany] option').each( function() {
-                        if($(this).val() == res.data.id) {
-                            $(this).text(res.data.name);
-                        }
-                    } );
-                } else {
-                    $(ele).prev().val(res.data.id);
-                    $(ele).parent().val(res.data.id);
+                $('select[id^=inputSedeCompany]').each( function() {
+                    $(this).append(
+                        $('<option>',
+                            {
+                                value: res.data.id,
+                                text: res.data.name,
+                                'data-default': false
+                            }
+                        )
+                    );
+                } );
 
-                    $('select[id^=inputSedeCompany]').each( function() {
-                        $(this).append(
-                            $('<option>',
-                                {
-                                    value: res.data.id,
-                                    text: res.data.name,
-                                    'data-default': false
-                                }
-                            )
-                        );
-                    } );
-                }
+
+
+
 
             }else{
                 alert(res.msg);
