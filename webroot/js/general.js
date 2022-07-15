@@ -586,12 +586,14 @@ function multipleFormValidation(forms)
       $(this).closest('.input').removeClass('has-error');
  			if($(this).val() == "" || $(this).val() == null ){
         if($(this).hasClass('required')){
+          if(!$(this).prop('readonly')){
             ckError = true;
-     				f.msgError = "Si prega di compilare tutti i campi obbligatori";
-            searchElementAddError(this);
-     				if(f.firstElem == ""){
-     					f.firstElem = this;
-     				}
+            f.msgError = "Si prega di compilare tutti i campi obbligatori";
+           searchElementAddError(this);
+            if(f.firstElem == ""){
+              f.firstElem = this;
+            }
+          }
         }
  			}else{
           if($(this).attr('name') == 'cf' || $(this).attr('name') == 'fiscalcode' || $(this).hasClass('check-cf')){
