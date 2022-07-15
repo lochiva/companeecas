@@ -170,7 +170,7 @@ $role = $this->request->session()->read('Auth.User.role');
 
                             <div class="col-md-11" id="rendiconti">
 
-                                <div class="input-group margin-bottom input" style="width:100%" data-default="1">
+                                <div class="input-group margin-bottom input" style="width:100%" data-default=true>
                                     <input type="hidden" value="" name="companies[0][id]">
                                     <input type="hidden" value=1 name="companies[0][isDefault]">
                                     <input class="form-control required" placeholder="Azienda" type="text" name="companies[0][name]" value="" required>

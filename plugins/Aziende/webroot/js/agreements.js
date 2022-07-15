@@ -150,6 +150,8 @@ $(document).ready(function(){
         });
     }
 
+    /*###################################################### MODALE ########################################################*/
+
     //Attivazione/disattivazione sede CHECK su Operativa
     $('.agreement-sede-active').change(function() {
         var id = $(this).attr('data-id');
@@ -158,8 +160,13 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', false);
             }
+
+            // Rendiconti
             $('#inputSedeCompany' + id).prop('disabled', false);
-            $('#inputSedeCompany' + id).val($('#inputSedeCompany' + id).find('option[data-default=true]').val());
+            $('#inputSedeCompany' + id + ' option[data-default=true]').prop('selected', true);
+            if($('input[name=rendiconto]').prop('checked')) {
+                $('#inputSedeCompany' + id).removeAttr('readonly');
+            }
 
         } else {
             $('#inputSedeCapacity'+id).prop('readonly', true);
@@ -168,6 +175,8 @@ $(document).ready(function(){
                 $('#inputSedeCapacityIncrement'+id).prop('readonly', true);
                 $('#inputSedeCapacityIncrement'+id).prop('title', 'Convenzione non più attiva per questo centro');
             }
+
+            // Rendiconti
             $('#inputSedeCompany' + id).prop('disabled', true);
             $('#inputSedeCompany' + id).val('');
         }
@@ -184,9 +193,13 @@ $(document).ready(function(){
             if ($('input[name="capacity_increment"]:checked').val() > 0) {
                 $('#inputSedeCapacityIncrement'+id).prop('disabled', false);
             }
-            //Attivo anche la scelta selezione dell'azienda per il rendiconto (solamente se la rendicontazione è attiva)
+            //Attivo anche la scelta selezione dell'azienda per il rendiconto
             $('#inputSedeCompany' + id).prop('disabled', false);
             $('#inputSedeCompany' + id + ' option[data-default=true]').prop('selected', true);
+
+            if($('input[name=rendiconto]').prop('checked')) {
+                $('#inputSedeCompany' + id).removeAttr('readonly');
+            }
             
         } else {
             $('#inputSedeActive'+id).prop('disabled', true);
@@ -248,7 +261,6 @@ $(document).ready(function(){
             { el: '#click_tab_1', form: 'formAgreement'},
             { el: '#click_tab_2', form: 'formRendiconto'}
         ];
-
 
         if(multipleFormValidation(forms)){
             $('#click_tab_1').trigger("click");
@@ -336,7 +348,7 @@ $(document).ready(function(){
         $('input[name=rendiconto]').prop('checked', false);
 
         let denominazione = $(this).data('denominazione');
-        $("div[data-default=1] input[name='companies[0][name]']").val(denominazione);
+        $("div[data-default=true] input[name='companies[0][name]']").val(denominazione);
 
         // Popolo le tendine accanto alle sedi
         $('select[id^=inputSedeCompany]').each(function () {
@@ -353,8 +365,6 @@ $(document).ready(function(){
                     )
                 ]
             );
-            // inizialitto con un valore nullo
-            //$(this).val('');
         }); 
     });
 
@@ -399,11 +409,7 @@ $(document).ready(function(){
             $(this).blur();
             window.focus;
         }
-
-        }
-    );
-
-
+    });
 
 });
 
@@ -490,7 +496,7 @@ $(document).on('click', '.edit-agreement', function(){
                                             }
 
                                         } else {
-                                            if($(this).data('default') == 1) {
+                                            if($(this).data('default') == true) {
                                                 $(this).prop('selected', true);
                                             }
 
@@ -554,8 +560,8 @@ $(document).on('click', '.edit-agreement', function(){
                         //Tab dei Rendiconti
                         res.data.companies.forEach((rendiconto) => {
                             if (rendiconto.isDefault) {
-                                $("div[data-default=1] input[name='companies[0][id]']").val(rendiconto.id);
-                                $("div[data-default=1] input[name='companies[0][name]']").val(rendiconto.name);
+                                $("div[data-default=true] input[name='companies[0][id]']").val(rendiconto.id);
+                                $("div[data-default=true] input[name='companies[0][name]']").val(rendiconto.name);
                             } else {
                                 addRendiconto(rendiconto.name, rendiconto.id);
                             }
@@ -608,7 +614,7 @@ function addRendiconto(denominazione, id) {
                 {
                     class: 'input-group margin-bottom input',
                     'data-id': id ? id : '',
-                    'data-default': 0
+                    'data-default': false
                 }
             ).append(
                 [
@@ -664,7 +670,7 @@ function enableRendiconti() {
     });
 
     //Disattivo i campi di input delle aziende della rendicontazione
-    $('div[data-default=0]').each( function() {
+    $('div[data-default=false]').each( function() {
         $(this).find("input[type=text][name^=companies]").prop('disabled', false);
     });
 }
@@ -686,7 +692,7 @@ function disableRendiconti() {
     });
 
     //Disattivo i campi di input delle aziende della rendicontazione
-    $('div[data-default=0]').each( function() {
+    $('div[data-default=false]').each( function() {
         $(this).find("input[type=text][name^=companies]").prop('disabled', true);
     });
 
@@ -703,7 +709,7 @@ function createInputForRendiconto(element) {
 }
 
 function emptyRendiconti() {
-    $('div[data-default=0]').each( function() {
+    $('div[data-default=false]').each( function() {
         $(this).remove();
     });
 
@@ -714,8 +720,8 @@ function emptyRendiconti() {
         $(this).html('')
     }); 
 
-    $("div[data-default=1] input[name='companies[0][id]']").val('');
-    $("div[data-default=1] input[name='companies[0][name]']").val('');
+    $("div[data-default=true] input[name='companies[0][id]']").val('');
+    $("div[data-default=true] input[name='companies[0][name]']").val('');
 
 }
 
