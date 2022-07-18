@@ -76,7 +76,7 @@ $user = $this->request->session()->read('Auth.User');
                                     <th width="15%">Comune</th>
                                     <th width="12%">Provincia</th>
                                     <th width="10%">
-                                        <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capinza effettiva" class="table-label">
+                                        <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capienza effettiva" class="table-label">
                                             Posti
                                         </span>
                                     </th>

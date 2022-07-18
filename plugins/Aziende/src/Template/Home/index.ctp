@@ -55,7 +55,7 @@ use Cake\Routing\Router;
                                     <th width="15%">Sito Web</th>
                                     <th width="15%">Tipo</th>
                                     <th width="10%">
-                                        <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capinza effettiva" class="table-label">
+                                        <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capienza effettiva" class="table-label">
                                             Posti
                                         </span>
                                     </th>
