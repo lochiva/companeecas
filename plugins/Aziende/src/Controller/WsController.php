@@ -2510,9 +2510,11 @@ class WsController extends AppController
                     ];
                     $agreementsSedi->patchEntity($agreementSede, $dataToSave);
                     if ($agreementsSedi->save($agreementSede)) {
-                        foreach ($sedi as $key => $sede) {
-                            if ($sede->id == $sedeId) {
-                                unset($sedi[$key]);
+                        if ($active) {
+                            foreach ($sedi as $key => $sede) {
+                                if ($sede->id == $sedeId) {
+                                    unset($sedi[$key]);
+                                }
                             }
                         }
                     }
@@ -2525,27 +2527,30 @@ class WsController extends AppController
                 $notifications = TableRegistry::get('Aziende.GuestsNotifications');
                 $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => 'MISSING_AGREEMENT_CENTER'])->first();
                 foreach ($sedi as $sede) {
-                    $agreement = $agreementsSedi->find()->where(['sede_id' => $sede->id, 'active' => 1])->first();
-                    if (empty($agreement)) {
-                        $missing = true;
-                        $sedeNotified = $notifications->find()->where(['type_id' => $notificationType->id, 'sede_id' => $sede->id, 'done' => 0])->first();
-                        if (empty($sedeNotified)) {
-                            $notification = $notifications->newEntity();
-                            $notificationData = [
-                                'type_id' => $notificationType->id,
-                                'azienda_id' => $sede->id_azienda,
-                                'sede_id' => $sede->id,
-                                'guest_id' => 0,
-                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                            ];
-                            $notifications->patchEntity($notification, $notificationData);
-                            $notifications->save($notification);
-                        } else {
-                            $notificationData = [
-                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                            ];
-                            $notifications->patchEntity($sedeNotified, $notificationData);
-                            $notifications->save($sedeNotified);
+                    //Se la struttura è operativa controllo se ha una convenzione attiva
+                    if ($sede->operativita) {
+                        $agreement = $agreementsSedi->find()->where(['sede_id' => $sede->id, 'active' => 1])->first();
+                        if (empty($agreement)) {
+                            $missing = true;
+                            $sedeNotified = $notifications->find()->where(['type_id' => $notificationType->id, 'sede_id' => $sede->id, 'done' => 0])->first();
+                            if (empty($sedeNotified)) {
+                                $notification = $notifications->newEntity();
+                                $notificationData = [
+                                    'type_id' => $notificationType->id,
+                                    'azienda_id' => $sede->id_azienda,
+                                    'sede_id' => $sede->id,
+                                    'guest_id' => 0,
+                                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                                ];
+                                $notifications->patchEntity($notification, $notificationData);
+                                $notifications->save($notification);
+                            } else {
+                                $notificationData = [
+                                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                                ];
+                                $notifications->patchEntity($sedeNotified, $notificationData);
+                                $notifications->save($sedeNotified);
+                            }
                         }
                     }
                 }
