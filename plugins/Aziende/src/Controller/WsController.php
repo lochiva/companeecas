@@ -2087,7 +2087,7 @@ class WsController extends AppController
                 }
                 if ($lastHistory->destination_id) {
                     $sede = TableRegistry::get('Aziende.Sedi')->get($lastHistory->destination_id, ['contain' => ['Comuni', 'Aziende']]);
-                    $guest['history_destination'] = $sede['azienda']['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['comune']['s_prv'].')';
+                    $guest['history_destination'] = $sede['azienda']['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['comune']['s_prv'].') ['.$sede['code_centro'].']';
                     $guest['history_destination_id'] = $lastHistory->destination_id;
                 } else {
                     $guest['history_destination'] = '';
@@ -2095,7 +2095,7 @@ class WsController extends AppController
                 }
                 if ($lastHistory->provenance_id) {
                     $sede = TableRegistry::get('Aziende.Sedi')->get($lastHistory->provenance_id, ['contain' => ['Comuni', 'Aziende']]);
-                    $guest['history_provenance'] = $sede['azienda']['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['comune']['s_prv'].')';
+                    $guest['history_provenance'] = $sede['azienda']['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['comune']['s_prv'].') ['.$sede['code_centro'].']';
                 } else {
                     $guest['history_provenance'] = '';
                 }
@@ -3141,7 +3141,7 @@ class WsController extends AppController
 
             $res['history_status'] = $status;
             $res['history_date'] = $checkOutDate;
-            $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].')';
+            $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].') ['.$destination['code_centro'].']';
             $res['history_destination_id'] = $data['sede'];
             $res['history_note'] = $data['note'];
             if ($status == 6) {

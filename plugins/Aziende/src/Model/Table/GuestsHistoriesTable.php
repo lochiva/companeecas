@@ -158,11 +158,11 @@ class GuestsHistoriesTable extends Table
                 'GuestsHistories.file',
                 'GuestsHistories.note', 
                 'azienda' => 'a.denominazione',
-                'sede' => 'CONCAT(s.indirizzo, " ", s.num_civico, " ", ls.des_luo, " (", ls.s_prv, ")")',
+                'sede' => 'CONCAT(s.indirizzo, " ", s.num_civico, " ", ls.des_luo, " (", ls.s_prv, ") [", s.code_centro, "]")',
                 'status' => 'gs.name',
                 'exit_type' => 'et.name',
-                'destination' => 'CONCAT(ad.denominazione, " - ", d.indirizzo, " ", d.num_civico, " ", ld.des_luo, " (", ld.s_prv, ")")',
-                'provenance' => 'CONCAT(ap.denominazione, " - ", p.indirizzo, " ", p.num_civico, " ", lp.des_luo, " (", lp.s_prv, ")")',
+                'destination' => 'CONCAT(ad.denominazione, " - ", d.indirizzo, " ", d.num_civico, " ", ld.des_luo, " (", ld.s_prv, ") [", d.code_centro, "]")',
+                'provenance' => 'CONCAT(ap.denominazione, " - ", p.indirizzo, " ", p.num_civico, " ", lp.des_luo, " (", lp.s_prv, ") [", p.code_centro, "]")',
                 'operator' => 'CONCAT(u.nome, " ", u.cognome)',
             ])
             ->where(['GuestsHistories.guest_id' => $guestId])
