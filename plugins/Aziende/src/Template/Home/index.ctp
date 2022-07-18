@@ -54,7 +54,11 @@ use Cake\Routing\Router;
                                     <th width="15%">Email</th>
                                     <th width="15%">Sito Web</th>
                                     <th width="15%">Tipo</th>
-                                    <th width="10%">Posti</th>
+                                    <th width="10%">
+                                        <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capinza effettiva" class="table-label">
+                                            Posti
+                                        </span>
+                                    </th>
                                     <!--<th width="10%">Partita IVA</th>-->
 									<!--<th width="10%">Codice Destinatario</th>-->
                                     <th width="130px" class="filters-reset"></th>

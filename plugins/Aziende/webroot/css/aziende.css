@@ -381,3 +381,8 @@ a.contact-login:hover{
 .table-agreement-sedi td {
 	padding: 5px;
 }
+
+#table-aziende .table-label,
+#table-sedi .table-label {
+	display: block;
+}

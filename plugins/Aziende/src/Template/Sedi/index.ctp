@@ -65,17 +65,21 @@ $user = $this->request->session()->read('Auth.User');
                         <table id="table-sedi" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Codice centro</th>
-                                    <th>Tipologia ministero</th>
+                                    <th width="10%">Codice centro</th>
+                                    <th width="10%">Tipologia ministero</th>
                                     <?php if ($azienda->id_tipo == 1) { ?>
-                                    <th>Tipologia capitolato</th>
+                                    <th width="12%">Tipologia capitolato</th>
                                     <?php } ?>
-                                    <th>Indirizzo</th>
-                                    <th>Civico</th>
-                                    <th>Cap</th>
-                                    <th>Comune</th>
-                                    <th>Provincia</th>
-                                    <th>Posti</th>
+                                    <th width="15%">Indirizzo</th>
+                                    <th width="7%">Civico</th>
+                                    <th width="7%">Cap</th>
+                                    <th width="15%">Comune</th>
+                                    <th width="12%">Provincia</th>
+                                    <th width="10%">
+                                        <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capinza effettiva" class="table-label">
+                                            Posti
+                                        </span>
+                                    </th>
                                     <th style="min-width:110px"></th>
                                 </tr>
                             </thead>
