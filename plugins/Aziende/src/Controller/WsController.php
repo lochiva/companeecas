@@ -1696,17 +1696,23 @@ class WsController extends AppController
 
         if(!empty($res['res'])){
 
+            $today = date('Y-m-d');
+
             foreach ($res['res'] as $key => $guest) {  
 
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
                 $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
-                $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
-				$buttons .= '</div>';
+                if (
+                    $user['role'] == 'admin' || 
+                    (empty($guest['original_guest_id']) && $guest['status_id'] == 1 && $guest['created']->format('Y-m-d') == $today)
+                ) {
+                    $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
+                }
+                $buttons .= '</div>';
 
                 //Icona di avvertenza se superata data dello stato bozza
                 $alertDraftIcon = '';
-                $today = date('Y-m-d');
                 $draftExpiration = empty($guest['draft_expiration']) ? '' : $guest['draft_expiration']->format('Y-m-d');
                 if ($guest['draft'] && $today > $draftExpiration) {
                     $alertDraftIcon = '<span class="alert-draft" data-toggle="tooltip" title="Inserire il CUI o l\'ID Vestanet"><i class="fa fa-exclamation-triangle"></i></span>';
@@ -2018,37 +2024,49 @@ class WsController extends AppController
             $guests = TableRegistry::get('Aziende.Guests');
             $guest = $guests->get($id);
 
-            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-            $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $id])->first();
+            $user = $this->request->session()->read('Auth.User');
+            $today = date('Y-m-d');
 
-            //Controllo se ospite unico adulto di un nucleo familiare
-            $delete = true;
-            if (!$guest['minor']) {
-                if ($guestHasFamily) {
-                    $countFamilyAdults = $guestsFamilies->countFamilyAdults($guestHasFamily['family_id'], $guest['sede_id']);
-                    if ($countFamilyAdults == 1) {
-                        $delete = false;
+            if (
+                $user['role'] == 'admin' || 
+                (empty($guest['original_guest_id']) && $guest['status_id'] == 1 && $guest['created']->format('Y-m-d') == $today)
+            ) {
+
+                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $id])->first();
+
+                //Controllo se ospite unico adulto di un nucleo familiare
+                $delete = true;
+                if (!$guest['minor']) {
+                    if ($guestHasFamily) {
+                        $countFamilyAdults = $guestsFamilies->countFamilyAdults($guestHasFamily['family_id'], $guest['sede_id']);
+                        if ($countFamilyAdults == 1) {
+                            $delete = false;
+                        }
                     }
                 }
-            }
 
-            if ($delete) {
-                $guest->deleted = 1;
-                if ($guests->save($guest)) {
-                    // Rimuovo relazione familiare
-                    if ($guestHasFamily) {
-                        $guestsFamilies->removeGuestFromFamily($guestHasFamily, $guest['sede_id']);
+                if ($delete) {
+                    $guest->deleted = 1;
+                    if ($guests->save($guest)) {
+                        // Rimuovo relazione familiare
+                        if ($guestHasFamily) {
+                            $guestsFamilies->removeGuestFromFamily($guestHasFamily, $guest['sede_id']);
+                        }
+                        
+                        $this->_result['response'] = "OK";
+                        $this->_result['msg'] = "Eliminazione dell'ospite avvenuta con successo";
+                    } else {
+                        $this->_result['response'] = "KO";
+                        $this->_result['msg'] = "Errore nell'eliminazione dell'ospite";
                     }
-                    
-                    $this->_result['response'] = "OK";
-                    $this->_result['msg'] = "Eliminazione dell'ospite avvenuta con successo";
                 } else {
                     $this->_result['response'] = "KO";
-                    $this->_result['msg'] = "Errore nell'eliminazione dell'ospite";
+                        $this->_result['msg'] = "Errore nell'eliminazione dell'ospite: l'ospite è l'unico adulto del nucleo familiare";
                 }
             } else {
                 $this->_result['response'] = "KO";
-                    $this->_result['msg'] = "Errore nell'eliminazione dell'ospite: l'ospite è l'unico adulto del nucleo familiare";
+                $this->_result['msg'] = "Non è possibile eliminare l'ospite.";
             }
         } else {
             $this->_result['response'] = "KO";

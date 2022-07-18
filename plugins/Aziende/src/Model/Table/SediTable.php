@@ -119,6 +119,8 @@ class SediTable extends AppTable
             ->select([
                 'Sedi.id',
                 'label' => 'CONCAT(
+                    Sedi.code_centro, 
+                    " - ", 
                     Sedi.indirizzo, 
                     " ", 
                     Sedi.num_civico, 

@@ -42,6 +42,8 @@ class GuestComponent extends Component
 			'Guests.draft_expiration', 
 			'Guests.suspended',
 			'Guests.status_id',
+			'Guests.original_guest_id',
+			'Guests.created',
 			'gs.name',
 			'gs.color',
 			'l.des_luo'
