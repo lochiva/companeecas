@@ -51,6 +51,17 @@ $menu = [
     'icon-class' => 'fa fa-file',
     'children' => []
   ],
+  [
+    'name' => 'Rendiconti',
+    'plugin' => ['Aziende'],
+    'controller' => ['Rendiconti'],
+    'action' => ['index'],
+    'levels' => ['admin', 'ente'],
+    'url' => Router::url('/aziende/statements/index'),
+    'target' => '',
+    'icon-class' => 'fa fa-money',
+    'children' => []
+  ],
   /*[
     'name' => 'Gestione Scheda',
     'plugin' => ['Diary'],
