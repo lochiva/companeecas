@@ -53,6 +53,13 @@ class AgreementsCompaniesTable extends AppTable
             'className' => 'Aziende.AgreementsToSedi',
             'propertyName' => 'sedi'
         ]);
+
+        $this->hasMany('StatementCompany', [
+            'foreignKey' => 'company_id',
+            'bindingKey' => 'id',
+            'className' => 'Aziende.StatementCompany',
+            'propertyName' => 'statement'
+        ]);
     }
 
     /**

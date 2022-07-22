@@ -1,0 +1,45 @@
+<?php
+namespace Aziende\Model\Entity;
+
+use Cake\ORM\Entity;
+
+/**
+ * Status Entity
+ *
+ * @property int $id
+ * @property string $name
+ * @property \Cake\I18n\Time $created
+ * @property \Cake\I18n\Time $modified
+ *
+ * @property \Aziende\Model\Entity\Guest[] $guests
+ * @property \Aziende\Model\Entity\ReportComnapy[] $report_comnapy
+ * @property \Aziende\Model\Entity\ReportCompany[] $report_company
+ * @property \Aziende\Model\Entity\StatementCompany[] $statement_company
+ * @property \Aziende\Model\Entity\Offer[] $offers
+ * @property \Aziende\Model\Entity\Order[] $orders
+ * @property \Aziende\Model\Entity\SurveysInterview[] $surveys_interviews
+ * @property \Aziende\Model\Entity\Survey[] $surveys
+ */
+class Status extends Entity
+{
+    /**
+     * Fields that can be mass assigned using newEntity() or patchEntity().
+     *
+     * Note that when '*' is set to true, this allows all unspecified fields to
+     * be mass assigned. For security purposes, it is advised to set '*' to false
+     * (or remove it), and explicitly make individual fields accessible as needed.
+     *
+     * @var array
+     */
+    protected $_accessible = [
+        'name' => true,
+        'created' => true,
+        'modified' => true,
+        'guests' => true,
+        'report_comnapy' => true,
+        'report_company' => true,
+        'statement_company' => true,
+        'offers' => true,
+        'orders' => true,
+    ];
+}
