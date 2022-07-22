@@ -32,6 +32,7 @@ class WsController extends AppController
         $this->loadComponent('Aziende.Clienti');
         $this->loadComponent('Aziende.Guest');
         $this->loadComponent('Aziende.Agreement');
+        $this->loadComponent('Aziende.StatementCompany');
     }
 
     public function isAuthorized($user)
@@ -3545,4 +3546,197 @@ class WsController extends AppController
             $this->_result['msg'] = 'Id nullo, impossibile recuperare i rendiconti';
         }
     }
+
+    public function getStatementCompanies() {
+
+        $pass['query'] = $this->request->query;
+
+        $res = $this->StatementCompany->getStatements($pass);
+
+        $out['total_rows'] = $res['tot'];
+
+        if(!empty($res['res'])){
+
+            foreach ($res['res'] as $key => $value) {
+
+                ########### buttons START
+                $button = '';
+
+                $button.= '<div class="btn-group">';
+
+                $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id]) .'" >
+                <i data-toggle="tooltip" title="Visualizza" href="#" class="fa fa-eye"></i>
+                </a>';
+
+                $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id]) .'" >
+                <i data-toggle="tooltip" title="Scarica" href="#" class="fa fa-download"></i>
+                </a>';
+
+                $button.= '</div>';
+                ########### buttons END
+                
+                $out['rows'][] = array(
+                    $value->company->name,
+                    $value->company->agreement->cig,
+                    $value->statement->period_label,
+                    $value->statement->year,
+                    $value->status->name,
+                    $value->approved_date,
+                    $button
+
+                );
+            }
+            $this->_result = $out;
+        }else{
+            $this->_result = array();
+        }
+    }
+
+    public function getPeriod($id)
+	{
+        if(isset($id)) {
+            $ret = TableRegistry::get('Aziende.Periods')->get($id);
+
+            if($ret) {
+                $ret->start_date = $ret->start_date->format('Y-m-d');
+                $ret->end_date = $ret->end_date->format('Y-m-d');
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $ret;
+                $this->_result['msg'] = '';
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile salvare il rendiconto di default';
+            }
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Id nullo, impossibile recuperare i dati del periodo';
+        }
+    }
+
+    public function checkCig($string) {
+        if(isset($string)) {
+            $ret = TableRegistry::get('Aziende.Agreements')->find('all')
+                ->where(['cig' => $string])
+                ->first();
+
+            if($ret) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $ret;
+                $this->_result['msg'] = '';
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile recuperare i dati relativi al CIG';
+            }
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Impossibile recuperare i dati relativi al CIG';
+        }
+
+    }
+
+    public function saveStatement() {
+        $table = TableRegistry::get('Aziende.Statements');
+        $statement = $table->newEntity(['associated' => 'StatementCompany']);
+
+        $data = $this->request->data;
+
+        $companies = TableRegistry::get('Aziende.AgreementsCompanies')->find('all')
+        ->where(['agreement_id' => $data['agreement_id']])
+        ->toArray();
+
+        $data['companies'] = [];
+
+        foreach ($companies as $company) {
+            $data['companies'][] = ['company_id' => $company['id']];
+
+        }
+
+        $ret = $table->patchEntity($statement, $data, ['associated' => 'StatementCompany']);
+
+        if ($table->save($statement, ['associated' => 'StatementCompany'])) {
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $ret;
+            $this->_result['msg'] = '';
+        } else {
+            $this->_result['data'] = "";
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Impossibile salvare il rendiconto';
+        }
+        
+    }
+
+    public function getCosts($all, $id) {
+         if(isset($id)) {
+
+            if($all == 'all') {
+                $companies =  TableRegistry::get('Aziende.StatementCompany')->find('list')
+                ->select('company_id')
+                ->where(['statement_id' => $id])
+                ->toList();
+
+                $ret = TableRegistry::get('Aziende.Costs')->find('all')
+                ->where(['Costs.statement_company IN' => $companies])
+                ->contain(['CostsCategories']);
+
+            } else {
+                $ret = TableRegistry::get('Aziende.Costs')->find('all')
+                    ->where(['Costs.statement_company' => $id])
+                    ->contain(['CostsCategories']); 
+            }
+
+            $c = new Collection($ret);
+            $ret = $c->groupBy('category_id');
+            $ret = $ret->toArray();
+
+            foreach($ret as $key => &$cat) {
+                $tot = 0;
+                foreach($cat as $cost) {
+                    $tot += $cost['amount'];
+                }
+                $toRet[$key]['costs'] = $cat;
+                $toRet[$key]['name'] = $cat[0]['category']['name'];
+                $toRet[$key]['tot'] = $tot;
+            }
+
+            if($ret) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $toRet;
+                $this->_result['msg'] = '';
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile recuperare le spese';
+            }
+            
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Id mancante, impossibile recuperare le spese';
+        }
+
+    }
+
+    public function getStatementCompany($id) {
+        if (isset($id)) {
+            $company =  TableRegistry::get('Aziende.StatementCompany')->get($id)->toArray();
+
+            if ($company) {
+                if(isset($company['billing_date'])) {
+                    $company['billing_date'] = $company['billing_date']->format('Y-m-d');
+                }
+                
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $company;
+                $this->_result['msg'] = '';
+
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile recuperare i dati della fatturazione';
+            }
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Id mancante, impossibile recuperare i dati della fatturazione';
+        }
+    }
+
+
+    
 }
