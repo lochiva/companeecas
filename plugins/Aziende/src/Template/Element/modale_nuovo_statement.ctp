@@ -33,9 +33,9 @@
                         <div class="col-sm-10">
                             <select name="period_id" class="form-control" required>
                                 <option selected disabled>-- Selezionare un periodo --</option>
-                                <? foreach ($periods as $key => $value) : ?>
+                                <?php foreach ($periods as $key => $value) : ?>
                                     <option value="<?= $key ?>"><?= $value ?></option>
-                                <? endforeach ?>
+                                <?php endforeach ?>
                             </select>
                         </div>
                     </div>
