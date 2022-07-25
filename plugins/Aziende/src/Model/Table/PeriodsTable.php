@@ -1,5 +1,5 @@
 <?php
-namespace aziende\Model\Table;
+namespace Aziende\Model\Table;
 
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
