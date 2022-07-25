@@ -1704,11 +1704,14 @@ class WsController extends AppController
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
                 $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
-                if (
-                    $user['role'] == 'admin' || 
-                    (empty($guest['original_guest_id']) && $guest['status_id'] == 1 && $guest['created']->format('Y-m-d') == $today)
-                ) {
+                if ($user['role'] == 'admin') {
                     $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
+                } else {
+                    if (empty($guest['original_guest_id']) && $guest['status_id'] == 1 && $guest['created']->format('Y-m-d') == $today) {
+                        $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
+                    } else {
+                        $buttons .= '<span data-toggle="tooltip" title="L\'eliminazione di un ospite è possibile unicamente il giorno dell\'inserimento e in assenza di trasferimenti"><a href="#" role="button" class="btn btn-xs btn-danger delete-guest disabled" data-id="'.$guest['id'].'"><i class="fa fa-trash"></i></a></span>'; 
+                    }
                 }
                 $buttons .= '</div>';
 

@@ -56,20 +56,22 @@ class Installer
         static::createWritableDirectories($rootDir, $io);
 
         // ask if the permissions should be changed
-        if ($io->isInteractive()) {
+        if (0 and $io->isInteractive()) {  // disable interactive
             $validator = function ($arg) {
                 if (in_array($arg, ['Y', 'y', 'N', 'n'])) {
                     return $arg;
                 }
                 throw new Exception('This is not a valid answer. Please choose Y or n.');
             };
+            $setFolderPermissions='Y';  // set always foder permission
+            /* 
             $setFolderPermissions = $io->askAndValidate(
                 '<info>Set Folder Permissions ? (Default to Y)</info> [<comment>Y,n</comment>]? ',
                 $validator,
                 10,
                 'Y'
             );
-
+            */
             if (in_array($setFolderPermissions, ['Y', 'y'])) {
                 static::setFolderPermissions($rootDir, $io);
             }
