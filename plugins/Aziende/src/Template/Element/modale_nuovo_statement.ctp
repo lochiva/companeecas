@@ -16,7 +16,7 @@
                     <div class="form-group">
                         <label class="required control-label col-sm-2">CIG</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" required id="cig">
+                            <input type="text" class="form-control" required id="cig" maxlength=10>
                         </div>
                     </div>
 
@@ -66,7 +66,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                <button type="button" class="btn btn-primary" id="save" disabled>Salva</button>
+                <button type="button" class="btn btn-primary" id="save">Salva</button>
             </div>
 
 
@@ -125,28 +125,6 @@
             }
         });
 
-        $('#cig').on('blur', function() {
-            $.ajax({
-                url: pathServer + 'aziende/ws/checkCig/' + $('#cig').val(),
-                type: "GET",
-                dataType: 'json'
-            }).done(function(res) {
-                if (res.response == 'OK') {
-                    $('input[name=agreement_id]').val(res.data.id);
-                    $('#save').prop('disabled', false);
-                } else {
-                    $('#save').prop('disabled', true);
-                    $('#cig').parent().parent().addClass('has-error');
-                    alert('Il CIG inserito non è valido');
-
-                }
-            }).fail(function(richiesta, stato, errori) {
-                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-                $('#save').prop('disabled', true);
-            });
-
-        });
-
         $("#save").click(function(e) {
             e.preventDefault();
             $('input[required], select[required]').each(function() {
@@ -155,12 +133,39 @@
             });
 
             let valid = true;
+            let message = '';
             $('input[required], select[required]').each(function() {
-                if ($(this).val() == false) {
+                if ($(this).val() == false || $(this).val() == null || $(this).val().length == 0) {
                     $(this).parent().parent().addClass('has-error');
+                    message = 'Correggere o compilare i campi in ROSSO.';
                     valid = false;
                 }
             });
+
+            if($('#cig').val().length == 10) {
+                $.ajax({
+                url: pathServer + 'aziende/ws/checkCig/' + $('#cig').val(),
+                type: "GET",
+                dataType: 'json',
+                async : false
+                }).done(function(res) {
+                    if (res.response == 'OK') {
+                        $('input[name=agreement_id]').val(res.data.id);
+                    } else {
+                        $('#cig').parent().parent().addClass('has-error');
+                        message += '\nIl CIG inserito non è valido';
+                        valid = false;
+                    }
+                }).fail(function(richiesta, stato, errori) {
+                    alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+                });
+
+            } else {
+                valid = false;
+                $('#cig').parent().parent().addClass('has-error');
+                message += '\nIl CIG inserito deve contenere dieci caratteri';
+
+            }
 
             if (valid) {
                 var formData = new FormData($('#form-statement')[0]);
@@ -174,7 +179,6 @@
                 }).done(function(res) {
                     if (res.response == 'OK') {
                         $('input[name=agreement_id]').val(res.data.id);
-                        $('#save').prop('disabled', false);
                         window.location.assign(pathServer + 'aziende/statements/view/' + res.data.id);
                     } else {
                         alert(res.msg);
@@ -182,6 +186,8 @@
                 }).fail(function(richiesta, stato, errori) {
                     alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
                 });
+            } else {
+                alert(message);
             }
         });
 
