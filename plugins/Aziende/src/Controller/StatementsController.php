@@ -86,11 +86,14 @@ class StatementsController extends AppController
             if(count($companies) > 1) {
                 $companies['all'] = 'Tutti';
                 $categories = [];
-            } else {
+            } else if (count($statement->companies) > 0) {
                 $categories = TableRegistry::get('Aziende.CostsCategories')->find('all')
-                ->contain(['Costs'])
-                ->where(['Costs.statement_company' => $statement->companies[0]->id])
+                ->contain('Costs', function (Query $q) use ($statement) {
+                    return $q->where(['Costs.statement_company' => $statement->companies[0]->id]);
+                })
                 ->toArray();
+            } else {
+                $categories = [];
             }
     
             $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->toArray();
