@@ -40,7 +40,7 @@ echo $this->Html->script('Aziende.statement_form.js');
                         <div class="col-md-1"><button type="button" class="btn btn-success">Approva</button></div>
                     </div>
 
-                    <?
+                    <?php
                         $this->Form->setTemplates($form_template);
                         echo $this->Form->create($statement, ['class' => 'form-horizontal', 'type' => 'file']);
                         echo $this->element('statement_form');
