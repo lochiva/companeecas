@@ -1,4 +1,4 @@
-<?
+<?php
 echo $this->Form->hidden('id');
 
 
@@ -60,7 +60,7 @@ echo $this->Form->control('period_label', [
 </div>
 
 
-<?
+<?php
 
 if (count($companies) > 1) {
     echo $this->Form->control('statement.company.id', [
@@ -79,7 +79,7 @@ if (count($companies) > 1) {
 ?>
 <div class="hidden" id="company_specific">
 
-    <?
+    <?php
 
 
     echo $this->Form->control('company.billing_reference', [
@@ -103,7 +103,7 @@ if (count($companies) > 1) {
 
     </div>
 
-    <?
+    <?php
     echo $this->Form->control('company.billing_net_amount', [
         'type' => 'number',
         'required' => true,
