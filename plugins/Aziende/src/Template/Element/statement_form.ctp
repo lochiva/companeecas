@@ -33,7 +33,7 @@ echo $this->Form->control('period_label', [
 
     <div class="col-sm-10">
 
-        <? echo $this->Form->text('period_start_date', [
+        <?php echo $this->Form->text('period_start_date', [
             'type' => 'date',
             'required' => true,
             'class' => 'form-control',
@@ -49,7 +49,7 @@ echo $this->Form->control('period_label', [
 
     <div class="col-sm-10">
 
-        <? echo $this->Form->text('period_end_date', [
+        <?php echo $this->Form->text('period_end_date', [
             'type' => 'date',
             'required' => true,
             'class' => 'form-control',
@@ -94,7 +94,7 @@ if (count($companies) > 1) {
 
         <div class="col-sm-10">
 
-            <? echo $this->Form->text('company.billing_date', [
+            <?php echo $this->Form->text('company.billing_date', [
                 'type' => 'date',
                 'required' => true,
                 'class' => 'form-control'
