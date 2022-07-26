@@ -27,7 +27,8 @@ return [
                     'aziende_gruppi' => 'Gruppi Enti',
                     'guests_exit_types' => 'Tipologie uscite ospiti',
                     'periods' => 'Periodi',
-                    'costs_categories' => 'Categorie dei costi'
+                    'costs_categories' => 'Categorie dei costi',
+                    'status' => 'Status dei rendiconti'
                 ]
             ]
         ],
