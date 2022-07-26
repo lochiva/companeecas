@@ -88,7 +88,7 @@ class StatementsController extends AppController
                 $categories = [];
             } else if (count($statement->companies) > 0) {
                 $categories = TableRegistry::get('Aziende.CostsCategories')->find('all')
-                ->contain('Costs', function (Query $q) use ($statement) {
+                ->contain('Costs', function ($q) use ($statement) {
                     return $q->where(['Costs.statement_company' => $statement->companies[0]->id]);
                 })
                 ->toArray();
