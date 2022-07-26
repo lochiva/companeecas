@@ -89,7 +89,7 @@ class StatementsController extends AppController
             } else {
                 $categories = TableRegistry::get('Aziende.CostsCategories')->find('all')
                 ->contain(['Costs'])
-                ->where(['CostsCategories.statement_company' => $statement->companies[0]->id])
+                ->where(['Costs.statement_company' => $statement->companies[0]->id])
                 ->toArray();
             }
     
