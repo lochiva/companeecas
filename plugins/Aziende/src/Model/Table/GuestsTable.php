@@ -327,7 +327,7 @@ class GuestsTable extends AppTable
             }
             $guest = $this->find()->where($where)->first();
             if (!empty($guest)) {
-                $entity->setError('cui', ['Non possono esistere due ospiti con nome, cognome, data di nascita, paese di nascita e sesso uguali senza che entrambi abbiano un CUI e/o un ID Vestanet.']);
+                $entity->setError('cui', ['Non possono esistere due ospiti con nome, cognome, data di nascita, nazionalità e sesso uguali senza che entrambi abbiano un CUI e/o un ID Vestanet.']);
                 return false;
             }
         } else {
@@ -360,7 +360,7 @@ class GuestsTable extends AppTable
             }
             $guest = $this->find()->where($where)->first();
             if (!empty($guest)) {
-                $entity->setError('cui', ['In mancanza di un CUI o un ID Vestanet, non possono esistere due ospiti con nome, cognome, data di nascita, paese di nascita e sesso uguali.']);
+                $entity->setError('cui', ['In mancanza di un CUI o un ID Vestanet, non possono esistere due ospiti con nome, cognome, data di nascita, nazionalità e sesso uguali.']);
                 return false;
             }
         }
