@@ -51,7 +51,7 @@ $menu = [
     'icon-class' => 'fa fa-file',
     'children' => []
   ],
-  [
+ /* disabilitato per mandare avanti develop [
     'name' => 'Rendiconti',
     'plugin' => ['Aziende'],
     'controller' => ['Rendiconti'],
@@ -61,7 +61,7 @@ $menu = [
     'target' => '',
     'icon-class' => 'fa fa-money',
     'children' => []
-  ],
+  ],  */
   /*[
     'name' => 'Gestione Scheda',
     'plugin' => ['Diary'],
