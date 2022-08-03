@@ -285,6 +285,51 @@ class GuestsTable extends AppTable
                     return false;
                 }
             }
+
+            // Controllo combinazione nome, cognome, data di nascita, paese di nascita, sesso rispetto agli ospiti senza cui e vestanet
+            $where = [
+                'cui' => '',
+                'name' => $entity->name,
+                'surname' => $entity->surname,
+                'birthdate' => $entity->birthdate,
+                'country_birth' => $entity->country_birth,
+                'sex' => $entity->sex,
+                'status_id IN' => [1, 2, 5]
+            ];
+            if ($entity->minor) {
+                $where['OR'] = [
+                    ['vestanet_id' => ''],
+                    ['vestanet_id' => $entity->vestanet_id],
+                ];
+            } else {
+                $where['OR'] = [
+                    ['vestanet_id' => ''],
+                    ['vestanet_id' => $entity->vestanet_id, 'minor' => 1],
+                ];
+            }
+            if (!empty($entity->id)) {
+                $where[] = ['id !=' => $entity->id];
+                $where[] = [
+                    'OR' => [
+                        'original_guest_id IS NULL',
+                        'original_guest_id !=' => $entity->id
+                    ]
+                ];
+            }
+            if (!empty($entity->original_guest_id)) {
+                $where[] = ['id !=' => $entity->original_guest_id];
+                $where[] = [
+                    'OR' => [
+                        'original_guest_id IS NULL',
+                        'original_guest_id !=' => $entity->original_guest_id
+                    ]
+                ];
+            }
+            $guest = $this->find()->where($where)->first();
+            if (!empty($guest)) {
+                $entity->setError('cui', ['Non possono esistere due ospiti con nome, cognome, data di nascita, nazionalità e sesso uguali senza che entrambi abbiano un CUI e/o un ID Vestanet.']);
+                return false;
+            }
         } else {
             // Altrimenti controllo unicità combinazione nome, cognome, data di nascita, paese di nascita, sesso
             $where = [
@@ -297,28 +342,29 @@ class GuestsTable extends AppTable
             ];
             if (!empty($entity->id)) {
                 $where[] = ['id !=' => $entity->id];
-                    $where[] = [
-                        'OR' => [
-                            'original_guest_id IS NULL',
-                            'original_guest_id !=' => $entity->id
-                        ]
-                    ];
+                $where[] = [
+                    'OR' => [
+                        'original_guest_id IS NULL',
+                        'original_guest_id !=' => $entity->id
+                    ]
+                ];
             }
             if (!empty($entity->original_guest_id)) {
                 $where[] = ['id !=' => $entity->original_guest_id];
-                    $where[] = [
-                        'OR' => [
-                            'original_guest_id IS NULL',
-                            'original_guest_id !=' => $entity->original_guest_id
-                        ]
-                    ];
+                $where[] = [
+                    'OR' => [
+                        'original_guest_id IS NULL',
+                        'original_guest_id !=' => $entity->original_guest_id
+                    ]
+                ];
             }
             $guest = $this->find()->where($where)->first();
             if (!empty($guest)) {
-                $entity->setError('cui', ['In mancanza di un CUI o un ID Vestanet, non possono esistere due ospiti con nome, cognome, data di nascita, paese di nascita e sesso uguali.']);
+                $entity->setError('cui', ['In mancanza di un CUI o un ID Vestanet, non possono esistere due ospiti con nome, cognome, data di nascita, nazionalità e sesso uguali.']);
                 return false;
             }
         }
+
         return true;
     }
 

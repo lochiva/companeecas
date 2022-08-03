@@ -290,7 +290,7 @@ class UsersController extends AppController
                         $this->set('emailSended', $res->email);
                         $this->render('recovery_password_sended');
                     } catch (\Exception $e) {
-                        $this->Flash->error(__('Errore durante l\'invio dell\'email, si prega di riprovare.'));
+                        $this->Flash->error(__('Errore durante l\'invio dell\'email, si prega di riprovare.' . $e->getMessage()));
                     }
                 } else {
                     $this->Flash->warning(__('Il profilo a cui appartiene la mail inserita risulta ancora da confermare, si prega di completare la procedura di registrazione e conferma prima di procede alla modifica della password.'));

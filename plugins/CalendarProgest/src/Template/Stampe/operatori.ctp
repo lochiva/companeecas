@@ -69,7 +69,7 @@ use Cake\Core\Configure;
             <?php endfor; ?>
           </tr>
         <?php endfor; ?>
-        <? /*aggiungo linee vuote fino a riempire la pagina*/ ?>
+        <?php /*aggiungo linee vuote fino a riempire la pagina*/ ?>
         <?php
          $occupate= 0;
          if (!empty($events['compresenzeList'])) $occupate= count($events['compresenzeList']);

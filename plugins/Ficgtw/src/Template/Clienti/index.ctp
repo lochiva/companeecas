@@ -2,7 +2,7 @@
 use Cake\Routing\Router;
 ?>
 <?php // echo $this->Element('Aziende.include'); ?>
-<? //$this->Html->script( 'Aziende.aziende' );
+<?php //$this->Html->script( 'Aziende.aziende' );
 
 echo $this->Html->css('Ficgtw.jquery.tablesorter.pager');
 echo $this->Html->css('Ficgtw.ficgtw');
