@@ -147,7 +147,7 @@
 
         </div>
 
-    <?
+    <?php
         echo $this->Form->control('companies.0.billing_net_amount', [
             'type' => 'number',
             'required' => true,
