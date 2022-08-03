@@ -36,6 +36,12 @@ class Cost extends Entity
         'attachment' => true,
         'created' => true,
         'modified' => true,
-        'costs_category' => true
+        'costs_category' => true,
+        'deleted' => true,
+        'description' => true,
+        'supplier' => true,
+        'number' => true,
+        'date' => true,
+        'notes' => true,
     ];
 }

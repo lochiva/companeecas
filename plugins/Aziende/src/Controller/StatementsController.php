@@ -6,6 +6,7 @@ use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 use Cake\I18n\Date;
+use Cake\ORM\Query;
 /**
  * Statements Controller
  *
@@ -65,47 +66,59 @@ class StatementsController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view()
     {
-        $statement = $this->Statements->get($id, [
-            'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany']
-        ]);
+        if ($this->request->is('post')) {
 
-        $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($this->user['id']);
+            $id = $this->request->getData('statement');
 
-        if($this->user['role'] == 'admin' || $this->user['role'] == 'ente' && $azienda['id'] == $statement->agreement->azienda_id){
+            $company = $this->request->getData('company');
 
-            $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
-                'keyField' => 'id',
-                'valueField' => 'company.name'
-            ])
-            ->contain('AgreementsCompanies')
-            ->where(['StatementCompany.statement_id' => $statement->id])
-            ->toArray();
-
-            if(count($companies) > 1) {
-                $companies['all'] = 'Tutti';
-                $categories = [];
-            } else if (count($statement->companies) > 0) {
-                $categories = TableRegistry::get('Aziende.CostsCategories')->find('all')
-                ->contain('Costs', function (Query $q) use ($statement) {
-                    return $q->where(['Costs.statement_company' => $statement->companies[0]->id]);
-                })
-                ->toArray();
-            } else {
-                $categories = [];
-            }
+            $statement = $this->Statements->get($id, [
+                'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany']
+            ]);
     
-            $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->toArray();
-            $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
-            $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
-
-            $this->set(compact('statement', 'companies', 'periods', 'categories'));
-            $this->set('_serialize', ['statement']);
-        }else{
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
+            $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($this->user['id']);
+    
+            if($this->user['role'] == 'admin' || $this->user['role'] == 'ente' && $azienda['id'] == $statement->agreement->azienda_id){
+    
+                $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
+                    'keyField' => 'id',
+                    'valueField' => 'company.name'
+                ])
+                ->contain('AgreementsCompanies')
+                ->where(['StatementCompany.statement_id' => $statement->id])
+                ->toArray();
+    
+                if(count($companies) > 1) {
+                    $companies['all'] = 'Tutti';
+                    $categories = [];
+                    $ati = 1;
+                } else if (count($statement->companies) > 0) {
+                    $categories = TableRegistry::get('Aziende.CostsCategories')->find('all')
+                    ->contain('Costs', function (Query $q) use ($statement) {
+                        return $q->where(['Costs.statement_company' => $statement->companies[0]->id]);
+                    })
+                    ->toArray();
+                    $ati = 0;
+                } else {
+                    $categories = [];
+                    $ati = 0;
+                }
+                $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->toArray();
+                $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
+                $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
+    
+                $this->set(compact('statement', 'companies', 'periods', 'categories', 'company', 'ati'));
+                $this->set('_serialize', ['statement']);
+            }else{
+                $this->Flash->error('Accesso negato. Non sei autorizzato.');
+                $this->redirect('/');
+            }
+        } else {
             $this->redirect('/');
         }
+
     }
 
     /**
@@ -168,11 +181,11 @@ class StatementsController extends AppController
     public function edit($id = null)
     {
         $statement = $this->Statements->get($id, [
-            'contain' => []
+            'contain' => ['StatementCompany']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $statement = $this->Statements->patchEntity($statement, $this->request->data);
-            if ($this->Statements->save($statement)) {
+            if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
                 $this->Flash->success(__('The statement has been saved.'));
 
                 return $this->redirect(['action' => 'index']);

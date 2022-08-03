@@ -33,6 +33,7 @@ class WsController extends AppController
         $this->loadComponent('Aziende.Guest');
         $this->loadComponent('Aziende.Agreement');
         $this->loadComponent('Aziende.StatementCompany');
+        $this->loadComponent('Aziende.Costs');
     }
 
     public function isAuthorized($user)
@@ -3567,11 +3568,18 @@ class WsController extends AppController
 
                 $button.= '<div class="btn-group">';
 
-                $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id]) .'" >
-                <i data-toggle="tooltip" title="Visualizza" href="#" class="fa fa-eye"></i>
-                </a>';
 
-                $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id]) .'" >
+
+                $button.= '
+                    <form method="POST" action="'.Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view']).'">
+                        <button class="btn btn-xs btn-default view-statement" name="statement" value="'.$value->statement->id.'">
+                            <i data-toggle="tooltip" title="Visualizza" href="#" class="fa fa-eye"></i>
+                        </button>
+                        <input type="hidden" name="company" value="'.$value->id.'">
+                    </form>
+                ';
+
+                $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->company->id]) .'" >
                 <i data-toggle="tooltip" title="Scarica" href="#" class="fa fa-download"></i>
                 </a>';
 
@@ -3670,38 +3678,9 @@ class WsController extends AppController
 
     public function getCosts($all, $id) {
          if(isset($id)) {
+            $toRet = $this->Costs->getCosts($all, $id);
 
-            if($all == 'all') {
-                $companies =  TableRegistry::get('Aziende.StatementCompany')->find('list')
-                ->select('company_id')
-                ->where(['statement_id' => $id])
-                ->toList();
-
-                $ret = TableRegistry::get('Aziende.Costs')->find('all')
-                ->where(['Costs.statement_company IN' => $companies])
-                ->contain(['CostsCategories']);
-
-            } else {
-                $ret = TableRegistry::get('Aziende.Costs')->find('all')
-                    ->where(['Costs.statement_company' => $id])
-                    ->contain(['CostsCategories']); 
-            }
-
-            $c = new Collection($ret);
-            $ret = $c->groupBy('category_id');
-            $ret = $ret->toArray();
-
-            foreach($ret as $key => &$cat) {
-                $tot = 0;
-                foreach($cat as $cost) {
-                    $tot += $cost['amount'];
-                }
-                $toRet[$key]['costs'] = $cat;
-                $toRet[$key]['name'] = $cat[0]['category']['name'];
-                $toRet[$key]['tot'] = $tot;
-            }
-
-            if($ret) {
+            if($toRet) {
                 $this->_result['response'] = "OK";
                 $this->_result['data'] = $toRet;
                 $this->_result['msg'] = '';
@@ -3737,6 +3716,65 @@ class WsController extends AppController
         } else {
             $this->_result['response'] = "KO";
             $this->_result['msg'] = 'Id mancante, impossibile recuperare i dati della fatturazione';
+        }
+    }
+
+    public function autocompleteCategories()
+    { 
+        $search = empty($this->request->query['q']) ? '' : $this->request->query['q'];
+
+        $cats = TableRegistry::get('Aziende.CostsCategories')->find('all')->select(['id' => 'id', 'text'=>'name'])->where(['name LIKE' => '%'.$search.'%'])->toArray();
+     
+        $this->_result['response'] = 'OK';
+        $this->_result['data'] = $cats;
+        $this->_result['msg'] = "Elenco risultati.";
+    }
+
+    public function saveCost($id = null) {
+        $table =  TableRegistry::get('Aziende.Costs');
+        $cost = $this->request->getData();
+
+        if (isset($id)) {
+            $entity = $table->get($id);
+        } else {
+            $entity = $table->newEntity();
+        }
+
+        $entity = $table->patchEntity($entity, $cost);
+
+        if($table->save($entity)) {
+            $toRet = $this->Costs->getCosts(false, $entity->statement_company);
+
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $toRet;
+            $this->_result['msg'] = 'Spesa salvata correttamente';
+
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['data'] = "";
+            $this->_result['msg'] = 'Impossibile salvare la spesa';
+        }
+    }
+
+    public function deleteCost($id) {
+        $table =  TableRegistry::get('Aziende.Costs');
+        $cost = $this->request->getData();
+
+
+        $entity = $table->get($id);
+        $entity->deleted = 1;
+
+        if($table->save($entity)) {
+            $toRet = $this->Costs->getCosts(false, $entity->statement_company);
+
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $toRet;
+            $this->_result['msg'] = 'Spesa salvata correttamente';
+
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['data'] = "";
+            $this->_result['msg'] = 'Impossibile salvare la spesa';
         }
     }
 
