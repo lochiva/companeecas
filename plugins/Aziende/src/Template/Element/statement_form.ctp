@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?
     echo $this->Form->hidden('id');
 
@@ -24,34 +23,6 @@
         'readonly' => true,
         'label' => ['text' => 'Etichetta Periodo', 'class' => 'col-sm-2 control-label required']
     ]);
-=======
-<?php
-echo $this->Form->hidden('id');
-
-
-echo $this->Form->control('year', [
-    'type' => 'number',
-    'required' => true,
-    'label' => ['text' => 'Anno', 'class' => 'col-sm-2 control-label required'],
-]);
-
-echo $this->Form->control('period_id', [
-    'type' => 'select',
-    'multiple' => false,
-    'options' => $periods,
-    'empty' => 'Selezionare un periodo',
-    'disabled' => [''],
-    'required' => true,
-    'label' => ['text' => 'Periodo', 'class' => 'col-sm-2 control-label required']
-]);
-
-echo $this->Form->control('period_label', [
-    'type' => 'text',
-    'required' => true,
-    'readonly' => true,
-    'label' => ['text' => 'Etichetta Periodo', 'class' => 'col-sm-2 control-label required']
-]);
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
 
 ?>
 
@@ -60,12 +31,7 @@ echo $this->Form->control('period_label', [
     <?= $this->Form->label('period_start_date', 'Inizio', ['class' => 'col-sm-2 control-label required']); ?>
 
     <div class="col-sm-10">
-<<<<<<< HEAD
         <? echo $this->Form->text('period_start_date', [
-=======
-
-        <?php echo $this->Form->text('period_start_date', [
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
             'type' => 'date',
             'required' => true,
             'class' => 'form-control',
@@ -80,12 +46,7 @@ echo $this->Form->control('period_label', [
     <?= $this->Form->label('stetement.period_end_date', 'Fine', ['class' => 'col-sm-2 control-label required']); ?>
 
     <div class="col-sm-10">
-<<<<<<< HEAD
         <? echo $this->Form->text('period_end_date', [
-=======
-
-        <?php echo $this->Form->text('period_end_date', [
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
             'type' => 'date',
             'required' => true,
             'class' => 'form-control',
@@ -95,16 +56,8 @@ echo $this->Form->control('period_label', [
 
 </div>
 
-<<<<<<< HEAD
 <?php if (count($companies) > 1) : ?>
     <?= $this->Form->control('companies.0.id', [
-=======
-
-<?php
-
-if (count($companies) > 1) {
-    echo $this->Form->control('statement.company.id', [
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
         'type' => 'select',
         'multiple' => false,
         'options' => $companies,
@@ -114,18 +67,7 @@ if (count($companies) > 1) {
         'label' => ['text' => 'Report di', 'class' => 'col-sm-2 control-label required']
     ]); ?>
 
-<<<<<<< HEAD
     <?= $this->Form->hidden('companies.0.id'); ?>
-=======
-    ]);
-} else {
-    echo $this->Form->hidden('statement.company.id');
-}
-?>
-<div class="hidden" id="company_specific">
-
-    <?php
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
 
     <div class="" id="company_specific">
 
@@ -149,14 +91,6 @@ if (count($companies) > 1) {
                 ]); ?>
             </div>
 
-<<<<<<< HEAD
-=======
-            <?php echo $this->Form->text('company.billing_date', [
-                'type' => 'date',
-                'required' => true,
-                'class' => 'form-control'
-            ]); ?>
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
         </div>
 
     <?php
@@ -184,18 +118,9 @@ if (count($companies) > 1) {
 
     </div>
 
-<<<<<<< HEAD
 <?php else : ?>
     <?= $this->Form->hidden('companies.0.id'); ?>
     <?= $this->Form->hidden('companies.0.company_id'); ?>
-=======
-    <?php
-    echo $this->Form->control('company.billing_net_amount', [
-        'type' => 'number',
-        'required' => true,
-        'label' => ['text' => 'Importo netto', 'class' => 'col-sm-2 control-label required'],
-    ]);
->>>>>>> 060540a6e6683b9d59852f0bc7d0ab8fe4d1bfdb
 
     <div>
 
