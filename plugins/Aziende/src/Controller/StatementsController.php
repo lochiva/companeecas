@@ -94,8 +94,8 @@ class StatementsController extends AppController
                     if (isset($statement->companies[0]->billing_date)) {
                         $statement->companies[0]->billing_date = $statement->companies[0]->billing_date->format('Y-m-d');
                     }
-                    $statement->companies[0]->billing_net_amount = number_format($statement->companies[0]->billing_net_amount, 2);
-                    $statement->companies[0]->billing_vat_amount = number_format($statement->companies[0]->billing_vat_amount, 2);
+                    $statement->companies[0]->billing_net_amount = number_format($statement->companies[0]->billing_net_amount, 2, '.', '');
+                    $statement->companies[0]->billing_vat_amount = number_format($statement->companies[0]->billing_vat_amount, 2, '.', '');
 
                     $ati = 0;
                     if (!isset($company)) {
