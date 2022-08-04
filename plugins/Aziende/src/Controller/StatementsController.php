@@ -66,13 +66,9 @@ class StatementsController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view()
+    public function view($id, $company = null)
     {
-        if ($this->request->is('post')) {
-
-            $id = $this->request->getData('statement');
-
-            $company = $this->request->getData('company');
+        if (isset($id)) {
 
             $statement = $this->Statements->get($id, [
                 'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany']
@@ -97,6 +93,9 @@ class StatementsController extends AppController
                 } else if (count($statement->companies) > 0) {
                     $statement->companies[0]->billing_date = $statement->companies[0]->billing_date->format('Y-m-d');
                     $ati = 0;
+                    if (!isset($company)) {
+                        $company = $statement->companies[0]->id;
+                    }
                 } else {
                     $ati = 0;
                 }
