@@ -319,7 +319,7 @@ function loadCosts(cats) {
                     <th>Data</th>
                     <th>Descrizione</th>
                     <th>Importo</th>
-                    <th>Q.ta parte</th>
+                    <th>Quota parte</th>
                     <th>Note</th>
                     <th>Attachment</th>
                     <th></th>
@@ -345,13 +345,13 @@ function loadCosts(cats) {
         cats[cat]["costs"][cost]["description"] +
         `</td>` +
         `<td>` +
-        cats[cat]["costs"][cost]["amount"] +
+        '&euro;' + ' ' + cats[cat]["costs"][cost]["amount"] +
         `</td>
           <td>` +
-        cats[cat]["costs"][cost]["share"] +
+          '&euro;' + ' ' + cats[cat]["costs"][cost]["share"] +
         `</td>` +
         `<td>` +
-        cats[cat]["costs"][cost]["note"] +
+        cats[cat]["costs"][cost]["notes"] +
         `</td>` +
         `<td>` +
         cats[cat]["costs"][cost]["attachment"] +
@@ -400,3 +400,4 @@ function deleteCost (id) {
     }) 
   }
 };
+
