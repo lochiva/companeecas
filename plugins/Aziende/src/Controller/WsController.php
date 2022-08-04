@@ -3713,6 +3713,8 @@ class WsController extends AppController
             if ($company) {
                 if(isset($company['billing_date'])) {
                     $company['billing_date'] = $company['billing_date']->format('Y-m-d');
+                    $company['billing_net_amount'] = number_format($company['billing_net_amount'], 2);
+                    $company['billing_vat_amount'] = number_format($company['billing_vat_amount'], 2);
                 }
                 
                 $this->_result['response'] = "OK";
