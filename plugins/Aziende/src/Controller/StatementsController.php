@@ -181,7 +181,7 @@ class StatementsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $statement = $this->Statements->patchEntity($statement, $this->request->data);
             if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
-                $this->Flash->success(__('Il rendiconto è stato salvato.'));
+                $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
