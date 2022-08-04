@@ -1,4 +1,4 @@
-<?
+<?php
     echo $this->Form->hidden('id');
 
     echo $this->Form->control('year', [
@@ -31,7 +31,7 @@
     <?= $this->Form->label('period_start_date', 'Inizio', ['class' => 'col-sm-2 control-label required']); ?>
 
     <div class="col-sm-10">
-        <? echo $this->Form->text('period_start_date', [
+        <?php echo $this->Form->text('period_start_date', [
             'type' => 'date',
             'required' => true,
             'class' => 'form-control',
@@ -46,7 +46,7 @@
     <?= $this->Form->label('stetement.period_end_date', 'Fine', ['class' => 'col-sm-2 control-label required']); ?>
 
     <div class="col-sm-10">
-        <? echo $this->Form->text('period_end_date', [
+        <?php echo $this->Form->text('period_end_date', [
             'type' => 'date',
             'required' => true,
             'class' => 'form-control',
@@ -138,7 +138,7 @@
 
             <div class="col-sm-10">
 
-                <? echo $this->Form->text('companies.0.billing_date', [
+                <?php echo $this->Form->text('companies.0.billing_date', [
                     'type' => 'date',
                     'required' => true,
                     'class' => 'form-control'
@@ -147,7 +147,7 @@
 
         </div>
 
-    <?
+    <?php
         echo $this->Form->control('companies.0.billing_net_amount', [
             'type' => 'number',
             'required' => true,
