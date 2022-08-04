@@ -3665,13 +3665,18 @@ class WsController extends AppController
                 $button.= '<div class="btn-group">';
 
                 $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) .'" >
-                <i data-toggle="tooltip" title="Scarica" href="#" class="fa fa-eye"></i>
+                <i data-toggle="tooltip" title="Scarica" class="fa fa-eye"></i>
                 </a>';
 
-                $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->company->id]) .'" >
-                <i data-toggle="tooltip" title="Scarica" href="#" class="fa fa-download"></i>
-                </a>';
-
+                if ($value->uploaded_path) {
+                    $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $value->id]) .'" >
+                    <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
+                    </a>';
+                } else {
+                    $button.= '<a class="btn btn-xs btn-default download-statement disabled" href="#" >
+                    <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
+                    </a>';
+                }
                 $button.= '</div>';
                 ########### buttons END
                 
@@ -3894,6 +3899,27 @@ class WsController extends AppController
         }
     }
 
+    public function downloadFileStatements($id)
+    {
+        $table = TableRegistry::get('Aziende.StatementCompany');
 
-    
+        $attachment = $table->get($id);
+        
+        $file = $attachment['uploaded_path'];
+
+        $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH') . $file;
+
+        if(file_exists($uploadPath)){
+            $this->response->file($uploadPath , array(
+                'download'=> true,
+                'name'=> $file
+            ));
+            setcookie('downloadStarted', '1', false, '/');
+            return $this->response;
+        }else{
+            setcookie('downloadStarted', '1', false, '/');
+            $this->_result['msg'] = 'Il file richiesto non esiste.';
+        }
+    }
+
 }

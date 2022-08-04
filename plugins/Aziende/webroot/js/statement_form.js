@@ -91,13 +91,13 @@ $(document).ready(function () {
             );
 
             if (res.data.uploaded_path.length) {
-              $("#upl_file").removeClass("hidden");
+              $("#file_upload").removeClass("hidden");
               $("#uploaded_path").prop(
                 "href",
-                pathServer + "aziende/ws/downloadFile/" + res.data.id
+                pathServer + "aziende/ws/downloadFileStatements/" + res.data.id
               );
             } else {
-              $("#upl_file").addClass("hidden");
+              $("#file_upload").addClass("hidden");
             }
           } else {
             alert(res.msg);

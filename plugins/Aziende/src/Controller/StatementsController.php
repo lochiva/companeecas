@@ -7,6 +7,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 use Cake\I18n\Date;
 use Cake\ORM\Query;
+use Cake\Filesystem\Folder;
+use Cake\Filesystem\File;
 /**
  * Statements Controller
  *
@@ -180,11 +182,26 @@ class StatementsController extends AppController
      */
     public function edit($id = null)
     {
+        $data = $this->request->data;
+        $attachment = $this->request->getUploadedFile('file');
+
+        // Controllo se è stato allegato un file
+        if(strlen($attachment->getClientFilename())) {
+            $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
+
+            $filePath = $data['companies'][0]['id'];
+            $dir = new Folder($uploadPath . $filePath, true, 0755);
+            
+            $fName = uniqid().'_'.$attachment->getClientFilename();
+            $attachment->moveTo($uploadPath . $filePath . DS . $fName);
+            $data['companies'][0]['uploaded_path'] = $filePath . DS . $fName;
+        }
+
         $statement = $this->Statements->get($id, [
             'contain' => ['StatementCompany']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $statement = $this->Statements->patchEntity($statement, $this->request->data);
+            $statement = $this->Statements->patchEntity($statement, $data);
             if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
                 $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
 

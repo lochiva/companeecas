@@ -1,4 +1,6 @@
 <?php
+use Cake\Routing\Router;
+
     echo $this->Form->hidden('id');
 
     echo $this->Form->control('year', [
@@ -106,15 +108,18 @@
             'label' => ['text' => 'Importo iva', 'class' => 'col-sm-2 control-label required'],
         ]);
 
-        echo $this->Form->hidden('companies.0.uploaded_path');
-
-        echo $this->Form->control('file', [
-            'type' => 'file',
-            'required' => true,
-            'disabled' => true,
-            'label' => ['text' => 'Upload File fattura', 'class' => 'col-sm-2 control-label required'],
-        ]);
     ?>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">File Fattura</label> 
+            <div class="col-sm-2" id="file_upload"> 
+                <a id="box-general-action" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank">Download</a>
+            </div>
+            <div class="col-sm-3"> 
+                <input type="file" name="file" class="form-control"> 
+            </div>
+        </div>
+
 
     </div>
 
@@ -159,16 +164,31 @@
             'required' => true,
             'label' => ['text' => 'Importo iva', 'class' => 'col-sm-2 control-label required'],
         ]);
-
-        echo $this->Form->hidden('companies.0.uploaded_path');
-
-        echo $this->Form->control('file', [
-            'type' => 'file',
-            'required' => true,
-            'disabled' => true,
-            'label' => ['text' => 'Upload File fattura', 'class' => 'col-sm-2 control-label required'],
-        ]);
     ?>
+
+    <?php if ($statement->companies[0]->uploaded_path) : ?>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">File Fattura</label> 
+            <div class="col-sm-2"> 
+                <a id="box-general-action" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank">Download</a>
+            </div>
+            <div class="col-sm-3"> 
+                <input type="file" name="file" class="form-control"> 
+            </div>
+        </div>
+
+    <?php else : ?>
+
+        <?= $this->Form->control('file', [
+            'type' => 'file',
+            'label' => ['text' => 'Upload File fattura', 'class' => 'col-sm-2 control-label required'],
+        ]); ?>
+
+    <? endif ?>
+
+
+    
 
     </div>
 
