@@ -3725,7 +3725,7 @@ class WsController extends AppController
             }
             
             $ret = TableRegistry::get('Aziende.Agreements')->find('all')
-                ->where(['cig' => $string])
+                ->where(['cig' => $string, 'deleted' => 0])
                 ->where($where)
                 ->contain(['AgreementsCompanies'])
                 ->first();
