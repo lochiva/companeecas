@@ -2946,92 +2946,116 @@ class WsController extends AppController
         $guests = TableRegistry::get('Aziende.Guests');
         $guest = $guests->get($data['guest_id']);
 
-        $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
+        $guestsToExit = [$guest];
 
-        //richiesta conferma uscita
-        if ($exitType['required_confirmation']) {
-            $status = 2;
-        } else {
-            $status = 3;
+        //uscita famigliari
+        if ($data['exit_family']) {
+            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+            $familyGuests = $guests->find()
+                ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
+                ->join([
+                    [
+                        'table' => 'guests_families',
+                        'alias' => 'gf',
+                        'type' => 'left',
+                        'conditions' => 'gf.guest_id = Guests.id'
+                    ]
+                ])
+                ->toArray();
+
+            $guestsToExit = array_merge($guestsToExit, $familyGuests);
         }
 
-        $today = new Time();
+        $errorMsg = '';
+        $responseStatus = 'OK';
 
-        //salvataggio file
-        $filePath = '';
-        $errorFile = false;
-        if (!empty($data['file']) && !empty($data['file']['tmp_name'])) {
-            $basePath = ROOT.DS.Configure::read('dbconfig.aziende.EXIT_FILES_PATH');
-            $fileName = uniqid().'_'.$data['file']['name'];
-            $path = date('Y').DS.date('m').DS;
-            $filePath = $path.$fileName;
-
-            if (!is_dir($basePath.$path) && !mkdir($basePath.$path, 0755, true)) {
-                $errorFile = true;
-            } else if (!move_uploaded_file($data['file']['tmp_name'], $basePath.$filePath)) {
-                $errorFile = true;
-            }
-        }
-
-        if (!$errorFile) {
-            $guestsToExit = [$guest];
-
-            //uscita famigliari
-            if ($data['exit_family']) {
-                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
-                $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
-                $familyGuests = $guests->find()
-                    ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
-                    ->join([
-                        [
-                            'table' => 'guests_families',
-                            'alias' => 'gf',
-                            'type' => 'left',
-                            'conditions' => 'gf.guest_id = Guests.id'
-                        ]
-                    ])
-                    ->toArray();
-
-                $guestsToExit = array_merge($guestsToExit, $familyGuests);
-            }
-
-            //uscita ospiti
-            $errorMsg = '';
-            $responseStatus = 'OK';
-            foreach ($guestsToExit as $g) {
-                $error = $this->Guest->exitGuest($g, $data, $today, $status, $filePath);
-                if ($error) {
-                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                    if ($g->id == $guest->id) {
-                        $responseStatus = 'KO';
+        //controllo sulla correttezza dei dati degli ospiti
+        foreach ($guestsToExit as $g) { 
+            $g->modified = new Time();
+            if (!$guests->save($g)) {
+                if (empty($errorMsg)) {
+                    $errorMsg = "Errore nella configurazione dell'ospite."; 
+                }
+                $errorMsg .= "\n\n".$g->name." ".$g->surname;
+                $fieldLabelsList = $guests->getFieldLabelsList();
+                foreach($g->errors() as $field => $errors){ 
+                    foreach($errors as $rule => $msg){ 
+                        $errorMsg .= "\n" . $fieldLabelsList[$field].': '.$msg;
                     }
-                    $res['family_status'][$g->id] = 1;
-                } else {
-                    $res['family_status'][$g->id] = $status;
+                }
+                $responseStatus = 'KO';
+            }
+        }
+
+        if (empty($errorMsg)) {
+            $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
+
+            //richiesta conferma uscita
+            if ($exitType['required_confirmation']) {
+                $status = 2;
+            } else {
+                $status = 3;
+            }
+
+            $today = new Time();
+
+            //salvataggio file
+            $filePath = '';
+            $errorFile = false;
+            if (!empty($data['file']) && !empty($data['file']['tmp_name'])) {
+                $basePath = ROOT.DS.Configure::read('dbconfig.aziende.EXIT_FILES_PATH');
+                $fileName = uniqid().'_'.$data['file']['name'];
+                $path = date('Y').DS.date('m').DS;
+                $filePath = $path.$fileName;
+
+                if (!is_dir($basePath.$path) && !mkdir($basePath.$path, 0755, true)) {
+                    $errorFile = true;
+                } else if (!move_uploaded_file($data['file']['tmp_name'], $basePath.$filePath)) {
+                    $errorFile = true;
                 }
             }
 
-            $res['history_status'] = $status;
-            $res['history_exit_type'] = $exitType['name'];
-            $res['check_out_date'] = $today->format('d/m/Y');
-            $res['history_file'] = $filePath;
-            $res['history_note'] = $data['note'];
-        } else {
-            $errorMsg = "Errore nel salvataggio del documento di uscita.";
-            $responseStatus = 'KO';
-        }
+            if (!$errorFile) {
+                //uscita ospiti
+                foreach ($guestsToExit as $g) {
+                    $error = $this->Guest->exitGuest($g, $data, $today, $status, $filePath);
+                    if ($error) {
+                        $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                        if ($g->id == $guest->id) {
+                            $responseStatus = 'KO';
+                        }
+                        $res['family_status'][$g->id] = 1;
+                    } else {
+                        $res['family_status'][$g->id] = $status;
+                    }
+                }
 
-        if (!$errorMsg) {
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $res;
-            if ( $status == 2) {
-                $this->_result['msg'] = 'Procedura di uscita dell\'ospite avviata con successo.';
+                $res['history_status'] = $status;
+                $res['history_exit_type'] = $exitType['name'];
+                $res['check_out_date'] = $today->format('d/m/Y');
+                $res['history_file'] = $filePath;
+                $res['history_note'] = $data['note'];
             } else {
-                $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
+                $errorMsg = "Errore nel salvataggio del documento di uscita.";
+                $responseStatus = 'KO';
+            }
+
+            if (!$errorMsg) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $res;
+                if ( $status == 2) {
+                    $this->_result['msg'] = 'Procedura di uscita dell\'ospite avviata con successo.';
+                } else {
+                    $this->_result['msg'] = 'Procedura di uscita dell\'ospite completata con successo.';
+                }
+            } else {
+                $this->_result['response'] = $responseStatus;
+                $this->_result['data'] = $res;
+                $this->_result['msg'] =  $errorMsg;
             }
         } else {
             $this->_result['response'] = $responseStatus;
-            $this->_result['data'] = $res;
             $this->_result['msg'] =  $errorMsg;
         }
     }
@@ -3042,11 +3066,6 @@ class WsController extends AppController
     
         $guests = TableRegistry::get('Aziende.Guests');
         $guest = $guests->get($data['guest_id']);
-
-        $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, 2);
-        $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
-
-        $today = new Time();
 
         $guestsToExit = [$guest];
 
@@ -3069,35 +3088,64 @@ class WsController extends AppController
             $guestsToExit = array_merge($guestsToExit, $familyGuests);
         }
 
-        //uscita ospiti
         $errorMsg = '';
         $responseStatus = 'OK';
-        foreach ($guestsToExit as $g) {
-            $error = $this->Guest->confirmExitGuest($g, $data, $today);
-            if ($error) {
-                $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                if ($g->id == $guest->id) {
-                    $responseStatus = 'KO';
+
+        //controllo sulla correttezza dei dati degli ospiti
+        foreach ($guestsToExit as $g) { 
+            $g->modified = new Time();
+            if (!$guests->save($g)) {
+                if (empty($errorMsg)) {
+                    $errorMsg = "Errore nella configurazione dell'ospite."; 
                 }
-                $res['family_status'][$g->id] = 2;
-            } else {
-                $res['family_status'][$g->id] = 3;
+                $errorMsg .= "\n\n".$g->name." ".$g->surname;
+                $fieldLabelsList = $guests->getFieldLabelsList();
+                foreach($g->errors() as $field => $errors){ 
+                    foreach($errors as $rule => $msg){ 
+                        $errorMsg .= "\n" . $fieldLabelsList[$field].': '.$msg;
+                    }
+                }
+                $responseStatus = 'KO';
             }
         }
 
-        $res['history_status'] = 3;
-        $res['history_exit_type'] = $exitType['name'];
-        $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
-        $res['history_file'] = $lastHistory->file;
-        $res['history_note'] = $lastHistory->note;
+        if (empty($errorMsg)) {
+            $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, 2);
+            $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
 
-        if (!$errorMsg) {
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $res;
-            $this->_result['msg'] = 'Uscita dell\'ospite confermata con successo.';
+            $today = new Time();
+
+            //uscita ospiti
+            foreach ($guestsToExit as $g) {
+                $error = $this->Guest->confirmExitGuest($g, $data, $today);
+                if ($error) {
+                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                    if ($g->id == $guest->id) {
+                        $responseStatus = 'KO';
+                    }
+                    $res['family_status'][$g->id] = 2;
+                } else {
+                    $res['family_status'][$g->id] = 3;
+                }
+            }
+
+            $res['history_status'] = 3;
+            $res['history_exit_type'] = $exitType['name'];
+            $res['check_out_date'] = $guest->check_out_date->format('d/m/Y');
+            $res['history_file'] = $lastHistory->file;
+            $res['history_note'] = $lastHistory->note;
+
+            if (!$errorMsg) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $res;
+                $this->_result['msg'] = 'Uscita dell\'ospite confermata con successo.';
+            } else {
+                $this->_result['response'] = $responseStatus;
+                $this->_result['data'] = $res;
+                $this->_result['msg'] =  $errorMsg;
+            }
         } else {
             $this->_result['response'] = $responseStatus;
-            $this->_result['data'] = $res;
             $this->_result['msg'] =  $errorMsg;
         }
     }
@@ -3115,19 +3163,6 @@ class WsController extends AppController
             (empty($guest['check_in_date']) || $checkOutDate->format('Y-m-d') >= $guest['check_in_date']->format('Y-m-d')) && 
             $checkOutDate->format('Y-m-d') <= date('Y-m-d')
         ) {
-            $guests = TableRegistry::get('Aziende.Guests');
-            $guest = $guests->get($data['guest_id']);
-            $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
-
-            // se rimane nello stesso ente non serve conferma trasferimento
-            if ($sede->id_azienda == $data['azienda']) {
-                $status = 6;
-                $statusCloned = 1;
-            } else {
-                $status = 4;
-                $statusCloned = 5;
-            }
-
             $guestsToTransfer = [$guest];
 
             //trasferimento famigliari
@@ -3149,44 +3184,79 @@ class WsController extends AppController
                 $guestsToTransfer = array_merge($guestsToTransfer, $familyGuests);
             }
 
-            //trasferimento ospiti
             $errorMsg = '';
             $responseStatus = 'OK';
-            foreach ($guestsToTransfer as $g) {
-                $error = $this->Guest->transferGuest($g, $data, $checkOutDate);
-                if ($error) {
-                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                    if ($g->id == $guest->id) {
-                        $responseStatus = 'KO';
+
+            //controllo sulla correttezza dei dati degli ospiti
+            foreach ($guestsToTransfer as $g) { 
+                $g->modified = new Time();
+                if (!$guests->save($g)) {
+                    if (empty($errorMsg)) {
+                        $errorMsg = "Errore nella configurazione dell'ospite."; 
                     }
-                    $res['family_status'][$g->id] = 1;
-                } else {
-                    $res['family_status'][$g->id] = $status;
+                    $errorMsg .= "\n\n".$g->name." ".$g->surname;
+                    $fieldLabelsList = $guests->getFieldLabelsList();
+                    foreach($g->errors() as $field => $errors){ 
+                        foreach($errors as $rule => $msg){ 
+                            $errorMsg .= "\n" . $fieldLabelsList[$field].': '.$msg;
+                        }
+                    }
+                    $responseStatus = 'KO';
                 }
             }
 
-            $destination = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
+            if (empty($errorMsg)) {
+                $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-            $res['history_status'] = $status;
-            $res['history_date'] = $checkOutDate;
-            $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].') ['.$destination['code_centro'].']';
-            $res['history_destination_id'] = $data['sede'];
-            $res['history_note'] = $data['note'];
-            if ($status == 6) {
-                $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $status);
-                $res['history_cloned_guest'] = empty($lastHistory) ? '' : $lastHistory->cloned_guest_id;
+                // se rimane nello stesso ente non serve conferma trasferimento
+                if ($sede->id_azienda == $data['azienda']) {
+                    $status = 6;
+                    $statusCloned = 1;
+                } else {
+                    $status = 4;
+                    $statusCloned = 5;
+                }
+
+                //trasferimento ospiti
+                foreach ($guestsToTransfer as $g) {
+                    $error = $this->Guest->transferGuest($g, $data, $checkOutDate);
+                    if ($error) {
+                        $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                        if ($g->id == $guest->id) {
+                            $responseStatus = 'KO';
+                        }
+                        $res['family_status'][$g->id] = 1;
+                    } else {
+                        $res['family_status'][$g->id] = $status;
+                    }
+                }
+
+                $destination = TableRegistry::get('Aziende.Sedi')->get($data['sede'], ['contain' => ['Comuni', 'Aziende']]);
+
+                $res['history_status'] = $status;
+                $res['history_date'] = $checkOutDate;
+                $res['history_destination'] = $destination['azienda']['denominazione'].' - '.$destination['indirizzo'].' '.$destination['num_civico'].', '.$destination['comune']['des_luo'].' ('.$destination['comune']['s_prv'].') ['.$destination['code_centro'].']';
+                $res['history_destination_id'] = $data['sede'];
+                $res['history_note'] = $data['note'];
+                if ($status == 6) {
+                    $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $status);
+                    $res['history_cloned_guest'] = empty($lastHistory) ? '' : $lastHistory->cloned_guest_id;
+                } else {
+                    $res['history_cloned_guest'] = '';
+                }
+
+                if (!$errorMsg) {
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = $res;
+                    $this->_result['msg'] = "Trasferimento dell'ospite avviato con successo.";
+                }  else {
+                    $this->_result['response'] = $responseStatus;
+                    $this->_result['data'] = $res;
+                    $this->_result['msg'] = $errorMsg;
+                }
             } else {
-                $res['history_cloned_guest'] = '';
-            }
-
-            if (!$errorMsg) {
-                $this->_result['response'] = "OK";
-                $this->_result['data'] = $res;
-                $this->_result['msg'] = "Trasferimento dell'ospite avviato con successo.";
-            }  else {
                 $this->_result['response'] = $responseStatus;
-                $this->_result['data'] = $res;
-                $this->_result['msg'] = $errorMsg;
+                $this->_result['msg'] =  $errorMsg;
             }
         } else {
             $this->_result['response'] = 'KO';
@@ -3203,7 +3273,6 @@ class WsController extends AppController
         if ($checkInDate->format('Y-m-d') <= date('Y-m-d')) {
             $guests = TableRegistry::get('Aziende.Guests');
             $guest = $guests->get($data['guest_id']);
-            $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
             $guestsToTransfer = [$guest];
 
@@ -3226,33 +3295,60 @@ class WsController extends AppController
                 $guestsToTransfer = array_merge($guestsToTransfer, $familyGuests);
             }
 
-            //accetta trasferimento ospiti
             $errorMsg = '';
             $responseStatus = 'OK';
-            foreach ($guestsToTransfer as $g) {
-                $error = $this->Guest->acceptTransferGuest($g, $data, $checkInDate);
-                if ($error) {
-                    $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
-                    if ($g->id == $guest->id) {
-                        $responseStatus = 'KO';
+
+            //controllo sulla correttezza dei dati degli ospiti
+            foreach ($guestsToTransfer as $g) { 
+                $g->modified = new Time();
+                if (!$guests->save($g)) {
+                    if (empty($errorMsg)) {
+                        $errorMsg = "Errore nella configurazione dell'ospite."; 
                     }
-                    $guest['family_status'][$g->id] = 5;
-                } else {
-                    $guest['family_status'][$g->id] = 1;
+                    $errorMsg .= "\n\n".$g->name." ".$g->surname;
+                    $fieldLabelsList = $guests->getFieldLabelsList();
+                    foreach($g->errors() as $field => $errors){ 
+                        foreach($errors as $rule => $msg){ 
+                            $errorMsg .= "\n" . $fieldLabelsList[$field].': '.$msg;
+                        }
+                    }
+                    $responseStatus = 'KO';
                 }
             }
 
-            $guest->status_id = 1;
-            $guest->check_in_date = $checkInDate;
+                if (empty($errorMsg)) {
 
-            if (!$errorMsg) {
-                $this->_result['response'] = "OK";
-                $this->_result['data'] = $guest;
-                $this->_result['msg'] = "Ingresso dell'ospite confermato con successo.";
-            }  else {
+                $sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+                //accetta trasferimento ospiti
+                foreach ($guestsToTransfer as $g) {
+                    $error = $this->Guest->acceptTransferGuest($g, $data, $checkInDate);
+                    if ($error) {
+                        $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                        if ($g->id == $guest->id) {
+                            $responseStatus = 'KO';
+                        }
+                        $guest['family_status'][$g->id] = 5;
+                    } else {
+                        $guest['family_status'][$g->id] = 1;
+                    }
+                }
+
+                $guest->status_id = 1;
+                $guest->check_in_date = $checkInDate;
+
+                if (!$errorMsg) {
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = $guest;
+                    $this->_result['msg'] = "Ingresso dell'ospite confermato con successo.";
+                }  else {
+                    $this->_result['response'] = $responseStatus;
+                    $this->_result['data'] = $guest;
+                    $this->_result['msg'] = $errorMsg;
+                }
+            } else {
                 $this->_result['response'] = $responseStatus;
-                $this->_result['data'] = $guest;
-                $this->_result['msg'] = $errorMsg;
+                $this->_result['msg'] =  $errorMsg;
             }
         } else {
             $this->_result['response'] = 'KO';
