@@ -97,7 +97,7 @@ echo $this->Html->script('Aziende.statement_form.js');
                                 </div>
 
                                 <div class="form-group col-sm-2 required">
-                                    <label class="control-label ">Quantità</label>
+                                    <label class="control-label ">Quota parte</label>
                                     <input type="number" step="0.01" min="0.01" class="form-control" name="share" required>
                                 </div>
 

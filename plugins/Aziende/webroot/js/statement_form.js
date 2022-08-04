@@ -301,9 +301,7 @@ function loadCosts(cats) {
       cats[cat]["id"] +
       `" aria-expanded="true">
                 ` +
-      cats[cat]["name"] +
-      ` ` +
-      cats[cat]["tot"] +
+      '	&euro;' + ' ' + cats[cat]["tot"] + ' ' + cats[cat]["name"] +
       `
             </a>
         </h4>

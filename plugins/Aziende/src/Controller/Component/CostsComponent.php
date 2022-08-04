@@ -50,7 +50,7 @@ class CostsComponent extends Component
                 $toRet[$key]['costs'] = $cat;
                 $toRet[$key]['name'] = $cat[0]['category']['name'];
                 $toRet[$key]['id'] = $cat[0]['category']['id'];
-                $toRet[$key]['tot'] = $tot;
+                $toRet[$key]['tot'] = number_format($tot, 2, ',', '');
             }
         } else {
             $toRet = $ret;
