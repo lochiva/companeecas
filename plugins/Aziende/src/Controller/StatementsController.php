@@ -181,11 +181,11 @@ class StatementsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $statement = $this->Statements->patchEntity($statement, $this->request->data);
             if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
-                $this->Flash->success(__('The statement has been saved.'));
+                $this->Flash->success(__('Il rendiconto è stato salvato.'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The statement could not be saved. Please, try again.'));
+                $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
             }
         }
         $agreements = $this->Statements->Agreements->find('list', ['limit' => 200]);
