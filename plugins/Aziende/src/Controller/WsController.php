@@ -3585,7 +3585,7 @@ class WsController extends AppController
                     $value->statement->period_label,
                     $value->statement->year,
                     $value->status->name,
-                    $value->approved_date,
+                    $value->approved_date ?? '',
                     $button
 
                 );
