@@ -507,10 +507,10 @@ class GuestsTable extends AppTable
             ->count();
     }
 
-    public function getDataForExportGuestsEmergenzaUcraina($aziendaId = '')
+    public function getDataForExportGuests($type, $aziendaId = '')
     {
         $where = [
-            'a.id_tipo' => 2,
+            'a.id_tipo' => $type,
             'a.deleted' => 0,
             's.deleted' => 0
         ];

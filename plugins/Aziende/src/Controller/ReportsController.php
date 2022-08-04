@@ -238,9 +238,9 @@ class ReportsController extends AppController
         $user = $this->request->session()->read('Auth.User');
         if ($user['role'] == 'ente') {
             $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
-			$data = $guestsTable->getDataForExportGuestsEmergenzaUcraina($contatto['id_azienda']);
+			$data = $guestsTable->getDataForExportGuests(2, $contatto['id_azienda']);
         } else {
-			$data = $guestsTable->getDataForExportGuestsEmergenzaUcraina();
+			$data = $guestsTable->getDataForExportGuests(2);
 		}
         
 		
@@ -286,7 +286,7 @@ class ReportsController extends AppController
 
     }
 
-	public function exportGuestsCas()
+	public function exportGuestsCasPresenze()
     {
 		set_time_limit(120);
 		
@@ -299,7 +299,7 @@ class ReportsController extends AppController
 		$contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
 		$azienda = TableRegistry::get('Aziende.Aziende')->get($contatto['id_azienda']);
 
-        $data = $sediTable->getDataForExportGuestsCas($contatto['id_azienda'], $year, $month);
+        $data = $sediTable->getDataForExportGuestsCasPresenze($contatto['id_azienda'], $year, $month);
 
 		$spreadsheet = new Spreadsheet();
 
@@ -378,6 +378,61 @@ class ReportsController extends AppController
 		];
 
         $filename = "LISTA OSPITI ".$azienda['denominazione']." ".$monthLabels[$month]." ".$year;
+
+		setcookie('downloadStarted', '1', false, '/');
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+		$writer->save('php://output');
+
+		exit;
+
+    }
+
+	public function exportGuestsCas()
+    {
+		set_time_limit(120);
+
+		$spreadsheet = new Spreadsheet();
+
+		// RIEPILOGO STRUTTURE
+		$spreadsheet->getActiveSheet()->setTitle("Lista ospiti CAS");
+
+		$guestsTable = TableRegistry::get('Aziende.Guests');
+
+		$data = $guestsTable->getDataForExportGuests(1);
+		
+		//ultima colonna
+		$c = 'A';
+		for($i = 1; $i < count($data[0]); $i++){
+			++$c;
+		}
+
+		//filtri riga intestazione
+        $spreadsheet->getActiveSheet()->setAutoFilter('A1:'.$c.'1');
+
+		//grassetto riga intestazione
+		$spreadsheet->getActiveSheet()->getStyle('A1:'.$c.'1')
+			->getFont()->setBold(true);
+
+		//dimensione automatica delle celle
+		$i = 'A';
+		foreach($data[0] as $col){
+			$spreadsheet->getActiveSheet()->getColumnDimension($i)->setAutoSize(true);
+			++$i;
+		}
+
+		$spreadsheet->getActiveSheet()->fromArray($data, NULL);
+		
+		$spreadsheet->getActiveSheet()->freezePane('A2');
+
+		$spreadsheet->setActiveSheetIndex(0);
+
+        $filename = "LISTA OSPITI CAS";
 
 		setcookie('downloadStarted', '1', false, '/');
 
