@@ -20,14 +20,14 @@ echo $this->Html->script( 'Aziende.statements.js' );
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div id="box-aziende" class="box box-info">
+            <div id="box-statements" class="box box-info">
                 <div class="box-header with-border">
                   <i class="fa fa-list-ul"></i>
                   <h3 class="box-title"><?=__c('Elenco degli rendiconti')?></h3>
                   <a id="box-general-action" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#modalStatement" data-backdrop="false" data-keyboard="false" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
-                <div class="box-table-aziende box-body">
+                <div class="box-table-statements box-body">
 
                     <div id="pager-statements" class="pager col-sm-6">
                         <form>

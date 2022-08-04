@@ -3,7 +3,8 @@ div.box-table-sedi.box-body #pager-sedi,
 div.box-table-contatti.box-body #pager-contatti,
 div.box-table-orders.box-body #pager-orders,
 div.box-table-invoice.box-body #pager-invoice,
-div.box-table-agreements.box-body #pager-agreements{
+div.box-table-agreements.box-body #pager-agreements,
+div.box-table-statements.box-body #pager-statements{
 	text-align: left;
 }
 div.box-table-aziende.box-body #box-general-action a,
