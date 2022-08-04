@@ -199,6 +199,9 @@
         $('input[name=period_label]').attr('readonly', true);
         $('input[name=period_start_date]').attr('readonly', true);
         $('input[name=period_end_date]').attr('readonly', true);
+        $('input[required], select[required]').each(function() {
+                $(this).parent().parent().removeClass('has-error');
+            });
         $('#save').prop('disabled', true);
 
     });

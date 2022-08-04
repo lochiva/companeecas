@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     $('form#add-cost')[0].reset();
     $('form#add-cost input[required], form#add-costt select[required]').each(function() {
-      $(this).parent().parent().removeClass('has-error');
+      $(this).parent().removeClass('has-error');
     });
 
     $("#accordion").text("");
@@ -127,7 +127,7 @@ $(document).ready(function () {
     }
   });
 
-  $("input[required], select[required]").each(function () {
+  $("form#main-form input[required], form#main-form select[required]").each(function () {
     $(this).on("change", function () {
       $(this).parent().parent().removeClass("has-error");
     });
@@ -182,7 +182,7 @@ $(document).ready(function () {
     }
   });
 
-  $("#form-statement").submit(function (e) {
+/*   $("#form-statement").submit(function (e) {
     e.preventDefault();
     let valid = true;
     $("input[required], select[required]").each(function () {
@@ -199,16 +199,16 @@ $(document).ready(function () {
     if (valid) {
       $("#form-statement").submit();
     }
-  });
+  }); */
 
   $('#save-cat').click(function (e) {
     e.preventDefault();
 
     let errors = 0;
 
-    $('form#add-cost input[required], form#add-costt select[required]').each(function() {
+    $('form#add-cost input[required], form#add-cost select[required]').each(function() {
       if($(this).val() == null ||  $(this).val()=='') {
-        $(this).parent().parent().addClass('has-error');
+        $(this).parent().addClass('has-error');
         errors ++;
       }
     });
@@ -226,6 +226,9 @@ $(document).ready(function () {
         dataType: "json",
       })
         .done(function (res) {
+          $('#add-cost')[0].reset();
+          $('form#add-cost #searchCat').val('');
+          $('form#add-cost #searchCat').trigger('change');
           if (res.response == "OK") {
             let cats = res.data;
             if (cats) {
@@ -292,6 +295,13 @@ $(document).ready(function () {
         alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
       });
   }
+
+  $('form#add-cost input[required], form#add-cost select[required]').each(function() {
+    $(this).on('change', function() {
+      $(this).parent().removeClass('has-error');
+    })
+
+  });
 
 });
 

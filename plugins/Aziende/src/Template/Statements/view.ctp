@@ -45,7 +45,7 @@ echo $this->Html->script('Aziende.statement_form.js');
 
                     <?php
                         $this->Form->setTemplates($form_template);
-                        echo $this->Form->create($statement, ['url' => ['action' => 'edit'], 'class' => 'form-horizontal', 'type' => 'file']);
+                        echo $this->Form->create($statement, ['url' => ['action' => 'edit'], 'class' => 'form-horizontal', 'type' => 'file', 'id' => 'main-form']);
                         echo $this->element('statement_form');
                     ?>
 
