@@ -58,7 +58,7 @@ echo $this->Html->script('Aziende.statement_form.js');
 
                     <div class="button-group" style="text-align: end;">
                         <button class="btn btn-danger" type="button" style="float: left;">Elimina</button>
-                        <a class="btn btn-default" href="<?= $this->request->env('HTTP_REFERER'); ?>" role="button">Annulla</a>
+                        <a class="btn btn-default" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']) ?>" role="button">Annulla</a>
                         <button class="btn btn-primary" type="submit" id="save-statment">Salva</button>
                     </div>
 
