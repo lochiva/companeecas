@@ -95,21 +95,17 @@ class StatementsController extends AppController
                     $categories = [];
                     $ati = 1;
                 } else if (count($statement->companies) > 0) {
-                    $categories = TableRegistry::get('Aziende.CostsCategories')->find('all')
-                    ->contain('Costs', function (Query $q) use ($statement) {
-                        return $q->where(['Costs.statement_company' => $statement->companies[0]->id]);
-                    })
-                    ->toArray();
+                    $statement->companies[0]->billing_date = $statement->companies[0]->billing_date->format('Y-m-d');
                     $ati = 0;
                 } else {
-                    $categories = [];
                     $ati = 0;
                 }
+
                 $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->toArray();
                 $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
                 $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
-    
-                $this->set(compact('statement', 'companies', 'periods', 'categories', 'company', 'ati'));
+
+                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati'));
                 $this->set('_serialize', ['statement']);
             }else{
                 $this->Flash->error('Accesso negato. Non sei autorizzato.');

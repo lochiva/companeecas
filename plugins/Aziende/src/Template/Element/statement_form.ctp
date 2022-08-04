@@ -56,7 +56,7 @@
 
 </div>
 
-<?php if (count($companies) > 1) : ?>
+<?php if ($ati) : ?>
     <?= $this->Form->control('companies.0.id', [
         'type' => 'select',
         'multiple' => false,
