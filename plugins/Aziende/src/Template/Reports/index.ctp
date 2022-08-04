@@ -39,20 +39,26 @@ use Cake\Routing\Router;
                                 <button type="button" id="reportGuestsCas" class="btn btn-success">Genera presenza CAS</button>
                             </div>
                         </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="button" id="exportGuestsCas" class="btn btn-success">Esporta tutti gli ospiti</button>
+                            </div>
+                        </div>
                     <?php } ?>
                     <?php if ($role == 'ente' && $azienda['id_tipo'] == 1) { ?>
                         <div class="row">
                             <div class="col-md-2">
-                                <label class="control-label" for="yearExportGuestsCas">Anno</label>
-                                <select id="yearExportGuestsCas" class="form-control">
+                                <label class="control-label" for="yearExportGuestsCasPresenze">Anno</label>
+                                <select id="yearExportGuestsCasPresenze" class="form-control">
                                     <?php foreach (range(date('Y'), 2021) as $year) { ?>
                                         <option value="<?= $year ?>" <?= date('Y') == $year ? 'selected' : '' ?>><?= $year ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label class="control-label" for="monthExportGuestsCas">Mese</label>
-                                <select id="monthExportGuestsCas"class="form-control">
+                                <label class="control-label" for="monthExportGuestsCasPresenze">Mese</label>
+                                <select id="monthExportGuestsCasPresenze"class="form-control">
                                     <option value="01" <?= date('m') == '01' ? 'selected' : '' ?>>Gennaio</option>
                                     <option value="02" <?= date('m') == '02' ? 'selected' : '' ?>>Febbraio</option>
                                     <option value="03" <?= date('m') == '03' ? 'selected' : '' ?>>Marzo</option>
@@ -68,7 +74,7 @@ use Cake\Routing\Router;
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <button type="button" id="exportGuestsCas" class="btn btn-success">Esporta tutti gli ospiti</button>
+                                <button type="button" id="exportGuestsCasPresenze" class="btn btn-success">Esporta tutti gli ospiti</button>
                             </div>
                         </div>
                     <?php } ?>
@@ -100,8 +106,8 @@ use Cake\Routing\Router;
                                 <button type="button" id="reportGuestsEmergenzaUcraina" class="btn btn-success">Genera presenza Ucraina</button>
                             </div>
                         </div>
+                        <hr>
                     <?php } ?>
-                    <hr>
                     <div class="row">
                         <div class="col-md-6">
                             <button type="button" id="exportGuestsEmergenzaUcraina" class="btn btn-success">Esporta tutti gli ospiti</button>

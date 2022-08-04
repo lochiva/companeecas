@@ -53,17 +53,28 @@ $(document).ready(function(){
         checkCookieForLoader('downloadStarted', '1');
     });
 
-    //Esporta tutti gli ospiti cas
-    $('#exportGuestsCas').click(function() {
+    //Esporta le presenze per tutti gli ospiti cas
+    $('#exportGuestsCasPresenze').click(function() {
+        $('#template-spinner').show();
+
+        var url = pathServer+'aziende/reports/exportGuestsCasPresenze';
+
+        var year = $('#yearExportGuestsCasPresenze').val();
+        url += '?year=' + year;
+
+        var month = $('#monthExportGuestsCasPresenze').val();
+        url += '&month=' + month;
+        
+        window.location = url;
+
+        checkCookieForLoader('downloadStarted', '1');
+    });
+
+     //Esporta tutti gli ospiti cas
+     $('#exportGuestsCas').click(function() {
         $('#template-spinner').show();
 
         var url = pathServer+'aziende/reports/exportGuestsCas';
-
-        var year = $('#yearExportGuestsCas').val();
-        url += '?year=' + year;
-
-        var month = $('#monthExportGuestsCas').val();
-        url += '&month=' + month;
         
         window.location = url;
 

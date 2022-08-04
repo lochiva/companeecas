@@ -702,7 +702,7 @@ class SediTable extends AppTable
             ->first();
     }
 
-    public function getDataForExportGuestsCas($aziendaId, $year, $month)
+    public function getDataForExportGuestsCasPresenze($aziendaId, $year, $month)
     {
         $res = $this->find()
             ->select($this)
