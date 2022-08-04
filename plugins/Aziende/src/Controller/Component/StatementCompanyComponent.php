@@ -23,9 +23,9 @@ class StatementCompanyComponent extends Component
         $columns = [
             0 => ['val' => 'AgreementsCompanies.name', 'type' => 'text'],
             1 => ['val' => 'Agreements.cig', 'type' => 'text'],
-            2 => ['val' => 'Statements.period_id', 'type' => 'number'],
-            3 => ['val' => 'Statements.year', 'type' => 'number'],
-            4 => ['val' => 'Status.id' , 'type' => 'number'],
+            2 => ['val' => 'Statements.period_label', 'type' => 'text'],
+            3 => ['val' => 'Statements.year', 'type' => 'text'],
+            4 => ['val' => 'Status.name' , 'type' => 'text'],
             5 => ['val' => 'StatementCompany.approved_date' , 'type' => 'date']
         ];
 
