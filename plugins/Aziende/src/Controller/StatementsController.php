@@ -91,7 +91,9 @@ class StatementsController extends AppController
                     $categories = [];
                     $ati = 1;
                 } else if (count($statement->companies) > 0) {
-                    $statement->companies[0]->billing_date = $statement->companies[0]->billing_date->format('Y-m-d');
+                    if (isset($statement->companies[0]->billing_date)) {
+                        $statement->companies[0]->billing_date = $statement->companies[0]->billing_date->format('Y-m-d');
+                    }
                     $ati = 0;
                     if (!isset($company)) {
                         $company = $statement->companies[0]->id;
