@@ -3619,8 +3619,18 @@ class WsController extends AppController
 
     public function checkCig($string) {
         if(isset($string)) {
+            $where = [];
+
+            $user = $this->Auth->user();
+
+            if ($user['role'] == 'ente') {
+                $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($user['id']);
+                $where = ['azienda_id' => $azienda['id']];
+            }
+            
             $ret = TableRegistry::get('Aziende.Agreements')->find('all')
                 ->where(['cig' => $string])
+                ->where($where)
                 ->contain(['AgreementsCompanies'])
                 ->first();
 
@@ -3636,7 +3646,7 @@ class WsController extends AppController
 
             } else {
                 $this->_result['response'] = "KO";
-                $this->_result['msg'] = 'Impossibile recuperare i dati relativi al CIG';
+                $this->_result['msg'] = 'Il CIG selezionato non è valido oppure non è abilitato per questo utente';
             }
         } else {
             $this->_result['response'] = "KO";
