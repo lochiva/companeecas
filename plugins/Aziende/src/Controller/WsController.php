@@ -3621,12 +3621,19 @@ class WsController extends AppController
         if(isset($string)) {
             $ret = TableRegistry::get('Aziende.Agreements')->find('all')
                 ->where(['cig' => $string])
+                ->contain(['AgreementsCompanies'])
                 ->first();
 
             if($ret) {
-                $this->_result['response'] = "OK";
-                $this->_result['data'] = $ret;
-                $this->_result['msg'] = '';
+                if (count($ret->companies)) {
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = $ret;
+                    $this->_result['msg'] = '';
+                } else {
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = 'Il CIG inserito è valido, tuttavia non ci sono convenzioni associate.';
+                }
+
             } else {
                 $this->_result['response'] = "KO";
                 $this->_result['msg'] = 'Impossibile recuperare i dati relativi al CIG';

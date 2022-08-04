@@ -153,7 +153,8 @@
                         $('input[name=agreement_id]').val(res.data.id);
                     } else {
                         $('#cig').parent().parent().addClass('has-error');
-                        message += '\nIl CIG inserito non è valido';
+                        message += '\n'
+                        message += res.msg;
                         valid = false;
                     }
                 }).fail(function(richiesta, stato, errori) {
