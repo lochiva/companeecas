@@ -3757,29 +3757,37 @@ class WsController extends AppController
 
         $data = $this->request->data;
 
-        $companies = TableRegistry::get('Aziende.AgreementsCompanies')->find('all')
-        ->where(['agreement_id' => $data['agreement_id']])
-        ->toArray();
+        // Controlla se esiste già un rendiconto per lo stesso CIG e periodo
+        $check = $table->find('all')->where(['agreement_id' => $data['agreement_id'], 'period_id' => $data['period_id']])->toArray();
 
-        $data['companies'] = [];
-
-        foreach ($companies as $company) {
-            $data['companies'][] = ['company_id' => $company['id']];
-
-        }
-
-        $ret = $table->patchEntity($statement, $data, ['associated' => 'StatementCompany']);
-
-        if ($table->save($statement, ['associated' => 'StatementCompany'])) {
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $ret;
-            $this->_result['msg'] = '';
-        } else {
+        if ($check) {
             $this->_result['data'] = "";
             $this->_result['response'] = "KO";
-            $this->_result['msg'] = 'Impossibile salvare il rendiconto';
+            $this->_result['msg'] = 'Attenzione, esiste già un rendiconto per questo periodo e CIG.';
+        } else {
+            $companies = TableRegistry::get('Aziende.AgreementsCompanies')->find('all')
+            ->where(['agreement_id' => $data['agreement_id']])
+            ->toArray();
+    
+            $data['companies'] = [];
+    
+            foreach ($companies as $company) {
+                $data['companies'][] = ['company_id' => $company['id']];
+    
+            }
+    
+            $ret = $table->patchEntity($statement, $data, ['associated' => 'StatementCompany']);
+    
+            if ($table->save($statement, ['associated' => 'StatementCompany'])) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $ret;
+                $this->_result['msg'] = '';
+            } else {
+                $this->_result['data'] = "";
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile salvare il rendiconto';
+            }
         }
-        
     }
 
     public function getCosts($all, $id) {
