@@ -9,7 +9,7 @@ echo $this->Html->script('Aziende.statements.js');
 echo $this->Html->script('Aziende.statement_form.js');
 ?>
 <script>
-    var company = <?=$company;?>;
+    var company = <?= $company ?? 'false' ?>;
     var ati = <?=$ati;?>;
 </script>
 <section class="content-header">

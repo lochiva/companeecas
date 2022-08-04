@@ -3568,16 +3568,9 @@ class WsController extends AppController
 
                 $button.= '<div class="btn-group">';
 
-
-
-                $button.= '
-                    <form method="POST" action="'.Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view']).'">
-                        <button class="btn btn-xs btn-default view-statement" name="statement" value="'.$value->statement->id.'">
-                            <i data-toggle="tooltip" title="Visualizza" href="#" class="fa fa-eye"></i>
-                        </button>
-                        <input type="hidden" name="company" value="'.$value->id.'">
-                    </form>
-                ';
+                $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) .'" >
+                <i data-toggle="tooltip" title="Scarica" href="#" class="fa fa-eye"></i>
+                </a>';
 
                 $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->company->id]) .'" >
                 <i data-toggle="tooltip" title="Scarica" href="#" class="fa fa-download"></i>

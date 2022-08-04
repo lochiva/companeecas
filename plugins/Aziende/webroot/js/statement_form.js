@@ -266,8 +266,14 @@ $(document).ready(function () {
   });
 
   if (ati) {
-    $('select[name="companies[0][id]"]').val(company);
-    $('select[name="companies[0][id]"]').change();
+    if (company) {
+      $('select[name="companies[0][id]"]').val(company);
+      $('select[name="companies[0][id]"]').change();
+    } else {
+      $('select[name="companies[0][id]"]').val('all');
+      $('select[name="companies[0][id]"]').change();
+    }
+
   } else {
     $.ajax({
       url: pathServer + "aziende/ws/getCosts/" + false + "/" + company,
