@@ -67,7 +67,7 @@
         'label' => ['text' => 'Report di', 'class' => 'col-sm-2 control-label required']
     ]); ?>
 
-    <?= $this->Form->hidden('companies.0.id'); ?>
+    <?= $this->Form->hidden('companies.0.company_id'); ?>
 
     <div class="" id="company_specific">
 
