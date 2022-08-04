@@ -5,6 +5,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
+use Cake\Collection\Collection;
 
 /**
  * StatementCompany component
@@ -18,7 +19,28 @@ class StatementCompanyComponent extends Component
      */
     protected $_defaultConfig = [];
 
+    public $components = ['Auth'];
+
     public function getStatements($pass = []) {
+
+         $user = $this->Auth->user();
+
+        if ($user['role'] == 'ente') {
+            $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($user['id']);
+            $agreements = TableRegistry::get('Aziende.Agreements')->find('all')->select(['id'])->where(['azienda_id' => $azienda['id']])->toArray();
+
+            $col = new Collection($agreements);
+            $agreements = $col->extract('id');
+            unset($col);
+
+            $agreements_companies = TableRegistry::get('Aziende.AgreementsCompanies')->find('all')->select(['id'])->where(['agreement_id IN' => $agreements->toList()])->toArray();
+
+            $col = new Collection($agreements_companies);
+            $agreements_companies = $col->extract('id');
+
+            $opt['conditions'] = ['StatementCompany.company_id IN' => $agreements_companies->toList()];
+        }
+ 
         $table = TableRegistry::get('Aziende.StatementCompany');
         $columns = [
             0 => ['val' => 'AgreementsCompanies.name', 'type' => 'text'],
