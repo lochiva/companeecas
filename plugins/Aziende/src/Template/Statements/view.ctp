@@ -39,8 +39,8 @@ echo $this->Html->script('Aziende.statement_form.js');
                         <div class="col-md-2"><b>Ente: </b><?= $statement->agreement->aziende->denominazione ?></div>
                         <div class="col-md-2"><b>CIG:</b> <?= $statement->agreement->cig ?></div>
                         <div class="col-md-2 panel panel-default"><?= $statement->agreement->procedure->name ?></div>
-                        <div class="col-md-1"><button type="button" class="btn btn-danger">Rifiuta</button></div>
-                        <div class="col-md-1"><button type="button" class="btn btn-success">Approva</button></div>
+                        <div class="col-md-1"><button type="button" class="btn btn-danger" disabled>Rifiuta</button></div>
+                        <div class="col-md-1"><button type="button" class="btn btn-success" disabled>Approva</button></div>
                     </div>
 
                     <?php
@@ -49,15 +49,8 @@ echo $this->Html->script('Aziende.statement_form.js');
                         echo $this->element('statement_form');
                     ?>
 
-                    <div class="form-group hidden" id="upl_file">
-                        <label class="control-label col-sm-2">File Fattura</label>
-                        <div class="col-sm-10">
-                            <a href="" class="btn btn-info" id="uploaded_path">Scarica</a>
-                        </div>
-                    </div>
-
                     <div class="button-group" style="text-align: end;">
-                        <button class="btn btn-danger" type="button" style="float: left;">Elimina</button>
+                        <button class="btn btn-danger" type="button" style="float: left;" disabled>Elimina</button>
                         <a class="btn btn-default" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']) ?>" role="button">Annulla</a>
                         <button class="btn btn-primary" type="submit" id="save-statment">Salva</button>
                     </div>
