@@ -55,6 +55,9 @@ $(document).ready(function () {
       </div>`;
               $("#accordion").append(toAppend);
             }
+            $('#deny').parent().hide();
+            $('#approve').parent().hide();
+            $('#status').parent().hide();
           } else {
             $("#accordion").append("<div>Nessuna spesa presente</div>");
           }
@@ -99,6 +102,28 @@ $(document).ready(function () {
             } else {
               $("#file_upload").addClass("hidden");
             }
+            if (res.data.status_id == 1) {
+              $('#deny').data('id', res.data.id);
+              $('#deny').parent().show();
+              $('#approve').data('id', res.data.id);
+              $('#approve').parent().show();
+              $('#status').parent().hide();
+            } else {
+              $('#deny').parent().hide();
+              $('#approve').parent().hide();
+              $('#status').parent().show();
+              $('#status').text(res.data.status.name);
+              if (res.data.status_id == 2) {
+                $('#status').removeClass().addClass('badge btn-success');
+
+              } else if (res.data.status_id == 3) {
+                $('#status').removeClass().addClass('badge btn-danger');
+
+              } else {
+                $('#status').removeClass().addClass('badge btn-default');
+              }
+            }
+
           } else {
             alert(res.msg);
           }
@@ -304,6 +329,15 @@ $(document).ready(function () {
 
   });
 
+  $('#deny').click(function() {
+    deny($(this).data('id'))
+  });
+
+  $('#approve').click(function() {
+    approve($(this).data('id'))
+  });
+
+
 });
 
 function loadCosts(cats) {
@@ -394,7 +428,6 @@ function loadCosts(cats) {
 
 function deleteCost (id) {
   let check = confirm('Cancellare la spesa selezionata?');
-  console.log(check);
   if (check) {
   $.ajax({
     url: pathServer + "aziende/ws/deleteCost/" + id,
@@ -418,5 +451,51 @@ function deleteCost (id) {
       alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
     }) 
   }
+};
+
+
+function approve (id) {
+  $.ajax({
+    url: pathServer + "aziende/ws/approveStatementCompany/" + id,
+    type: "GET",
+    dataType: "json",
+  })
+  .done(function (res) {
+    if (res.response == "OK") {
+      $('#deny').parent().hide();
+      $('#approve').parent().hide();
+      $('#status').parent().show();
+      $('#status').text(res.data.status.name);
+      $('#status').removeClass().addClass('badge btn-success');
+    } else {
+      alert(res.msg);
+    }
+  })
+    .fail(function (richiesta, stato, errori) {
+      alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+    }) 
+};
+
+function deny (id) {
+  $.ajax({
+    url: pathServer + "aziende/ws/denyStatementCompany/" + id,
+    type: "GET",
+    dataType: "json",
+  })
+  .done(function (res) {
+    if (res.response == "OK") {
+      $('#deny').parent().hide();
+      $('#approve').parent().hide();
+      $('#status').parent().show();
+      $('#status').text(res.data.status.name);
+      $('#status').removeClass().addClass('badge btn-danger');
+    } else {
+      alert(res.msg);
+    }
+  })
+    .fail(function (richiesta, stato, errori) {
+      alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+    }) 
+
 };
 

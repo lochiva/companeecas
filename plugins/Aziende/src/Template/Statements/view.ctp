@@ -39,8 +39,9 @@ echo $this->Html->script('Aziende.statement_form.js');
                         <div class="col-md-2"><b>Ente: </b><?= $statement->agreement->aziende->denominazione ?></div>
                         <div class="col-md-2"><b>CIG:</b> <?= $statement->agreement->cig ?></div>
                         <div class="col-md-2 panel panel-default"><?= $statement->agreement->procedure->name ?></div>
-                        <div class="col-md-1"><button type="button" class="btn btn-danger" disabled>Rifiuta</button></div>
-                        <div class="col-md-1"><button type="button" class="btn btn-success" disabled>Approva</button></div>
+                        <div class="col-md-1"><button id="deny" type="button" class="btn btn-danger">Rifiuta</button></div>
+                        <div class="col-md-1"><button id="approve" type="button" class="btn btn-success">Approva</button></div>
+                        <div class="col-md-1"><span id="status" class="badge"></span></div>
                     </div>
 
                     <?php
@@ -107,45 +108,48 @@ echo $this->Html->script('Aziende.statement_form.js');
                                     <label class="control-label ">Quota parte</label>
                                     <input type="number" step="0.01" min="0.01" class="form-control" name="share" required>
                                 </div>
-
-                                <div class="form-group col-sm-2">
-                                    <label class="control-label ">File</label>
-                                    <input type="file" class="form-control" name="file">
-                                </div>
-
-                                <div class="form-group col-sm-2">
-                                <?php if (!$ati) :?>
-                                    <button id="save-cat" class="btn btn-success">Aggiungi</button>
-                                <?php else: ?>
-                                    <button id="save-cat" class="btn btn-success" disabled>Aggiungi</button>
-                                <?php endif?>
-                                    
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-2">
-                                    <label class="control-label required">Fornitore</label>
-                                    <input type="text" class="form-control" name="supplier" required>
-                                </div>
                                 <div class="form-group col-sm-2">
                                     <label class="control-label required">Data</label>
                                     <input type="date" class="form-control" name="date" required>
                                 </div>
-                                <div class="form-group col-sm-2">
-                                    <label class="control-label required">Descrizione</label>
-                                    <input type="text" class="form-control" name="description" required>
-                                </div>
+
                                 <div class="form-group col-sm-2">
                                     <label class="control-label required">Num doc</label>
                                     <input type="text" class="form-control" name="number" required>
                                 </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-4">
+                                    <label class="control-label required">Descrizione</label>
+                                    <input type="text" class="form-control" name="description" required>
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <label class="control-label required">Fornitore</label>
+                                    <input type="text" class="form-control" name="supplier" required>
+                                </div>
+
                                 <div class="form-group col-sm-4">
                                     <label class="control-label">Note</label>
                                     <input type="text" class="form-control" name="notes" maxlength="255">
                                 </div>
-
                             </div>
-                        </form>
+                            <div class="row">
+                                <div class="form-group col-sm-3">
+                                    <label class="control-label ">File</label>
+                                    <input type="file" class="form-control" name="file">
+                                </div>
+                            </div>
+                        
+                        <div class="form-group">
+                        <?php if (!$ati) :?>
+                            <button id="save-cat" class="btn btn-success">Aggiungi</button>
+                        <?php else: ?>
+                            <button id="save-cat" class="btn btn-success" disabled>Aggiungi</button>
+                        <?php endif?>
+                        </div>
+                    </form>
                     </div>
 
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"></div>
@@ -159,3 +163,6 @@ echo $this->Html->script('Aziende.statement_form.js');
 
     </div>
 </section>
+
+
+
