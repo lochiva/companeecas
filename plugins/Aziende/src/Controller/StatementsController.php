@@ -76,6 +76,11 @@ class StatementsController extends AppController
             $statement = $this->Statements->get($id, [
                 'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany']
             ]);
+
+            if ($statement->deleted) {
+                $this->Flash->error('Il rendiconto è stato eliminato.');
+                $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+            }
     
             $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($this->user['id']);
     
@@ -116,10 +121,10 @@ class StatementsController extends AppController
                 $this->set('_serialize', ['statement']);
             }else{
                 $this->Flash->error('Accesso negato. Non sei autorizzato.');
-                $this->redirect('/');
+                $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
             }
         } else {
-            $this->redirect('/');
+            $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
         }
 
     }
@@ -252,10 +257,11 @@ class StatementsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $statement = $this->Statements->get($id);
-        if ($this->Statements->delete($statement)) {
-            $this->Flash->success(__('The statement has been deleted.'));
+        $statement->deleted = 1;
+        if ($this->Statements->save($statement)) {
+            $this->Flash->success(__('Il rendiconto è stato eliminato'));
         } else {
-            $this->Flash->error(__('The statement could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Non è stato possibile eliminare il rendiconto.'));
         }
 
         return $this->redirect(['action' => 'index']);

@@ -38,6 +38,7 @@ class Statement extends Entity
         'period_end_date' => true,
         'agreement' => true,
         'period' => true,
+        'deleted' => true,
         'companies' => true
     ];
 }

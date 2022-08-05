@@ -50,12 +50,26 @@ echo $this->Html->script('Aziende.statement_form.js');
                     ?>
 
                     <div class="button-group" style="text-align: end;">
-                        <button class="btn btn-danger" type="button" style="float: left;" disabled>Elimina</button>
                         <a class="btn btn-default" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']) ?>" role="button">Annulla</a>
                         <button class="btn btn-primary" type="submit" id="save-statment">Salva</button>
                     </div>
 
                     <?= $this->Form->end(); ?>
+
+                    <?= $this->Form->postButton(
+                        'Elimina', 
+                        [
+                            "plugin" => "Aziende",
+                            "controller" => 'Statements',
+                            "action" => "delete",
+                            $statement->id
+                        ],
+                        [
+                            'confirm' => 'Eliminare il rendiconto?',
+                            'class' => 'btn btn-danger',
+                            'style' => "float: left; margin-top:-34px;"
+                        ]
+                    );?>
 
                 </div>
             </div>

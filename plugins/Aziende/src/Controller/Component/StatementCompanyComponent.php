@@ -64,6 +64,7 @@ class StatementCompanyComponent extends Component
 
         $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements']];
         $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Statements.year', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path'];
+        $opt['conditions']['Statements.deleted'] = false;
 
         $toRet['res'] = $table->queryForTableSorter($columns,$opt,$pass);
         $toRet['tot'] = $table->queryForTableSorter($columns,$opt,$pass,true);
