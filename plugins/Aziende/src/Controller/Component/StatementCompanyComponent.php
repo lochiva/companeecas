@@ -30,15 +30,26 @@ class StatementCompanyComponent extends Component
             $agreements = TableRegistry::get('Aziende.Agreements')->find('all')->select(['id'])->where(['azienda_id' => $azienda['id']])->toArray();
 
             $col = new Collection($agreements);
-            $agreements = $col->extract('id');
-            unset($col);
+            $agreements = $col->extract('id')->toList();
 
-            $agreements_companies = TableRegistry::get('Aziende.AgreementsCompanies')->find('all')->select(['id'])->where(['agreement_id IN' => $agreements->toList()])->toArray();
+            if(count($agreements)) {
+                unset($col);
+                
+                $agreements_companies = TableRegistry::get('Aziende.AgreementsCompanies')->find('all')->select(['id'])->where(['agreement_id IN' => $agreements])->toArray();
+                
+                $col = new Collection($agreements_companies);
+                
+                $agreements_companies = $col->extract('id');
+                
+                $opt['conditions'] = ['StatementCompany.company_id IN' => $agreements_companies->toList()];
 
-            $col = new Collection($agreements_companies);
-            $agreements_companies = $col->extract('id');
+            } else {
+                $toRet['res'] = [];
+                $toRet['tot'] = 0;
+        
+                return $toRet;
+            }
 
-            $opt['conditions'] = ['StatementCompany.company_id IN' => $agreements_companies->toList()];
         }
  
         $table = TableRegistry::get('Aziende.StatementCompany');
