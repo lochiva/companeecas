@@ -3666,7 +3666,7 @@ class WsController extends AppController
                 $button.= '<div class="btn-group">';
 
                 $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) .'" >
-                <i data-toggle="tooltip" title="Scarica" class="fa fa-eye"></i>
+                <i data-toggle="tooltip" title="Visualizza" class="fa fa-eye"></i>
                 </a>';
 
                 if ($value->uploaded_path) {
