@@ -185,7 +185,7 @@ use Cake\Routing\Router;
             'label' => ['text' => 'Upload File fattura', 'class' => 'col-sm-2 control-label required'],
         ]); ?>
 
-    <? endif ?>
+    <?php endif ?>
 
 
     
