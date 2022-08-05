@@ -253,6 +253,7 @@ $(document).ready(function () {
   $('#searchCat').select2({
     language: 'it',
     placeholder: 'Cerca una categoria',
+    width: '100%',
     closeOnSelect: true,
     //dropdownParent: $("#divSearchGuest"),
     ajax: {
@@ -368,11 +369,13 @@ function loadCosts(cats) {
         `</td>` +
         `<td>` +
         cats[cat]["costs"][cost]["notes"] +
-        `</td>` +
-        `<td>` +
-        cats[cat]["costs"][cost]["attachment"] +
-        `</td>
-        <td> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
+        `</td><td>`;
+
+        if (cats[cat]["costs"][cost]["attachment"]) {
+          toAppend +=         '<a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cats[cat]["costs"][cost]["id"] + '">Scarica</a>';
+        }
+
+        toAppend += `</td> <td> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
         <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
         </a>` +
         `</td>

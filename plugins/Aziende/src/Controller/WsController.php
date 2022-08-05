@@ -12,6 +12,7 @@ use Cake\Collection\Collection;
 use Cake\I18n\Date;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
+use RuntimeException;
 
 /**
  * Aziende Controller
@@ -3855,6 +3856,8 @@ class WsController extends AppController
         $table =  TableRegistry::get('Aziende.Costs');
         $cost = $this->request->getData();
 
+        $attachment = $this->request->getUploadedFile('file');
+
         if (isset($id)) {
             $entity = $table->get($id);
         } else {
@@ -3863,13 +3866,45 @@ class WsController extends AppController
 
         $entity = $table->patchEntity($entity, $cost);
 
-        if($table->save($entity)) {
-            $toRet = $this->Costs->getCosts(false, $entity->statement_company);
+        if($table->save($entity)) {        
+            
+            // Controllo se è stato allegato un file
+            if(strlen($attachment->getClientFilename())) {
+                $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.COSTS_UPLOAD_PATH');
+    
+                $filePath = $entity->statement_company . DS . $entity->id;
 
-            $this->_result['response'] = "OK";
-            $this->_result['data'] = $toRet;
-            $this->_result['msg'] = 'Spesa salvata correttamente';
+                $dir = new Folder($uploadPath . $filePath, true, 0755);
+                
+                $fName = uniqid().'_'.$attachment->getClientFilename();
 
+                try {
+                    $attachment->moveTo($uploadPath . $filePath . DS . $fName);
+
+                    $entity->attachment = $filePath . DS . $fName;
+    
+                    $table->save($entity);
+
+                    $toRet = $this->Costs->getCosts(false, $entity->statement_company);
+
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = $toRet;
+                    $this->_result['msg'] = 'Spesa salvata correttamente';
+
+                } catch(RuntimeException $e) {
+                    $table->delete($entity);
+                    $this->_result['response'] = "KO";
+                    $this->_result['data'] = "";
+                    $this->_result['msg'] = "Impossibile salvare la spesa, si è verificato un errore durante l'upload del file";
+                }
+
+            } else {
+                $toRet = $this->Costs->getCosts(false, $entity->statement_company);
+
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $toRet;
+                $this->_result['msg'] = 'Spesa salvata correttamente';
+            }
         } else {
             $this->_result['response'] = "KO";
             $this->_result['data'] = "";
@@ -3908,6 +3943,29 @@ class WsController extends AppController
         $file = $attachment['uploaded_path'];
 
         $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH') . $file;
+
+        if(file_exists($uploadPath)){
+            $this->response->file($uploadPath , array(
+                'download'=> true,
+                'name'=> $file
+            ));
+            setcookie('downloadStarted', '1', false, '/');
+            return $this->response;
+        }else{
+            setcookie('downloadStarted', '1', false, '/');
+            $this->_result['msg'] = 'Il file richiesto non esiste.';
+        }
+    }
+
+    public function downloadFileCosts($id)
+    {
+        $table = TableRegistry::get('Aziende.Costs');
+
+        $attachment = $table->get($id);
+        
+        $file = $attachment['attachment'];
+
+        $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.COSTS_UPLOAD_PATH') . $file;
 
         if(file_exists($uploadPath)){
             $this->response->file($uploadPath , array(

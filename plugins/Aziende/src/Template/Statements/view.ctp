@@ -103,7 +103,7 @@ echo $this->Html->script('Aziende.statement_form.js');
 
                                 <div class="form-group col-sm-2">
                                     <label class="control-label ">File</label>
-                                    <input type="file" class="form-control" name="attachment" disabled>
+                                    <input type="file" class="form-control" name="file">
                                 </div>
 
                                 <div class="form-group col-sm-2">

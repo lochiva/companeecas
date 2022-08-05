@@ -9,6 +9,7 @@ use Cake\I18n\Date;
 use Cake\ORM\Query;
 use Cake\Filesystem\Folder;
 use Cake\Filesystem\File;
+use RuntimeException;
 /**
  * Statements Controller
  *
@@ -182,38 +183,61 @@ class StatementsController extends AppController
      */
     public function edit($id = null)
     {
-        $data = $this->request->data;
-        $attachment = $this->request->getUploadedFile('file');
-
-        // Controllo se è stato allegato un file
-        if(strlen($attachment->getClientFilename())) {
-            $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
-
-            $filePath = $data['companies'][0]['id'];
-            $dir = new Folder($uploadPath . $filePath, true, 0755);
-            
-            $fName = uniqid().'_'.$attachment->getClientFilename();
-            $attachment->moveTo($uploadPath . $filePath . DS . $fName);
-            $data['companies'][0]['uploaded_path'] = $filePath . DS . $fName;
-        }
-
-        $statement = $this->Statements->get($id, [
-            'contain' => ['StatementCompany']
-        ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $statement = $this->Statements->patchEntity($statement, $data);
-            if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
-                $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
 
-                return $this->redirect(['action' => 'index']);
+            $data = $this->request->data;
+            $attachment = $this->request->getUploadedFile('file');
+
+            $statement = $this->Statements->get($id, [
+                'contain' => ['StatementCompany']
+            ]);
+
+            // Controllo se è stato allegato un file
+            if(strlen($attachment->getClientFilename())) {
+                $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
+
+                $filePath = $data['companies'][0]['id'];
+
+               $dir = new Folder($uploadPath . $filePath, true, 0755);
+                
+                $fName = uniqid().'_'.$attachment->getClientFilename();
+
+                try {
+                    $attachment->moveTo($uploadPath . $filePath . DS . $fName);
+                    $data['companies'][0]['uploaded_path'] = $filePath . DS . $fName;
+                
+                    $statement = $this->Statements->patchEntity($statement, $data);
+
+                    if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
+                        $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
+        
+                        return $this->redirect(['action' => 'index']);
+                    } else {
+                        $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
+                    }
+
+                } catch (RuntimeException $e) {
+                    $this->Flash->error(__("Impossibile salvare il rendiconto. Si è verificato un errore durante l'upload del file"));
+                    return $this->redirect(['action' => 'view', $id]);
+
+                }
+
             } else {
-                $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
+                $statement = $this->Statements->patchEntity($statement, $data);
+
+                if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
+                    $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
+    
+                    return $this->redirect(['action' => 'index']);
+                } else {
+                    $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
+                    return $this->redirect(['action' => 'view', $id]);
+                }
+
             }
+
+
         }
-        $agreements = $this->Statements->Agreements->find('list', ['limit' => 200]);
-        $periods = $this->Statements->Periods->find('list', ['limit' => 200]);
-        $this->set(compact('statement', 'agreements', 'periods'));
-        $this->set('_serialize', ['statement']);
     }
 
 
