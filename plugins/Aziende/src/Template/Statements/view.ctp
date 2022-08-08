@@ -124,7 +124,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
             <div class="box box-info">
                     <div class="box-header with-border">
                         <i class="fa fa-money"></i>
-                        <h3 class="box-title"><?= __c('Spese') ?></h3>
+                        <h3 class="box-title" id="cost-headers"><?= __c('Spese') ?></h3>
                     </div>
 
                 <div class="box-body">

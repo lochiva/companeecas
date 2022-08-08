@@ -18,6 +18,7 @@ $(document).ready(function () {
       $('#approve').parent().hide();
       $('#status').parent().hide();
       $('#delete-statement').prop('disabled', true);
+      $('#cost-headers').html("Spese (vista aggregata dell'ATI)");
       $.ajax({
         url:
           pathServer +
@@ -64,6 +65,7 @@ $(document).ready(function () {
           alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
         });
     } else {
+      $('#cost-headers').html('Spese');
       $('#save-statment').prop('disabled', false);
       let id = $(this).val();
       $('#add-cost').show();
