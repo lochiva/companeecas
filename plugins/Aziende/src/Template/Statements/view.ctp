@@ -148,12 +148,12 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </div>
 
                                 <div class="form-group col-sm-2">
-                                    <label class="control-label required">Costo</label>
+                                    <label class="control-label required">Costo &euro;</label>
                                     <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
                                 </div>
 
                                 <div class="form-group col-sm-2 required">
-                                    <label class="control-label ">Quota parte</label>
+                                    <label class="control-label ">Quota parte &euro;</label>
                                     <input type="number" step="0.01" min="0.01" class="form-control" name="share" required>
                                 </div>
                                 <div class="form-group col-sm-2">

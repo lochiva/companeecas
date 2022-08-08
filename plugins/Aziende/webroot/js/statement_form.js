@@ -381,7 +381,7 @@ function loadCosts(cats) {console.log(cats);
                   <th>Importo</th>
                   <th>Quota parte</th>
                   <th>Note</th>
-                  <th>Attachment</th>
+                  <th>Allegato</th>
                   <th></th>
                 </tr>
               </thead>
