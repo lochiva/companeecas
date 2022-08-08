@@ -31,6 +31,7 @@ class StatementsController extends AppController
 
         $this->set('title', 'Rendiconti');
         $this->set('form_template', $form_template);
+        $this->set('user', $this->user);
     }
 
     public function beforeFilter(Event $event)

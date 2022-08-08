@@ -46,13 +46,17 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             <?= $this->element('AttachmentManager.button_attachment', ['id' => 'button_attachment', 'buttonLabel' => 'Allegati convenzione']); ?>
                         </div>
                         <?php if ($ati) : ?>
-                            <div class="col-md-1"><button id="deny" type="button" class="btn btn-danger">Rifiuta</button></div>
-                            <div class="col-md-1"><button id="approve" type="button" class="btn btn-success">Approva</button></div>
+                            <div class="<?= $user['role'] == 'ente' ? 'hidden' : 'col-md-2' ?>">
+                                <div style="display: inline-block;"><button id="deny" type="button" class="btn btn-danger">Rifiuta</button></div>
+                                <div style="display: inline-block;"><button id="approve" type="button" class="btn btn-success">Approva</button></div>
+                            </div>
                             <div class="col-md-1"><span id="status" class="badge"></span></div>
                         <?php else : ?>
                             <?php if ($statement->companies[0]->status_id == 1) : ?>
-                                <div class="col-md-1"><button id="deny" data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-danger">Rifiuta</button></div>
-                                <div class="col-md-1"><button id="approve" data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success">Approva</button></div>
+                                <div class="<?= $user['role'] == 'ente' ? 'hidden' : 'col-md-2' ?>">
+                                    <div style="display: inline-block;"><button id="deny" data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-danger">Rifiuta</button></div>
+                                    <div style="display: inline-block;"><button id="approve" data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success">Approva</button></div>
+                                </div>
                                 <div class="col-md-1"><span id="status" class="badge"></span></div>
                             <?php else : ?>
                                 <?php if ($statement->companies[0]->status_id == 2) : ?>
