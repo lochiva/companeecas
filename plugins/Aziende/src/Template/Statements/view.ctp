@@ -7,6 +7,7 @@ $this->assign('title', $title);
 echo $this->Element('Aziende.include');
 echo $this->Html->script('Aziende.statements.js');
 echo $this->Html->script('Aziende.statement_form.js');
+echo $this->Html->script('AttachmentManager.modal_attachment.js');
 ?>
 <script>
     var company = <?= $company ?? 'false' ?>;
@@ -38,8 +39,12 @@ echo $this->Html->script('Aziende.statement_form.js');
                     <div class="row" style="display: flex; justify-content: space-between;">
                         <div class="col-md-2"><b>Ente: </b><?= $statement->agreement->aziende->denominazione ?></div>
                         <div class="col-md-2"><b>CIG:</b> <?= $statement->agreement->cig ?></div>
-                        <div class="col-md-2 panel panel-default"><?= $statement->agreement->procedure->name ?></div>
-
+                        <div class="col-md-2">
+                            <span hidden id='contextForAttachment'>agreements</span>
+                            <span hidden id='idItemForAttachment'><?=$statement->agreement_id?></span>
+                            <span hidden id="attachmentReadOnly">0</span>
+                            <?= $this->element('AttachmentManager.button_attachment', ['id' => 'button_attachment', 'buttonLabel' => 'Allegati convenzione']); ?>
+                        </div>
                         <?php if ($ati) : ?>
                             <div class="col-md-1"><button id="deny" type="button" class="btn btn-danger">Rifiuta</button></div>
                             <div class="col-md-1"><button id="approve" type="button" class="btn btn-success">Approva</button></div>
@@ -203,5 +208,4 @@ echo $this->Html->script('Aziende.statement_form.js');
     </div>
 </section>
 
-
-
+<?= $this->element('AttachmentManager.modal_attachment'); ?>
