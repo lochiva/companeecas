@@ -210,6 +210,7 @@ class StatementsController extends AppController
                 try {
                     $attachment->moveTo($uploadPath . $filePath . DS . $fName);
                     $data['companies'][0]['uploaded_path'] = $filePath . DS . $fName;
+                    $data['companies'][0]['filename'] = $attachment->getClientFilename();
                 
                     $statement = $this->Statements->patchEntity($statement, $data);
 

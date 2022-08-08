@@ -34,6 +34,7 @@ class Cost extends Entity
         'amount' => true,
         'share' => true,
         'attachment' => true,
+        'filename' => true,
         'created' => true,
         'modified' => true,
         'costs_category' => true,

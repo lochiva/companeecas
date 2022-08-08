@@ -3882,6 +3882,7 @@ class WsController extends AppController
                     $attachment->moveTo($uploadPath . $filePath . DS . $fName);
 
                     $entity->attachment = $filePath . DS . $fName;
+                    $entity->filename = $attachment->getClientFilename();
     
                     $table->save($entity);
 
@@ -3947,7 +3948,7 @@ class WsController extends AppController
         if(file_exists($uploadPath)){
             $this->response->file($uploadPath , array(
                 'download'=> true,
-                'name'=> $file
+                'name'=> $attachment['filename']
             ));
             setcookie('downloadStarted', '1', false, '/');
             return $this->response;
@@ -3970,7 +3971,7 @@ class WsController extends AppController
         if(file_exists($uploadPath)){
             $this->response->file($uploadPath , array(
                 'download'=> true,
-                'name'=> $file
+                'name'=> $attachment['filename']
             ));
             setcookie('downloadStarted', '1', false, '/');
             return $this->response;

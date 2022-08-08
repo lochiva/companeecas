@@ -44,6 +44,7 @@ class StatementCompany extends Entity
         'status_id' => true,
         'approved_date' => true,
         'uploaded_path' => true,
+        'filename' => true,
         'created' => true,
         'modified' => true,
         'statement' => true,
