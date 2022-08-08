@@ -387,3 +387,7 @@ a.contact-login:hover{
 #table-sedi .table-label {
 	display: block;
 }
+
+.f-right {
+	float: right;
+}

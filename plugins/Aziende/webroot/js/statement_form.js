@@ -36,22 +36,16 @@ $(document).ready(function () {
                 `
               <div class="panel panel-default">
                 <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#` +
+                  <h4 class="panel-title">` +
                 cats[cat]["name"] +
-                `" aria-expanded="true">
-                      ` +
-                cats[cat]["name"] +
-                ` ` +
-                cats[cat]["tot"] +
-                `
-                      </a>
+                      `
+                    <span class="f-right">&euro; ` + cats[cat]["tot"] + `</span>
                   </h4>
                   </div>
                   
           <div id="` +
                 cats[cat]["name"] +
-                `" class="panel-collapse collapse in" role="tabpanel">
+                `" class="panel-collapse collapse" role="tabpanel">
           <div class="panel-body">
 
 
@@ -355,11 +349,11 @@ function loadCosts(cats) {
       cats[cat]["id"] +
       `" aria-expanded="true">
                 ` +
-      '	&euro;' + ' ' + cats[cat]["tot"] + ' ' + cats[cat]["name"] +
-      `
-            </a>
-        </h4>
-        </div>
+      cats[cat]["name"] +
+      `</a>
+        <span class = "f-right">&euro;` + ` ` + cats[cat]["tot"] + `</span>` +
+        `</h4>
+          </div>
         
         <div id="` +
       cats[cat]["id"] +
