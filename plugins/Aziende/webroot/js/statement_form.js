@@ -17,6 +17,7 @@ $(document).ready(function () {
       $('#deny').parent().hide();
       $('#approve').parent().hide();
       $('#status').parent().hide();
+      $('#delete-statement').prop('disabled', true);
       $.ajax({
         url:
           pathServer +
@@ -108,7 +109,9 @@ $(document).ready(function () {
               $('#approve').data('id', res.data.id);
               $('#approve').parent().show();
               $('#status').parent().hide();
+              $('#delete-statement').prop('disabled', false);
             } else {
+              $('#delete-statement').prop('disabled', true);
               $('#deny').parent().hide();
               $('#approve').parent().hide();
               $('#status').parent().show();
@@ -467,6 +470,7 @@ function approve (id) {
       $('#status').parent().show();
       $('#status').text(res.data.status.name);
       $('#status').removeClass().addClass('badge btn-success');
+      $('#delete-statement').prop('disabled', true);
     } else {
       alert(res.msg);
     }
@@ -489,6 +493,7 @@ function deny (id) {
       $('#status').parent().show();
       $('#status').text(res.data.status.name);
       $('#status').removeClass().addClass('badge btn-danger');
+      $('#delete-statement').prop('disabled', true);
     } else {
       alert(res.msg);
     }

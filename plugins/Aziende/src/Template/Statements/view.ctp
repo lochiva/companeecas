@@ -74,20 +74,42 @@ echo $this->Html->script('Aziende.statement_form.js');
 
                     <?= $this->Form->end(); ?>
 
-                    <?= $this->Form->postButton(
-                        'Elimina', 
-                        [
-                            "plugin" => "Aziende",
-                            "controller" => 'Statements',
-                            "action" => "delete",
-                            $statement->id
-                        ],
-                        [
-                            'confirm' => 'Eliminare il rendiconto?',
-                            'class' => 'btn btn-danger',
-                            'style' => "float: left; margin-top:-34px;"
-                        ]
-                    );?>
+                    <?php if ($ati) {
+
+                        echo $this->Form->postButton(
+                            'Elimina', 
+                            [
+                                "plugin" => "Aziende",
+                                "controller" => 'Statements',
+                                "action" => "delete",
+                                $statement->id
+                            ],
+                            [
+                                'confirm' => 'Eliminare il rendiconto?',
+                                'class' => 'btn btn-danger',
+                                'style' => "float: left; margin-top:-34px;",
+                                'id' => 'delete-statement'
+                            ]
+                        );
+                    } else {
+                        echo $this->Form->postButton(
+                            'Elimina', 
+                            [
+                                "plugin" => "Aziende",
+                                "controller" => 'Statements',
+                                "action" => "delete",
+                                $statement->id
+                            ],
+                            [
+                                'confirm' => 'Eliminare il rendiconto?',
+                                'class' => 'btn btn-danger',
+                                'style' => "float: left; margin-top:-34px;",
+                                'id' => 'delete-statement',
+                                'disabled' => $statement->companies[0]->status_id == 1 ? false : true
+                            ]
+                        );
+
+                    } ?>
 
                 </div>
             </div>
