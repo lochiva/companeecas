@@ -74,7 +74,7 @@ class StatementsController extends AppController
         if (isset($id)) {
 
             $statement = $this->Statements->get($id, [
-                'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany']
+                'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany' => ['Status']]
             ]);
 
             if ($statement->deleted) {

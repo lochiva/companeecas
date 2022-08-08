@@ -39,9 +39,26 @@ echo $this->Html->script('Aziende.statement_form.js');
                         <div class="col-md-2"><b>Ente: </b><?= $statement->agreement->aziende->denominazione ?></div>
                         <div class="col-md-2"><b>CIG:</b> <?= $statement->agreement->cig ?></div>
                         <div class="col-md-2 panel panel-default"><?= $statement->agreement->procedure->name ?></div>
-                        <div class="col-md-1"><button id="deny" type="button" class="btn btn-danger">Rifiuta</button></div>
-                        <div class="col-md-1"><button id="approve" type="button" class="btn btn-success">Approva</button></div>
-                        <div class="col-md-1"><span id="status" class="badge"></span></div>
+
+                        <?php if ($ati) : ?>
+                            <div class="col-md-1"><button id="deny" type="button" class="btn btn-danger">Rifiuta</button></div>
+                            <div class="col-md-1"><button id="approve" type="button" class="btn btn-success">Approva</button></div>
+                            <div class="col-md-1"><span id="status" class="badge"></span></div>
+                        <?php else : ?>
+                            <?php if ($statement->companies[0]->status_id == 1) : ?>
+                                <div class="col-md-1"><button id="deny" data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-danger">Rifiuta</button></div>
+                                <div class="col-md-1"><button id="approve" data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success">Approva</button></div>
+                                <div class="col-md-1"><span id="status" class="badge"></span></div>
+                            <?php else : ?>
+                                <?php if ($statement->companies[0]->status_id == 2) : ?>
+                                    <div class="col-md-1"><span id="status" class="badge btn-success"><?=$statement->companies[0]->status->name;?></span></div>
+                                <?php elseif ($statement->companies[0]->status_id == 3) : ?>
+                                    <div class="col-md-1"><span id="status" class="badge btn-danger"><?=$statement->companies[0]->status->name;?></span></div>
+                                <?php else : ?>
+                                    <div class="col-md-1"><span id="status" class="badge btn-default"><?=$statement->companies[0]->status->name;?></span></div>
+                                <?php endif ?>
+                            <?php endif ?>
+                        <?php endif ?>
                     </div>
 
                     <?php

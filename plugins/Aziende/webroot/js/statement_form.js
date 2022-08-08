@@ -14,6 +14,9 @@ $(document).ready(function () {
       $('#add-cost').hide();
       $('#add-cost input[type=hidden][name=statement_company]').val('');
       $('#save-cat').prop('disabled', true);
+      $('#deny').parent().hide();
+      $('#approve').parent().hide();
+      $('#status').parent().hide();
       $.ajax({
         url:
           pathServer +
@@ -55,9 +58,6 @@ $(document).ready(function () {
       </div>`;
               $("#accordion").append(toAppend);
             }
-            $('#deny').parent().hide();
-            $('#approve').parent().hide();
-            $('#status').parent().hide();
           } else {
             $("#accordion").append("<div>Nessuna spesa presente</div>");
           }
