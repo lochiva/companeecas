@@ -46,13 +46,12 @@ class CostsComponent extends Component
             foreach($ret as $cat) {
                 $tot = 0;
                 foreach($cat['costs'] as $cost) {
-                    $tot += $cost['amount'];
-                    $grandTotal += $tot;
+                    $tot += $cost['share'];
                     $cost['amount'] = number_format($cost['amount'], 2, '.', '');
                     $cost['share'] = number_format($cost['share'], 2, '.', '');
                     $cost['date'] = $cost['date']->format('d/m/Y');;
                 }
-
+                $grandTotal += $tot;
                 $cat['tot'] = number_format($tot, 2, '.', '');
             }
         }
