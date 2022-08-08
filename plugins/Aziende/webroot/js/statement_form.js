@@ -32,25 +32,28 @@ $(document).ready(function () {
           if (res.response == "OK") {
             let cats = res.data;
             for (let cat in cats) {
-              let toAppend =
-                `
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">` +
+              let toAppend = '<div class="panel panel-default">';
+
+              if (cats[cat]['id'] == 'grandTotal') {
+                toAppend += 
+                `<div class="panel-heading" role="tab" style="background-color: white;">
+                <h4>`;
+              } else {
+                toAppend +=
+                `<div class="panel-heading" role="tab">
+                <h4 class="panel-title">`;
+              }
+              toAppend +=
                 cats[cat]["name"] +
-                      `
-                    <span class="f-right">&euro; ` + cats[cat]["tot"] + `</span>
+                `<span class="f-right">&euro; ` + cats[cat]["tot"] + `</span>
                   </h4>
-                  </div>
-                  
-          <div id="` +
-                cats[cat]["name"] +
-                `" class="panel-collapse collapse" role="tabpanel">
-          <div class="panel-body">
-
-
-          </div>
-      </div>`;
+                    </div>
+                    <div id="` +
+                      cats[cat]["name"] +
+                      `" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                    </div>
+                </div>`;
               $("#accordion").append(toAppend);
             }
           } else {
@@ -337,87 +340,97 @@ $(document).ready(function () {
 
 });
 
-function loadCosts(cats) {
+function loadCosts(cats) {console.log(cats);
   $("#accordion").html("");
   for (let cat in cats) {
-    let toAppend =
+    let toAppend = '';
+    if (cats[cat]['id'] == 'grandTotal') {
+      toAppend =
       `
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab">
-        <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#` +
-      cats[cat]["id"] +
-      `" aria-expanded="true">
-                ` +
-      cats[cat]["name"] +
-      `</a>
-        <span class = "f-right">&euro;` + ` ` + cats[cat]["tot"] + `</span>` +
-        `</h4>
-          </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" style="background-color: white;">
+            <h4>` +
+              cats[cat]["name"] +
+              `<span class = "f-right">&euro;` + ` ` + cats[cat]["tot"] + `</span>` +
+          `</h4>
+        </div>`;
+    } else {
+      toAppend =
+      `
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#` +
+                cats[cat]["id"] + `" aria-expanded="true">` + cats[cat]["name"] +
+            `</a>
+            <span class = "f-right">&euro;` + ` ` + cats[cat]["tot"] + `</span>` +
+          `</h4>
+        </div>
         
-        <div id="` +
-      cats[cat]["id"] +
-      `" class="panel-collapse collapse" role="tabpanel">
-        <div class="panel-body">
+        <div id="` + cats[cat]["id"] + `" class="panel-collapse collapse" role="tabpanel">
+          <div class="panel-body">
             <table class="table">
-                <thead>
-                  <tr>
-                    <th>Fornitore</th>
-                    <th>Num doc</th>
-                    <th>Data</th>
-                    <th>Descrizione</th>
-                    <th>Importo</th>
-                    <th>Quota parte</th>
-                    <th>Note</th>
-                    <th>Attachment</th>
-                    <th></th>
-                  </tr>
-                </thead>
+              <thead>
+                <tr>
+                  <th>Fornitore</th>
+                  <th>Num doc</th>
+                  <th>Data</th>
+                  <th>Descrizione</th>
+                  <th>Importo</th>
+                  <th>Quota parte</th>
+                  <th>Note</th>
+                  <th>Attachment</th>
+                  <th></th>
+                </tr>
+              </thead>
 
-                <tbody>`;
+              <tbody>`;
 
-    for (let cost in cats[cat]["costs"]) {
-      toAppend +=
-        `
-        <tr>` +
-        `<td>` +
-        cats[cat]["costs"][cost]["supplier"] +
-        `</td>` +
-        `<td>` +
-        cats[cat]["costs"][cost]["number"] +
-        `</td>` +
-        `<td>` +
-        cats[cat]["costs"][cost]["date"] +
-        `</td>` +
-        `<td>` +
-        cats[cat]["costs"][cost]["description"] +
-        `</td>` +
-        `<td>` +
-        '&euro;' + ' ' + cats[cat]["costs"][cost]["amount"] +
-        `</td>
-          <td>` +
-          '&euro;' + ' ' + cats[cat]["costs"][cost]["share"] +
-        `</td>` +
-        `<td>` +
-        cats[cat]["costs"][cost]["notes"] +
-        `</td><td>`;
+      for (let cost in cats[cat]["costs"]) {
+        toAppend +=
+          `
+          <tr>` +
+          `<td>` +
+          cats[cat]["costs"][cost]["supplier"] +
+          `</td>` +
+          `<td>` +
+          cats[cat]["costs"][cost]["number"] +
+          `</td>` +
+          `<td>` +
+          cats[cat]["costs"][cost]["date"] +
+          `</td>` +
+          `<td>` +
+          cats[cat]["costs"][cost]["description"] +
+          `</td>` +
+          `<td>` +
+          '&euro;' + ' ' + cats[cat]["costs"][cost]["amount"] +
+          `</td>
+            <td>` +
+            '&euro;' + ' ' + cats[cat]["costs"][cost]["share"] +
+          `</td>` +
+          `<td>` +
+          cats[cat]["costs"][cost]["notes"] +
+          `</td><td>`;
 
-        if (cats[cat]["costs"][cost]["attachment"]) {
-          toAppend +=         '<a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cats[cat]["costs"][cost]["id"] + '">Scarica</a>';
-        }
+          if (cats[cat]["costs"][cost]["attachment"]) {
+            toAppend +=         '<a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cats[cat]["costs"][cost]["id"] + '">Scarica</a>';
+          }
 
-        toAppend += `</td> <td> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
-        <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
-        </a>` +
-        `</td>
-        </tr>`;
-    }
+          toAppend += `</td> <td> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
+          <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
+          </a>` +
+          `</td>
+          </tr>`;
+      }
 
     toAppend += `</tbody>
             </table>
 
         </div>
     </div>`;
+
+    }
+
     $("#accordion").append(toAppend);
   }
 

@@ -41,7 +41,7 @@ class CostsCategoriesTable extends Table
         $this->hasMany('Costs', [
             'foreignKey' => 'category_id',
             'className' => 'Aziende.Costs',
-            'propertyName' => 'cost'
+            'propertyName' => 'costs'
         ]);
     }
 
