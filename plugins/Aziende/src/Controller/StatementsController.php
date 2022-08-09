@@ -107,7 +107,7 @@ class StatementsController extends AppController
                 $minors = $presenzeQuery
                     ->select(['Presenze.guest_id'])
                     ->distinct(['Presenze.guest_id'])
-                    ->where(['Guests.birthdate >=' => new Date('-30 months')])
+                    ->where(['Guests.birthdate >=' => $statement->period_end_date->modify('-30 months')])
                     ->count();
 
                 $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
