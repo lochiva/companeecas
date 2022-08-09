@@ -186,7 +186,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             <div class="row">
                                 <div class="form-group col-sm-3">
                                     <label class="control-label ">File</label>
-                                    <input type="file" class="form-control" name="file">
+                                    <input type="file" class="form-control" name="file" required>
                                 </div>
                             </div>
                         
@@ -196,6 +196,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <?php else: ?>
                             <button id="save-cat" class="btn btn-success" disabled>Aggiungi</button>
                         <?php endif?>
+                        <button type="reset" class="btn btn-warning">Svuota</button>
                         </div>
                     </form>
                     </div>

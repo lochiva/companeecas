@@ -228,6 +228,11 @@ $(document).ready(function () {
     }
   }); */
 
+  $('#add-cost button[type=reset]').click(function() {
+    $('form#add-cost #searchCat').val('');
+    $('form#add-cost #searchCat').trigger('change');
+  });
+
   $('#save-cat').click(function (e) {
     e.preventDefault();
 
@@ -253,9 +258,6 @@ $(document).ready(function () {
         dataType: "json",
       })
         .done(function (res) {
-          $('#add-cost')[0].reset();
-          $('form#add-cost #searchCat').val('');
-          $('form#add-cost #searchCat').trigger('change');
           if (res.response == "OK") {
             let cats = res.data;
             if (cats) {
