@@ -99,7 +99,7 @@ class StatementsController extends AppController
                     ->contain(['Guests'])
                     ->where(['Presenze.sede_id IN' => $sedi, 'Presenze.presente' => true])
                     ->where(function (QueryExpression $exp, Query $q) use ($statement) {
-                        return $exp->between('Presenze.date', $statement->period->start_date, $statement->period->end_date);
+                        return $exp->between('Presenze.date', $statement->period_start_date, $statement->period_end_date);
                     });
 
                 $presenze = $presenzeQuery->count();
