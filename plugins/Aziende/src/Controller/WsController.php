@@ -3764,7 +3764,7 @@ class WsController extends AppController
         $data = $this->request->data;
 
         // Controlla se esiste già un rendiconto per lo stesso CIG e periodo
-        $check = $table->find('all')->where(['agreement_id' => $data['agreement_id'], 'period_id' => $data['period_id']])->toArray();
+        $check = $table->find('all')->where(['agreement_id' => $data['agreement_id'], 'period_id' => $data['period_id'], 'deleted'=>0 ])->toArray();
 
         if ($check) {
             $this->_result['data'] = "";
