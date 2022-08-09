@@ -58,6 +58,11 @@ class AgreementsToSediTable extends AppTable
             'className' => 'Aziende.AgreementsCompanies',
             'propertyName' => 'agreement_company_data'
         ]);
+        $this->belongsTo('Guests', [
+            'foreignKey' => 'guest_id',
+            'className' => 'Aziende.Guests',
+            'propertyName' => 'guests'
+        ]);
     }
 
     /**
