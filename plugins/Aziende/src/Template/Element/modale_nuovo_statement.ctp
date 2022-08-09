@@ -202,7 +202,5 @@
         $('input[required], select[required]').each(function() {
                 $(this).parent().parent().removeClass('has-error');
             });
-        $('#save').prop('disabled', true);
-
     });
 </script>
