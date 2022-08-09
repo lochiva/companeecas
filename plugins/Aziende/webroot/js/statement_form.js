@@ -259,6 +259,8 @@ $(document).ready(function () {
       })
         .done(function (res) {
           if (res.response == "OK") {
+            $('#add-cost input[name=number]').val('');
+            $('#add-cost input[name=file]').val('');
             let cats = res.data;
             if (cats) {
               loadCosts(cats);
