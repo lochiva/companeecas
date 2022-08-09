@@ -3687,7 +3687,7 @@ class WsController extends AppController
                     $value->statement->period_label,
                     $value->statement->year,
                     $value->status->name,
-                    isset($value->approved_date) ? $value->approved_date->format('d/m/Y') : '',
+                    isset($value->approved_date) && $value->status->id == 2 ? $value->approved_date->format('d/m/Y') : '',
                     $button
 
                 );
