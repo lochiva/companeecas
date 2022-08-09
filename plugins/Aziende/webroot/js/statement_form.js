@@ -338,11 +338,10 @@ $(document).ready(function () {
   $('#approve').click(function() {
     approve($(this).data('id'))
   });
-
-
+  attachmentsNumberForBadge('agreements', $('#idItemForAttachment').html(), 'button_attachment');
 });
 
-function loadCosts(cats) {console.log(cats);
+function loadCosts(cats) {
   $("#accordion").html("");
   for (let cat in cats) {
     let toAppend = '';

@@ -176,9 +176,5 @@ $(function(){
 
 });
 
-$(document).ready(function(){
-  attachmentsNumberForBadge('agreements', $('#idItemForAttachment').html(), 'button_attachment');
-});
-
 
 
