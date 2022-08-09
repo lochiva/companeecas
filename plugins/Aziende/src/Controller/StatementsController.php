@@ -5,10 +5,13 @@ use Aziende\Controller\AppController;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
+use Cake\I18n\Time;
 use Cake\I18n\Date;
 use Cake\ORM\Query;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Filesystem\Folder;
 use Cake\Filesystem\File;
+use Cake\Collection\Collection;
 use RuntimeException;
 /**
  * Statements Controller
@@ -86,7 +89,27 @@ class StatementsController extends AppController
             $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($this->user['id']);
     
             if($this->user['role'] == 'admin' || $this->user['role'] == 'ente' && $azienda['id'] == $statement->agreement->azienda_id){
-    
+
+                $sedi = TableRegistry::get('Aziende.AgreementsToSedi')->find('all')
+                    ->where(['agreement_id' => $statement->agreement->id])
+                    ->extract('sede_id')
+                    ->toList();
+
+                $presenzeQuery = TableRegistry::get('Aziende.Presenze')->find('all')
+                    ->contain(['Guests'])
+                    ->where(['Presenze.sede_id IN' => $sedi, 'Presenze.presente' => true])
+                    ->where(function (QueryExpression $exp, Query $q) use ($statement) {
+                        return $exp->between('Presenze.date', $statement->period->start_date, $statement->period->end_date);
+                    });
+
+                $presenze = $presenzeQuery->count();
+
+                $minors = $presenzeQuery
+                    ->select(['Presenze.guest_id'])
+                    ->distinct(['Presenze.guest_id'])
+                    ->where(['Guests.birthdate >=' => new Date('-30 months')])
+                    ->count();
+
                 $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
                     'keyField' => 'id',
                     'valueField' => 'company.name'
@@ -118,7 +141,7 @@ class StatementsController extends AppController
                 $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
                 $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
 
-                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati'));
+                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati', 'presenze', 'minors'));
                 $this->set('_serialize', ['statement']);
             }else{
                 $this->Flash->error('Accesso negato. Non sei autorizzato.');

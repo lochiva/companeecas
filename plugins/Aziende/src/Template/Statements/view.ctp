@@ -125,6 +125,36 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
         </div>
 
         <div class="col-xs-12">
+            <div class="box box-brown">
+
+                <div class="box-header with-border">
+                    <i class="fa fa-calculator"></i>
+                    <h3 class="box-title"><?= __c('Totali') ?></h3>
+                </div>
+
+                <div class="box-body">
+                    <div class="container-fluid">
+                        <p>
+                            <span class="label-like">Tot presenti</span> <?=$presenze?> <span class="label-like">per canone</span> &euro;<?=$statement->agreement->guest_daily_price?>
+                        </p>
+                        <p>
+                            <span class="label-like">Minori di 30 mesi:</span>
+                            <?php if ($minors > 0) : ?>
+                                SI (<?=$minors?>)
+                            <?php else : ?>
+                                NO
+                            <?php endif ?>
+                        </p>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="col-xs-12">
             <div class="box box-info">
                     <div class="box-header with-border">
                         <i class="fa fa-money"></i>
