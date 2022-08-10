@@ -3,12 +3,6 @@ use Cake\Routing\Router;
 
     echo $this->Form->hidden('id');
 
-    echo $this->Form->control('year', [
-        'type' => 'number',
-        'required' => true,
-        'label' => ['text' => 'Anno', 'class' => 'col-sm-2 control-label required'],
-    ]);
-
     echo $this->Form->control('period_id', [
         'type' => 'select',
         'multiple' => false,

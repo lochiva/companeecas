@@ -8,7 +8,6 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property int $agreement_id
- * @property int $year
  * @property int $period_id
  * @property string $period_label
  * @property \Cake\I18n\Date $period_start_date
@@ -31,7 +30,6 @@ class Statement extends Entity
      */
     protected $_accessible = [
         'agreement_id' => true,
-        'year' => true,
         'period_id' => true,
         'period_label' => true,
         'period_start_date' => true,

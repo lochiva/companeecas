@@ -28,8 +28,8 @@ $(function(){
 			},
         },
         headers: { 
-			5: { filter: false }, 
-			6: {  sorter:false}
+			4: { filter: false }, 
+			5: {  sorter:false}
 		}
     }).tablesorterPager({
 

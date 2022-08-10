@@ -53,7 +53,6 @@ echo $this->Html->script( 'Aziende.statements.js' );
                                     <th width="20%">Ente</th>
                                     <th width="10%">CIG</th>
                                     <th width="10%">Periodo</th>
-                                    <th width="10%">Anno</th>
                                     <th width="10%">Stato</th>
                                     <th width="20%">Data approvazione</th>
                                     <th width="7%" class="filters-reset"></th>

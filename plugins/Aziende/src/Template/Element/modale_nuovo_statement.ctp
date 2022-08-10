@@ -21,14 +21,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="required control-label col-sm-2">Anno</label>
-                        <div class="col-sm-10">
-                            <input type="number" name="year" required class="form-control">
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
                         <label class="required control-label col-sm-2">Periodo</label>
                         <div class="col-sm-10">
                             <select name="period_id" class="form-control" required>

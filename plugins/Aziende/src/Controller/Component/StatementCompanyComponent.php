@@ -57,13 +57,12 @@ class StatementCompanyComponent extends Component
             0 => ['val' => 'AgreementsCompanies.name', 'type' => 'text'],
             1 => ['val' => 'Agreements.cig', 'type' => 'text'],
             2 => ['val' => 'Statements.period_label', 'type' => 'text'],
-            3 => ['val' => 'Statements.year', 'type' => 'text'],
-            4 => ['val' => 'Status.name' , 'type' => 'text'],
-            5 => ['val' => 'StatementCompany.approved_date' , 'type' => 'date']
+            3 => ['val' => 'Status.name' , 'type' => 'text'],
+            4 => ['val' => 'StatementCompany.approved_date' , 'type' => 'date']
         ];
 
         $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements']];
-        $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Statements.year', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path'];
+        $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path'];
         $opt['conditions']['Statements.deleted'] = false;
 
         $toRet['res'] = $table->queryForTableSorter($columns,$opt,$pass);
