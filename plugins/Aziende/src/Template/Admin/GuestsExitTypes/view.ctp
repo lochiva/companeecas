@@ -15,15 +15,15 @@
             <td><?= h($guestsExitType->name) ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Richiesta conferma') ?></th>
+            <th scope="row"><?= __('Necessaria conferma') ?></th>
             <td><?= $guestsExitType->required_confirmation ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Richiesto documento') ?></th>
+            <th scope="row"><?= __('Necessario documento') ?></th>
             <td><?= $guestsExitType->required_file ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Richieste note') ?></th>
+            <th scope="row"><?= __('Necessarie note') ?></th>
             <td><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>
         </tr>
         <tr>

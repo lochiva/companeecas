@@ -17,15 +17,15 @@
         <?php
             echo $this->Form->input('name');
             echo '<div class="input checkbox">';
-            echo $this->Form->label('required_confirmation', 'Richiesta Conferma');
+            echo $this->Form->label('required_confirmation', 'Necessaria Conferma');
             echo $this->Form->checkbox('required_confirmation', ['class' => 'input-checkbox']);
             echo '</div>';
             echo '<div class="input checkbox">';
-            echo $this->Form->label('required_file', 'Richiesto Documento');
+            echo $this->Form->label('required_file', 'Necessario Documento');
             echo $this->Form->checkbox('required_file', ['class' => 'input-checkbox']);
             echo '</div>';
             echo '<div class="input checkbox">';
-            echo $this->Form->label('required_note', 'Richieste Note');
+            echo $this->Form->label('required_note', 'Necessarie Note');
             echo $this->Form->checkbox('required_note', ['class' => 'input-checkbox']);
             echo '</div>';
             echo '<div class="input checkbox">';
