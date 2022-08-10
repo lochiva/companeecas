@@ -135,10 +135,26 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                 <div class="box-body">
                     <div class="container-fluid">
                         <p>
-                            <span class="label-like">Tot presenti</span> <?=$presenze?> <span class="label-like">per canone</span> &euro;<?=$statement->agreement->guest_daily_price?>
+                            <span class="label-like">
+                                <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'> Presenze totali nel periodo come registrato nel modulo presenze per le strutture collegata alla convenzione</div>">
+                                    <i class="fa fa-info"></i>
+                                </span>
+                                Tot presenti
+                            </span> 
+                            <?=$presenze?> 
+                            <span class="label-like">per canone</span> &euro;<?=number_format($statement->agreement->guest_daily_price, 2, '.', '')?> 
+                            <span class="label-like">pari a</span> &euro;
+                            <?= number_format($presenze * $statement->agreement->guest_daily_price, 2, '.', '')?>
+
+
                         </p>
                         <p>
-                            <span class="label-like">Minori di 30 mesi:</span>
+                            <span class="label-like">
+                                <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'>Numero di bambini con età minore di 30 mesi alla data di fine periodo</div>">
+                                    <i class="fa fa-info"></i>
+                                </span>
+                                Minori di 30 mesi:
+                            </span>
                             <?php if ($minors > 0) : ?>
                                 SI (<?=$minors?>)
                             <?php else : ?>
