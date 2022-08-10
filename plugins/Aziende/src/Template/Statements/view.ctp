@@ -36,7 +36,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                 </div>
 
                 <div class="box-body">
-                    <div class="row" style="display: flex; justify-content: space-between;">
+                    <div class="row" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                         <div class="col-md-2"><b>Ente: </b><?= $statement->agreement->aziende->denominazione ?></div>
                         <div class="col-md-2"><b>CIG:</b> <?= $statement->agreement->cig ?></div>
                         <div class="col-md-2">
