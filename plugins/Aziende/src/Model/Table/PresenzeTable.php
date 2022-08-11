@@ -104,10 +104,12 @@ class PresenzeTable extends Table
     {
         $presenze = $this->find()
             ->where([
-                'sede_id' => $sedeId,
-                'date' => $day,
-                'presente' => 1
+                'Presenze.sede_id' => $sedeId,
+                'Presenze.date' => $day,
+                'Presenze.presente' => 1,
+                'Guests.deleted' => 0
             ])
+            ->contain(['Guests'])
             ->toArray();
             
         return $presenze;
@@ -117,10 +119,12 @@ class PresenzeTable extends Table
     {
         $presenze = $this->find()
             ->where([
-                'sede_id' => $sedeId,
-                'date LIKE' => $month.'%',
-                'presente' => 1
+                'Presenze.sede_id' => $sedeId,
+                'Presenze.date LIKE' => $month.'%',
+                'Presenze.presente' => 1,
+                'Guests.deleted' => 0
             ])
+            ->contain(['Guests'])
             ->toArray();
             
         return $presenze;
