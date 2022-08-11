@@ -371,3 +371,21 @@ label.required:after{
 .message-exited .download-exit-file {
     margin-top: 10px;
 }
+
+a.disabled-anchor {
+    pointer-events: auto;
+}
+a.disabled-anchor:active {
+    pointer-events: none;
+}
+a.disabled-anchor:hover {
+    text-decoration: none;
+}
+
+a.btn-info.disabled-anchor,
+a.btn-info.disabled-anchor:active,
+a.btn-info.disabled-anchor:visited {
+    color: #a0a0a0;
+    background-color: #8bd2e5;
+    border-color: #72cce5;
+}
