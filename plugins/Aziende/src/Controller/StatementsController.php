@@ -91,25 +91,33 @@ class StatementsController extends AppController
             if($this->user['role'] == 'admin' || $this->user['role'] == 'ente' && $azienda['id'] == $statement->agreement->azienda_id){
 
                 $sedi = TableRegistry::get('Aziende.AgreementsToSedi')->find('all')
-                    ->where(['agreement_id' => $statement->agreement->id])
+                    ->contain(['Sedi'])
+                    ->where(['agreement_id' => $statement->agreement->id, 'Sedi.deleted' => 0])
                     ->extract('sede_id')
                     ->toList();
-
-                $presenzeQuery = TableRegistry::get('Aziende.Presenze')->find('all')
+                
+                if (count($sedi)) {
+                    $presenzeQuery = TableRegistry::get('Aziende.Presenze')->find('all')
                     ->contain(['Guests'])
                     ->where(['Presenze.sede_id IN' => $sedi, 'Presenze.presente' => true])
                     ->where(function (QueryExpression $exp, Query $q) use ($statement) {
                         return $exp->between('Presenze.date', $statement->period_start_date, $statement->period_end_date);
                     });
 
-                $presenze = $presenzeQuery->count();
+                    $presenze = $presenzeQuery->count();
 
-                $dateLimit = new Date($statement->period_end_date);
-                $minors = $presenzeQuery
-                    ->select(['Presenze.guest_id'])
-                    ->distinct(['Presenze.guest_id'])
-                    ->where(['Guests.birthdate >=' => $dateLimit->modify('-30 months')])
-                    ->count();
+                    $dateLimit = new Date($statement->period_end_date);
+                    $minors = $presenzeQuery
+                        ->select(['Presenze.guest_id'])
+                        ->distinct(['Presenze.guest_id'])
+                        ->where(['Guests.birthdate >=' => $dateLimit->modify('-30 months')])
+                        ->count();
+                } else {
+                    $presenze = 0;
+                    $minors = 0;
+                }
+
+
 
                 $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
                     'keyField' => 'id',
