@@ -11,6 +11,7 @@
         <legend><?= __('Add Costs Category') ?></legend>
         <?php
             echo $this->Form->input('name');
+            echo $this->Form->input('ordering');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Save'),['class' => 'btn btn-success']) ?>

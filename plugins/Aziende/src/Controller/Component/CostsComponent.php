@@ -30,6 +30,7 @@ class CostsComponent extends Component
                 ->contain('Costs', function ($q) use ($companies){
                     return $q->where(['Costs.statement_company IN' => $companies, 'Costs.deleted' => 0]);
                 })
+                ->order(['CostsCategories.ordering'])
                 ->toArray();
 
         } else {
@@ -37,6 +38,7 @@ class CostsComponent extends Component
                 ->contain('Costs', function ($q) use ($id){
                     return $q->where(['Costs.statement_company' => $id, 'Costs.deleted' => 0]);
                 })
+                ->order(['CostsCategories.ordering'])
                 ->toArray();
         }
 

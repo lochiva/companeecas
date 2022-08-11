@@ -11,6 +11,7 @@
             <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('name') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('ordering') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
                 <th scope="col" class="actions"><?= __('Azioni') ?></th>
@@ -21,6 +22,7 @@
             <tr>
                 <td><?= $this->Number->format($costsCategory->id) ?></td>
               <td><?= h($costsCategory->name) ?></td>
+              <td><?= $this->Number->format($costsCategory->ordering) ?></td>
               <td><?= h($costsCategory->created) ?></td>
               <td><?= h($costsCategory->modified) ?></td>
                 <td class="actions">

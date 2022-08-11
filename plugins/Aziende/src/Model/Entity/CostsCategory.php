@@ -24,6 +24,7 @@ class CostsCategory extends Entity
      */
     protected $_accessible = [
         'name' => true,
+        'ordering' => true,
         'created' => true,
         'modified' => true
     ];
