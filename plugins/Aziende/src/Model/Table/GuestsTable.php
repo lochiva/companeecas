@@ -68,6 +68,12 @@ class GuestsTable extends AppTable
             'className' => 'Aziende.GuestsStatuses'
         ]);
 
+        $this->belongsTo('GuestsExitRequestStatuses', [
+            'foreignKey' => 'exit_request_status_id',
+            'joinType' => 'LEFT',
+            'className' => 'Aziende.GuestsStatuses'
+        ]);
+
         $this->belongsTo('OriginalGuests', [
             'foreignKey' => 'original_guest_id',
             'joinType' => 'LEFT',
@@ -184,6 +190,7 @@ class GuestsTable extends AppTable
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
         $rules->add($rules->existsIn(['country_birth'], 'Countries'));
         $rules->add($rules->existsIn(['status_id'], 'GuestsStatuses'));
+        $rules->add($rules->existsIn(['exit_request_status_id'], 'GuestsExitRequestStatuses'));
         $rules->add($rules->existsIn(['original_guest_id'], 'OriginalGuests'));
         $rules->add($rules->existsIn(['educational_qualification_id'], 'EducationalQualifications'));
 
@@ -213,6 +220,7 @@ class GuestsTable extends AppTable
             'check_in_date' => 'Data di check-in',
             'check_out_date' => 'Data di check-out',
             'status_id' => 'Stato',
+            'exit_request_status_id' => 'Stato richiesta di uscita',
             'original_guest_id' => 'ID ospite originale',
             'deleted' => 'Cancellato',
             'created' => 'Data creazione',

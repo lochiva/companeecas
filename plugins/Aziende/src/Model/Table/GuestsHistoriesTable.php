@@ -73,6 +73,11 @@ class GuestsHistoriesTable extends Table
             'joinType' => 'INNER',
             'className' => 'Aziende.GuestsStatuses'
         ]);
+        $this->belongsTo('GuestsExitRequestStatuses', [
+            'foreignKey' => 'guest_exit_request_status_id',
+            'joinType' => 'LEFT',
+            'className' => 'Aziende.GuestsStatuses'
+        ]);
         $this->belongsTo('ExitTypes', [
             'foreignKey' => 'exit_type_id',
             'className' => 'Aziende.GuestsExitTypes'
@@ -136,6 +141,7 @@ class GuestsHistoriesTable extends Table
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
         $rules->add($rules->existsIn(['operator_id'], 'Users'));
         $rules->add($rules->existsIn(['guest_status_id'], 'GuestsStatuses'));
+        $rules->add($rules->existsIn(['guest_exit_request_status_id'], 'GuestsExitRequestStatuses'));
         $rules->add($rules->existsIn(['exit_type_id'], 'ExitTypes'));
         $rules->add($rules->existsIn(['cloned_guest_id'], 'ClonedGuests'));
         $rules->add($rules->existsIn(['destination_id'], 'Destinations'));
@@ -155,11 +161,13 @@ class GuestsHistoriesTable extends Table
                 'GuestsHistories.destination_id', 
                 'GuestsHistories.provenance_id',
                 'GuestsHistories.guest_status_id',
+                'GuestsHistories.guest_exit_request_status_id',
                 'GuestsHistories.file',
                 'GuestsHistories.note', 
                 'azienda' => 'a.denominazione',
                 'sede' => 'CONCAT(s.indirizzo, " ", s.num_civico, " ", ls.des_luo, " (", ls.s_prv, ") [", s.code_centro, "]")',
                 'status' => 'gs.name',
+                'exit_request_status' => 'gs.name',
                 'exit_type' => 'et.name',
                 'destination' => 'CONCAT(ad.denominazione, " - ", d.indirizzo, " ", d.num_civico, " ", ld.des_luo, " (", ld.s_prv, ") [", d.code_centro, "]")',
                 'provenance' => 'CONCAT(ap.denominazione, " - ", p.indirizzo, " ", p.num_civico, " ", lp.des_luo, " (", lp.s_prv, ") [", p.code_centro, "]")',
@@ -190,6 +198,12 @@ class GuestsHistoriesTable extends Table
                     'alias' => 'gs',
                     'type' => 'left',
                     'conditions' => 'gs.id = GuestsHistories.guest_status_id'
+                ],
+                [
+                    'table' => 'guests_exit_request_statuses',
+                    'alias' => 'gers',
+                    'type' => 'left',
+                    'conditions' => 'gers.id = GuestsHistories.guest_exit_request_status_id'
                 ],
                 [
                     'table' => 'guests_exit_types',

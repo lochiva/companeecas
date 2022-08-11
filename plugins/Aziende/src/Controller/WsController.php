@@ -2850,9 +2850,9 @@ class WsController extends AppController
 
         $role = $this->request->session()->read('Auth.User.role');
         if ($role == 'admin') {
-		    $exitTypes = $table->find()->where(['ente_type' => $aziendaTipo])->toArray();
+		    $exitTypes = $table->find()->where(['ente_type' => $aziendaTipo, 'required_request' => 0])->toArray();
         } elseif ($role == 'ente') {
-            $exitTypes = $table->find()->where(['startable_by_ente' => 1, 'ente_type' => $aziendaTipo])->toArray();
+            $exitTypes = $table->find()->where(['startable_by_ente' => 1, 'ente_type' => $aziendaTipo, 'required_request' => 0])->toArray();
         }
 
         $res = [];

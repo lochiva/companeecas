@@ -11,6 +11,9 @@
             <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('name') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('required_request') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('required_request_file') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('required_request_note') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('required_confirmation') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('required_file') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('required_note') ?></th>
@@ -28,6 +31,9 @@
             <tr>
                 <td><?= $this->Number->format($guestsExitType->id) ?></td>
                 <td><?= h($guestsExitType->name) ?></td>
+                <td><?= $guestsExitType->required_request ? 'Sì' : 'No' ?></td>
+                <td><?= $guestsExitType->required_request_file ? 'Sì' : 'No' ?></td>
+                <td><?= $guestsExitType->required_request_note ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->required_confirmation ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->required_file ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->required_note ? 'Sì' : 'No' ?></td>

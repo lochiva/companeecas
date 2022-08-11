@@ -64,6 +64,15 @@ class GuestsExitTypesTable extends Table
             ->notEmptyString('name');
 
         $validator
+            ->boolean('required_request');
+
+        $validator
+            ->boolean('required_request_file');
+
+        $validator
+            ->boolean('required_request_note');
+
+        $validator
             ->boolean('required_confirmation');
 
         $validator
