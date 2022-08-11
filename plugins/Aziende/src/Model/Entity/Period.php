@@ -31,6 +31,7 @@ class Period extends Entity
         'end_date' => true,
         'visible' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
+        'ordering' => true
     ];
 }

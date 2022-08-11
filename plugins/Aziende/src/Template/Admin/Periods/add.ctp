@@ -13,6 +13,7 @@
             echo $this->Form->input('label');
             echo $this->Form->input('start_date');
             echo $this->Form->input('end_date');
+            echo $this->Form->input('ordering');
             echo $this->Form->input('visible');
         ?>
     </fieldset>

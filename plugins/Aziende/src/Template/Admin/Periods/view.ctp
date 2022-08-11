@@ -38,5 +38,9 @@
             <th scope="row"><?= __('Visible') ?></th>
             <td><?= $period->visible ? __('Yes') : __('No'); ?></td>
         </tr>
+        <tr>
+            <th scope="row"><?= __('Ordering') ?></th>
+            <td><?= $this->Number->format($period->ordering) ?></td>
+        </tr>
     </table>
 </div>

@@ -61,7 +61,7 @@ class StatementsController extends AppController
      */
     public function index()
     {
-        $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->toArray();
+        $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->order(['ordering'])->toArray();
         $this->set('periods', $periods);
     }
 

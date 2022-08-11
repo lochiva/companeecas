@@ -14,6 +14,7 @@
                 <th scope="col"><?= $this->Paginator->sort('start_date') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('end_date') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('visible') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('ordering') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
                 <th scope="col" class="actions"><?= __('Azioni') ?></th>
@@ -27,6 +28,7 @@
               <td><?= h($period->start_date) ?></td>
               <td><?= h($period->end_date) ?></td>
               <td><?= h($period->visible) ?></td>
+              <td><?= $this->Number->format($period->ordering) ?></td>
               <td><?= h($period->created) ?></td>
               <td><?= h($period->modified) ?></td>
                 <td class="actions">
