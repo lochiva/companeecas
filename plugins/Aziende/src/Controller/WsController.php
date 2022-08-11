@@ -384,43 +384,53 @@ class WsController extends AppController
             $data['operativita'] = 1;
         }
 
-        $sede = $this->Sedi->_patchEntity($sede, $data);
 
-        if (!empty($data['comune'])) {
-            $sede->comune = $data['comune'];
-        }
-        if (!empty($data['provincia'])) {
-            $sede->provincia = $data['provincia'];
+        //Se operatività = chiusa controllo che la sede non abbia ospiti
+        $validOperativita = true;
+        if (!$new && empty($data['operativita']) && $this->Sedi->checkSedeHasGuests($idSede)) {
+            $validOperativita = false;
         }
 
-        if ($this->Sedi->_save($sede)) {
-            // Salvataggio notifica creazione struttura
-            if (!empty($saveType)) {
-                $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-                $notification = $guestsNotifications->newEntity();
-                $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-                $notificationData = [
-                    'type_id' => $notificationType->id,
-                    'azienda_id' => $sede->id_azienda,
-                    'sede_id' => $sede->id,
-                    'guest_id' => 0,
-                    'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                ];
-                $guestsNotifications->patchEntity($notification, $notificationData);
-                $guestsNotifications->save($notification);
+        if ($validOperativita) {
+            $sede = $this->Sedi->_patchEntity($sede, $data);
+
+            if (!empty($data['comune'])) {
+                $sede->comune = $data['comune'];
+            }
+            if (!empty($data['provincia'])) {
+                $sede->provincia = $data['provincia'];
             }
 
-            $this->_result = array('response' => 'OK', 'data' => $new, 'msg' => "Salvato");
-        }else{
-            $errorMsg = '';
-            foreach($sede->errors() as $field => $errors){ 
-				foreach($errors as $rule => $msg){ 
-					$errorMsg .= ' '.$msg;
-				}
-			}  
-            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio. ".$errorMsg);
-        }
+            if ($this->Sedi->_save($sede)) {
+                // Salvataggio notifica creazione struttura
+                if (!empty($saveType)) {
+                    $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                    $notification = $guestsNotifications->newEntity();
+                    $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                    $notificationData = [
+                        'type_id' => $notificationType->id,
+                        'azienda_id' => $sede->id_azienda,
+                        'sede_id' => $sede->id,
+                        'guest_id' => 0,
+                        'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                    ];
+                    $guestsNotifications->patchEntity($notification, $notificationData);
+                    $guestsNotifications->save($notification);
+                }
 
+                $this->_result = array('response' => 'OK', 'data' => $new, 'msg' => "Salvato");
+            }else{
+                $errorMsg = '';
+                foreach($sede->errors() as $field => $errors){ 
+                    foreach($errors as $rule => $msg){ 
+                        $errorMsg .= ' '.$msg;
+                    }
+                }  
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel salvataggio. ".$errorMsg);
+            }
+        } else {
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Attenzione! Non è possibile chiudere una struttura con ospiti presenti.");
+        }
     }
 
     public function deleteSede($id = 0){
@@ -1028,37 +1038,52 @@ class WsController extends AppController
             unset($data['id']);
         }
 
-        if ($this->Azienda->saveAziendaJson($data)) {
-			if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
-				$msg = false;
-				//Aggiorno o creo cliente su fattureincloud
-				$dataC = $data;
-				$dataC['fornitore'] = false;
-				if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
-					$msg = $this->sendEditAnagrafica($dataC);
-				}elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
-					$msg = $this->sendAnagrafica($dataC['id']);
-				}
-				//Aggiorno o creo fornitore su fattureincloud
-				$dataF = $data;
-				$dataF['cliente'] = false;
-				if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
-					$msg = $this->sendEditAnagrafica($dataF);
-				}elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
-					$msg = $this->sendAnagrafica($dataF['id']);
-				}
-				if(!$msg){
-					$this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
-				}else{
-					$this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
-				}
-			}else{
-				$this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
-			}
-        }else{
-            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
+        // //Se ci sono sedi con operatività = chiusa controllo che non abbiano ospiti
+        $validOperativita = true;
+        $sedi = json_decode($data['sedi'], true);
+        if (!empty($sedi)) {
+            foreach ($sedi as $sede) {
+                if (!empty($sede['id']) && empty($sede['operativita']) && $this->Sedi->checkSedeHasGuests($sede['id'])) {
+                    $validOperativita = false;
+                    break;
+                }
+            }
         }
 
+        if ($validOperativita) {
+            if ($this->Azienda->saveAziendaJson($data)) {
+                if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
+                    $msg = false;
+                    //Aggiorno o creo cliente su fattureincloud
+                    $dataC = $data;
+                    $dataC['fornitore'] = false;
+                    if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
+                        $msg = $this->sendEditAnagrafica($dataC);
+                    }elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
+                        $msg = $this->sendAnagrafica($dataC['id']);
+                    }
+                    //Aggiorno o creo fornitore su fattureincloud
+                    $dataF = $data;
+                    $dataF['cliente'] = false;
+                    if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
+                        $msg = $this->sendEditAnagrafica($dataF);
+                    }elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
+                        $msg = $this->sendAnagrafica($dataF['id']);
+                    }
+                    if(!$msg){
+                        $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                    }else{
+                        $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
+                    }
+                }else{
+                    $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                }
+            }else{
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
+            }
+        } else {
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Attenzione! Non è possibile chiudere una struttura con ospiti presenti.");
+        }
     }
 
 	public function sendAnagrafica($idAzienda){

@@ -110,7 +110,11 @@ class SediTable extends AppTable
 
     public function searchSedi($aziendaId, $search = "", $sedeId = "")
     {
-        $where = ['Sedi.id_azienda' => $aziendaId];
+        $where = [
+            'Sedi.id_azienda' => $aziendaId,
+            'Sedi.operativita' => 1
+        ];
+
         if (!empty($sedeId)) {
             $where['Sedi.id !='] = $sedeId;
         }

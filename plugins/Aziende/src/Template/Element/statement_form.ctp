@@ -70,7 +70,7 @@ use Cake\Routing\Router;
     <?= $this->Form->control('companies.0.billing_reference', [
             'type' => 'text',
             'required' => true,
-            'label' => ['text' => 'Riferimento Fattura', 'class' => 'col-sm-2 control-label required'],
+            'label' => ['text' => 'Numero Fattura', 'class' => 'col-sm-2 control-label required'],
         ]); 
     ?>
         
@@ -127,7 +127,7 @@ use Cake\Routing\Router;
             echo $this->Form->control('companies.0.billing_reference', [
                 'type' => 'text',
                 'required' => true,
-                'label' => ['text' => 'Riferimento Fattura', 'class' => 'col-sm-2 control-label required'],
+                'label' => ['text' => 'Numero Fattura', 'class' => 'col-sm-2 control-label required'],
             ]); 
         ?>
         

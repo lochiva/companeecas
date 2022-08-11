@@ -300,4 +300,9 @@ class SediComponent extends Component
         return false;
     }
 
+    public function checkSedeHasGuests($idSede)
+    {
+        return TableRegistry::get('Aziende.Guests')->countGuestsForSede($idSede);
+    }
+
 }

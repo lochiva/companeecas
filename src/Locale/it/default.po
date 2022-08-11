@@ -562,15 +562,15 @@ msgstr "Cancella Tipo"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:14
 msgid "Required Confirmation"
-msgstr "Richiesta Conferma"
+msgstr "Necessaria Conferma"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:15
 msgid "Required File"
-msgstr "Richiesto Documento"
+msgstr "Necessario Documento"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:16
 msgid "Required Note"
-msgstr "Richieste Note"
+msgstr "Necessarie Note"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:17
 msgid "Startable By Ente"

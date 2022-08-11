@@ -63,6 +63,14 @@ class GuestsController extends AppController
             return null;
         }
 
+        //Se la sede è chiusa non posso aggiungere un ospite
+        $guestId = $this->request->query('guest');
+        if (empty($guestId) && $sede['operativita'] == 0) {
+            $this->Flash->error('La struttura è chiusa pertanto non è possibile aggiungere ospiti.');
+            $this->redirect('/aziende/guests/index/'.$sedeId);
+            return null;
+        }
+
         $azienda = TableRegistry::get('Aziende.Aziende')->get($sede['id_azienda']);
 
         $this->set('sede', $sede);
