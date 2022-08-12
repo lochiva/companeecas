@@ -296,6 +296,11 @@ var app = new Vue({
         this.getExitTypes();
         this.getRequestExitTypes();
 
+        let modalGuestRequestExit = this.$refs.modalGuestRequestExit; 
+        $(modalGuestRequestExit).on('hidden.bs.modal', () => {
+            this.clearRequestExitProcedureData();
+        });
+
         let modalGuestExit = this.$refs.modalGuestExit; 
         $(modalGuestExit).on('hidden.bs.modal', () => {
             this.clearExitProcedureData();
@@ -832,6 +837,35 @@ var app = new Vue({
             .catch(error => {
                 console.log(error);
             });
+        },
+
+        clearRequestExitProcedureData: function() {
+            this.requestExitProcedureData = {
+                exit_type_id: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                file: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                note:  {
+                    required: false,
+                    hasError: false,
+                    value: ''
+                }
+            };
+        },
+
+        openAuthorizeRequestExitModal: function() {
+            let modalAuthorizeGuestRequestExit = this.$refs.modalAuthorizeGuestRequestExit;
+            $(modalAuthorizeGuestRequestExit).modal({
+                backdrop: false,
+                keyboard: false
+            });
+            $(modalAuthorizeGuestRequestExit).modal('show');
         },
 
         openExitModal: function() {

@@ -220,7 +220,8 @@ label.required:after{
 .exit-note,
 .transfer-note,
 .readmission-note,
-.absence-note{
+.absence-note,
+.request-exit-note {
     height: 130px !important;
     resize: none;
 }
