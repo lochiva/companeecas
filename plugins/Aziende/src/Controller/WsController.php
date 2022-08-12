@@ -1750,7 +1750,9 @@ class WsController extends AppController
                 }
 
                 //Stato ospite
-                $status = '<span class="guest-status" style="background-color: '.$guest['gs']['color'].'">'.$guest['gs']['name'].'</span>';
+                $statusColor = $guest['exit_request_status_id'] === null ? $guest['gs']['color'] : $guest['gers']['color'];
+                $statusName = $guest['exit_request_status_id'] === null ? $guest['gs']['name'] : $guest['gs']['name'] . ' - ' . $guest['gers']['name'];
+                $status = '<span class="guest-status" style="background-color: '.$statusColor.'">'.$statusName.'</span>';
 
                 //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso e ente tipo cas)
                 $classPresenze = '';
@@ -2125,7 +2127,7 @@ class WsController extends AppController
             } else {
                 $guest['educational_qualification_child'] = '';
             }
-            if ($guest->status_id != 1) {
+            if ($guest->status_id != 1 || $guest->exit_request_status_id !== null) {
                 //Dati per messaggi di stato
                 $lastHistory = TableRegistry::get('Aziende.GuestsHistories')->getLastGuestHistoryByStatus($guest->id, $guest->status_id);
                 if ($lastHistory->exit_type_id) {
@@ -2864,7 +2866,25 @@ class WsController extends AppController
 
         $this->_result['response'] = "OK";
         $this->_result['data'] = $res;
-        $this->_result['msg'] = 'Tipologie uscite recuperate con successo.';
+        $this->_result['msg'] = 'Tipologie uscita recuperate con successo.';
+    }
+
+    public function getRequestExitTypes($aziendaTipo)
+	{
+		$table = TableRegistry::get('Aziende.GuestsExitTypes');
+	
+        $requestExitTypes = $table->find()->where(['ente_type' => $aziendaTipo, 'required_request' => 1])->toArray();
+
+        $res = [];
+        if (!empty($requestExitTypes)) {
+            foreach ($requestExitTypes as $type) {
+                $res[$type['id']] = $type;
+            }
+        }
+
+        $this->_result['response'] = "OK";
+        $this->_result['data'] = $res;
+        $this->_result['msg'] = 'Tipologie richiesta uscita recuperate con successo.';
     }
 
     public function getTransferAziendaDefault($sedeId) 
@@ -2963,6 +2983,115 @@ class WsController extends AppController
 			$this->_result['response'] = "KO";
 			$this->_result['msg'] = 'Nessuna struttura trovata.';
 		}		
+    }
+
+    public function requestExitProcedure()
+    {
+        $data = $this->request->data;
+
+        $guests = TableRegistry::get('Aziende.Guests');
+        $guest = $guests->get($data['guest_id']);
+
+        $guestsToRequestExit = [$guest];
+
+        //richiesta uscita famigliari
+        if ($data['request_exit_family']) {
+            $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+            $guestFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+            $familyGuests = $guests->find()
+                ->where(['gf.family_id' => $guestFamily->family_id, 'Guests.id !=' => $guest->id, 'Guests.status_id' => '1'])
+                ->join([
+                    [
+                        'table' => 'guests_families',
+                        'alias' => 'gf',
+                        'type' => 'left',
+                        'conditions' => 'gf.guest_id = Guests.id'
+                    ]
+                ])
+                ->toArray();
+
+            $guestsToRequestExit = array_merge($guestsToRequestExit, $familyGuests);
+        }
+
+        $errorMsg = '';
+        $responseStatus = 'OK';
+
+        //controllo sulla correttezza dei dati degli ospiti
+        foreach ($guestsToRequestExit as $g) { 
+            $g->modified = new Time();
+            if (!$guests->save($g)) {
+                if (empty($errorMsg)) {
+                    $errorMsg = "Errore nella configurazione dell'ospite."; 
+                }
+                $errorMsg .= "\n\n".$g->name." ".$g->surname;
+                $fieldLabelsList = $guests->getFieldLabelsList();
+                foreach($g->errors() as $field => $errors){ 
+                    foreach($errors as $rule => $msg){ 
+                        $errorMsg .= "\n" . $fieldLabelsList[$field].': '.$msg;
+                    }
+                }
+                $responseStatus = 'KO';
+            }
+        }
+
+        if (empty($errorMsg)) {
+            $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($data['exit_type_id']); 
+
+            $today = new Time();
+
+            //salvataggio file
+            $filePath = '';
+            $errorFile = false;
+            if (!empty($data['file']) && !empty($data['file']['tmp_name'])) {
+                $basePath = ROOT.DS.Configure::read('dbconfig.aziende.EXIT_FILES_PATH');
+                $fileName = uniqid().'_'.$data['file']['name'];
+                $path = date('Y').DS.date('m').DS;
+                $filePath = $path.$fileName;
+
+                if (!is_dir($basePath.$path) && !mkdir($basePath.$path, 0755, true)) {
+                    $errorFile = true;
+                } else if (!move_uploaded_file($data['file']['tmp_name'], $basePath.$filePath)) {
+                    $errorFile = true;
+                }
+            }
+
+            if (!$errorFile) {
+                //richiesta uscita ospiti
+                foreach ($guestsToRequestExit as $g) {
+                    $error = $this->Guest->requestExitGuest($g, $data, $today, $filePath);
+                    if ($error) {
+                        $errorMsg .= $g->name." ".$g->surname.": ".$error."\n";
+                        if ($g->id == $guest->id) {
+                            $responseStatus = 'KO';
+                        }
+                        $res['family_exit_request_status'][$g->id] = 0;
+                    } else {
+                        $res['family_exit_request_status'][$g->id] = 1;
+                    }
+                }
+
+                $res['history_exit_request_status'] = 1;
+                $res['history_exit_type'] = $exitType['name'];
+                $res['history_file'] = $filePath;
+                $res['history_note'] = $data['note'];
+            } else {
+                $errorMsg = "Errore nel salvataggio del documento di uscita.";
+                $responseStatus = 'KO';
+            }
+
+            if (!$errorMsg) {
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $res;
+                $this->_result['msg'] = 'Procedura di richiesta uscita dell\'ospite completata con successo.';
+            } else {
+                $this->_result['response'] = $responseStatus;
+                $this->_result['data'] = $res;
+                $this->_result['msg'] =  $errorMsg;
+            }
+        } else {
+            $this->_result['response'] = $responseStatus;
+            $this->_result['msg'] =  $errorMsg;
+        }
     }
 
     public function exitProcedure()

@@ -40,7 +40,7 @@ class CreateGuestsExitRequestStatuses extends AbstractMigration
             ],
             [
                 'name' => 'Richiesta di uscita autorizzata',
-                'color' => '#CCAA00',
+                'color' => '#CC9F00',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ]

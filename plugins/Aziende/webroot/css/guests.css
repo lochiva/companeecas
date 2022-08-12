@@ -126,9 +126,19 @@ label.required:after{
 .message-exited,
 .message-transferring,
 .message-accept-transfer,
-.message-transferred{
+.message-transferred,
+.message-exit-request-sent,
+.message-exit-request-authorized {
     margin: 15px 15px 0px 15px;
     color: #FFF;
+}
+
+.message-exit-request-sent{
+    background-color: #9CB700;
+}
+
+.message-exit-request-authorized{
+    background-color: #CC9F00;
 }
 
 .message-exiting{
@@ -179,6 +189,28 @@ label.required:after{
 .btn-violet:hover{
     color: #FFF;
     background-color: #6F4DD6;
+}
+
+.btn-olive {
+    color: #FFF;
+    background-color: #9CB700;
+    border-color: #92ab00;
+}
+.btn-olive:hover {
+    color: #FFF;
+    background-color: #90aa00;
+    border-color: #879f00;
+}
+
+.btn-gold {
+    color: #FFF;
+    background-color: #cc9f00;
+    border-color: #bc9300;
+}
+.btn-gold:hover {
+    color: #FFF;
+    background-color: #c69b00;
+    border-color: #b99100;
 }
 
 .radio-no{
@@ -343,7 +375,8 @@ label.required:after{
 }
 
 .btn-transfer,
-.btn-exit {
+.btn-exit,
+.btn-exit-request {
     margin-left: 10px;
 }
 

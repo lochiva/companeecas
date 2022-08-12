@@ -36,6 +36,13 @@ $role = $this->request->session()->read('Auth.User.role');
     <?= $this->Flash->render() ?>
 
     <div v-clock>
+        <div v-if="guestStatus == 1 && guestExitRequestStatus == 1" class="message-exit-request-sent alert">
+            L'ospite è in stato "Richiesta di uscita inviata" con motivazione {{requestExitData.type}}.
+            <div><b>Note uscita:</b> {{requestExitData.note}}</div>
+            <div v-if="role == 'admin'" class="exit-buttons">
+                <button type="button" class="btn btn-gold" @click="openConfirmRequestExitModal()">Autorizza richiesta di uscita</button>
+            </div>
+        </div>
         <div v-if="guestStatus == 2" class="message-exiting alert">
             L'ospite è in stato "In uscita" con motivazione {{exitData.type}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
@@ -211,8 +218,9 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div class="box-footer">
-                        <button :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
-                        <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                        <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
+                        <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                        <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-olive pull-right btn-exit-request" @click="openRequestExitModal()">Richiesta uscita</button>
                         <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 3 || existsInFuture" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()" :title="guestStatus == 3 && existsInFuture ? 'L\'ospite è gia stato riammesso' : ''">Riammissione</button>
                     </div>
                 </div>
@@ -228,7 +236,7 @@ $role = $this->request->session()->read('Auth.User.role');
                         <i class="fa fa-users"></i>
                         <h3 class="box-title"><?=__c('Componenti il nucleo familiare')?></h3> 
                         <button role="button" class="btn btn-primary pull-right" :disabled="((guestStatus != '' && guestStatus != 1) || !familyId || guestData.minor.value || countFamilyAdults == 1)" :title="removeFamilyButtonMessage" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
-                        <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="guestStatus != '' && guestStatus != 1" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
+                        <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="(guestStatus != '' && guestStatus != 1) || guestExitRequestStatus != null" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
                         <v-select hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
                             @search="searchGuests" @input="addSearchedGuest" placeholder="Seleziona un ospite">
                             <template slot="no-options">Nessun ospite trovato.</template>
@@ -288,15 +296,18 @@ $role = $this->request->session()->read('Auth.User.role');
                                 <tr v-for="history in guestHistory">
                                     <td>{{ history.azienda }}</td>
                                     <td>{{ history.sede }}</td>
-                                    <td>{{ history.status }}</td>
+                                    <td>
+                                        {{ history.status }}
+                                        <span v-if="history.guest_exit_request_status_id != null"> - {{ history.exit_request_status }}</span>
+                                    </td>
                                     <td>{{ history.operation_date }}</td>
                                     <td>{{ history.exit_type }}</td>
                                     <td>{{ history.destination }}</td>
                                     <td>{{ history.provenance }}</td>
                                     <td>{{ history.note }}</td>
                                     <td>{{ history.operator }}</td>
-                                    <td>
-                                        <button v-if="history.guest_status_id == 3 && history.file" type="button" class="btn btn-primary btn-xs" 
+                                    <td class="text-center">
+                                        <button v-if="history.file && (history.guest_status_id == 3 || history.guest_exit_request_status_id != null)" type="button" class="btn btn-primary btn-xs" 
                                             @click="downloadExitDocument(history.file)">
                                             <i class="fa fa-download"></i>
                                         </button>
@@ -335,6 +346,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </md-speed-dial-content>
     </md-speed-dial>
 
+    <?= $this->element('Aziende.modal_guest_request_exit') ?>
     <?= $this->element('Aziende.modal_guest_exit') ?>
     <?= $this->element('Aziende.modal_exit_family') ?>
     <?= $this->element('Aziende.modal_confirm_guest_exit') ?>

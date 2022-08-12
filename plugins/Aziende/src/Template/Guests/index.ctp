@@ -6,9 +6,18 @@ $role = $this->request->session()->read('Auth.User.role');
 <script>
     var sede_id = '<?= $sede['id'] ?>';
     var statuses = JSON.parse('<?= json_encode($statuses) ?>');
+    var exitRequestStatuses = JSON.parse('<?= json_encode($exitRequestStatuses) ?>');
     var statusesList = [];
-    Object.keys(statuses).forEach(function(key){
-        statusesList.push(statuses[key].name);
+    Object.keys(statuses).forEach(function(key) {
+        if (statuses[key].id == 1) {
+            statusesList.push(statuses[key].name);
+            Object.keys(exitRequestStatuses).forEach(function(k) {
+                var label = statuses[key].name + ' - ' + exitRequestStatuses[k].name;
+                statusesList.push(label);
+            });
+        } else {
+            statusesList.push(statuses[key].name);
+        }
     }); 
 </script>
 <?php $this->assign('title', 'Ospiti') ?>

@@ -45,10 +45,12 @@ class GuestsController extends AppController
 
         $azienda = TableRegistry::get('Aziende.Aziende')->get($sede['id_azienda']);
         $statuses = TableRegistry::get('Aziende.GuestsStatuses')->find()->toArray();
+        $exitRequestStatuses = TableRegistry::get('Aziende.GuestsExitRequestStatuses')->find()->toArray();
 
         $this->set('sede', $sede);
         $this->set('azienda', $azienda);
         $this->set('statuses', $statuses);
+        $this->set('exitRequestStatuses', $exitRequestStatuses);
     }
 
     public function guest()

@@ -115,6 +115,7 @@ var app = new Vue({
         },
         guestPresenza: null,
         guestStatus: '',
+        guestExitRequestStatus: null,
         countries: [],
         familyGuests: [],
         educationalQualifications: [],
@@ -122,6 +123,29 @@ var app = new Vue({
         familyId : '',
         guestFamily: [],
         guestHistory: [],
+        requestExitTypes: [],
+        requestExitProcedureData: {
+            exit_type_id: {
+                required: true,
+                hasError: false,
+                value: ''
+            },
+            file:  {
+                required: false,
+                hasError: false,
+                value: ''
+            },
+            note:  {
+                required: false,
+                hasError: false,
+                value: ''
+            }
+        },
+        requestExitData: {
+            type: '',
+            file: '',
+            note: '',
+        },
         exitTypes: [],
         exitProcedureData: {
             exit_type_id: {
@@ -270,6 +294,7 @@ var app = new Vue({
 
         this.getEducationalQualifications();
         this.getExitTypes();
+        this.getRequestExitTypes();
 
         let modalGuestExit = this.$refs.modalGuestExit; 
         $(modalGuestExit).on('hidden.bs.modal', () => {
@@ -337,7 +362,11 @@ var app = new Vue({
 
                         this.guestPresenza = res.data.data.presenza;
                         this.guestStatus = res.data.data.status_id;
+                        this.guestExitRequestStatus = res.data.data.exit_request_status_id;
 
+                        this.requestExitData.type = res.data.data.history_exit_type;
+                        this.requestExitData.file = res.data.data.history_file;
+                        this.requestExitData.note = res.data.data.history_note;
                         this.exitData.type = res.data.data.history_exit_type;
                         this.exitData.date = res.data.data.check_out_date;
                         this.exitData.file = res.data.data.history_file;
@@ -694,6 +723,116 @@ var app = new Vue({
                     console.log(error);
                 });
         },
+        
+        getRequestExitTypes: function() {
+            axios.get(pathServer + 'aziende/ws/getRequestExitTypes/'+this.ente_type)
+                .then(res => { 
+                    if (res.data.response == 'OK') {
+                        this.requestExitTypes = res.data.data;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+        },
+
+        openRequestExitModal: function() {
+            let modalGuestRequestExit = this.$refs.modalGuestRequestExit;
+            $(modalGuestRequestExit).modal({
+                backdrop: false,
+                keyboard: false
+            });
+            $(modalGuestRequestExit).modal('show');
+        },
+
+        updateRequestExitRequirements: function() {
+            if (this.requestExitProcedureData.exit_type_id.value && this.requestExitTypes[this.requestExitProcedureData.exit_type_id.value].required_request_file) {
+                this.requestExitProcedureData.file.required = true;
+            } else {
+                this.requestExitProcedureData.file.hasError = false;
+                this.requestExitProcedureData.file.required = false;
+            }
+            if (this.requestExitProcedureData.exit_type_id.value && this.requestExitTypes[this.requestExitProcedureData.exit_type_id.value].required_request_note) {
+                this.requestExitProcedureData.note.required = true;
+            } else {
+                this.requestExitProcedureData.note.hasError = false;
+                this.requestExitProcedureData.note.required = false;
+            }
+        },
+
+        requestExitProcedure: function() { 
+            var error = false;
+
+            Object.keys(this.requestExitProcedureData).forEach((prop) => {
+                if (this.requestExitProcedureData[prop].required && (this.requestExitProcedureData[prop].value == "" || this.requestExitProcedureData[prop].value == null)) {
+                    error = true;
+                    this.requestExitProcedureData[prop].hasError = true;
+                } else {
+                    this.requestExitProcedureData[prop].hasError = false;
+                }
+            });                 
+
+            if (error) {
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            } else { 
+                /*if (this.guestFamily.length > 0) {
+                    let requestExitFamily = this.$refs.requestExitFamily;
+                    $(requestExitFamily).modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                } else { 
+                    this.requestExitGuest(0);
+                }*/ 
+                this.requestExitGuest(0);        
+            }
+        },
+
+        requestExitGuest: function(requestExitFamily){
+            let formData = new FormData();
+            formData.append('guest_id', this.guestData.id.value);
+            Object.keys(this.requestExitProcedureData).forEach((prop) => {
+                formData.append(prop, this.requestExitProcedureData[prop].value);
+            });
+            formData.append('request_exit_family', requestExitFamily);
+
+            axios.post(pathServer + 'aziende/ws/requestExitProcedure', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                    this.guestExitRequestStatus = res.data.data.history_exit_request_status;
+                    this.requestExitData.type = res.data.data.history_exit_type;
+                    this.requestExitData.file = res.data.data.history_file;
+                    this.requestExitData.note = res.data.data.history_note;
+
+                    if(requestExitFamily){
+                        this.guestFamily.forEach((guest) => {
+                            guest.exit_request_status_id = res.data.data.family_exit_request_status[guest.id];
+                        });
+                        this.loadedFamily = JSON.stringify(this.guestFamily);
+                    }
+
+                    this.loadGuestHistory();
+
+                    let modalGuestRequestExit = this.$refs.modalGuestRequestExit;
+                    $(modalGuestRequestExit).modal('hide');
+
+                    //Aggiorna conteggio notifiche
+                    this.updateNotificationsCount();
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
 
         openExitModal: function() {
             if (this.guestPresenza) {
@@ -768,6 +907,7 @@ var app = new Vue({
                 if (res.data.response == 'OK') {
                     alert(res.data.msg);
                     this.guestStatus = res.data.data.history_status;
+                    this.guestExitRequestStatus = null;
                     this.exitData.type = res.data.data.history_exit_type;
                     this.exitData.date = res.data.data.check_out_date;
                     this.exitData.file = res.data.data.history_file;
