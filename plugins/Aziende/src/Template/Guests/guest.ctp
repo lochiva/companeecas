@@ -37,10 +37,17 @@ $role = $this->request->session()->read('Auth.User.role');
 
     <div v-clock>
         <div v-if="guestStatus == 1 && guestExitRequestStatus == 1" class="message-exit-request-sent alert">
-            L'ospite è in stato "Richiesta di uscita inviata" con motivazione {{requestExitData.type}}.
+            L'ospite è in stato "Richiesta di uscita inviata" con motivazione {{requestExitData.type.name}}.
             <div><b>Note uscita:</b> {{requestExitData.note}}</div>
             <div v-if="role == 'admin'" class="exit-buttons">
                 <button type="button" class="btn btn-gold" @click="openAuthorizeRequestExitModal()">Autorizza richiesta di uscita</button>
+            </div>
+        </div>
+        <div v-if="guestStatus == 1 && guestExitRequestStatus == 2" class="message-exit-request-authorized alert">
+            L'ospite è in stato "Richiesta di uscita autorizzata" con motivazione {{authorizeRequestExitData.type.name}}.
+            <div><b>Note uscita:</b> {{authorizeRequestExitData.note}}</div>
+            <div class="exit-buttons">
+                <button type="button" class="btn btn-danger" @click="openExitModal()">Uscita</button>
             </div>
         </div>
         <div v-if="guestStatus == 2" class="message-exiting alert">
@@ -346,7 +353,9 @@ $role = $this->request->session()->read('Auth.User.role');
         </md-speed-dial-content>
     </md-speed-dial>
 
+    <?= $this->element('Aziende.modal_request_exit_family') ?>
     <?= $this->element('Aziende.modal_guest_request_exit') ?>
+    <?= $this->element('Aziende.modal_authorize_request_exit_family') ?>
     <?= $this->element('Aziende.modal_authorize_guest_request_exit') ?>
     <?= $this->element('Aziende.modal_guest_exit') ?>
     <?= $this->element('Aziende.modal_exit_family') ?>

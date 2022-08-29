@@ -221,7 +221,8 @@ label.required:after{
 .transfer-note,
 .readmission-note,
 .absence-note,
-.request-exit-note {
+.request-exit-note,
+.authorize-request-exit-note {
     height: 130px !important;
     resize: none;
 }
@@ -422,4 +423,9 @@ a.btn-info.disabled-anchor:visited {
     color: #a0a0a0;
     background-color: #8bd2e5;
     border-color: #72cce5;
+}
+
+#requestExitFamily,
+#authorizeRequestExitFamily {
+    z-index: 99999;
 }

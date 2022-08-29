@@ -271,7 +271,7 @@ class GuestComponent extends Component
 			$guestsHistory->patchEntity($history, $historyData);
 
 			if ($guestsHistory->save($history)) {
-				//aggiornamento stato ospite e data di check-out
+				//aggiornamento stato richiesta uscita ospite
 				$guests = TableRegistry::get('Aziende.Guests');
 
 				$guest->exit_request_status_id = 1; 
@@ -298,6 +298,49 @@ class GuestComponent extends Component
 					$guestsNotifications->patchEntity($notification, $notificationData);
 					$guestsNotifications->save($notification);
 				} else {
+					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+				}
+			} else {
+				$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+			}
+		}
+
+		return $error;
+	}
+
+	public function authorizeRequestExitGuest($guest, $data, $today, $filePath)
+	{
+		$error = '';
+
+		// Se stato diverso da "In struttura" non eseguo nessuna operazione sull'ospite
+		if ($guest->status_id == 1) {
+
+			$sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+			//aggiornamento storico
+			$guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+			$history = $guestsHistory->newEntity();
+
+			$historyData['guest_id'] = $guest->id;
+			$historyData['azienda_id'] = $sede->id_azienda;
+			$historyData['sede_id'] = $guest->sede_id;
+			$historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+			$historyData['operation_date'] = $today->format('Y-m-d');
+			$historyData['guest_status_id'] = 1;
+			$historyData['guest_exit_request_status_id'] = 2;
+			$historyData['exit_type_id'] = $data['exit_type_id'];
+			$historyData['file'] = $filePath;
+			$historyData['note'] = $data['note'];
+
+			$guestsHistory->patchEntity($history, $historyData);
+
+			if ($guestsHistory->save($history)) {
+				//aggiornamento stato richiesta uscita ospite
+				$guests = TableRegistry::get('Aziende.Guests');
+
+				$guest->exit_request_status_id = 2; 
+
+				if (!$guests->save($guest)) {
 					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
 				}
 			} else {
@@ -342,6 +385,7 @@ class GuestComponent extends Component
 					$guests = TableRegistry::get('Aziende.Guests');
 
 					$guest->status_id = $status;
+					$guest->exit_request_status_id = null;
 					$guest->check_out_date = $today->format('Y-m-d');  
 
 					if ($guests->save($guest)) {

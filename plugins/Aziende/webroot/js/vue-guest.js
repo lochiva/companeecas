@@ -142,7 +142,30 @@ var app = new Vue({
             }
         },
         requestExitData: {
-            type: '',
+            type: {
+                id: '',
+                name: ''
+            },
+            file: '',
+            note: '',
+        },
+        authorizeRequestExitProcedureData: {
+            file:  {
+                required: false,
+                hasError: false,
+                value: ''
+            },
+            note:  {
+                required: false,
+                hasError: false,
+                value: ''
+            }
+        },
+        authorizeRequestExitData: {
+            type: {
+                id: '',
+                name: ''
+            },
             file: '',
             note: '',
         },
@@ -290,15 +313,21 @@ var app = new Vue({
 
         if(this.guestData.id.value){
             this.loadGuest(this.guestData.id.value);
+        } else {
+            this.getExitTypes();
         }
 
         this.getEducationalQualifications();
-        this.getExitTypes();
         this.getRequestExitTypes();
 
         let modalGuestRequestExit = this.$refs.modalGuestRequestExit; 
         $(modalGuestRequestExit).on('hidden.bs.modal', () => {
             this.clearRequestExitProcedureData();
+        });
+
+        let modalAuthorizeGuestRequestExit = this.$refs.modalAuthorizeGuestRequestExit; 
+        $(modalAuthorizeGuestRequestExit).on('hidden.bs.modal', () => {
+            this.clearAuthorizeRequestExitProcedureData();
         });
 
         let modalGuestExit = this.$refs.modalGuestExit; 
@@ -369,19 +398,32 @@ var app = new Vue({
                         this.guestStatus = res.data.data.status_id;
                         this.guestExitRequestStatus = res.data.data.exit_request_status_id;
 
-                        this.requestExitData.type = res.data.data.history_exit_type;
-                        this.requestExitData.file = res.data.data.history_file;
-                        this.requestExitData.note = res.data.data.history_note;
-                        this.exitData.type = res.data.data.history_exit_type;
-                        this.exitData.date = res.data.data.check_out_date;
-                        this.exitData.file = res.data.data.history_file;
-                        this.exitData.note = res.data.data.history_note;
-                        this.transferData.destination = res.data.data.history_destination;
-                        this.transferData.destination_id = res.data.data.history_destination_id;
-                        this.transferData.provenance = res.data.data.history_provenance;
-                        this.transferData.date = res.data.data.history_date;
-                        this.transferData.note = res.data.data.history_note;
-                        this.transferData.cloned_guest = res.data.data.history_cloned_guest;
+                        if (this.guestStatus == 1 && this.guestExitRequestStatus == 1) {
+                            this.requestExitData.type.id = res.data.data.history_exit_type_id;
+                            this.requestExitData.type.name = res.data.data.history_exit_type_name;
+                            this.requestExitData.file = res.data.data.history_file;
+                            this.requestExitData.note = res.data.data.history_note;
+                        }
+                        if (this.guestStatus == 1 && this.guestExitRequestStatus == 2) {
+                            this.authorizeRequestExitData.type.id = res.data.data.history_exit_type_id;
+                            this.authorizeRequestExitData.type.name = res.data.data.history_exit_type_name;
+                            this.authorizeRequestExitData.file = res.data.data.history_file;
+                            this.authorizeRequestExitData.note = res.data.data.history_note;
+                        }
+                        if (this.guestStatus == 2 || this.guestStatus == 3) {
+                            this.exitData.type = res.data.data.history_exit_type_name;
+                            this.exitData.date = res.data.data.check_out_date;
+                            this.exitData.file = res.data.data.history_file;
+                            this.exitData.note = res.data.data.history_note;
+                        }
+                        if (this.guestStatus == 4 || this.guestStatus == 5 || this.guestStatus == 6) {
+                            this.transferData.destination = res.data.data.history_destination;
+                            this.transferData.destination_id = res.data.data.history_destination_id;
+                            this.transferData.provenance = res.data.data.history_provenance;
+                            this.transferData.date = res.data.data.history_date;
+                            this.transferData.note = res.data.data.history_note;
+                            this.transferData.cloned_guest = res.data.data.history_cloned_guest;
+                        }
 
                         this.familyId = res.data.data.family_id;
                         this.guestFamily = res.data.data.family; 
@@ -389,6 +431,8 @@ var app = new Vue({
                         this.existsInFuture = res.data.data.exists_in_future; 
 
                         this.loadedFamily = JSON.stringify(this.guestFamily);
+
+                        this.getExitTypes();
 
                         this.loadGuestHistory();
 
@@ -717,7 +761,8 @@ var app = new Vue({
         },
 
         getExitTypes: function() {
-            axios.get(pathServer + 'aziende/ws/getExitTypes/'+this.ente_type)
+            var all = this.guestExitRequestStatus == 2 ? 1 : 0;
+            axios.get(pathServer + 'aziende/ws/getExitTypes/'+this.ente_type+'/'+all)
                 .then(res => { 
                     if (res.data.response == 'OK') {
                         this.exitTypes = res.data.data;
@@ -782,7 +827,7 @@ var app = new Vue({
                 alert('Si prega di compilare tutti i campi obbligatori.');
                 return false;
             } else { 
-                /*if (this.guestFamily.length > 0) {
+                if (this.guestFamily.length > 0) {
                     let requestExitFamily = this.$refs.requestExitFamily;
                     $(requestExitFamily).modal({
                         backdrop: 'static',
@@ -790,8 +835,7 @@ var app = new Vue({
                     });
                 } else { 
                     this.requestExitGuest(0);
-                }*/ 
-                this.requestExitGuest(0);        
+                }        
             }
         },
 
@@ -812,7 +856,8 @@ var app = new Vue({
                 if (res.data.response == 'OK') {
                     alert(res.data.msg);
                     this.guestExitRequestStatus = res.data.data.history_exit_request_status;
-                    this.requestExitData.type = res.data.data.history_exit_type;
+                    this.requestExitData.type.id = res.data.data.history_exit_type_id;
+                    this.requestExitData.type.name = res.data.data.history_exit_type_name;
                     this.requestExitData.file = res.data.data.history_file;
                     this.requestExitData.note = res.data.data.history_note;
 
@@ -868,10 +913,101 @@ var app = new Vue({
             $(modalAuthorizeGuestRequestExit).modal('show');
         },
 
+        authorizeRequestExitProcedure: function() { 
+            var error = false;
+
+            Object.keys(this.authorizeRequestExitProcedureData).forEach((prop) => {
+                if (this.authorizeRequestExitProcedureData[prop].required && (this.authorizeRequestExitProcedureData[prop].value == "" || this.authorizeRequestExitProcedureData[prop].value == null)) {
+                    error = true;
+                    this.authorizeRequestExitProcedureData[prop].hasError = true;
+                } else {
+                    this.authorizeRequestExitProcedureData[prop].hasError = false;
+                }
+            });
+
+            if (error) {
+                alert('Si prega di compilare tutti i campi obbligatori.');
+                return false;
+            } else { 
+                if (this.guestFamily.length > 0) {
+                    let authorizeRequestExitFamily = this.$refs.authorizeRequestExitFamily;
+                    $(authorizeRequestExitFamily).modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                } else { 
+                    this.authorizeRequestExitGuest(0);
+                }       
+            }
+        },
+
+        authorizeRequestExitGuest: function(authorizeRequestExitFamily){
+            let formData = new FormData();
+            formData.append('guest_id', this.guestData.id.value);
+            Object.keys(this.authorizeRequestExitProcedureData).forEach((prop) => {
+                formData.append(prop, this.authorizeRequestExitProcedureData[prop].value);
+            });
+            formData.append('authorize_request_exit_family', authorizeRequestExitFamily);
+            formData.append('exit_type_id', this.requestExitData.type.id);
+
+            axios.post(pathServer + 'aziende/ws/authorizeRequestExitProcedure', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    alert(res.data.msg);
+                    this.guestExitRequestStatus = res.data.data.history_exit_request_status;
+                    this.authorizeRequestExitData.type.id = res.data.data.history_exit_type_id;
+                    this.authorizeRequestExitData.type.name = res.data.data.history_exit_type_name;
+                    this.authorizeRequestExitData.file = res.data.data.history_file;
+                    this.authorizeRequestExitData.note = res.data.data.history_note;
+
+                    if(authorizeRequestExitFamily){
+                        this.guestFamily.forEach((guest) => {
+                            guest.exit_request_status_id = res.data.data.family_exit_request_status[guest.id];
+                        });
+                        this.loadedFamily = JSON.stringify(this.guestFamily);
+                    }
+
+                    this.loadGuestHistory();
+
+                    let modalAuthorizeGuestRequestExit = this.$refs.modalAuthorizeGuestRequestExit;
+                    $(modalAuthorizeGuestRequestExit).modal('hide');
+
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+
+        clearAuthorizeRequestExitProcedureData: function() {
+            this.authorizeRequestExitProcedureData = {
+                file: {
+                    required: true,
+                    hasError: false,
+                    value: ''
+                },
+                note:  {
+                    required: false,
+                    hasError: false,
+                    value: ''
+                }
+            };
+        },
+
         openExitModal: function() {
             if (this.guestPresenza) {
                 alert("L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di uscita.")
             } else {
+                if (this.guestExitRequestStatus == 2) {
+                    this.exitProcedureData.exit_type_id.value = this.authorizeRequestExitData.type.id;
+                    this.updateExitRequirements();
+                }
                 let modalGuestExit = this.$refs.modalGuestExit;
                 $(modalGuestExit).modal({
                     backdrop: false,
