@@ -15,9 +15,17 @@
 					<div class="form-group"> 
 						<div class="col-sm-12" :class="{'has-error': exitProcedureData.exit_type_id.hasError}">
 							<label :class="{'required': exitProcedureData.exit_type_id.required}" for="exitType">Motivazione</label>
-							<select v-model="exitProcedureData.exit_type_id.value" id="exitType" class="form-control" @change="updateExitRequirements()">
+							<select :disabled="guestExitRequestStatus == 2" v-model="exitProcedureData.exit_type_id.value" id="exitType" class="form-control" @change="updateExitRequirements()">
 								<option v-for="type in exitTypes" :value="type.id">{{type.name}}</option>
 							</select>
+						</div>
+					</div>
+					<div v-if="guestExitRequestStatus == 2 && authorizeRequestExitData.file" class="form-group"> 
+						<div class="col-sm-12">
+							<button type="button" class="btn btn-primary" 
+								@click="downloadExitDocument(authorizeRequestExitData.file)">
+								<i class="fa fa-download"></i> Scarica documento di revoca
+							</button>
 						</div>
 					</div>
 					<div class="form-group"> 

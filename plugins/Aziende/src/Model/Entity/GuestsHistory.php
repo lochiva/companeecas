@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property int $operator_id
  * @property \Cake\I18n\Date|null $operation_date
  * @property int $guest_status_id
+ * @property int $guest_exit_request_status_id
  * @property int|null $exit_type_id
  * @property int $cloned_guest_id
  * @property int $destination_id
@@ -49,6 +50,7 @@ class GuestsHistory extends Entity
         'operator_id' => true,
         'operation_date' => true,
         'guest_status_id' => true,
+        'guest_exit_request_status_id' => true,
         'exit_type_id' => true,
         'cloned_guest_id' => true,
         'destination_id' => true,

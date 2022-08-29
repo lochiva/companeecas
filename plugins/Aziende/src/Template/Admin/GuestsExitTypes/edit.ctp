@@ -17,6 +17,18 @@
         <?php
             echo $this->Form->input('name');
             echo '<div class="input checkbox">';
+            echo $this->Form->label('required_request', 'Necessaria Richiesta');
+            echo $this->Form->checkbox('required_request', ['class' => 'input-checkbox']);
+            echo '</div>';
+            echo '<div class="input checkbox">';
+            echo $this->Form->label('required_request_file', 'Necessario Documento Per Richiesta');
+            echo $this->Form->checkbox('required_request_file', ['class' => 'input-checkbox']);
+            echo '</div>';
+            echo '<div class="input checkbox">';
+            echo $this->Form->label('required_request_note', 'Necessarie Note Per Richiesta');
+            echo $this->Form->checkbox('required_request_note', ['class' => 'input-checkbox']);
+            echo '</div>';
+            echo '<div class="input checkbox">';
             echo $this->Form->label('required_confirmation', 'Necessaria Conferma');
             echo $this->Form->checkbox('required_confirmation', ['class' => 'input-checkbox']);
             echo '</div>';
