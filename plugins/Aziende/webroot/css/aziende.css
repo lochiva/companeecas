@@ -391,3 +391,18 @@ a.contact-login:hover{
 .f-right {
 	float: right;
 }
+
+.integrazione textarea {
+	border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.integrazione .input-group-btn {
+	font-size: 14px;
+	border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.action-status {
+	height: 54px;
+}

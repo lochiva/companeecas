@@ -14,7 +14,7 @@ $(document).ready(function () {
       $('#add-cost').hide();
       $('#add-cost input[type=hidden][name=statement_company]').val('');
       $('#save-cat').prop('disabled', true);
-      $('#deny').parent().hide();
+      $('#deny').parent().parent().hide();
       $('#approve').parent().hide();
       $('#status').parent().hide();
       $('#delete-statement').prop('disabled', true);
@@ -102,30 +102,83 @@ $(document).ready(function () {
             } else {
               $("#file_upload").addClass("hidden");
             }
-            if (res.data.status_id == 1) {
-              $('#deny').data('id', res.data.id);
-              $('#deny').parent().show();
-              $('#approve').data('id', res.data.id);
-              $('#approve').parent().show();
-              $('#status').parent().hide();
-              $('#delete-statement').prop('disabled', false);
-            } else {
-              $('#delete-statement').prop('disabled', true);
-              $('#deny').parent().hide();
-              $('#approve').parent().hide();
-              $('#status').parent().show();
-              $('#status').text(res.data.status.name);
-              if (res.data.status_id == 2) {
-                $('#status').removeClass().addClass('badge btn-success');
+            $('#status').text(res.data.status.name);
+            $('textarea[name=notes]').val(res.data.notes);
 
-              } else if (res.data.status_id == 3) {
-                $('#status').removeClass().addClass('badge btn-danger');
+            // In corso
+            if (res.data.status_id == 1) {
+              $('#deny').parent().parent().hide();
+              $('#approve').parent().hide();
+
+              if (role === 'ente') {
+                $('#send').data('id', res.data.id);
+                $('#send').parent().parent().show();
+                $('#send').prop('disabled', false);
+                $('textarea[name=notes]').val(res.data.notes);
+                $('textarea[name=notes]').prop('disabled', true);
+              } else {
+                $('#send').parent().parent().hide();
+              }
+
+              $('#status').removeClass().addClass('badge btn-default');
+              $('#save-statment').prop('disabled', false);
+              $('#delete-statement').prop('disabled', false);
+              $('form#add-cost').show();
+              
+            // Approvato
+            }  else if (res.data.status_id == 2) {
+              $('#deny').parent().parent().hide();
+              $('#approve').parent().hide();
+              $('#send').parent().parent().hide();
+              $('#save-statment').prop('disabled', true);
+              $('#delete-statement').prop('disabled', false);
+              $('form#add-cost').hide();
+              $('#status').removeClass().addClass('badge btn-success');
+
+            // Integrazione
+            } else if (res.data.status_id == 3) {
+              if(role === 'ente') {
+                $('#deny').parent().parent().hide();
+                $('#approve').parent().hide();
+                $('#send').data('id', res.data.id);
+                $('#send').parent().parent().show();
+                $('#send').prop('disabled', false);
+                $('textarea[name=notes]').prop('disabled', false);
 
               } else {
-                $('#status').removeClass().addClass('badge btn-default');
-              }
-            }
+                $('#deny').parent().parent().show();
+                $('#deny').prop('disabled', true);
+                $('#approve').parent().show();
+                $('#approve').prop('disabled', true);
+                $('#send').parent().parent().hide();
+                $('textarea[name=notes]').prop('disabled', true);
 
+              }
+              $('#save-statment').prop('disabled', false);
+              $('#delete-statement').prop('disabled', false);
+              $('form#add-cost').show();
+              $('#status').removeClass().addClass('badge btn-warning');
+
+            // In approvazione
+            } else if (res.data.status_id == 4) {
+              if (role === 'ente') {
+                $('#send').parent().parent().show();
+                $('#send').prop('disabled', true);
+                $('textarea[name=notes]').prop('disabled', true);
+              } else {
+                $('#send').parent().parent().hide();
+                $('#deny').data('id', res.data.id);
+                $('#deny').parent().parent().show();
+                $('#deny').prop('disabled', false);
+                $('#approve').data('id', res.data.id);
+                $('#approve').parent().show();
+                $('#approve').prop('disabled', false);
+              }
+              $('#save-statment').prop('disabled', true);
+              $('#delete-statement').prop('disabled', false);
+              $('form#add-cost').hide();
+              $('#status').removeClass().addClass('badge btn-info');
+            }
           } else {
             alert(res.msg);
           }
@@ -335,13 +388,12 @@ $(document).ready(function () {
 
   });
 
-  $('#deny').click(function() {
-    deny($(this).data('id'))
+
+
+  $('.action-status:not(:disabled)').click(function() {
+    changeStatus($(this).data('id'), $(this).data('status-id'))
   });
 
-  $('#approve').click(function() {
-    approve($(this).data('id'))
-  });
   attachmentsNumberForBadge('agreements', $('#idItemForAttachment').html(), 'button_attachment');
 });
 
@@ -469,43 +521,63 @@ function deleteCost (id) {
 };
 
 
-function approve (id) {
+function changeStatus (id, status) {
+  let notes = $('textarea[name=notes]').val();
   $.ajax({
-    url: pathServer + "aziende/ws/approveStatementCompany/" + id,
-    type: "GET",
+    url: pathServer + "aziende/ws/updateStatusStatementCompany/" + id,
+    type: "POST",
+    data: {notes: notes, status: status},
     dataType: "json",
   })
   .done(function (res) {
     if (res.response == "OK") {
-      $('#deny').parent().hide();
-      $('#approve').parent().hide();
-      $('#status').parent().show();
-      $('#status').text(res.data.status.name);
-      $('#status').removeClass().addClass('badge btn-success');
-      $('#delete-statement').prop('disabled', true);
-    } else {
-      alert(res.msg);
-    }
-  })
-    .fail(function (richiesta, stato, errori) {
-      alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-    }) 
-};
 
-function deny (id) {
-  $.ajax({
-    url: pathServer + "aziende/ws/denyStatementCompany/" + id,
-    type: "GET",
-    dataType: "json",
-  })
-  .done(function (res) {
-    if (res.response == "OK") {
-      $('#deny').parent().hide();
-      $('#approve').parent().hide();
-      $('#status').parent().show();
-      $('#status').text(res.data.status.name);
-      $('#status').removeClass().addClass('badge btn-danger');
-      $('#delete-statement').prop('disabled', true);
+       if (status == 2) {
+        $('#deny').parent().parent().hide();
+        $('#approve').parent().hide();
+        $('#send').parent().parent().hide();
+        $('#save-statment').prop('disabled', true);
+        $('#delete-statement').prop('disabled', false);
+        $('form#add-cost').hide();
+        $('#status').removeClass().addClass('badge btn-success');
+        $('#status').text(res.data.status.name);
+
+      // Integrazione
+      } else if (status == 3) {
+        $('#deny').data('id', res.data.id);
+        $('#deny').parent().parent().show();
+        $('#deny').prop('disabled', true);
+        $('#approve').data('id', res.data.id);
+        $('#approve').parent().show();
+        $('#approve').prop('disabled', true);
+        $('#send').data('id', res.data.id);
+        $('#send').parent().parent().show();
+        $('#send').prop('disabled', false);
+        $('#save-statment').prop('disabled', false);
+        $('#delete-statement').prop('disabled', false);
+        $('form#add-cost').show();
+        $('#status').removeClass().addClass('badge btn-warning');
+        $('#status').text(res.data.status.name);
+        $('textarea[name=notes]').prop('disabled', true);
+
+      // In approvazione
+      } else if (status == 4) {
+        $('#deny').data('id', res.data.id);
+        $('#deny').parent().parent().show();
+        $('#deny').prop('disabled', false);
+        $('#approve').data('id', res.data.id);
+        $('#approve').parent().show();
+        $('#approve').prop('disabled', false);
+        $('#send').data('id', res.data.id);
+        $('#send').parent().parent().show();
+        $('#send').prop('disabled', true);
+        $('#save-statment').prop('disabled', true);
+        $('#delete-statement').prop('disabled', false);
+        $('form#add-cost').hide();
+        $('#status').removeClass().addClass('badge btn-info');
+        $('#status').text(res.data.status.name);
+        $('textarea[name=notes]').prop('disabled', true);
+      }
     } else {
       alert(res.msg);
     }

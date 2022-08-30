@@ -4014,36 +4014,20 @@ class WsController extends AppController
         }
     }
 
-    public function approveStatementCompany($id) {
+    public function updateStatusStatementCompany($id) {
         $table = TableRegistry::get('Aziende.StatementCompany');
         
         if(isset($id)) {
+            $data = $this->request->data;
+
             $entity = $table->get($id);
 
-            $entity->status_id = 2;
-            $entity->approved_date = date('Y-m-d');
+            $entity->status_id = $data['status'];
+            $entity->notes = $data['notes'];
 
-            $ret = $table->save($entity);
-
-            if ($ret) {
-                $this->_result['response'] = 'OK';
-                $this->_result['data'] = $table->get($id, ['contain' => ['Status']]);
-                $this->_result['msg'] = "";
-            } else {
-                $this->_result['response'] = 'KO';
-                $this->_result['data'] = -1;
-                $this->_result['msg'] = "Impossibile salvare il rendiconto";
+            if ($data['status'] == 2) {
+                $entity->approved_date = date('Y-m-d');
             }
-        }
-    }
-
-    public function denyStatementCompany($id) {
-        $table = TableRegistry::get('Aziende.StatementCompany');
-        
-        if(isset($id)) {
-            $entity = $table->get($id);
-
-            $entity->status_id = 3;
 
             $ret = $table->save($entity);
 
