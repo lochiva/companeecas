@@ -27,7 +27,7 @@ class GuestComponent extends Component
 			$columns[] = ['val' => 'Guests.draft_expiration', 'type' => 'date'];
 			$columns[] = ['val' => 'Guests.suspended', 'type' => 'number'];
 		}
-		$columns[] = ['val' => 'gs.name', 'type' => 'text'];
+		$columns[] = ['val' => 'CONCAT(gs.name, IF(Guests.exit_request_status_id IS NOT NULL, CONCAT(" - ", gers.name), ""))', 'type' => 'text'];
         
         $opt['fields'] = [
 			'Guests.id', 
@@ -42,10 +42,13 @@ class GuestComponent extends Component
 			'Guests.draft_expiration', 
 			'Guests.suspended',
 			'Guests.status_id',
+			'Guests.exit_request_status_id',
 			'Guests.original_guest_id',
 			'Guests.created',
 			'gs.name',
 			'gs.color',
+			'gers.name',
+			'gers.color',
 			'l.des_luo'
 		];
 
@@ -55,6 +58,12 @@ class GuestComponent extends Component
 				'alias' => 'gs',
 				'type' => 'LEFT',
 				'conditions' => 'Guests.status_id = gs.id'
+			],
+			[
+				'table' => 'guests_exit_request_statuses',
+				'alias' => 'gers',
+				'type' => 'LEFT',
+				'conditions' => 'Guests.exit_request_status_id = gers.id'
 			],
 			[
 				'table' => 'luoghi',
@@ -235,6 +244,113 @@ class GuestComponent extends Component
 
     }
 
+	public function requestExitGuest($guest, $data, $today, $filePath)
+	{
+		$error = '';
+
+		// Se stato diverso da "In struttura" non eseguo nessuna operazione sull'ospite
+		if ($guest->status_id == 1) {
+
+			$sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+			//aggiornamento storico
+			$guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+			$history = $guestsHistory->newEntity();
+
+			$historyData['guest_id'] = $guest->id;
+			$historyData['azienda_id'] = $sede->id_azienda;
+			$historyData['sede_id'] = $guest->sede_id;
+			$historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+			$historyData['operation_date'] = $today->format('Y-m-d');
+			$historyData['guest_status_id'] = 1;
+			$historyData['guest_exit_request_status_id'] = 1;
+			$historyData['exit_type_id'] = $data['exit_type_id'];
+			$historyData['file'] = $filePath;
+			$historyData['note'] = $data['note'];
+
+			$guestsHistory->patchEntity($history, $historyData);
+
+			if ($guestsHistory->save($history)) {
+				//aggiornamento stato richiesta uscita ospite
+				$guests = TableRegistry::get('Aziende.Guests');
+
+				$guest->exit_request_status_id = 1; 
+
+				if ($guests->save($guest)) {
+					//creazione notifica richiesta uscita ospite
+					$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+					if ($azienda->id_tipo == 1) {
+						$saveType = 'REQUEST_EXIT_GUEST';
+					} else if ($azienda->id_tipo == 2) {
+						$saveType = 'REQUEST_EXIT_GUEST_UKRAINE';
+					}
+
+					$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+					$notification = $guestsNotifications->newEntity();
+					$notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+					$notificationData = [
+						'type_id' => $notificationType->id,
+						'azienda_id' => $sede->id_azienda,
+						'sede_id' => $sede->id,
+						'guest_id' => $guest->id,
+						'user_maker_id' => $this->request->session()->read('Auth.User.id')
+					];
+					$guestsNotifications->patchEntity($notification, $notificationData);
+					$guestsNotifications->save($notification);
+				} else {
+					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+				}
+			} else {
+				$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+			}
+		}
+
+		return $error;
+	}
+
+	public function authorizeRequestExitGuest($guest, $data, $today, $filePath)
+	{
+		$error = '';
+
+		// Se stato diverso da "In struttura" non eseguo nessuna operazione sull'ospite
+		if ($guest->status_id == 1) {
+
+			$sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
+
+			//aggiornamento storico
+			$guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+			$history = $guestsHistory->newEntity();
+
+			$historyData['guest_id'] = $guest->id;
+			$historyData['azienda_id'] = $sede->id_azienda;
+			$historyData['sede_id'] = $guest->sede_id;
+			$historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+			$historyData['operation_date'] = $today->format('Y-m-d');
+			$historyData['guest_status_id'] = 1;
+			$historyData['guest_exit_request_status_id'] = 2;
+			$historyData['exit_type_id'] = $data['exit_type_id'];
+			$historyData['file'] = $filePath;
+			$historyData['note'] = $data['note'];
+
+			$guestsHistory->patchEntity($history, $historyData);
+
+			if ($guestsHistory->save($history)) {
+				//aggiornamento stato richiesta uscita ospite
+				$guests = TableRegistry::get('Aziende.Guests');
+
+				$guest->exit_request_status_id = 2; 
+
+				if (!$guests->save($guest)) {
+					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+				}
+			} else {
+				$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+			}
+		}
+
+		return $error;
+	}
+
 	public function exitGuest($guest, $data, $today, $status, $filePath)
 	{
 		$error = '';
@@ -269,6 +385,7 @@ class GuestComponent extends Component
 					$guests = TableRegistry::get('Aziende.Guests');
 
 					$guest->status_id = $status;
+					$guest->exit_request_status_id = null;
 					$guest->check_out_date = $today->format('Y-m-d');  
 
 					if ($guests->save($guest)) {

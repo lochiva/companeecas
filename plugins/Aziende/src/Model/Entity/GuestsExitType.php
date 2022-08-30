@@ -8,6 +8,9 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property string $name
+ * @property bool $required_request
+ * @property bool $required_request_file
+ * @property bool $required_request_note
  * @property bool $required_confirmation
  * @property bool $required_file
  * @property bool $required_note
@@ -31,6 +34,9 @@ class GuestsExitType extends Entity
      */
     protected $_accessible = [
         'name' => true,
+        'required_request' => true,
+        'required_request_file' => true,
+        'required_request_note' => true,
         'required_confirmation' => true,
         'required_file' => true,
         'required_note' => true,

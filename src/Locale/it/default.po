@@ -561,26 +561,38 @@ msgid "Delete Sedi Tipi"
 msgstr "Cancella Tipo"
 
 #: Template/Admin/GuestsExitTypes/index.ctp:14
+msgid "Required Request"
+msgstr "Necessaria Richiesta"
+
+#: Template/Admin/GuestsExitTypes/index.ctp:15
+msgid "Required Request File"
+msgstr "Necessario Documento Per Richiesta"
+
+#: Template/Admin/GuestsExitTypes/index.ctp:16
+msgid "Required Request Note"
+msgstr "Necessarie Note Per Richiesta"
+
+#: Template/Admin/GuestsExitTypes/index.ctp:17
 msgid "Required Confirmation"
 msgstr "Necessaria Conferma"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:15
+#: Template/Admin/GuestsExitTypes/index.ctp:18
 msgid "Required File"
 msgstr "Necessario Documento"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:16
+#: Template/Admin/GuestsExitTypes/index.ctp:19
 msgid "Required Note"
 msgstr "Necessarie Note"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:17
+#: Template/Admin/GuestsExitTypes/index.ctp:20
 msgid "Startable By Ente"
 msgstr "Avviabile Da Ente"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:18
+#: Template/Admin/GuestsExitTypes/index.ctp:21
 msgid "ToSAI"
 msgstr "Destinazione SAI"
 
-#: Template/Admin/GuestsExitTypes/index.ctp:19
+#: Template/Admin/GuestsExitTypes/index.ctp:22
 msgid "Ente Type"
 msgstr "Tipologia Ente"
 
