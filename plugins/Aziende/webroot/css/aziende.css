@@ -392,17 +392,10 @@ a.contact-login:hover{
 	float: right;
 }
 
-.integrazione textarea {
-	border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
+.d-flex {
+	display: flex;
 }
 
-.integrazione .input-group-btn {
-	font-size: 14px;
-	border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.action-status {
-	height: 54px;
+.d-align-items-center {
+	align-items: center;
 }
