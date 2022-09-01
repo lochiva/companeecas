@@ -38,14 +38,14 @@ return [
             'select' => '<select class="form-control" name="{{name}}" {{attrs}} /> {{content}} </select>',
 
             'inputContainer' => 
-                '<div class="form-group">
+                '<div class="col-md-6">
                     {{content}}
                 </div>',
 
-            'formGroup' => '{{label}} <div class="col-sm-10"> {{input}} </div>',
+            'formGroup' => '{{label}} {{input}}',
 
             'selectContainer' => 
-                '<div class="form-group">
+                '<div class="col-md-6">
                     {{content}}
                 </div>',
         ]

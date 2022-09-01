@@ -1,116 +1,125 @@
 <?php
 use Cake\Routing\Router;
+?>
 
-    echo $this->Form->hidden('id');
+    <?= $this->Form->hidden('id'); ?>
 
-    echo $this->Form->control('period_id', [
+    <div class="form-group">
+
+    
+    <?php echo $this->Form->control('period_id', [
         'type' => 'select',
         'multiple' => false,
         'options' => $periods,
         'empty' => 'Selezionare un periodo',
         'disabled' => [''],
         'required' => true,
-        'label' => ['text' => 'Periodo', 'class' => 'col-sm-2 control-label required']
+        'label' => ['text' => 'Periodo', 'class' => 'control-label required']
     ]);
 
     echo $this->Form->control('period_label', [
         'type' => 'text',
         'required' => true,
         'readonly' => true,
-        'label' => ['text' => 'Etichetta Periodo', 'class' => 'col-sm-2 control-label required']
+        'label' => ['text' => 'Etichetta Periodo', 'class' => 'control-label required']
     ]);
 
-?>
-
-<div class="form-group">
-
-    <?= $this->Form->label('period_start_date', 'Inizio', ['class' => 'col-sm-2 control-label required']); ?>
-
-    <div class="col-sm-10">
-        <?php echo $this->Form->text('period_start_date', [
-            'type' => 'date',
-            'required' => true,
-            'class' => 'form-control',
-            'readonly' => true
-        ]); ?>
-    </div>
-
-</div>
-
-<div class="form-group">
-
-    <?= $this->Form->label('stetement.period_end_date', 'Fine', ['class' => 'col-sm-2 control-label required']); ?>
-
-    <div class="col-sm-10">
-        <?php echo $this->Form->text('period_end_date', [
-            'type' => 'date',
-            'required' => true,
-            'class' => 'form-control',
-            'readonly' => true
-        ]); ?>
-    </div>
-
-</div>
-
-<?php if ($ati) : ?>
-    <?= $this->Form->control('companies.0.id', [
-        'type' => 'select',
-        'multiple' => false,
-        'options' => $companies,
-        'empty' => "Selezionare un'azienda",
-        'value' => '',
-        'disabled' => [''],
-        'label' => ['text' => 'Report di', 'class' => 'col-sm-2 control-label required']
-    ]); ?>
-
-    <?= $this->Form->hidden('companies.0.company_id'); ?>
-
-    <div class="" id="company_specific">
-
-    <?= $this->Form->control('companies.0.billing_reference', [
-            'type' => 'text',
-            'required' => true,
-            'label' => ['text' => 'Numero Fattura', 'class' => 'col-sm-2 control-label required'],
-        ]); 
     ?>
-        
-        <div class="form-group">
 
-            <?= $this->Form->label('companies.0.billing_date', 'Data fattura', ['class' => 'col-sm-2 control-label required']); ?>
+    </div>
 
-            <div class="col-sm-10">
+    <div class="form-group">
+        <div class="col-md-6">
 
-                <?= $this->Form->text('companies.0.billing_date', [
-                    'type' => 'date',
-                    'required' => true,
-                    'class' => 'form-control'
-                ]); ?>
-            </div>
+            <?= $this->Form->label('period_start_date', 'Inizio', ['class' => 'control-label required']); ?>
+
+            <?php echo $this->Form->text('period_start_date', [
+                'type' => 'date',
+                'required' => true,
+                'class' => 'form-control',
+                'readonly' => true
+            ]); ?>
 
         </div>
 
-    <?php
-        echo $this->Form->control('companies.0.billing_net_amount', [
-            'type' => 'number',
-            'required' => true,
-            'label' => ['text' => 'Importo netto', 'class' => 'col-sm-2 control-label required'],
-        ]);
+        <div class="col-md-6">
 
-        echo $this->Form->control('companies.0.billing_vat_amount', [
-            'type' => 'number',
-            'required' => true,
-            'label' => ['text' => 'Importo iva', 'class' => 'col-sm-2 control-label required'],
-        ]);
+            <?= $this->Form->label('stetement.period_end_date', 'Fine', ['class' => 'control-label required']); ?>
 
-    ?>
+            <?php echo $this->Form->text('period_end_date', [
+                'type' => 'date',
+                'required' => true,
+                'class' => 'form-control',
+                'readonly' => true
+            ]); ?>
+
+        </div>
+    </div>
+
+<?php if ($ati) : ?>
+    <div class="form-group">
+        <?= $this->Form->control('companies.0.id', [
+            'type' => 'select',
+            'multiple' => false,
+            'options' => $companies,
+            'empty' => "Selezionare un'azienda",
+            'value' => '',
+            'disabled' => [''],
+            'label' => ['text' => 'Report di', 'class' => 'control-label required']
+        ]); ?>
+    </div>
+
+        <?= $this->Form->hidden('companies.0.company_id'); ?>
+
+        <div class="" id="company_specific">
+
+            <div class="form-group">
+
+                <?= $this->Form->control('companies.0.billing_reference', [
+                        'type' => 'text',
+                        'required' => true,
+                        'label' => ['text' => 'Numero Fattura', 'class' => 'control-label required'],
+                    ]); 
+                ?>
+            
+                <div class="col-md-6">
+                    <?= $this->Form->label('companies.0.billing_date', 'Data fattura', ['class' => 'control-label required']); ?>
+
+                    <?= $this->Form->text('companies.0.billing_date', [
+                        'type' => 'date',
+                        'required' => true,
+                        'class' => 'form-control'
+                    ]); ?>
+                </div>
+
+            </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label">File Fattura</label> 
-            <div class="col-sm-2" id="file_upload"> 
-                <a id="box-general-action" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank">Download</a>
-            </div>
-            <div class="col-sm-3"> 
-                <input type="file" name="file" class="form-control"> 
+            <?php
+                echo $this->Form->control('companies.0.billing_net_amount', [
+                    'type' => 'number',
+                    'required' => true,
+                    'label' => ['text' => 'Importo netto', 'class' => 'control-label required'],
+                ]);
+
+                echo $this->Form->control('companies.0.billing_vat_amount', [
+                    'type' => 'number',
+                    'required' => true,
+                    'label' => ['text' => 'Importo iva', 'class' => 'control-label required'],
+                ]);
+
+            ?>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-6">
+                <label class="control-label">File Fattura</label>
+                
+
+                <div class="d-flex">
+                    <input type="file" name="file" class="form-control">
+                    <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                </div>
             </div>
         </div>
 
@@ -123,66 +132,57 @@ use Cake\Routing\Router;
 
     <div>
 
-        <?php
-            echo $this->Form->control('companies.0.billing_reference', [
-                'type' => 'text',
-                'required' => true,
-                'label' => ['text' => 'Numero Fattura', 'class' => 'col-sm-2 control-label required'],
-            ]); 
-        ?>
-        
         <div class="form-group">
+            <?php
+                echo $this->Form->control('companies.0.billing_reference', [
+                    'type' => 'text',
+                    'required' => true,
+                    'label' => ['text' => 'Numero Fattura', 'class' => 'control-label required'],
+                ]); 
+            ?>
+        
+            <div class="col-md-6">
 
-        <?= $this->Form->label('companies.0.billing_date', 'Data fattura', ['class' => 'col-sm-2 control-label required']); ?>
-
-            <div class="col-sm-10">
+            <?= $this->Form->label('companies.0.billing_date', 'Data fattura', ['class' => 'control-label required']); ?>
 
                 <?php echo $this->Form->text('companies.0.billing_date', [
                     'type' => 'date',
                     'required' => true,
                     'class' => 'form-control'
                 ]); ?>
+
             </div>
-
         </div>
+        
+        <div class="form-group">
+        <?php
+            echo $this->Form->control('companies.0.billing_net_amount', [
+                'type' => 'number',
+                'required' => true,
+                'label' => ['text' => 'Importo netto', 'class' => 'control-label required'],
+            ]);
 
-    <?php
-        echo $this->Form->control('companies.0.billing_net_amount', [
-            'type' => 'number',
-            'required' => true,
-            'label' => ['text' => 'Importo netto', 'class' => 'col-sm-2 control-label required'],
-        ]);
-
-        echo $this->Form->control('companies.0.billing_vat_amount', [
-            'type' => 'number',
-            'required' => true,
-            'label' => ['text' => 'Importo iva', 'class' => 'col-sm-2 control-label required'],
-        ]);
-    ?>
-
-    <?php if ($statement->companies[0]->uploaded_path) : ?>
+            echo $this->Form->control('companies.0.billing_vat_amount', [
+                'type' => 'number',
+                'required' => true,
+                'label' => ['text' => 'Importo iva', 'class' => 'control-label required'],
+            ]);
+        ?>
+        </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label">File Fattura</label> 
-            <div class="col-sm-2"> 
-                <a id="box-general-action" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank">Download</a>
-            </div>
-            <div class="col-sm-3"> 
-                <input type="file" name="file" class="form-control"> 
-            </div>
+
+                    <div class="col-sm-6">
+                        <label class="control-label">File Fattura</label>
+                        <div class="d-flex">
+                            <input type="file" name="file" class="form-control">
+                            <?php if ($statement->companies[0]->uploaded_path) : ?>
+                                <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                            <?php endif ?>
+                        </div>
+                    </div>
+
         </div>
-
-    <?php else : ?>
-
-        <?= $this->Form->control('file', [
-            'type' => 'file',
-            'label' => ['text' => 'Upload File fattura', 'class' => 'col-sm-2 control-label required'],
-        ]); ?>
-
-    <?php endif ?>
-
-
-    
 
     </div>
 

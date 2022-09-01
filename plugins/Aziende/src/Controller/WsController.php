@@ -4272,7 +4272,10 @@ class WsController extends AppController
             $entity = $table->get($id);
 
             $entity->status_id = $data['status'];
-            $entity->notes = $data['notes'];
+
+            if(isset($data['notes'])) {
+                $entity->notes = $data['notes'];
+            }
 
             if ($data['status'] == 2) {
                 $entity->approved_date = date('Y-m-d');
