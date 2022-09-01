@@ -892,7 +892,7 @@ var app = new Vue({
                     value: ''
                 },
                 file: {
-                    required: true,
+                    required: false,
                     hasError: false,
                     value: ''
                 },

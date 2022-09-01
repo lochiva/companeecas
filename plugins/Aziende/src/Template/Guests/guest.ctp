@@ -47,7 +47,10 @@ $role = $this->request->session()->read('Auth.User.role');
             L'ospite è in stato "Richiesta di uscita autorizzata" con motivazione {{authorizeRequestExitData.type.name}}.
             <div><b>Note uscita:</b> {{authorizeRequestExitData.note}}</div>
             <div class="exit-buttons">
-                <button type="button" class="btn btn-danger" @click="openExitModal()">Uscita</button>
+                <button v-if="role == 'admin' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger" @click="openExitModal()">Uscita</button>
+                <span v-else title="Questa motivazione di uscita non è avviabile da ente">
+                    <button disabled type="button" class="btn btn-danger">Uscita</button>
+                </span>
             </div>
         </div>
         <div v-if="guestStatus == 2" class="message-exiting alert">
@@ -226,7 +229,15 @@ $role = $this->request->session()->read('Auth.User.role');
                     </div>
                     <div class="box-footer">
                         <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
-                        <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                        <span v-if="guestStatus == 1 && guestExitRequestStatus == 2">
+                            <button v-if="role == 'admin' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                            <span v-else title="Questa motivazione di uscita non è avviabile da ente">
+                                <button disabled type="button" class="btn btn-danger pull-right btn-exit">Uscita</button>
+                            </span>
+                        </span>
+                        <span v-else>
+                            <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                        </span>
                         <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-olive pull-right btn-exit-request" @click="openRequestExitModal()">Richiesta uscita</button>
                         <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 3 || existsInFuture" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()" :title="guestStatus == 3 && existsInFuture ? 'L\'ospite è gia stato riammesso' : ''">Riammissione</button>
                     </div>
