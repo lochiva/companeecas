@@ -70,7 +70,6 @@ $(document).ready(function () {
       $('#cost-headers').html('Spese');
       $('#save-statment').prop('disabled', false);
       let id = $(this).val();
-      $('#add-cost').show();
       $('#add-cost input[type=hidden][name=statement_company]').val(id);
       $('#save-cat').prop('disabled', false);
       $("#company_specific").removeClass("hidden");
@@ -107,7 +106,9 @@ $(document).ready(function () {
               $("#file_upload").addClass("hidden");
             }
             $('#status').text(res.data.status.name);
+            $('#status').data('status_id', res.data.status_id);
             $('textarea[name=notes]').val(res.data.notes);
+            $('#text-notes').text(res.data.notes);
 
             // In corso
             if (res.data.status_id == 1) {
@@ -123,7 +124,6 @@ $(document).ready(function () {
 
                 $('#save-statment').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
-                $('form#add-cost').show();
               } else {
                 $('textarea[name=notes]').prop('disabled', true);
                 $('#btn-actions').hide();
@@ -133,35 +133,34 @@ $(document).ready(function () {
             // Approvato
             }  else if (res.data.status_id == 2) {
               $('#status').removeClass().addClass('badge btn-success');
-              if (role === 'ente') {
-                $('textarea[name=notes]').prop('disabled', true);
-                $('#btn-actions').hide();
-                $('#comments').hide();
 
-                $('#save-statment').prop('disabled', true);
-                $('#delete-statement').prop('disabled', true);
-                $('form#add-cost').hide();
-              } else {
-                $('textarea[name=notes]').prop('disabled', true);
-                $('#btn-actions').hide();
-                $('#comments').hide();
-              }
+              $('textarea[name=notes]').prop('disabled', true);
+              $('textarea[name=notes]').hide();
+              $('#btn-actions').hide();
+              $('#comments').show();
+
+              $('#save-statment').prop('disabled', true);
+              $('#delete-statement').prop('disabled', true);
+
+              $('#text-notes').show();
 
             // Integrazione
             } else if (res.data.status_id == 3) {
               $('#status').removeClass().addClass('badge btn-warning');
+
+              $('#text-notes').hide();
               if(role === 'ente') {
                 $('#send').data('id', res.data.id);
                 $('#send').prop('disabled', false);
                 
                 $('#save-statment').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
-                $('form#add-cost').show();
 
                 $('#btn-actions').show();
                 $('#comments').show();
 
                 $('textarea[name=notes]').prop('disabled', false);
+
 
               } else {
                 $('#deny').prop('disabled', true);
@@ -173,18 +172,17 @@ $(document).ready(function () {
                 $('textarea[name=notes]').prop('disabled', true);
               }
 
-
-
             // In approvazione
             } else if (res.data.status_id == 4) {
+
               $('#status').removeClass().addClass('badge btn-info');
+              $('#text-notes').hide();
               if (role === 'ente') {
                 $('#btn-actions').show();
                 $('#send').prop('disabled', true);
 
                 $('#save-statment').prop('disabled', true);
                 $('#delete-statement').prop('disabled', true);
-                $('form#add-cost').hide();
 
                 $('#comments').show();
                 $('textarea[name=notes]').prop('disabled', true);
@@ -423,6 +421,7 @@ $(document).ready(function () {
 
 function loadCosts(cats) {
   $("#accordion").html("");
+  let status_id = $('#status').data('status_id');
   for (let cat in cats) {
     let toAppend = '';
     if (cats[cat]['id'] == 'grandTotal') {
@@ -460,11 +459,14 @@ function loadCosts(cats) {
                   <th>Importo</th>
                   <th>Quota parte</th>
                   <th>Note</th>
-                  <th>Allegato</th>
-                  <th></th>
-                </tr>
-              </thead>
+                  <th>Allegato</th>`;
 
+      if(status_id != 2) {
+        toAppend += `<th class="spesa-col"></th>`;
+      }
+
+      toAppend += `</tr>
+              </thead>
               <tbody>`;
 
       for (let cost in cats[cat]["costs"]) {
@@ -497,11 +499,16 @@ function loadCosts(cats) {
             toAppend +=         '<a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cats[cat]["costs"][cost]["id"] + '">Scarica</a>';
           }
 
-          toAppend += `</td> <td> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
-          <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
-          </a>` +
-          `</td>
-          </tr>`;
+          toAppend += `</td>`;
+
+          if(status_id != 2) {
+            toAppend += `<td class="spesa-col"> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
+            <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
+            </a>` +
+            `</td>`;
+          }
+
+          toAppend += `</tr>`;
       }
 
     toAppend += `</tbody>
@@ -513,6 +520,12 @@ function loadCosts(cats) {
     }
 
     $("#accordion").append(toAppend);
+  }
+
+  if(status_id != 2) {
+    $('#add-cost').parent().show();
+  } else {
+    $('#add-cost').parent().hide();
   }
 
 }
@@ -574,13 +587,23 @@ function changeStatus (id, status) {
     })
     .done(function (res) {
       if (res.response == "OK") {
+
+        $('#status').data('status_id', status);
+        $('#text-notes').text(res.data.notes);
   
         // Approvato
          if (status == 2) {
           $('#btn-actions').hide();
           $('#status').removeClass().addClass('badge btn-success');
           $('#status').text(res.data.status.name);
-          $('#comments').hide();
+          
+          $('#comments').show();
+
+          $('textarea[name=notes]').hide();
+
+          $('#text-notes').show();
+
+          $('#add-cost').parent().hide();
   
         // Integrazione
         } else if (status == 3) {
@@ -590,18 +613,28 @@ function changeStatus (id, status) {
   
           $('#status').removeClass().addClass('badge btn-warning');
           $('#status').text(res.data.status.name);
-  
+
+          $('#comments').show();
+          $('#text-notes').hide();
+          $('textarea[name=notes]').show();
           $('textarea[name=notes]').prop('disabled', true);
+
+          $('#add-cost').parent().show();
   
         // In approvazione
         } else if (status == 4) {
+          $('#add-cost').parent().hide();
+
           $('#send').prop('disabled', true);
           $('#save-statment').prop('disabled', true);
           $('#delete-statement').prop('disabled', true);
           $('form#add-cost').hide();
           $('#status').removeClass().addClass('badge btn-info');
           $('#status').text(res.data.status.name);
+
           $('#comments').show();
+          $('#text-notes').hide();
+          $('textarea[name=notes]').show();
           $('textarea[name=notes]').prop('disabled', true);
         }
       } else {
