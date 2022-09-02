@@ -22,7 +22,7 @@ class UsersTable extends AppTable
             ->notEmpty('password', 'La password è obbligatoria')
             ->notEmpty('role', 'Il ruolo è obbligatorio')
             ->add('role', 'inList', [
-                'rule' => ['inList', ['admin', 'ente']],
+                'rule' => ['inList', ['admin', 'area_iv', 'ragioneria', 'ente_ospiti', 'ente_contabile']],
                 'message' => 'Inserire un ruolo valido'
             ]);
     }

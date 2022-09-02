@@ -24,7 +24,12 @@ $user = $this->request->session()->read('Auth.User');
 		<!-- Messaggio di benvenuto -->
 		<div id="box-benvenuto" class="box box-warning" style="text-align:center; padding:15px;">
 			<div class="row" style="margin:0;">  
-				<?php if ($user['role'] == 'admin' || ($user['role'] == 'ente' && $this->Utils->isValidEnte($user['id']))) { ?>
+				<?php if (
+					$user['role'] == 'admin' || 
+					$user['role'] == 'area_iv' || 
+					$user['role'] == 'ragioneria' || 
+					(($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') && $this->Utils->isValidEnte($user['id']))
+				) { ?>
 					<?= $this->Html->Image('/img/logo_homepage.png',['class'=>'logo_centro']) ?>
 					<h2>Benvenuta/o!</h2>
 					<br />
@@ -41,11 +46,16 @@ $user = $this->request->session()->read('Auth.User');
 	<!-- Ricerca ospite -->
 	<?= $this->element('Aziende.box_search_guest'); ?>
 
-	<?php if ($user['role'] == 'admin') { ?>
+	<?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv') { ?>
 		<!-- Notifiche -->
 		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsCount, 'notifications' => $notifications, 'enteType' => 1]); ?>
 
 		<!-- Notifiche Emergenza Ucraina -->
 		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsUkraineCount, 'notifications' => $notificationsUkraine, 'enteType' => 2]); ?>
+	<?php } ?>
+
+	<?php if ($user['role'] == 'admin' || $user['role'] == 'ragioneria') { ?>
+		<!-- Notifiche Ragioneria -->
+		
 	<?php } ?>
 </section>

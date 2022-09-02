@@ -30,7 +30,7 @@ $role = $this->request->session()->read('Auth.User.role');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <?php if ($role == 'admin') { ?>
+        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
         <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
@@ -51,11 +51,13 @@ $role = $this->request->session()->read('Auth.User.role');
                   <?php if ($azienda['id_tipo'] == 1) { ?>
                     <a href="<?=Router::url('/aziende/sedi/presenze?sede='.$sede['id']);?>" id="sediPresenze" class="btn btn-primary btn-xs pull-right" style="margin-left:10px"><i class="fa fa-calendar"></i> Presenze</a>
                   <?php } ?>
-                  <a href="<?=Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=');?>" id="newGuest" style="margin-left:10px"
-                    class="btn btn-info btn-xs pull-right <?= $sede['operativita'] == 0 ? 'disabled-anchor' : '' ?>"
-                    <?= $sede['operativita'] == 0 ? 'data-toggle="tooltip" data-placement="top" title="La sede è chiusa pertanto non è possibile aggiungere ospiti"' : '' ?>>
-                    <i class="fa fa-plus"></i> Nuovo
-                  </a>
+                  <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                    <a href="<?=Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=');?>" id="newGuest" style="margin-left:10px"
+                        class="btn btn-info btn-xs pull-right <?= $sede['operativita'] == 0 ? 'disabled-anchor' : '' ?>"
+                        <?= $sede['operativita'] == 0 ? 'data-toggle="tooltip" data-placement="top" title="La sede è chiusa pertanto non è possibile aggiungere ospiti"' : '' ?>>
+                        <i class="fa fa-plus"></i> Nuovo
+                    </a>
+                    <?php } ?>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-table-guests box-body">

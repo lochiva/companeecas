@@ -14,6 +14,8 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
         vm.sedeModel = sedeModel;
         vm.contattoModel = contattoModel;
 
+        vm.role = role;
+
 
         vm.azienda = new vm.aziendaModel().azienda;
 

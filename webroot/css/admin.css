@@ -27,8 +27,9 @@ div.edit-user input,
 div.add-user input{
 	width:200px;
 }
-div.edit-user select{
-	width:100px;
+div.edit-user select,
+div.add-user select{
+	width:200px;
 }
 div.edit-user .btn,
 div.add-user .btn{

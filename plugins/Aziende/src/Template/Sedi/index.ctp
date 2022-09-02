@@ -22,7 +22,7 @@ $user = $this->request->session()->read('Auth.User');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-dashboard"></i> Home</a></li>
-        <?php if ($user['role'] == 'admin') { ?>
+        <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
         <li class="active">Gestione strutture</li>
@@ -40,7 +40,9 @@ $user = $this->request->session()->read('Auth.User');
                     <?php if ($azienda->id_tipo == 1) { ?>
                         <a class="btn btn-primary btn-xs pull-right" href="<?= Router::url('/aziende/agreements/index/' . $azienda->id)?>" style="margin-left: 10px;"><i class="fa fa-file-text-o"></i> Convenzioni</a>
                     <?php } ?>
+                    <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') { ?>
                     <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" data-backdrop="false" data-keyboard="false" onclick="clearModale()" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                    <?php } ?>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                   </div>
                 </div>

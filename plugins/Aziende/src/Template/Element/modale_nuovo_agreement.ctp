@@ -23,7 +23,7 @@ $role = $this->request->session()->read('Auth.User.role');
                             <input type="hidden" name="azienda_id" id="aziendaId" value="<?=$azienda['id']?>">
                             <input type="hidden" id="approved">
 
-                            <?php if ($role == 'admin') { ?>
+                            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" for="inputApproved">Approvato</label>
                                     <div class="col-sm-8">
@@ -184,9 +184,13 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger pull-left" id="deleteAgreement">Cancella</button>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                    <button type="button" class="btn btn-danger pull-left" id="deleteAgreement">Cancella</button>
+                <?php } ?>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                <button type="button" class="btn btn-primary" id="saveAgreement" >Salva</button>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                    <button type="button" class="btn btn-primary" id="saveAgreement" >Salva</button>
+                <?php } ?>
             </div>
 
         </div>

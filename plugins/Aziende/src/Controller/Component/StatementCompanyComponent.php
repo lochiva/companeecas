@@ -25,7 +25,7 @@ class StatementCompanyComponent extends Component
 
          $user = $this->Auth->user();
 
-        if ($user['role'] == 'ente') {
+        if ($user['role'] == 'ente_contabile') {
             $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($user['id']);
             $agreements = TableRegistry::get('Aziende.Agreements')->find('all')->select(['id'])->where(['azienda_id' => $azienda['id']])->toArray();
 

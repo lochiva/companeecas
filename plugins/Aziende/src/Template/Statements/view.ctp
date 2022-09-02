@@ -71,7 +71,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             <div class="col-md-11">
                                 <span id="text-notes"></span>
                             
-                            <?php if ($user['role'] == 'ente') : ?>
+                            <?php if ($user['role'] == 'ente_contabile') : ?>
                                 <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled></textarea>
                             <?php else : ?>
                                 <textarea class="form-control" style="overflow:auto;resize:none;border-color: #e08e0b;" name="notes"></textarea>
@@ -83,7 +83,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     <?php else : ?>
 
                         <?php if ($statement->companies[0]->status_id == 1) : ?>
-                            <?php if ($user['role'] == 'ente') : ?>
+                            <?php if ($user['role'] == 'ente_contabile') : ?>
                                 <div class="row margin d-flex d-align-items-center" id="comments" style="display:none;">
                                     <div class="col-md-1"><b>Commenti:</b></div>
                                     <div class="col-md-11">
@@ -105,7 +105,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                                 <div class="col-md-1"><b>Commenti:</b></div>
                                 <div class="col-md-11">
-                                <?php if ($user['role'] == 'ente') : ?>
+                                <?php if ($user['role'] == 'ente_contabile') : ?>
                                     <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes"><?=$statement->companies[0]->notes?></textarea>
                                 <?php else : ?>
                                     <textarea class="form-control" style="overflow:auto;resize:none;border-color: #e08e0b;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
@@ -119,7 +119,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             <div class="row margin d-flex d-align-items-center" id="comments">
                                 <div class="col-md-1"><b>Commenti:</b></div>
                                 <div class="col-md-11">
-                                <?php if ($user['role'] == 'ente') : ?>
+                                <?php if ($user['role'] == 'ente_contabile') : ?>
                                         <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
                                 <?php else : ?>
                                         <textarea class="form-control" style="overflow:auto;resize:none;border-color: #e08e0b;" name="notes"><?=$statement->companies[0]->notes?></textarea>
@@ -131,60 +131,63 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                     <?php endif ?>
 
-                    <div class="row margin d-flex d-align-items-center" id="btn-actions">
-                        <?php if ($ati) : ?>
-                            <div class="col-md-1"><b>Azioni:</b></div>
-                            <div class="col-md-11">
-                            
-                            <?php if ($user['role'] == 'ente') : ?>
-                                <button id="send" data-id="" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
+                    
+                    <?php if ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ente_contabile') : ?>
+                        <div class="row margin d-flex d-align-items-center" id="btn-actions">
+                            <?php if ($ati) : ?>
+                                <div class="col-md-1"><b>Azioni:</b></div>
+                                <div class="col-md-11">
+                                
+                                <?php if ($user['role'] == 'ente_contabile') : ?>
+                                    <button id="send" data-id="" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
+                                <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
+                                    <button id="deny" data-id="" data-status-id=3 type="button" class="btn btn-warning action-status" data-toggle="tooltip" data-placement="top" title="Fare click qui per richiedere l'integrazione">Richiesta integrazione</button>
+                                    <button id="approve" data-status-id=2 data-id="" type="button" class="btn btn-success action-status">Approva</button>
+                                <?php endif ?>
+                                </div>
+
                             <?php else : ?>
-                                <button id="deny" data-id="" data-status-id=3 type="button" class="btn btn-warning action-status" data-toggle="tooltip" data-placement="top" title="Fare click qui per richiedere l'integrazione">Richiesta integrazione</button>
-                                <button id="approve" data-status-id=2 data-id="" type="button" class="btn btn-success action-status">Approva</button>
-                            <?php endif ?>
-                            </div>
 
-                        <?php else : ?>
+                                <?php if ($statement->companies[0]->status_id == 1) : ?>
 
-                            <?php if ($statement->companies[0]->status_id == 1) : ?>
+                                    <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                                        <div class="col-md-1"><b>Azioni:</b></div>
+                                        <div class="col-md-11">
+                                            <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
+                                        </div>
+                                    <?php endif ?>
 
-                                <?php if ($user['role'] == 'ente') : ?>
+                                <?php elseif ($statement->companies[0]->status_id == 2) : ?>
+
+                                <?php elseif ($statement->companies[0]->status_id == 3) : ?>
                                     <div class="col-md-1"><b>Azioni:</b></div>
                                     <div class="col-md-11">
+                                    <?php if ($user['role'] == 'ente_contabile') : ?>
                                         <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
+                                    <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
+                                        <button id="deny" data-id="<?=$statement->companies[0]->id?>" data-status-id=3 type="button" class=" btn btn-warning" disabled>Richiesta integrazione</button>
+                                        <button id="approve" data-status-id=2 data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success action-status" disabled>Approva</button>
+                                    <?php endif ?>
                                     </div>
+                                        
+
+                                <?php elseif ($statement->companies[0]->status_id == 4) :  ?>
+                                    <div class="col-md-1"><b>Azioni:</b></div>
+                                    <div class="col-md-11">
+                                    <?php if ($user['role'] == 'ente_contabile') : ?>
+                                        <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status" disabled>Invia per approvazione</button>
+                                    <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
+                                        <button id="deny" data-id="<?=$statement->companies[0]->id?>" data-status-id=3 type="button" class="btn btn-warning action-status">Richiesta integrazione</button>
+                                        <button id="approve" data-status-id=2 data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success action-status">Approva</button>
+                                    <?php endif ?>
+                                    </div>
+                                        
                                 <?php endif ?>
 
-                            <?php elseif ($statement->companies[0]->status_id == 2) : ?>
-
-                            <?php elseif ($statement->companies[0]->status_id == 3) : ?>
-                                <div class="col-md-1"><b>Azioni:</b></div>
-                                <div class="col-md-11">
-                                <?php if ($user['role'] == 'ente') : ?>
-                                    <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
-                                <?php else : ?>
-                                    <button id="deny" data-id="<?=$statement->companies[0]->id?>" data-status-id=3 type="button" class=" btn btn-warning" disabled>Richiesta integrazione</button>
-                                    <button id="approve" data-status-id=2 data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success action-status" disabled>Approva</button>
-                                <?php endif ?>
-                                </div>
-                                    
-
-                            <?php elseif ($statement->companies[0]->status_id == 4) :  ?>
-                                <div class="col-md-1"><b>Azioni:</b></div>
-                                <div class="col-md-11">
-                                <?php if ($user['role'] == 'ente') : ?>
-                                    <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status" disabled>Invia per approvazione</button>
-                                <?php else : ?>
-                                    <button id="deny" data-id="<?=$statement->companies[0]->id?>" data-status-id=3 type="button" class="btn btn-warning action-status">Richiesta integrazione</button>
-                                    <button id="approve" data-status-id=2 data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success action-status">Approva</button>
-                                <?php endif ?>
-                                </div>
-                                    
                             <?php endif ?>
 
-                        <?php endif ?>
-
-                    </div>
+                        </div>
+                    <?php endif ?>
                 </div>
             </div>
         </div>
@@ -219,52 +222,55 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     <div class="button-group" style="text-align: end;">
                         <a class="btn btn-default" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']) ?>" role="button">Annulla</a>
 
-                        <?php if ($statement->companies[0]->status_id === 1 || $statement->companies[0]->status_id === 3) : ?>
-                            <button class="btn btn-primary" type="submit" id="save-statment">Salva</button>
-                        <?php elseif ($statement->companies[0]->status_id == 4) : ?>
-                            <button class="btn btn-primary" type="submit" id="save-statment" disabled>Salva</button>
+                        <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                            <?php if ($statement->companies[0]->status_id === 1 || $statement->companies[0]->status_id === 3) : ?>
+                                <button class="btn btn-primary" type="submit" id="save-statment">Salva</button>
+                            <?php elseif ($statement->companies[0]->status_id == 4) : ?>
+                                <button class="btn btn-primary" type="submit" id="save-statment" disabled>Salva</button>
+                            <?php endif ?>
                         <?php endif ?>
-
                     </div>
 
                     <?= $this->Form->end(); ?>
 
-                    <?php if ($ati) {
+                    <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                        <?php if ($ati) {
 
-                        echo $this->Form->postButton(
-                            'Elimina', 
-                            [
-                                "plugin" => "Aziende",
-                                "controller" => 'Statements',
-                                "action" => "delete",
-                                $statement->id
-                            ],
-                            [
-                                'confirm' => 'Eliminare il rendiconto?',
-                                'class' => 'btn btn-danger',
-                                'style' => "float: left; margin-top:-34px;",
-                                'id' => 'delete-statement'
-                            ]
-                        );
-                    } else {
-                        echo $this->Form->postButton(
-                            'Elimina', 
-                            [
-                                "plugin" => "Aziende",
-                                "controller" => 'Statements',
-                                "action" => "delete",
-                                $statement->id
-                            ],
-                            [
-                                'confirm' => 'Eliminare il rendiconto?',
-                                'class' => 'btn btn-danger',
-                                'style' => "float: left; margin-top:-34px;",
-                                'id' => 'delete-statement',
-                                'disabled' => $statement->companies[0]->status_id == 1 ? false : true
-                            ]
-                        );
+                            echo $this->Form->postButton(
+                                'Elimina', 
+                                [
+                                    "plugin" => "Aziende",
+                                    "controller" => 'Statements',
+                                    "action" => "delete",
+                                    $statement->id
+                                ],
+                                [
+                                    'confirm' => 'Eliminare il rendiconto?',
+                                    'class' => 'btn btn-danger',
+                                    'style' => "float: left; margin-top:-34px;",
+                                    'id' => 'delete-statement'
+                                ]
+                            );
+                        } else {
+                            echo $this->Form->postButton(
+                                'Elimina', 
+                                [
+                                    "plugin" => "Aziende",
+                                    "controller" => 'Statements',
+                                    "action" => "delete",
+                                    $statement->id
+                                ],
+                                [
+                                    'confirm' => 'Eliminare il rendiconto?',
+                                    'class' => 'btn btn-danger',
+                                    'style' => "float: left; margin-top:-34px;",
+                                    'id' => 'delete-statement',
+                                    'disabled' => $statement->companies[0]->status_id == 1 ? false : true
+                                ]
+                            );
 
-                    } ?>
+                        } ?>
+                    <?php endif ?>
 
                 </div>
             </div>
@@ -324,74 +330,76 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     </div>
 
                 <div class="box-body">
-                    <div class="container-fluid">
-                        <form id="add-cost">
-                            <div class="row">
+                    <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                        <div class="container-fluid">
+                            <form id="add-cost">
+                                <div class="row">
 
+                                    <?php if (!$ati) :?>
+                                        <input type="hidden" name="statement_company" value=<?=$statement->companies[0]->id?>>
+                                    <?php else: ?>
+                                        <input type="hidden" name="statement_company" value="">
+                                    <?php endif?>
+
+                                    <div class="form-group col-sm-4">
+                                        <label class="control-label required">Categoria</label>
+                                        <select id="searchCat" class="select2 form-control" name="category_id" required></select>
+                                    </div>
+
+                                    <div class="form-group col-sm-2">
+                                        <label class="control-label required">Costo &euro;</label>
+                                        <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
+                                    </div>
+
+                                    <div class="form-group col-sm-2 required">
+                                        <label class="control-label ">Quota parte &euro;</label>
+                                        <input type="number" step="0.01" min="0.01" class="form-control" name="share" required>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label class="control-label required">Data</label>
+                                        <input type="date" class="form-control" name="date" required>
+                                    </div>
+
+                                    <div class="form-group col-sm-2">
+                                        <label class="control-label required">Num doc</label>
+                                        <input type="text" class="form-control" name="number" required>
+                                    </div>
+
+
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-4">
+                                        <label class="control-label required">Descrizione</label>
+                                        <input type="text" class="form-control" name="description" required>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label class="control-label required">Fornitore</label>
+                                        <input type="text" class="form-control" name="supplier" required>
+                                    </div>
+
+                                    <div class="form-group col-sm-4">
+                                        <label class="control-label">Note</label>
+                                        <input type="text" class="form-control" name="notes" maxlength="255">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-3">
+                                        <label class="control-label ">File</label>
+                                        <input type="file" class="form-control" name="file" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
                                 <?php if (!$ati) :?>
-                                    <input type="hidden" name="statement_company" value=<?=$statement->companies[0]->id?>>
+                                    <button id="save-cat" class="btn btn-success">Aggiungi</button>
                                 <?php else: ?>
-                                    <input type="hidden" name="statement_company" value="">
+                                    <button id="save-cat" class="btn btn-success" disabled>Aggiungi</button>
                                 <?php endif?>
-
-                                <div class="form-group col-sm-4">
-                                    <label class="control-label required">Categoria</label>
-                                    <select id="searchCat" class="select2 form-control" name="category_id" required></select>
+                                <button type="reset" class="btn btn-warning">Svuota</button>
                                 </div>
-
-                                <div class="form-group col-sm-2">
-                                    <label class="control-label required">Costo &euro;</label>
-                                    <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
-                                </div>
-
-                                <div class="form-group col-sm-2 required">
-                                    <label class="control-label ">Quota parte &euro;</label>
-                                    <input type="number" step="0.01" min="0.01" class="form-control" name="share" required>
-                                </div>
-                                <div class="form-group col-sm-2">
-                                    <label class="control-label required">Data</label>
-                                    <input type="date" class="form-control" name="date" required>
-                                </div>
-
-                                <div class="form-group col-sm-2">
-                                    <label class="control-label required">Num doc</label>
-                                    <input type="text" class="form-control" name="number" required>
-                                </div>
-
-
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-4">
-                                    <label class="control-label required">Descrizione</label>
-                                    <input type="text" class="form-control" name="description" required>
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <label class="control-label required">Fornitore</label>
-                                    <input type="text" class="form-control" name="supplier" required>
-                                </div>
-
-                                <div class="form-group col-sm-4">
-                                    <label class="control-label">Note</label>
-                                    <input type="text" class="form-control" name="notes" maxlength="255">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-3">
-                                    <label class="control-label ">File</label>
-                                    <input type="file" class="form-control" name="file" required>
-                                </div>
-                            </div>
-                        
-                        <div class="form-group">
-                        <?php if (!$ati) :?>
-                            <button id="save-cat" class="btn btn-success">Aggiungi</button>
-                        <?php else: ?>
-                            <button id="save-cat" class="btn btn-success" disabled>Aggiungi</button>
-                        <?php endif?>
-                        <button type="reset" class="btn btn-warning">Svuota</button>
+                            </form>
                         </div>
-                    </form>
-                    </div>
+                    <?php endif ?>
 
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"></div>
                 </div>

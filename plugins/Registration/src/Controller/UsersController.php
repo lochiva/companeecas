@@ -9,6 +9,21 @@ use Cake\ORM\TableRegistry;
 
 class UsersController extends AppController
 {
+    public function isAuthorized($user)
+    {
+        if(
+            $user['role'] == 'admin' || 
+            $user['role'] == 'area_iv' || 
+            $user['role'] == 'ragioneria' || 
+            $user['role'] == 'ente_ospiti' ||
+            $user['role'] == 'ente_contabile'
+        ){
+            return true;
+        }
+        
+        return false;
+    }
+    
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
@@ -23,10 +38,6 @@ class UsersController extends AppController
         //$this->Auth->allow(['add','recoveryPassword','newPassword','authEmailSended','authEmail']);
 
         $user = $this->Auth->user();
-
-        if(isset($user['role']) && ($user['role'] == 'ente')){
-            $this->Auth->allow(['view', 'unlikGoogle', 'edit']);
-        }
     }
 
     public function add()

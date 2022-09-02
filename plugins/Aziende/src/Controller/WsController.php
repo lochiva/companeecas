@@ -39,13 +39,69 @@ class WsController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin' || $user['role'] == 'ente'){
-            return true;
-        }else{
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
-            $this->redirect('/');
+        if ($user['role'] == 'admin') {
             return true;
         }
+
+        $authorizedActions = [
+            'area_iv' => [
+                'getAziende', 'saveAzienda', 'deleteAzienda', 'loadAzienda', 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 
+                'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'saveAziendaJson', 'sendAnagrafica',
+                'sendEditAnagrafica', 'verifyDatiPiva', 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests',
+                'saveGuest', 'getSediForSearchGuest', 'deleteGuest', 'getGuest', 'searchCountry', 'searchGuest', 'removeGuestFromFamily', 
+                'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 'saveAllGuestsNotificationsDone',
+                'getAgreements', 'saveAgreement', 'deleteAgreement', 'getAgreement', 'getGuestsForPresenze', 'saveGuestsPresenze', 'loadGuestHistory',
+                'getExitTypes', 'getRequestExitTypes', 'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault',
+                'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 'requestExitProcedure', 'authorizeRequestExitProcedure',
+                'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 'readmissionProcedure', 'getEducationalQualifications', 
+                'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 
+                'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
+                'downloadFileCosts'
+            ],
+            'ragioneria' => [
+                'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva', 
+                'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry', 
+                'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 
+                'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 
+                'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
+                'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 
+                'downloadFileStatements', 'downloadFileCosts', 'updateStatusStatementCompany'
+            ],
+            'ente_ospiti' => [
+                'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda', 
+                'autocompleteAziende', 'sendAnagrafica', 'sendEditAnagrafica', 'verifyDatiPiva', 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 
+                'convertComune', 'getGuests', 'saveGuest', 'getSediForSearchGuest', 'deleteGuest', 'getGuest', 'searchCountry', 'searchGuest', 
+                'removeGuestFromFamily', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'saveAgreement', 'deleteAgreement', 'getAgreement', 'getGuestsForPresenze', 
+                'saveGuestsPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 'getTransferAziendaDefault', 'searchTransferAziende', 
+                'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
+                'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
+                'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti'
+            ],
+            'ente_contabile' => [
+                'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
+                'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry', 'searchGuest', 
+                'removeGuestFromFamily', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 
+                'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 
+                'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
+                'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'saveStatement', 'getCosts', 'getStatementCompany', 
+                'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'updateStatusStatementCompany'
+            ]
+        ];
+
+        if (
+            !empty($user['role']) && 
+            !empty($authorizedActions[$user['role']]) && 
+            in_array($this->request->getParam('action'), $authorizedActions[$user['role']])
+        ) {
+            return true;
+        }
+
+        // Default deny
+        return false;
     }
 
     public function beforeFilter(Event $event)
@@ -81,6 +137,8 @@ class WsController extends AppController
     {
 
         //echo "<pre>"; print_r($this->request->query); echo "</pre>";
+
+        $user = $this->request->session()->read('Auth.User');
 
         $pass['query'] = $this->request->query;
 
@@ -119,7 +177,9 @@ class WsController extends AppController
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
                 }
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
-                $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
+                if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
+                    $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
+                }
                 $button.= '</ul>';
                 $button.= '</div>';
                 $button.= '</div>';
@@ -281,6 +341,8 @@ class WsController extends AppController
 
         //echo "<pre>"; print_r($this->request->query); echo "</pre>";
 
+        $user = $this->request->session()->read('Auth.User');
+
         $pass['query'] = $this->request->query;
 
         $pass['idAzienda'] = $idAzienda;
@@ -312,7 +374,9 @@ class WsController extends AppController
                         $button.= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
                     }
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
-                    $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
+                    if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') {
+                        $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
+                    }
                     $button.= '</ul>';
                     $button.= '</div>';
                     $button.= '</div>';
@@ -485,12 +549,14 @@ class WsController extends AppController
                 $button = "";
                 $button.= '<div class="btn-group">';
                 $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $contatto->id . '" data-toggle="modal" data-target="#myModalContatto" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
-                $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
-                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
-                $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                $button.= '<li><a class="delete" href="#" data-id="' . $contatto->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
-                $button.= '</ul>';
-                $button.= '</div>';
+                if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') {
+                    $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
+                    $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+                    $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
+                    $button.= '<li><a class="delete" href="#" data-id="' . $contatto->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
+                    $button.= '</ul>';
+                    $button.= '</div>';
+                }
                 $button.= '</div>';
 
                 $login = "";
@@ -1731,9 +1797,9 @@ class WsController extends AppController
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
                 $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
-                if ($user['role'] == 'admin') {
+                if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
                     $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
-                } else {
+                } elseif ($user['role'] == 'ente_ospiti') {
                     if (empty($guest['original_guest_id']) && $guest['status_id'] == 1 && $guest['created']->format('Y-m-d') == $today) {
                         $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
                     } else {
@@ -2001,7 +2067,7 @@ class WsController extends AppController
 
         // Se ruolo ente, ricerca ospiti solo per quell'ente
         $user = $this->request->session()->read('Auth.User');
-        if ($user['role'] == 'ente') {
+        if ($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') {
             $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
             $where['a.id'] = $contatto['id_azienda'];
         }
@@ -2312,11 +2378,6 @@ class WsController extends AppController
     public function getGuestsNotificationsCount($enteType)
     {
         $user = $this->request->session()->read('Auth.User');
-        if($user['role'] != 'admin'){
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
-            $this->redirect('/');
-            return null;
-        }
 
         $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
         $notificationsCount = $guestsNotifications->countGuestsNotifications($enteType);
@@ -2329,12 +2390,6 @@ class WsController extends AppController
     public function getGuestsNotifications($enteType)
     {
         $user = $this->request->session()->read('Auth.User');
-
-        if($user['role'] != 'admin'){
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
-            $this->redirect('/');
-            return null;
-        }
 
         $pass['query'] = $this->request->query;
 
@@ -2612,7 +2667,7 @@ class WsController extends AppController
             /*
             // Notifica nuovo processo di approvazione
             $role = $this->request->session()->read('Auth.User.role');
-            if ($role == 'ente' && $entity->approved && ($oldData != $entity->toArray())) {
+            if ($role == 'ente_ospiti' && $entity->approved && ($oldData != $entity->toArray())) {
                 $notifications = TableRegistry::get('Aziende.GuestsNotifications');
                 $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => 'APPROVE_NEEDED_AGREEMENT'])->first();
                 $notification = $notifications->newEntity();
@@ -3679,7 +3734,7 @@ class WsController extends AppController
 
         // Se ruolo ente, ricerca ospiti solo per quell'ente
         $user = $this->request->session()->read('Auth.User');
-        if ($user['role'] == 'ente') {
+        if ($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') {
             $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
             $where['a.id'] = $contatto['id_azienda'];
         }
@@ -3998,7 +4053,7 @@ class WsController extends AppController
 
             $user = $this->Auth->user();
 
-            if ($user['role'] == 'ente') {
+            if ($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') {
                 $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($user['id']);
                 $where = ['azienda_id' => $azienda['id']];
             }

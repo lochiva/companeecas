@@ -4,6 +4,7 @@ use Cake\Routing\Router;
 $role = $this->request->session()->read('Auth.User.role'); 
 ?>
 <script>
+    var role = '<?= $role ?>';
     var next_sede = '<?= $nextSede ?>';
 </script>
 <?php $this->assign('title', 'Presenze') ?>
@@ -17,7 +18,7 @@ $role = $this->request->session()->read('Auth.User.role');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <?php if ($role == 'admin') { ?>
+        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
         <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
@@ -67,7 +68,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                             {{file.file}}                                                         
                                             
                                             <a v-bind:href=file.fullPath target="_blank"><span class="text-green"><span class="glyphicon glyphicon glyphicon-download" aria-hidden="true"></span></span></a>
-                                            <span v-on:click="deleteFile(file)" class="text-red" style="cursor: pointer;"><span class="glyphicon glyphicon glyphicon-remove-sign" aria-hidden="true"></span></span>
+                                            <span v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" v-on:click="deleteFile(file)" class="text-red" style="cursor: pointer;"><span class="glyphicon glyphicon glyphicon-remove-sign" aria-hidden="true"></span></span>
                                         </div>
                                     </div>
 
@@ -107,7 +108,7 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div class="box-footer">
-                        <div v-if="guests.length > 0">
+                        <div v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && guests.length > 0">
                             <button type="button" class="btn btn-success pull-right" id="savePresenzeNext" @click="save(true)"
                                 :disabled="!next_sede" :title="noNextSedeMessage">
                                 Salva e prossimo

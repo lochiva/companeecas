@@ -1,5 +1,7 @@
 <?php
 use Cake\Routing\Router;
+
+$role = $this->request->session()->read('Auth.User.role'); 
 ?>
 <?php echo $this->Element('Aziende.include'); ?>
 <?= $this->Html->script( 'Aziende.aziende' ); ?>
@@ -93,13 +95,14 @@ use Cake\Routing\Router;
                   </div>
                 </div><!-- /.box-body -->
 
+                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                    <div class="box-footer clearfix">
 
-                <div class="box-footer clearfix">
+                        <a class="btn btn-sm btn-default btn-flat pull-right edit"  data-id="<?= $azienda->id ?>"data-toggle="modal"
+                        data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false" data-parentTab="#click_tab_1" >Modifica</a>
 
-                    <a class="btn btn-sm btn-default btn-flat pull-right edit"  data-id="<?= $azienda->id ?>"data-toggle="modal"
-                       data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false" data-parentTab="#click_tab_1" >Modifica</a>
-
-                </div><!-- /.box-footer -->
+                    </div><!-- /.box-footer -->
+                <?php } ?>
 
               </div>
         </div>
@@ -147,11 +150,13 @@ use Cake\Routing\Router;
                                             <td><?=h($sede['p']['des_luo'])?></td>
                                             <td width="50px" style="padding-left: 0px; padding-right: 0px">
                                               <div class="tools-hover">
-                                                <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_2" data-childTab="#click_subtab_sede_<?=$sede->id?>"
-                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
-                                                &nbsp;
-                                                <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella struttura"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
-                                              </div>
+                                                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                                                    <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_2" data-childTab="#click_subtab_sede_<?=$sede->id?>"
+                                                    data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
+                                                    &nbsp;
+                                                    <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella struttura"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
+                                                <?php } ?>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -166,13 +171,14 @@ use Cake\Routing\Router;
                     </div>
                 </div>
                 
+                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                    <div class="box-footer clearfix">
 
-                <div class="box-footer clearfix">
+                        <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_2" data-childTab=".add-tab-sede"
+                        data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">Inserisci nuova struttura</a>
 
-                    <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_2" data-childTab=".add-tab-sede"
-                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">Inserisci nuova struttura</a>
-
-                </div>
+                    </div>
+                <?php } ?>
             </div>
         </div>
 
@@ -201,12 +207,18 @@ use Cake\Routing\Router;
                                     </div>
 
                                     <div class="product-info" style="position:relative">
-                                        <a class="product-title edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
-                                            data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">
+                                        <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                                            <a class="product-title edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
+                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">
+                                                <?=h($contatto->cognome . " " . $contatto->nome)?>
+                                                <span class="label ruoliBG-<?=$contatto->id_ruolo?> pull-right">
+                                                <?=h(!empty($contatto->ruolo->ruolo)? $contatto->ruolo->ruolo : '')?></span>
+                                            </a>
+                                        <?php } else { ?>
                                             <?=h($contatto->cognome . " " . $contatto->nome)?>
                                             <span class="label ruoliBG-<?=$contatto->id_ruolo?> pull-right">
-                                              <?=h(!empty($contatto->ruolo->ruolo)? $contatto->ruolo->ruolo : '')?></span>
-                                        </a>
+                                            <?=h(!empty($contatto->ruolo->ruolo)? $contatto->ruolo->ruolo : '')?></span>
+                                        <?php } ?>
                                         <span class="product-description">
                                             <?php if(!empty($contatto->sede)): ?>
                                               Struttura di: <?=h($contatto->sede->indirizzo . " " . $contatto->sede->num_civico)?>
@@ -215,10 +227,12 @@ use Cake\Routing\Router;
                                             <?php endif ?>
                                         </span>
                                         <div class="tools-hover " style="margin-top:-20px">
-                                            <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
-                                            data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica contatto" class="text-red glyphicon glyphicon-pencil"></i></a>
-                                            &nbsp;
-                                            <a class="delete-contatto pointer" data-id="<?= $contatto->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella contatto"><i class="text-red glyphicon glyphicon-trash pull-right"></i></a>
+                                            <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                                                <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
+                                                data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica contatto" class="text-red glyphicon glyphicon-pencil"></i></a>
+                                                &nbsp;
+                                                <a class="delete-contatto pointer" data-id="<?= $contatto->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella contatto"><i class="text-red glyphicon glyphicon-trash pull-right"></i></a>
+                                            <?php } ?>
                                         </div>
 
                                     </div>
@@ -235,11 +249,14 @@ use Cake\Routing\Router;
 
                     </ul>
                 </div><!-- /.box-body -->
-                <div class="box-footer text-center">
-                    <!--<a class="uppercase" href="javascript::;">View All Products</a>-->
-                    <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_3" data-childTab=".add-tab-contatto"
-                    data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">Inserisci nuovo Contatto</a>
-                </div><!-- /.box-footer -->
+
+                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                    <div class="box-footer text-center">
+                        <!--<a class="uppercase" href="javascript::;">View All Products</a>-->
+                        <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_3" data-childTab=".add-tab-contatto"
+                        data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">Inserisci nuovo Contatto</a>
+                    </div><!-- /.box-footer -->
+                <?php } ?>
             </div>
         </div>
         <div class="col-md-6">

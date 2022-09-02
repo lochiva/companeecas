@@ -1,5 +1,7 @@
 <?php
 use Cake\Routing\Router;
+
+$role = $this->request->session()->read('Auth.User.role'); 
 ?>
 
 <?= $this->Html->script('Aziende.modale_nuovo_contatto.js'); ?>
@@ -225,7 +227,9 @@ use Cake\Routing\Router;
                     </div>
                 </div>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                <button type="button" class="btn btn-primary" id="salvaNuovoContatto" >Salva</button>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                    <button type="button" class="btn btn-primary" id="salvaNuovoContatto" >Salva</button>
+                <?php } ?>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

@@ -30,6 +30,19 @@ class HomeController extends AppController
         $this->set('title', 'Aziende');
     }
 
+    public function isAuthorized($user)
+    {
+        if(
+            $user['role'] == 'admin' || 
+            $user['role'] == 'area_iv' || 
+            $user['role'] == 'ragioneria'
+        ){
+            return true;
+        }
+        
+        return false;
+    }
+
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);

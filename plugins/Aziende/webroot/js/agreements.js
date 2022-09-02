@@ -536,7 +536,7 @@ $(document).on('click', '.edit-agreement', function(){
                         });
             
                         // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
-                        if (role == 'ente' && res.data.approved) {
+                        if (role == 'ente_ospiti' && res.data.approved) {
                             $('.approved-message').show();
                             disableApprovedModal();
                         }
@@ -575,7 +575,9 @@ $(document).on('click', '.edit-agreement', function(){
                             }
                             
                         });
-                        createButton();
+                        if(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') {
+                            createButton();
+                        }
             
                         if(res.data.companies.length > 1) {
                             $('input[name=rendiconto]').prop('checked', true);
@@ -712,7 +714,9 @@ function createInputForRendiconto(element) {
     if(element) {
         $(element).remove();
     }
-    createButton();
+    if(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') {
+        createButton();
+    }
     
 }
 
@@ -759,7 +763,7 @@ function deleteRendiconto(ele) {
 
     var rendiconti = $('input[name^=companies]');
 
-    if(rendiconti.length > 0) {
+    if((role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && rendiconti.length > 0) {
         createButton();
     }
 }

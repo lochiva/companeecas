@@ -23,7 +23,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </h1>
         <ol class="breadcrumb">
             <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-            <?php if ($role == 'admin') { ?>
+            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
             <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
             <?php } ?>
             <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
@@ -39,15 +39,15 @@ $role = $this->request->session()->read('Auth.User.role');
         <div v-if="guestStatus == 1 && guestExitRequestStatus == 1" class="message-exit-request-sent alert">
             L'ospite è in stato "Richiesta di uscita inviata" con motivazione {{requestExitData.type.name}}.
             <div><b>Note uscita:</b> {{requestExitData.note}}</div>
-            <div v-if="role == 'admin'" class="exit-buttons">
+            <div v-if="role == 'admin' || role == 'area_iv'" class="exit-buttons">
                 <button type="button" class="btn btn-gold" @click="openAuthorizeRequestExitModal()">Autorizza richiesta di uscita</button>
             </div>
         </div>
         <div v-if="guestStatus == 1 && guestExitRequestStatus == 2" class="message-exit-request-authorized alert">
             L'ospite è in stato "Richiesta di uscita autorizzata" con motivazione {{authorizeRequestExitData.type.name}}.
             <div><b>Note uscita:</b> {{authorizeRequestExitData.note}}</div>
-            <div class="exit-buttons">
-                <button v-if="role == 'admin' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger" @click="openExitModal()">Uscita</button>
+            <div v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" class="exit-buttons">
+                <button v-if="role == 'admin' || role == 'area_iv' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger" @click="openExitModal()">Uscita</button>
                 <span v-else title="Questa motivazione di uscita non è avviabile da ente">
                     <button disabled type="button" class="btn btn-danger">Uscita</button>
                 </span>
@@ -56,7 +56,7 @@ $role = $this->request->session()->read('Auth.User.role');
         <div v-if="guestStatus == 2" class="message-exiting alert">
             L'ospite è in stato "In uscita" con motivazione {{exitData.type}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
-            <div v-if="role == 'admin'" class="exit-buttons">
+            <div v-if="role == 'admin' || role == 'area_iv'" class="exit-buttons">
                 <button type="button" class="btn btn-danger" @click="openConfirmExitModal()">Conferma uscita</button>
             </div>
         </div>
@@ -72,13 +72,13 @@ $role = $this->request->session()->read('Auth.User.role');
         <div v-if="guestStatus == 5" class="message-accept-transfer alert">
             <div>L'ospite è in stato "Trasferimento in ingresso" con provenienza {{transferData.provenance}}.</div>
             <div><b>Note trasferimento:</b> {{transferData.note}}</div>
-            <div class="transfer-buttons">
+            <div v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" class="transfer-buttons">
                 <button type="button" class="btn btn-accept-transfer" @click="openConfirmTransferModal()">Conferma ingresso</button>
             </div>
         </div>
         <div v-if="guestStatus == 6" class="message-transferred alert">
             L'ospite è stato trasferito nella struttura {{transferData.destination}} in data {{transferData.date}}.
-            <?php if ($role == 'admin') { ?>
+            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
                 <a :href="'<?=Router::url('/aziende/guests/guest');?>?sede='+transferData.destination_id+'&guest='+transferData.cloned_guest" class="view-transferred-guest">
                     <b>Visualizza ospite</b> <i class="fa fa-arrow-right"></i>
                 </a>
@@ -227,19 +227,19 @@ $role = $this->request->session()->read('Auth.User.role');
                             </div>
                         </form>
                     </div>
-                    <div class="box-footer">
+                    <div v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" class="box-footer">
                         <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
                         <span v-if="guestStatus == 1 && guestExitRequestStatus == 2">
-                            <button v-if="role == 'admin' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                            <button v-if="role == 'admin' || role == 'area_iv' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
                             <span v-else title="Questa motivazione di uscita non è avviabile da ente">
                                 <button disabled type="button" class="btn btn-danger pull-right btn-exit">Uscita</button>
                             </span>
                         </span>
                         <span v-else>
-                            <button v-if="role == 'admin' || (role == 'ente' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                            <button v-if="role == 'admin' || role == 'area_iv' || (role == 'ente_ospiti' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
                         </span>
                         <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-olive pull-right btn-exit-request" @click="openRequestExitModal()">Richiesta uscita</button>
-                        <button v-if="role == 'admin'" :disabled="guestData.id.value == '' || guestStatus != 3 || existsInFuture" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()" :title="guestStatus == 3 && existsInFuture ? 'L\'ospite è gia stato riammesso' : ''">Riammissione</button>
+                        <button v-if="role == 'admin' || role == 'area_iv'" :disabled="guestData.id.value == '' || guestStatus != 3 || existsInFuture" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()" :title="guestStatus == 3 && existsInFuture ? 'L\'ospite è gia stato riammesso' : ''">Riammissione</button>
                     </div>
                 </div>
             </div>
@@ -253,9 +253,9 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-header with-border">
                         <i class="fa fa-users"></i>
                         <h3 class="box-title"><?=__c('Componenti il nucleo familiare')?></h3> 
-                        <button role="button" class="btn btn-primary pull-right" :disabled="((guestStatus != '' && guestStatus != 1) || !familyId || guestData.minor.value || countFamilyAdults == 1)" :title="removeFamilyButtonMessage" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
-                        <button role="button" class="btn btn-default pull-right search-guest-btn" :disabled="(guestStatus != '' && guestStatus != 1) || guestExitRequestStatus != null" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
-                        <v-select hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
+                        <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" role="button" class="btn btn-primary pull-right" :disabled="((guestStatus != '' && guestStatus != 1) || !familyId || guestData.minor.value || countFamilyAdults == 1)" :title="removeFamilyButtonMessage" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
+                        <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" role="button" class="btn btn-default pull-right search-guest-btn" :disabled="(guestStatus != '' && guestStatus != 1) || guestExitRequestStatus != null" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
+                        <v-select v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
                             @search="searchGuests" @input="addSearchedGuest" placeholder="Seleziona un ospite">
                             <template slot="no-options">Nessun ospite trovato.</template>
                         </v-select>
@@ -267,11 +267,11 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <td><span v-if="guest.cui">{{guest.cui}} - </span>{{guest.name}} {{guest.surname}}<span v-if="guest.status_id == 3 || guest.status_id == 6" class="exit-icon"><i class="fa fa-sign-out"></i></span></td>
                                     <td width="130px;">
                                         <div class="button-group">
-                                            <a v-if="role == 'admin'" v-if="guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=')?>'+guest.id" target="_blank" role="button" 
+                                            <a v-if="(role == 'admin' || role == 'area_iv' || role == 'ragioneria') && guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=')?>'+guest.id" target="_blank" role="button" 
                                                 class="btn btn-xs btn-warning" title="Modifica ospite">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
-                                            <button :disabled="guest.status_id != 1 || guestStatus != 1 || guest.minor == 1 || countFamilyAdults == 1" role="button" class="btn btn-xs btn-primary" 
+                                            <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" :disabled="guest.status_id != 1 || guestStatus != 1 || guest.minor == 1 || countFamilyAdults == 1" role="button" class="btn btn-xs btn-primary" 
                                                 :title="guest.status_id == 1 && guestStatus == 1 && guest.minor == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: l\'ospite è un minore' : (guest.status_id == 1 && guestStatus == 1 && countFamilyAdults == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: unico adulto presente nel nucleo familiare' : 'Rimuovi ospite dal nucleo familiare')" 
                                                 @click="removeGuestFromFamily(index)">
                                                 <i class="fa fa-unlink"></i>
@@ -354,11 +354,11 @@ $role = $this->request->session()->read('Auth.User.role');
                 </md-button>
             </a>
 
-            <md-button v-if="!(guestData.id.value != '' && guestStatus != 1)" class="md-fab fab-success save-guest-stay" @click="checkFormGuest()" title="Salva">
+            <md-button v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && !(guestData.id.value != '' && guestStatus != 1)" class="md-fab fab-success save-guest-stay" @click="checkFormGuest()" title="Salva">
                 <md-icon><i class="glyphicon glyphicon-floppy-disk fab-icon"></i></md-icon>
             </md-button>
 
-            <md-button v-if="!(guestData.id.value != '' && guestStatus != 1)" class="md-fab fab-primary save-guest-exit" @click="checkFormGuest(true)" title="Salva ed esci">
+            <md-button v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && !(guestData.id.value != '' && guestStatus != 1)" class="md-fab fab-primary save-guest-exit" @click="checkFormGuest(true)" title="Salva ed esci">
                 <md-icon><i class="glyphicon glyphicon-floppy-remove fab-icon"></i></md-icon>
             </md-button>
         </md-speed-dial-content>
