@@ -66,7 +66,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                     <?php if ($ati) : ?>
                         <div class="row margin d-flex d-align-items-center" id="comments">
-                            <div class="col-md-1"><b>Commenti integrazione:</b></div>
+                            <div class="col-md-1"><b>Commenti:</b></div>
 
                             <div class="col-md-11">
                                 <span id="text-notes"></span>
@@ -85,7 +85,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <?php if ($statement->companies[0]->status_id == 1) : ?>
                             <?php if ($user['role'] == 'ente') : ?>
                                 <div class="row margin d-flex d-align-items-center" id="comments" style="display:none;">
-                                    <div class="col-md-1"><b>Commenti integrazione:</b></div>
+                                    <div class="col-md-1"><b>Commenti:</b></div>
                                     <div class="col-md-11">
                                         <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
                                     </div>
@@ -94,7 +94,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                         <?php elseif ($statement->companies[0]->status_id == 2) : ?>
                             <div class="row margin d-flex d-align-items-center" id="comments">
-                                <div class="col-md-1"><b>Commenti integrazione:</b></div>
+                                <div class="col-md-1"><b>Commenti:</b></div>
                                 <div class="col-md-11">
                                     <span id="text-notes"><?=$statement->companies[0]->notes?></span>
                                 </div>
@@ -103,7 +103,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <?php elseif ($statement->companies[0]->status_id == 3) : ?>
                             <div class="row margin d-flex d-align-items-center" id="comments">
 
-                                <div class="col-md-1"><b>Commenti integrazione:</b></div>
+                                <div class="col-md-1"><b>Commenti:</b></div>
                                 <div class="col-md-11">
                                 <?php if ($user['role'] == 'ente') : ?>
                                     <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes"><?=$statement->companies[0]->notes?></textarea>
@@ -117,7 +117,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                         <?php elseif ($statement->companies[0]->status_id == 4) :  ?>
                             <div class="row margin d-flex d-align-items-center" id="comments">
-                                <div class="col-md-1"><b>Commenti integrazione:</b></div>
+                                <div class="col-md-1"><b>Commenti:</b></div>
                                 <div class="col-md-11">
                                 <?php if ($user['role'] == 'ente') : ?>
                                         <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
