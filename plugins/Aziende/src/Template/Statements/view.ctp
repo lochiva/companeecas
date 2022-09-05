@@ -22,7 +22,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?= Router::url('/'); ?>"><i class="fa fa-home"></i> Home</a></li>
-        <li>Gestione rendiconti</li>
+        <li><a href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'statements', 'action' => 'index']); ?>">Gestione rendiconti</a></li>
         <li class="active">Visualizza</li>
     </ol>
 </section>
