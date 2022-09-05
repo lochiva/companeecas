@@ -114,7 +114,7 @@ $(document).ready(function () {
             if (res.data.status_id == 1) {
               $('#status').removeClass().addClass('badge btn-default');
 
-              if (role === 'ente') {
+              if (role === 'ente_contabile') {
                 $('#send').data('id', res.data.id);
                 $('#send').prop('disabled', false);
 
@@ -125,6 +125,8 @@ $(document).ready(function () {
                 $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
               } else {
+                $('#save-statement').prop('disabled', true);
+                $('#delete-statement').prop('disabled', true);
                 $('textarea[name=notes]').prop('disabled', true);
                 $('#btn-actions').hide();
                 $('#comments').hide();
@@ -149,7 +151,7 @@ $(document).ready(function () {
               $('#status').removeClass().addClass('badge btn-warning');
 
               $('#text-notes').hide();
-              if(role === 'ente') {
+              if(role === 'ente_contabile') {
                 $('#send').data('id', res.data.id);
                 $('#send').prop('disabled', false);
                 
@@ -170,6 +172,9 @@ $(document).ready(function () {
                 $('#comments').show();
 
                 $('textarea[name=notes]').prop('disabled', true);
+
+                $('#save-statement').prop('disabled', true);
+                $('#delete-statement').prop('disabled', true);
               }
 
             // In approvazione
@@ -177,12 +182,12 @@ $(document).ready(function () {
 
               $('#status').removeClass().addClass('badge btn-info');
               $('#text-notes').hide();
-              if (role === 'ente') {
+              $('#save-statement').prop('disabled', true);
+              $('#delete-statement').prop('disabled', true);
+
+              if (role === 'ente_contabile') {
                 $('#btn-actions').show();
                 $('#send').prop('disabled', true);
-
-                $('#save-statment').prop('disabled', true);
-                $('#delete-statement').prop('disabled', true);
 
                 $('#comments').show();
                 $('textarea[name=notes]').prop('disabled', true);
