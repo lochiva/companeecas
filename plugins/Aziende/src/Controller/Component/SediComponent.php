@@ -20,7 +20,6 @@ class SediComponent extends Component
         $col = [];
 
         ######################################################################################################
-
         $col[] = "code_centro";
         $col[] = "stm.name";
         if ($aziendaTipo == 1) {
@@ -31,6 +30,9 @@ class SediComponent extends Component
         $col[] = "cap";
         $col[] = "c.des_luo";
         $col[] = "p.des_luo";
+        if ($aziendaTipo == 1) {
+            $col[9] = "sto.name";
+        }
 
         if(isset($pass['query']) && !empty($pass['query'])){
 
@@ -102,6 +104,7 @@ class SediComponent extends Component
                             case '4':
                             case '6':
                             case '7':
+                            case '9':
                                 $opt['conditions']['AND'][$key][$col[$key] . ' LIKE'] = "%" . $value . "%";
                             break;
     
@@ -166,6 +169,12 @@ class SediComponent extends Component
                 'alias' => 'stc',
                 'type' => 'LEFT',
                 'conditions' => 'stc.id = Sedi.id_tipo_capitolato'
+            ],
+            [
+                'table' => 'sedi_tipologie_ospiti',
+                'alias' => 'sto',
+                'type' => 'LEFT',
+                'conditions' => 'sto.id = Sedi.id_tipologia_ospiti'
             ]
         ];
 

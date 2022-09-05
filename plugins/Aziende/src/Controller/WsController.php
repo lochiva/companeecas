@@ -399,6 +399,9 @@ class WsController extends AppController
                     $rows[$key][] = htmlspecialchars($sede->c['des_luo']);
                     $rows[$key][] = htmlspecialchars($sede->p['des_luo']);
                     $rows[$key][] = $countGuests.'/'.$postiSede;
+                    if ($azienda->id_tipo == 1) {
+                        $rows[$key][] = htmlspecialchars($sede['sto']['name']);
+                    }
                     $rows[$key][] = $button;
                 }
 
