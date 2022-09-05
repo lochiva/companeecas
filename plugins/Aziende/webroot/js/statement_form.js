@@ -9,7 +9,7 @@ $(document).ready(function () {
     $("#accordion").text("");
 
     if ($(this).val() == "all") {
-      $('#save-statment').prop('disabled', true);
+      $('#save-statement').prop('disabled', true);
       $("#company_specific").addClass("hidden");
       $('#add-cost').hide();
       $('#add-cost input[type=hidden][name=statement_company]').val('');
@@ -68,7 +68,7 @@ $(document).ready(function () {
         });
     } else {
       $('#cost-headers').html('Spese');
-      $('#save-statment').prop('disabled', false);
+      $('#save-statement').prop('disabled', false);
       let id = $(this).val();
       $('#add-cost input[type=hidden][name=statement_company]').val(id);
       $('#save-cat').prop('disabled', false);
@@ -122,7 +122,7 @@ $(document).ready(function () {
                 $('#comments').hide();
                 $('textarea[name=notes]').prop('disabled', true);
 
-                $('#save-statment').prop('disabled', false);
+                $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
               } else {
                 $('textarea[name=notes]').prop('disabled', true);
@@ -139,7 +139,7 @@ $(document).ready(function () {
               $('#btn-actions').hide();
               $('#comments').show();
 
-              $('#save-statment').prop('disabled', true);
+              $('#save-statement').prop('disabled', true);
               $('#delete-statement').prop('disabled', true);
 
               $('#text-notes').show();
@@ -153,7 +153,7 @@ $(document).ready(function () {
                 $('#send').data('id', res.data.id);
                 $('#send').prop('disabled', false);
                 
-                $('#save-statment').prop('disabled', false);
+                $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
 
                 $('#btn-actions').show();
@@ -626,7 +626,7 @@ function changeStatus (id, status) {
           $('#add-cost').parent().hide();
 
           $('#send').prop('disabled', true);
-          $('#save-statment').prop('disabled', true);
+          $('#save-statement').prop('disabled', true);
           $('#delete-statement').prop('disabled', true);
           $('form#add-cost').hide();
           $('#status').removeClass().addClass('badge btn-info');

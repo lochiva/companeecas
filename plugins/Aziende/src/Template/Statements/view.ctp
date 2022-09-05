@@ -224,9 +224,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                         <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
                             <?php if ($statement->companies[0]->status_id === 1 || $statement->companies[0]->status_id === 3) : ?>
-                                <button class="btn btn-primary" type="submit" id="save-statment">Salva</button>
+                                <button class="btn btn-primary" type="submit" id="save-statement">Salva</button>
                             <?php elseif ($statement->companies[0]->status_id == 4) : ?>
-                                <button class="btn btn-primary" type="submit" id="save-statment" disabled>Salva</button>
+                                <button class="btn btn-primary" type="submit" id="save-statement" disabled>Salva</button>
                             <?php endif ?>
                         <?php endif ?>
                     </div>
