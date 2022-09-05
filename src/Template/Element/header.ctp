@@ -3,6 +3,14 @@ use Cake\Routing\Router;
 use Cake\Core\Configure;
 
 $user = $this->request->session()->read('Auth.User');
+
+$roleLabels = [
+  'admin' => 'Admin',
+  'area_iv' => 'Area IV',
+  'ragioneria' => 'Ragioneria',
+  'ente_ospiti' => 'Ente ospiti',
+  'ente_contabile' => 'Ente contabile'
+];
 ?>
 <script>
 
@@ -27,14 +35,8 @@ $user = $this->request->session()->read('Auth.User');
 
 	<a href="<?= Router::url('/');?>" class="logo">
     	<!-- LOGO -->
-		<?php if($user['role'] == 'nodo' && $base64 = $this->Utils->hasNodoLogo($user['id'])){ ?>
-			<img class="logo-mini text-center" src="<?=$base64?>" />
-			<img class="logo-nodo-header logo-lg" src="<?=$base64?>" />
-		<?php }else{ ?>
       <?= $this->Html->Image('/img/logo_xs.png',['class'=>'logo-mini text-center']) ?>	
 			<?= $this->Html->Image('/img/logo_header.png',['class'=>'logo-lg'])?>
-     
-		<?php } ?>	
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top" role="navigation">
@@ -68,7 +70,7 @@ $user = $this->request->session()->read('Auth.User');
         -->
 
         <?php 
-        if ($user['role'] == 'admin') {
+        if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
           echo $this->element('Aziende.guests_notify'); 
         }
         ?>
@@ -85,7 +87,7 @@ $user = $this->request->session()->read('Auth.User');
               <?= $this->Utils->userImage($user['id'],'img-circle') ?>
               <p>
                 <?php echo $user['cognome'] . " " . $user['nome'];?>
-                <small><?php echo $user['role'];?></small>
+                <small><?php echo $roleLabels[$user['role']];?></small>
               </p>
             </li>
             <!-- Menu Body -->

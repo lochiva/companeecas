@@ -18,7 +18,7 @@ use Cake\Routing\Router;
 
 <?= $this->Flash->render() ?>
 
-<?php if ($role == 'admin' || ($role == 'ente' && $azienda['id_tipo'] == 1)) { ?>
+<?php if ($role == 'admin' || $role == 'area_iv' ||  ($role == 'ente_ospiti' && $azienda['id_tipo'] == 1)) { ?>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -29,7 +29,7 @@ use Cake\Routing\Router;
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-reports box-body">
-                    <?php if ($role == 'admin') { ?>
+                    <?php if ($role == 'admin' || $role == 'area_iv') { ?>
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="control-label" for="dateReportGuestsCas">Data</label>
@@ -46,7 +46,7 @@ use Cake\Routing\Router;
                             </div>
                         </div>
                     <?php } ?>
-                    <?php if ($role == 'ente' && $azienda['id_tipo'] == 1) { ?>
+                    <?php if ($role == 'ente_ospiti' && $azienda['id_tipo'] == 1) { ?>
                         <div class="row">
                             <div class="col-md-2">
                                 <label class="control-label" for="yearExportGuestsCasPresenze">Anno</label>
@@ -85,7 +85,7 @@ use Cake\Routing\Router;
 </section>
 <?php } ?>
 
-<?php if ($role == 'admin' || ($role == 'ente' && $azienda['id_tipo'] == 2)) { ?>
+<?php if ($role == 'admin' || $role == 'area_iv' || ($role == 'ente_ospiti' && $azienda['id_tipo'] == 2)) { ?>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -96,7 +96,7 @@ use Cake\Routing\Router;
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-reports box-body">
-                    <?php if ($role == 'admin') { ?>
+                    <?php if ($role == 'admin' || $role == 'area_iv') { ?>
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="control-label" for="dateReportGuestsEmergenzaUcraina">Data</label>

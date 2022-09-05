@@ -20,13 +20,15 @@ class ReportsController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin' || $user['role'] == 'ente'){
-            return true;
-        }else{
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
-            $this->redirect('/');
+        if(
+			$user['role'] == 'admin' || 
+            $user['role'] == 'area_iv' ||
+            $user['role'] == 'ente_ospiti'
+		){
             return true;
         }
+		
+		return false;
     }
 
     /**
@@ -36,6 +38,7 @@ class ReportsController extends AppController
      */
     public function index()
     {
+
         $user = $this->request->session()->read('Auth.User');
 		$azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($user['id']);
 
@@ -236,7 +239,7 @@ class ReportsController extends AppController
 
 		// Se ruolo ente, ricerca ospiti solo per quell'ente
         $user = $this->request->session()->read('Auth.User');
-        if ($user['role'] == 'ente') {
+        if ($user['role'] == 'ente_ospiti') {
             $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
 			$data = $guestsTable->getDataForExportGuests(2, $contatto['id_azienda']);
         } else {

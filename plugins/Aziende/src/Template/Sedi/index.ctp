@@ -22,7 +22,7 @@ $user = $this->request->session()->read('Auth.User');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-dashboard"></i> Home</a></li>
-        <?php if ($user['role'] == 'admin') { ?>
+        <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
         <li class="active">Gestione strutture</li>
@@ -40,7 +40,9 @@ $user = $this->request->session()->read('Auth.User');
                     <?php if ($azienda->id_tipo == 1) { ?>
                         <a class="btn btn-primary btn-xs pull-right" href="<?= Router::url('/aziende/agreements/index/' . $azienda->id)?>" style="margin-left: 10px;"><i class="fa fa-file-text-o"></i> Convenzioni</a>
                     <?php } ?>
+                    <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') { ?>
                     <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" data-backdrop="false" data-keyboard="false" onclick="clearModale()" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                    <?php } ?>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                   </div>
                 </div>
@@ -65,27 +67,30 @@ $user = $this->request->session()->read('Auth.User');
                         <table id="table-sedi" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th width="10%">Codice centro</th>
-                                    <th width="10%">Tipologia ministero</th>
+                                    <th width="8%">Codice centro</th>
+                                    <th width="12%">Tipologia ministero</th>
                                     <?php if ($azienda->id_tipo == 1) { ?>
                                     <th width="12%">Tipologia capitolato</th>
                                     <?php } ?>
-                                    <th width="15%">Indirizzo</th>
-                                    <th width="7%">Civico</th>
-                                    <th width="7%">Cap</th>
-                                    <th width="15%">Comune</th>
-                                    <th width="12%">Provincia</th>
-                                    <th width="10%">
+                                    <th width="14%">Indirizzo</th>
+                                    <th width="5%">Civico</th>
+                                    <th width="5%">Cap</th>
+                                    <th width="14%">Comune</th>
+                                    <th width="8%">Provincia</th>
+                                    <th width="6%" data-sorter="false" data-filter="false">
                                         <span data-toggle="tooltip" data-placement="bottom" title="Posti occupati / capienza effettiva" class="table-label">
                                             Posti
                                         </span>
                                     </th>
-                                    <th style="min-width:110px"></th>
+                                    <?php if ($azienda->id_tipo == 1) { ?>
+                                    <th width="10%">Tipologia ospiti</th>
+                                    <?php } ?>
+                                    <th style="min-width:110px" data-sorter="false" data-filter="false"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="10">Non ci sono dati</td>
+                                    <td colspan="11">Non ci sono dati</td>
                                 </tr>
                             </tbody>
                         </table>

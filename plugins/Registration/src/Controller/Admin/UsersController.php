@@ -36,23 +36,17 @@ class UsersController extends AppController
         $role = $this->request->session()->read('Auth.User.role');
         $level = $this->request->session()->read('Auth.User.level');
 
-        if($role == 'admin'){
-            $users = $this->Users->find()
-                ->where([
-                    'OR' => [
-                        ['role' => 'ente'],
-                        'AND' => [
-                            'role' => 'admin',
-                            'level <=' => $level
-                        ]
+        $users = $this->Users->find()
+            ->where([
+                'OR' => [
+                    ['role IN' => ['area_iv', 'ragioneria', 'ente_ospiti', 'ente_contabile']],
+                    'AND' => [
+                        'role' => 'admin',
+                        'level <=' => $level
                     ]
-                ])
-                ->toArray();
-        }elseif($role == 'ente'){
-            $users = $this->Users->find()
-            ->where(['role' => 'user', 'level <=' => $level])
+                ]
+            ])
             ->toArray();
-        }
 
         $this->set('users', $users);
     }

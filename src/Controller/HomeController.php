@@ -18,7 +18,15 @@ class HomeController extends AppController
 
         $user = $this->Auth->user();
 
-        if(isset($user['role']) && ($user['role'] == 'admin' || $user['role'] == 'ente')){
+        if(
+          isset($user['role']) && (
+            $user['role'] == 'admin' || 
+            $user['role'] == 'area_iv' || 
+            $user['role'] == 'ragioneria' || 
+            $user['role'] == 'ente_ospiti' ||
+            $user['role'] == 'ente_contabile'
+          )
+        ){
             $this->Auth->allow(['index', 'checkPathFiles']);
         }
     }

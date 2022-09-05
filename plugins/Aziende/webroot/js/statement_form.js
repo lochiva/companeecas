@@ -501,7 +501,7 @@ function loadCosts(cats) {
 
           toAppend += `</td>`;
 
-          if(status_id != 2) {
+          if((role == 'admin' || role == 'ente_contabile') && status_id != 2) {
             toAppend += `<td class="spesa-col"> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
             <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
             </a>` +

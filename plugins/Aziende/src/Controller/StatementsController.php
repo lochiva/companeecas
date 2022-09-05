@@ -45,13 +45,32 @@ class StatementsController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin' || $user['role'] == 'ente'){
-            return true;
-        }else{
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
-            $this->redirect('/');
+        if(
+            $user['role'] == 'admin' || 
+            $user['role'] == 'ente_contabile'
+        ){
             return true;
         }
+
+        $authorizedActions = [
+            'area_iv' => [
+                'index', 'view'
+            ],
+            'ragioneria' => [
+                'index', 'view'
+            ]
+        ];
+
+        if (
+            !empty($user['role']) && 
+            !empty($authorizedActions[$user['role']]) && 
+            in_array($this->request->getParam('action'), $authorizedActions[$user['role']])
+        ) {
+            return true;
+        }
+
+        // Default deny
+        return false;
     }
 
     /**
@@ -88,7 +107,12 @@ class StatementsController extends AppController
     
             $azienda = TableRegistry::get('Aziende.Aziende')->getAziendaByUser($this->user['id']);
     
-            if($this->user['role'] == 'admin' || $this->user['role'] == 'ente' && $azienda['id'] == $statement->agreement->azienda_id){
+            if(
+                $this->user['role'] == 'admin' ||
+                $this->user['role'] == 'area_iv' ||
+                $this->user['role'] == 'ragioneria' ||
+                $this->user['role'] == 'ente_contabile' && $azienda['id'] == $statement->agreement->azienda_id
+            ){
 
                 $sedi = TableRegistry::get('Aziende.AgreementsToSedi')->find('all')
                     ->contain(['Sedi'])

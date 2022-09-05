@@ -39,23 +39,17 @@ class UserComponent extends Component
 		$level = $this->request->session()->read('Auth.User.level');
 		$registrationType = Configure::read('dbconfig.registration.REGISTRATION_TYPE');
 
-		if ($role == 'admin') {
-			$users = $usersTable->find()
-				->where([
-					'OR' => [
-						['role' => 'ente'],
-						'AND' => [
-							'role' => 'admin',
-							'level <=' => $level
-						]
+		$users = $usersTable->find()
+			->where([
+				'OR' => [
+					['role IN' => ['area_iv', 'ragioneria', 'ente_ospiti', 'ente_contabile']],
+					'AND' => [
+						'role' => 'admin',
+						'level <=' => $level
 					]
-				])
-				->toArray();
-		} elseif ($role == 'ente') {
-			$users = $usersTable->find()
-				->where(['role' => 'user', 'level <=' => $level])
-				->toArray();
-		}
+				]
+			])
+			->toArray();
 
 		if ($registrationType == '1') {
 			$data[0] = ['Username', 'Email', 'Nome', 'Cognome', 'Ruolo', 'Livello', 'Autenticato'];

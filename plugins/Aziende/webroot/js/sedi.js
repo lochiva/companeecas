@@ -19,7 +19,7 @@ $(document).ready(function(){
               //2:provider,
           }
         },
-        headers: { 8: { filter: false, sorter:false}, 9: { filter: false, sorter:false} }
+        headers: {}
     }).tablesorterPager({
 
           // **********************************
@@ -345,7 +345,7 @@ function loadInputModale(idSede){
             enableInputModale();
 
             // Se utente di ruolo ente e convenzione approvata, disabilito form e mostro messaggio
-            if (role == 'ente' && data.data.approved) {
+            if (role == 'ente_ospiti' && data.data.approved) {
                 $('.approved-message').show();
                 disableApprovedModal();
             }

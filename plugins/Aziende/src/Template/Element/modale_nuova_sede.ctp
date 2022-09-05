@@ -20,7 +20,7 @@ $role = $this->request->session()->read('Auth.User.role');
                         <input type="hidden" name="id" id="idSede" value="">
                         <input type="hidden" name="id_azienda" id="idAzienda" value="<?=$idAzienda?>">
 
-                        <?php if ($role == 'admin') { ?>
+                        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="inputApproved">Approvato</label>
                                 <div class="col-sm-10">
@@ -260,7 +260,9 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                <button type="button" class="btn btn-primary" id="salvaNuovaSede" >Salva</button>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                    <button type="button" class="btn btn-primary" id="salvaNuovaSede" >Salva</button>
+                <?php } ?>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

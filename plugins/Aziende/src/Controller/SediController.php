@@ -22,13 +22,17 @@ class SediController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin' || $user['role'] == 'ente'){
-            return true;
-        }else{
-            $this->Flash->error('Accesso negato. Non sei autorizzato.');
-            $this->redirect('/');
+        if(
+            $user['role'] == 'admin' || 
+            $user['role'] == 'area_iv' || 
+            $user['role'] == 'ragioneria' || 
+            $user['role'] == 'ente_ospiti' ||
+            $user['role'] == 'ente_contabile'
+        ){
             return true;
         }
+        
+        return false;
     }
 
     public function beforeFilter(Event $event)

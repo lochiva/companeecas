@@ -2,6 +2,7 @@ var app = new Vue({
     el: '#app-presenze',
     data: {
 		sede_id: '',
+        role: role,
         date: new Date(),
         guests: [],
         file: null,

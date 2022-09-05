@@ -1,6 +1,12 @@
 <?php
 use Cake\Routing\Router;
+
+$role = $this->request->session()->read('Auth.User.role'); 
 ?>
+
+<script>
+    var role = '<?= $role ?>';
+</script>
 
 <?php echo $this->Html->script('Aziende.modale_nuova_azienda'); ?>
 <?php echo $this->Html->script('Aziende.angular/select.min'); ?>
@@ -223,7 +229,7 @@ use Cake\Routing\Router;
                       <li ng-repeat="sede in vm.azienda.sedi track by $index"  ng-class="{'active': ($first && !vm.editing) }" id="subtabsede_{{sede.id}}" >
                         <a id="click_subtab_sede_{{sede.id}}" href="#subtab_sede_{{ $index }}" data-toggle="tab">
                           <i class="fa fa-circle-o sediTipiMinisteroColor-{{sede.id_tipo_ministero}}"></i> {{ !sede.indirizzo ? 'nuova struttura' : sede.comune_des+' - '+sede.indirizzo }} 
-                          <i ng-if="sede.indirizzo" class="fa fa-times-circle text-red delete-sede" data-id="{{ sede.id }}" title="Cancella struttura"></i>
+                          <i ng-if="(vm.role == 'admin' || vm.role == 'area_iv') && sede.indirizzo" class="fa fa-times-circle text-red delete-sede" data-id="{{ sede.id }}" title="Cancella struttura"></i>
                         </a>
                       </li>
                     </ul>
@@ -465,7 +471,7 @@ use Cake\Routing\Router;
                       <li ng-repeat="contatto in vm.azienda.contatti track by $index" ng-class="{'active': ($first && !vm.editing) }" id="subtabcontatto_{{contatto.id}}">
                         <a id="click_subtab_contatto_{{contatto.id}}" href="#subtab_contatto{{ $index }}" data-toggle="tab">
                           <i class="fa fa-circle-o ruoliColor-{{contatto.id_ruolo}}"></i> {{ !contatto.nome ? 'nuovo contatto' : contatto.nome+' '+contatto.cognome }}
-                          <i ng-if="contatto.id" class="fa fa-times-circle text-red delete-contatto" data-id="{{ contatto.id }}" title="Cancella contatto"></i>
+                          <i ng-if="(vm.role == 'admin' || vm.role == 'area_iv') && contatto.id" class="fa fa-times-circle text-red delete-contatto" data-id="{{ contatto.id }}" title="Cancella contatto"></i>
                         </a>
                       </li>
                     </ul>
@@ -855,7 +861,7 @@ use Cake\Routing\Router;
                         </div>
                     </div>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                    <button id="saveModalAziende" type="button" class="btn btn-primary" ng-click="vm.checkSubmit()"  >Salva</button>
+                    <button ng-if="vm.role == 'admin' || vm.role == 'area_iv'" id="saveModalAziende" type="button" class="btn btn-primary" ng-click="vm.checkSubmit()"  >Salva</button>
 				</div>
                 <!-- /.tab-content -->
             </div>

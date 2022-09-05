@@ -12,7 +12,7 @@ $menu = [
     'plugin' => [],
     'controller' => ['Home'],
     'action' => [],
-    'levels' => ['admin', 'ente'],
+    'levels' => ['admin', 'area_iv', 'ragioneria', 'ente_ospiti', 'ente_contabile'],
     'url' => Router::url('/'),
     'target' => '',
     'icon-class' => 'fa fa-home',
@@ -23,7 +23,7 @@ $menu = [
     'plugin' => ['Aziende'],
     'controller' => ['Home'],
     'action' => ['index'],
-    'levels' => ['admin'],
+    'levels' => ['admin', 'area_iv', 'ragioneria'],
     'url' => Router::url('/aziende'),
     'target' => '',
     'icon-class' => 'fa fa-building',
@@ -34,7 +34,7 @@ $menu = [
     'plugin' => ['Aziende'],
     'controller' => ['Sedi'],
     'action' => ['index'],
-    'levels' => ['ente'],
+    'levels' => ['ente_ospiti', 'ente_contabile'],
     'url' => Router::url('/aziende/sedi/index/').$this->Utils->getEnteIDByUserLoggedIn(),
     'target' => '',
     'icon-class' => 'fa fa-home',
@@ -45,7 +45,7 @@ $menu = [
     'plugin' => ['Aziende'],
     'controller' => ['Reports'],
     'action' => ['index'],
-    'levels' => ['admin', 'ente'],
+    'levels' => ['admin', 'area_iv', 'ente_ospiti'],
     'url' => Router::url('/aziende/reports/index/'),
     'target' => '',
     'icon-class' => 'fa fa-file',
@@ -56,7 +56,7 @@ $menu = [
     'plugin' => ['Aziende'],
     'controller' => ['Rendiconti'],
     'action' => ['index'],
-    'levels' => ['admin', 'ente'],
+    'levels' => ['admin', 'area_iv', 'ragioneria', 'ente_contabile'],
     'url' => Router::url('/aziende/statements/index'),
     'target' => '',
     'icon-class' => 'fa fa-money',
@@ -387,7 +387,7 @@ $user = $this->request->session()->read('Auth.User');
       <?php if(in_array($user['role'], $item['levels'])){ ?>
 
         <?php if(!(empty($item['plugin']) && count($item['controller']) == 1 && $item['controller'][0] == 'Home')) {
-          if($user['role'] == 'ente' && !$this->Utils->isValidEnte($user['id'])) {
+          if(($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') && !$this->Utils->isValidEnte($user['id'])) {
             continue;
           }
         } ?>
