@@ -29,7 +29,8 @@ $connectionTimetask = Configure::read('dbconfig.calendar.TIMETASK_CONNECTION');
         <div class="col-md-12" id="divCheckPasswordMatch"></div>
         <?= $this->Form->input('email') ?>
         <?= $this->Form->input('role', [
-            'options' => ['ente' => 'Ente', 'admin' => 'Admin']
+            'options' => [ 'admin' => 'Admin' , 'area_iv' => 'Area IV', 'ragioneria' => 'Ragioneria', 'ente_ospiti' => 'Ente ospiti', 'ente_contabile' => 'Ente contabile'],
+            'default' => 'ente_ospiti'
         ]) ?>
         <?= $this->Form->input('level',['type' => 'number', 'value' => 0]) ?>
         <?= $this->Form->input('auth_email', ['type' => 'checkbox', 'checked' => 'checked', 'label' => ['text' => "Autenticato"]]) ?>
