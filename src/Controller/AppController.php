@@ -119,7 +119,9 @@ class AppController extends Controller
         //Rimozione spazi bianchi iniziali e finali nei dati ricevuti in POST     
         array_walk_recursive($this->request->data, function (&$value, $key) {
             if (is_string($value)) {
-                $value = trim($value);    
+                $value = trim($value); 
+                $value= trim($value, "\xC2\xA0"); // elimina non-breaking space UTF-8
+
             }
         });     
     }
