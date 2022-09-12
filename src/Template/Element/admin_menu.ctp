@@ -39,6 +39,7 @@ $adminControllers = Configure::read('localconfig.AdminControllers');
     <!--FINE HOME PAGE ADMIN-->
 
     <!--ACCESSI-->
+    <!--
     <?php if($user['level'] >= 900){ ?>
         <?php
             $controller = strtolower($this->request->params['controller']);
@@ -52,6 +53,7 @@ $adminControllers = Configure::read('localconfig.AdminControllers');
             <a href="<?=Router::url('/admin/users');?>"><i class="glyphicon glyphicon-log-in"></i> Accessi</a>
         </li>
     <?php } ?>
+    -->
     <!--FINE ACCESSI-->
 
     <!--CONFIGURATIONS-->

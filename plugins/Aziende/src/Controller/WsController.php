@@ -1894,9 +1894,6 @@ class WsController extends AppController
             }
         }
 
-        $data['name'] = trim($data['name']);
-        $data['surname'] = trim($data['surname']);
-
         $data['check_in_date'] = empty($data['check_in_date']) || $data['check_in_date'] == 'null' ? NULL : new Time(substr($data['check_in_date'], 0, 33));
 
         $presenze = [];

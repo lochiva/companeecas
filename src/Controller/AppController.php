@@ -95,35 +95,33 @@ class AppController extends Controller
 
     public function beforeFilter(Event $event)
     {
-        /**/
         parent::beforeFilter($event);
-
-        //$this->Auth->allow(['index', 'view', 'display']);
 
         ##########################################################################
         //Gestione del layout da usare per admin o meno
-
         if(isset($this->request->params['prefix']) && $this->request->params['prefix'] == 'admin'){
             $this->viewBuilder()->layout('admin');
         }
 
         ##########################################################################
         //Leggo le configurazioni da db
-
         $configurations = TableRegistry::get('Configurations');
-
         $result = $configurations->find('all');
-
         foreach ($result as $conf) {
             Configure::write('dbconfig.' .$conf->plugin .'.'. $conf->key_conf,$conf->value);
         }
 
         ##########################################################################
         //Inizializzo la classe del mailer
-
         $this->email = new Email('default');
 
-        //debug($this->request->session()->read());die;
+        ##########################################################################
+        //Rimozione spazi bianchi iniziali e finali nei dati ricevuti in POST     
+        array_walk_recursive($this->request->data, function (&$value, $key) {
+            if (is_string($value)) {
+                $value = trim($value);    
+            }
+        });     
     }
 
     /**
