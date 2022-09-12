@@ -4382,7 +4382,7 @@ class WsController extends AppController
             $statement = TableRegistry::get('Aziende.Statements')->get($statement_id, ['contain' => ['Agreements', 'StatementCompany' => 'AgreementsCompanies']]);
 
             $folderPath = $statement->id;
-            $archiveName = 'rendiconto_' . $statement->agreement->CIG . '_' . $statement->period_label . '.zip';
+            $archiveName = 'rendiconto_' . $statement->agreement->cig . '_' . $statement->period_label . '.zip';
             $archivePath = $statementsFilesPath.$folderPath.$archiveName;
 
             if (!empty($statement->companies)) {
