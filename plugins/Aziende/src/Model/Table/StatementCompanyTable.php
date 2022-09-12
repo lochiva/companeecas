@@ -61,7 +61,7 @@ class StatementCompanyTable extends AppTable
         ]);
 
         $this->hasMany('Costs', [
-            'foreignKey' => 'statement_company_id',
+            'foreignKey' => 'statement_company',
             'bindingKey' => 'id',
             'className' => 'Aziende.Costs',
             'propertyName' => 'costs'

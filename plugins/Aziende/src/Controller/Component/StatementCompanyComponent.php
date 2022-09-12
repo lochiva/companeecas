@@ -70,6 +70,29 @@ class StatementCompanyComponent extends Component
 
         return $toRet;
     }
+
+    public function checkDownloads ($statement_id) {
+        $ret = false;
+        $downloads = TableRegistry::get('Aziende.StatementCompany')
+            ->find('all')
+            ->where(['StatementCompany.statement_id' => $statement_id])
+            ->contain(['Costs'])
+            ->toArray();
+
+        foreach ($downloads as $company) {
+            if ($company->uploaded_path) {
+                $ret = true;
+            }
+            foreach ($company['costs'] as $cost) {
+                if ($cost->attachment) {
+                    $ret = true;
+                }
+
+            }
+        }
+
+        return $ret;
+    }
 }
 
 

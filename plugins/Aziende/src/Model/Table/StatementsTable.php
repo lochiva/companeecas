@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Table\AppTable;
 
 /**
  * Statements Model
@@ -22,7 +23,7 @@ use Cake\Validation\Validator;
  * @method \aziende\Model\Entity\Statement[] patchEntities($entities, array $data, array $options = [])
  * @method \aziende\Model\Entity\Statement findOrCreate($search, callable $callback = null, $options = [])
  */
-class StatementsTable extends Table
+class StatementsTable extends AppTable
 {
     /**
      * Initialize method

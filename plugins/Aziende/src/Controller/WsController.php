@@ -3989,41 +3989,52 @@ class WsController extends AppController
         $out['total_rows'] = $res['tot'];
 
         if(!empty($res['res'])){
+            $resRes = new Collection($res['res']);
+            $resRes = $resRes->groupBy('statement.id')->toArray();
+            // echo "<pre>";
+            // print_r($resRes);
+            // die();
 
-            foreach ($res['res'] as $key => $value) {
+            foreach ($resRes as $key => $statement) {
+                $download = $this->StatementCompany->checkDownloads($key);
 
-                ########### buttons START
-                $button = '';
+                    foreach ($statement as $value) {
+                                        ########### buttons START
+                    $button = '';
 
-                $button.= '<div class="btn-group">';
+                    $button.= '<div class="btn-group">';
 
-                $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) .'" >
-                <i data-toggle="tooltip" title="Visualizza" class="fa fa-eye"></i>
-                </a>';
-
-                if ($value->uploaded_path) {
-                    $button.= '<a class="btn btn-xs btn-default download-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $value->id]) .'" >
-                    <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
+                    $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) .'" >
+                    <i data-toggle="tooltip" title="Visualizza" class="fa fa-eye"></i>
                     </a>';
-                } else {
-                    $button.= '<a class="btn btn-xs btn-default download-statement disabled" href="#" >
-                    <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
-                    </a>';
+
+                    if ($download) {
+                        $button.= '<a class="btn btn-xs btn-default download-statement" href="#" data-statement="'.$value->statement->id.'">
+                        <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
+                        </a>';
+
+                    } else {
+                        $button.= '<a class="btn btn-xs btn-default" href="#" disabled>
+                        <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
+                        </a>';
+
+                    }
+                    $button.= '</div>';
+                    ########### buttons END
+                    
+                    $out['rows'][] = array(
+                        $value->company->name,
+                        $value->company->agreement->cig,
+                        $value->statement->period_label,
+                        $value->status->name,
+                        isset($value->approved_date) && $value->status->id == 2 ? $value->approved_date->format('d/m/Y') : '',
+                        $button
+
+                    );
+
                 }
-                $button.= '</div>';
-                ########### buttons END
-                
-                $out['rows'][] = array(
-                    $value->company->name,
-                    $value->company->agreement->cig,
-                    $value->statement->period_label,
-                    $value->status->name,
-                    isset($value->approved_date) && $value->status->id == 2 ? $value->approved_date->format('d/m/Y') : '',
-                    $button
-
-                );
+                $this->_result = $out;
             }
-            $this->_result = $out;
         }else{
             $this->_result = array();
         }
@@ -4350,6 +4361,101 @@ class WsController extends AppController
                 $this->_result['data'] = -1;
                 $this->_result['msg'] = "Impossibile salvare il rendiconto";
             }
+        }
+    }
+
+    /*
+    Dato statement_company.id
+    - Root contiene: 
+        - Per ogni company una cartella che contiene
+            - La testa (statement_company.uploaded_path)
+            - Cartella Costi che contiene: 
+                - Una cartella per ogni costs.category_id che contiene
+                    - Tutti costs.attachment
+    */
+    public function downloadZipStatements($statement_id = null) {
+        // path dei file di costo
+        $costsFilesPath = ROOT.DS.Configure::read('dbconfig.aziende.COSTS_UPLOAD_PATH');
+        // path della testa
+        $statementsFilesPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
+
+        $files = [];
+
+        if (isset($statement_id)) {
+            $statement = TableRegistry::get('Aziende.Statements')->get($statement_id, ['contain' => ['Agreements', 'StatementCompany' => 'AgreementsCompanies']]);
+
+            $folderPath = $statement->id;
+            $archiveName = 'rendiconto_' . $statement->agreement->CIG . '_' . $statement->period_label . '.zip';
+            $archivePath = $statementsFilesPath.$folderPath.$archiveName;
+
+            if (!empty($statement->companies)) {
+                foreach ($statement->companies as $company) {
+                    if (!empty($company->uploaded_path)) {
+                        $files[] = [
+                            'path' => $statementsFilesPath . $company->uploaded_path,
+                            'name' => $company->company->name . DS . $company->filename
+                        ];
+                    }
+                    $costs = TableRegistry::get('Aziende.CostsCategories')->find('all')
+                    ->where()
+                    ->contain('Costs', function ($q) use ($company){
+                        return $q->where(
+                            ['Costs.statement_company' => $company->id, 'Costs.deleted' => 0]
+                        );
+                    })
+                    ->toArray();
+
+                    // Per ogni categoria di costo creo una cartella e metto i file
+                    foreach ($costs as $category) {
+                        foreach ($category['costs'] as $cost) {
+                            if (!empty($cost->attachment)) {
+                                $files[] = [
+                                    'path' => $costsFilesPath . $cost->attachment,
+                                    'name' => $company->company->name . DS . $category->name . DS . $cost->filename
+                                ];
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            if (!empty($files)) {
+                //Eliminazione vecchio archivio se presente
+                if (file_exists($archivePath)) {
+                    unlink($archivePath);
+                }
+
+                //Creazione archivio zip
+                $archive = new \ZipArchive();
+
+                if ($archive->open($archivePath, \ZIPARCHIVE::CREATE)) {
+
+                    foreach ($files as $file) {
+                        $archive->addFile($file['path'], $file['name']);
+                    }
+
+                    $archive->close();
+                    $this->response->file($archivePath, array(
+                        'download'=> true,
+                        'name'=> $archiveName
+                    ));
+                    setcookie('downloadStarted', '1', false, '/');
+                    return $this->response;
+                } else {
+                    setcookie('downloadStarted', '1', false, '/');
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = 'Errore nello scaricamento dello ZIP: errore nella creazione dell\'archivio ZIP.';
+                }
+            } else {
+                setcookie('downloadStarted', '1', false, '/');
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Errore nello scaricamento dello ZIP: nessun documento da scaricare.';
+            }
+        } else {
+            setcookie('downloadStarted', '1', false, '/');
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Errore nello scaricamento dello ZIP: dati mancanti.';
         }
     }
 

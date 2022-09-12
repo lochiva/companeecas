@@ -173,8 +173,26 @@ $(function(){
 
 		//resetto filtri al click
 		$('.btn-reset-filters-statements').click(function () { $("#table-statements").trigger('filterReset').trigger('sortReset').trigger('update'); return false; });
-
 });
 
+$(document).on('click','.download-statement',function(e){
+	e.preventDefault();
 
+  $('#template-spinner').show();
+  document.cookie = 'downloadStarted=0;path=/';
 
+  window.location = pathServer + 'aziende/ws/downloadZipStatements/' + $(this).data('statement');
+
+  checkCookieForLoader('downloadStarted', '1');
+});
+
+function checkCookieForLoader(name, value) {
+  var cookie = getCookie(name);
+
+  if (cookie == value) {
+      $('#template-spinner').hide();
+      document.cookie = 'downloadStarted=0;path=/';
+  } else {
+      setTimeout(function () { checkCookieForLoader(name, value); }, 300);
+  }
+}
