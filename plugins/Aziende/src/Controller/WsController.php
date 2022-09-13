@@ -4021,7 +4021,7 @@ class WsController extends AppController
                     
                     $out['rows'][] = array(
                         $value->company->name,
-                        $value->company->agreement->cig,
+                        isset($value->company->agreement) ? $value->company->agreement->cig : "",
                         $value->statement->period_label,
                         $value->status->name,
                         isset($value->approved_date) && $value->status->id == 2 ? $value->approved_date->format('d/m/Y') : '',

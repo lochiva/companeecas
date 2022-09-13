@@ -84,7 +84,7 @@ class StatementCompanyComponent extends Component
                 $ret = true;
             }
             foreach ($company['costs'] as $cost) {
-                if ($cost->attachment) {
+                if ($cost->attachment && !$cost->deleted) {
                     $ret = true;
                 }
 
