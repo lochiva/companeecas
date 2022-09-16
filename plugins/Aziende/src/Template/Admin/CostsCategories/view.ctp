@@ -15,6 +15,10 @@
             <td><?= h($costsCategory->name) ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Description') ?></th>
+            <td><?= h($costsCategory->description) ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Ordering') ?></th>
             <td><?= $this->Number->format($costsCategory->ordering) ?></td>
         </tr>

@@ -26,6 +26,7 @@ class CostsCategory extends Entity
         'name' => true,
         'ordering' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
+        'description' => true
     ];
 }

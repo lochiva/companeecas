@@ -19,6 +19,13 @@
             echo $this->Form->input('name');
             echo $this->Form->input('ordering');
         ?>
+        <div class="input text">
+        <?php
+            
+            echo $this->Form->label('description', 'Descrizione');
+            echo $this->Form->textarea('description');
+        ?>
+        </div>
     </fieldset>
     <?= $this->Form->button(__('Save'),['class' => 'btn btn-success']) ?>
     <?= $this->Form->end() ?>

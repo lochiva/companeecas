@@ -124,7 +124,7 @@ div.edit-config .btn{
 	padding-left:0px;
 	font-weight:bold;
 }
-.admin-form input{
+.admin-form input, .admin-form textarea{
 	width:200px;
 }
 .admin-form .input-group-addon{

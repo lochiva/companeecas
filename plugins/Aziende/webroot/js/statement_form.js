@@ -462,8 +462,19 @@ function loadCosts(cats) {
             <h4 class="panel-title">
               <a role="button" data-toggle="collapse" data-parent="#accordion" href="#` +
                 cats[cat]["id"] + `" aria-expanded="true">` + cats[cat]["name"] +
-            `</a>
-            <span class = "f-right">&euro;` + ` ` + cats[cat]["tot"] + `</span>` +
+            `</a>`;
+
+      if (cats[cat]["description"].length) {
+        toAppend += `<span data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'>`;
+        toAppend += cats[cat]["description"];
+        toAppend += `
+        </div>">
+        <i class="fa fa-question-circle"></i>
+        </span>`;
+
+      }
+
+      toAppend += `<span class = "f-right">&euro;` + ` ` + cats[cat]["tot"] + `</span>` +
           `</h4>
         </div>
         
