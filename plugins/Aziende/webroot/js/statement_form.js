@@ -534,9 +534,9 @@ function loadCosts(cats) {
   }
 
   if(status_id != 2) {
-    $('#add-cost').parent().show();
+    $('#add-cost').show();
   } else {
-    $('#add-cost').parent().hide();
+    $('#add-cost').hide();
   }
 
 }
@@ -614,7 +614,7 @@ function changeStatus (id, status) {
 
           $('#text-notes').show();
 
-          $('#add-cost').parent().hide();
+          $('#add-cost').hide();
   
         // Integrazione
         } else if (status == 3) {
@@ -630,11 +630,11 @@ function changeStatus (id, status) {
           $('textarea[name=notes]').show();
           $('textarea[name=notes]').prop('disabled', true);
 
-          $('#add-cost').parent().show();
+          $('#add-cost').show();
   
         // In approvazione
         } else if (status == 4) {
-          $('#add-cost').parent().hide();
+          $('#add-cost').hide();
 
           $('#send').prop('disabled', true);
           $('#save-statement').prop('disabled', true);
