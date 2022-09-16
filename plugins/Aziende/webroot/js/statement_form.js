@@ -538,14 +538,7 @@ function loadCosts(cats) {
     </div>`;
 
     }
-
     $("#accordion").append(toAppend);
-  }
-
-  if(status_id != 2) {
-    $('#add-cost').show();
-  } else {
-    $('#add-cost').hide();
   }
 
 }
