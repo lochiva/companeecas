@@ -332,7 +332,26 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                 <div class="box-body">
                     <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
                         <div class="container-fluid">
+                        <?php if ($ati) :?>
                             <form id="add-cost">
+                        <?php else :?>
+                            <?php switch ($statement->companies[0]->status_id):
+                                case 1:
+                            ?>
+                                    <form id="add-cost">
+                                <?php break; ?>
+                                <?php case 2:?>
+                                    <form id="add-cost" style="display: none;">
+                                <?php break; ?>
+                                <?php case 3:?>
+                                    <form id="add-cost">
+                                <?php break; ?>
+                                <?php case 4:?>
+                                    <form id="add-cost" style="display: none;">
+                                <?php break; ?>
+                            <?php endswitch ?>
+
+                        <?php endif ?>
                                 <div class="row">
 
                                     <?php if (!$ati) :?>

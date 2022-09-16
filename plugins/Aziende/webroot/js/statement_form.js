@@ -124,6 +124,8 @@ $(document).ready(function () {
 
                 $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
+
+                $('form#add-cost').show();
               } else {
                 $('#save-statement').prop('disabled', true);
                 $('#delete-statement').prop('disabled', true);
@@ -146,6 +148,8 @@ $(document).ready(function () {
 
               $('#text-notes').show();
 
+              $('form#add-cost').hide();
+
             // Integrazione
             } else if (res.data.status_id == 3) {
               $('#status').removeClass().addClass('badge btn-warning');
@@ -163,6 +167,7 @@ $(document).ready(function () {
 
                 $('textarea[name=notes]').prop('disabled', false);
 
+                $('form#add-cost').show();
 
               } else {
                 $('#deny').prop('disabled', true);
@@ -179,6 +184,7 @@ $(document).ready(function () {
 
             // In approvazione
             } else if (res.data.status_id == 4) {
+              $('form#add-cost').hide();
 
               $('#status').removeClass().addClass('badge btn-info');
               $('#text-notes').hide();
