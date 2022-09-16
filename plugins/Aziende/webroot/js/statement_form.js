@@ -428,6 +428,15 @@ $(document).ready(function () {
   });
 
   attachmentsNumberForBadge('agreements', $('#idItemForAttachment').html(), 'button_attachment');
+
+  $('#add-cost input[name=amount]').blur(
+    function () {
+      let val = $(this).val();
+      if ($('#add-cost input[name=share]').val() == '') {
+        $('#add-cost input[name=share]').val(val)
+      }
+    }
+  );
 });
 
 function loadCosts(cats) {
