@@ -23,7 +23,7 @@
         <?php
             
             echo $this->Form->label('description', 'Descrizione');
-            echo $this->Form->textarea('description');
+            echo $this->Form->textarea('description', ['style' => ['width: 500px;', 'resize: none;']]);
         ?>
         </div>
     </fieldset>
