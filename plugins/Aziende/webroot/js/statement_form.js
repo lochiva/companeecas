@@ -321,50 +321,58 @@ $(document).ready(function () {
 
   $('#save-cat').click(function (e) {
     e.preventDefault();
+    let start = new Date($("input[name=period_start_date]").val()).getTime();
+    let end = new Date($("input[name=period_end_date]").val()).getTime();
+    let date = new Date($("input[name=date]").val()).getTime();
 
+    var conf = true;
     let errors = 0;
 
-    $('form#add-cost input[required], form#add-cost select[required]').each(function() {
-      if($(this).val() == null ||  $(this).val()=='') {
-        $(this).parent().addClass('has-error');
-        errors ++;
-      }
-    });
-
-    if(errors) {
-      alert('Compilare tutti i campi in rosso');
+    if (date < start || date > end) {
+      conf = confirm('Data non conforme al periodo, vuoi comunqie inserire la la spesa?');
     } else {
-      var formData = new FormData($('#add-cost')[0]);
-      $.ajax({
-        url: pathServer + "aziende/ws/saveCost",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-      })
-        .done(function (res) {
-          if (res.response == "OK") {
-            $('#add-cost input[name=number]').val('');
-            $('#add-cost input[name=file]').val('');
-            let cats = res.data;
-            if (cats) {
-              loadCosts(cats);
-            } else {
-              $("#accordion").append("<div>Nessuna spesa presente</div>");
-            }
-          } else {
-            alert(res.msg)
-          }
-        })
-        .fail(function (richiesta, stato, errori) {
-          alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-        });
-
+      conf = true;
     }
 
-
-
+    if (conf == true) {
+      $('form#add-cost input[required], form#add-cost select[required]').each(function() {
+        if($(this).val() == null ||  $(this).val()=='') {
+          $(this).parent().addClass('has-error');
+          errors ++;
+        }
+      });
+  
+      if(errors) {
+        alert('Compilare tutti i campi in rosso');
+      } else {
+        var formData = new FormData($('#add-cost')[0]);
+        $.ajax({
+          url: pathServer + "aziende/ws/saveCost",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          dataType: "json",
+        })
+          .done(function (res) {
+            if (res.response == "OK") {
+              $('#add-cost input[name=number]').val('');
+              $('#add-cost input[name=file]').val('');
+              let cats = res.data;
+              if (cats) {
+                loadCosts(cats);
+              } else {
+                $("#accordion").append("<div>Nessuna spesa presente</div>");
+              }
+            } else {
+              alert(res.msg)
+            }
+          })
+          .fail(function (richiesta, stato, errori) {
+            alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+          });
+      }
+    }
   });
 
   $('#searchCat').select2({
@@ -511,8 +519,22 @@ function loadCosts(cats) {
           cats[cat]["costs"][cost]["number"] +
           `</td>` +
           `<td>` +
-          cats[cat]["costs"][cost]["date"] +
-          `</td>` +
+          cats[cat]["costs"][cost]["date"];
+
+          let start = new Date($("input[name=period_start_date]").val()).getTime();
+          let end = new Date($("input[name=period_end_date]").val()).getTime();
+
+          let [d, m, y] = cats[cat]["costs"][cost]["date"].split(/\D/);
+          let date = new Date(y, m-1, d).getTime();
+
+          if (date < start || date > end  ) {
+            toAppend += `
+              <span data-toggle="tooltip" data-html="true" data-placement="top" title="" data-original-title="<div class='text-justify'>Data non conforme al periodo</div>">
+                <i class="fa fa-warning"></i>
+              </span>`;
+          }
+
+          toAppend += `</td>` +
           `<td>` +
           cats[cat]["costs"][cost]["description"] +
           `</td>` +
