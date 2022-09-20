@@ -338,7 +338,7 @@ $(document).ready(function () {
     let errors = 0;
 
     if (date < start || date > end) {
-      conf = confirm('Data non conforme al periodo, vuoi comunqie inserire la la spesa?');
+      conf = confirm('Data non conforme al periodo, vuoi comunque inserire la la spesa?');
     } else {
       conf = true;
     }
