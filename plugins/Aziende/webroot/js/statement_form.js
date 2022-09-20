@@ -98,12 +98,21 @@ $(document).ready(function () {
 
             if (res.data.uploaded_path.length) {
               $("#file_upload").removeClass("hidden");
-              $("#uploaded_path").prop(
+              $("#file_upload").prop(
                 "href",
-                pathServer + "aziende/ws/downloadFileStatements/" + res.data.id
+                pathServer + "aziende/ws/downloadFileStatements/" + 'invoice/' + res.data.id
               );
             } else {
               $("#file_upload").addClass("hidden");
+            }
+            if (res.data.compliance.length) {
+              $("#file_compliance_upload").removeClass("hidden");
+              $("#file_compliance_upload").prop(
+                "href",
+                pathServer + "aziende/ws/downloadFileStatements/" + 'compliance/' + res.data.id
+              );
+            } else {
+              $("#file_compliance_upload").addClass("hidden");
             }
             $('#status').text(res.data.status.name);
             $('#status').data('status_id', res.data.status_id);
@@ -605,91 +614,94 @@ function deleteCost (id) {
 
 
 function changeStatus (id, status) {
-  let msg = "ATTENZIONE!\n" + "Operazione irreversibile!\n";
-  switch(status) {
-    // Approva
-    case 2:
-      msg +=  "Si desidera approvare il rendiconto?";
-      break;
 
-    // Integrazione
-    case 3:
-      msg += "Si desidera richiedere l'interazione del rendiconto?";
-      break;
-
-    // In approvazione
-    case 4:
-      msg += "Si desidera inviare il rendiconto in approvazione?";
-      break;
-  }
-
-  if (confirm(msg)) {
-    let notes = $('textarea[name=notes]').val();
-    $.ajax({
-      url: pathServer + "aziende/ws/updateStatusStatementCompany/" + id,
-      type: "POST",
-      data: {notes: notes, status: status},
-      dataType: "json",
-    })
-    .done(function (res) {
-      if (res.response == "OK") {
-
-        $('#status').data('status_id', status);
-        $('#text-notes').text(res.data.notes);
+    let msg = "ATTENZIONE!\n" + "Operazione irreversibile!\n";
+    switch(status) {
+      // Approva
+      case 2:
+        msg +=  "Si desidera approvare il rendiconto?";
+        break;
   
-        // Approvato
-         if (status == 2) {
-          $('#btn-actions').hide();
-          $('#status').removeClass().addClass('badge btn-success');
-          $('#status').text(res.data.status.name);
-          
-          $('#comments').show();
-
-          $('textarea[name=notes]').hide();
-
-          $('#text-notes').show();
-
-          $('#add-cost').hide();
+      // Integrazione
+      case 3:
+        msg += "Si desidera richiedere l'interazione del rendiconto?";
+        break;
   
-        // Integrazione
-        } else if (status == 3) {
-          $('#deny').prop('disabled', true);
+      // In approvazione
+      case 4:
+        msg += "Si desidera inviare il rendiconto in approvazione?";
+        break;
+    }
   
-          $('#approve').prop('disabled', true);
+    if (confirm(msg)) {
+      let notes = $('textarea[name=notes]').val();
+      $.ajax({
+        url: pathServer + "aziende/ws/updateStatusStatementCompany/" + id,
+        type: "POST",
+        data: {notes: notes, status: status},
+        dataType: "json",
+      })
+      .done(function (res) {
+        if (res.response == "OK") {
+          window.location.reload();
   
-          $('#status').removeClass().addClass('badge btn-warning');
-          $('#status').text(res.data.status.name);
-
-          $('#comments').show();
-          $('#text-notes').hide();
-          $('textarea[name=notes]').show();
-          $('textarea[name=notes]').prop('disabled', true);
-
-          $('#add-cost').show();
+/*           $('#status').data('status_id', status);
+          $('#text-notes').text(res.data.notes);
+    
+          // Approvato
+           if (status == 2) {
+            $('#btn-actions').hide();
+            $('#status').removeClass().addClass('badge btn-success');
+            $('#status').text(res.data.status.name);
+            
+            $('#comments').show();
   
-        // In approvazione
-        } else if (status == 4) {
-          $('#add-cost').hide();
-
-          $('#send').prop('disabled', true);
-          $('#save-statement').prop('disabled', true);
-          $('#delete-statement').prop('disabled', true);
-          $('form#add-cost').hide();
-          $('#status').removeClass().addClass('badge btn-info');
-          $('#status').text(res.data.status.name);
-
-          $('#comments').show();
-          $('#text-notes').hide();
-          $('textarea[name=notes]').show();
-          $('textarea[name=notes]').prop('disabled', true);
+            $('textarea[name=notes]').hide();
+  
+            $('#text-notes').show();
+  
+            $('#add-cost').hide();
+    
+          // Integrazione
+          } else if (status == 3) {
+            $('#deny').prop('disabled', true);
+    
+            $('#approve').prop('disabled', true);
+    
+            $('#status').removeClass().addClass('badge btn-warning');
+            $('#status').text(res.data.status.name);
+  
+            $('#comments').show();
+            $('#text-notes').hide();
+            $('textarea[name=notes]').show();
+            $('textarea[name=notes]').prop('disabled', true);
+  
+            $('#add-cost').show();
+    
+          // In approvazione
+          } else if (status == 4) {
+            $('#add-cost').hide();
+  
+            $('#send').prop('disabled', true);
+            $('#save-statement').prop('disabled', true);
+            $('#delete-statement').prop('disabled', true);
+            $('form#add-cost').hide();
+            $('#status').removeClass().addClass('badge btn-info');
+            $('#status').text(res.data.status.name);
+  
+            $('#comments').show();
+            $('#text-notes').hide();
+            $('textarea[name=notes]').show();
+            $('textarea[name=notes]').prop('disabled', true);
+          } */
+        } else {
+          alert(res.msg);
         }
-      } else {
-        alert(res.msg);
-      }
-    })
-      .fail(function (richiesta, stato, errori) {
-        alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-      }) 
-  }
+      })
+        .fail(function (richiesta, stato, errori) {
+          alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+        }) 
+    }
+
 };
 

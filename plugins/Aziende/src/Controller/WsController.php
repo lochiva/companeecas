@@ -4287,20 +4287,29 @@ class WsController extends AppController
         }
     }
 
-    public function downloadFileStatements($id)
+    public function downloadFileStatements($what, $id)
     {
         $table = TableRegistry::get('Aziende.StatementCompany');
 
         $attachment = $table->get($id);
         
-        $file = $attachment['uploaded_path'];
+        if ($what == 'invoice' ) {
+            $file = $attachment['uploaded_path'];
+            $name = $attachment['filename'];
+
+        } else if ($what == 'compliance') {
+            $file = $attachment['compliance'];
+            $name = $attachment['compliance_filename'];
+            
+        }
+        
 
         $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH') . $file;
 
         if(file_exists($uploadPath)){
             $this->response->file($uploadPath , array(
                 'download'=> true,
-                'name'=> $attachment['filename']
+                'name'=> $name
             ));
             setcookie('downloadStarted', '1', false, '/');
             return $this->response;
@@ -4341,27 +4350,71 @@ class WsController extends AppController
 
             $entity = $table->get($id);
 
-            $entity->status_id = $data['status'];
+            if ($data['status'] == 4) {
+                $missingFile = false;
+                $missingCompliance = false;
+                if (empty($entity->uploaded_path)) {
+                    $msg = "Manca il file della fattura\n";
+                    $missingFile = true;
+                }
+                if (empty($entity->compliance)) {
+                    $msg = "Manca il file della dichiarazione\n";
+                    $missingCompliance = true;
+                }
 
-            if(isset($data['notes'])) {
-                $entity->notes = $data['notes'];
-            }
+                if ($missingFile || $missingCompliance) {
+                    $this->_result['response'] = 'KO';
+                    $this->_result['data'] = -1;
+                    $this->_result['msg'] = "Impossibile salvare il rendiconto\n" . $msg;
+                } else {
+                    $entity->status_id = $data['status'];
 
-            if ($data['status'] == 2) {
-                $entity->approved_date = date('Y-m-d');
-            }
+                    if(isset($data['notes'])) {
+                        $entity->notes = $data['notes'];
+                    }
+        
+                    if ($data['status'] == 2) {
+                        $entity->approved_date = date('Y-m-d');
+                    }
+        
+                    $ret = $table->save($entity);
+        
+                    if ($ret) {
+                        $this->_result['response'] = 'OK';
+                        $this->_result['data'] = $table->get($id, ['contain' => ['Status']]);
+                        $this->_result['msg'] = "";
+                    } else {
+                        $this->_result['response'] = 'KO';
+                        $this->_result['data'] = -1;
+                        $this->_result['msg'] = "Impossibile salvare il rendiconto";
+                    }
 
-            $ret = $table->save($entity);
+                }
 
-            if ($ret) {
-                $this->_result['response'] = 'OK';
-                $this->_result['data'] = $table->get($id, ['contain' => ['Status']]);
-                $this->_result['msg'] = "";
             } else {
-                $this->_result['response'] = 'KO';
-                $this->_result['data'] = -1;
-                $this->_result['msg'] = "Impossibile salvare il rendiconto";
+                $entity->status_id = $data['status'];
+
+                if(isset($data['notes'])) {
+                    $entity->notes = $data['notes'];
+                }
+    
+                if ($data['status'] == 2) {
+                    $entity->approved_date = date('Y-m-d');
+                }
+    
+                $ret = $table->save($entity);
+    
+                if ($ret) {
+                    $this->_result['response'] = 'OK';
+                    $this->_result['data'] = $table->get($id, ['contain' => ['Status']]);
+                    $this->_result['msg'] = "";
+                } else {
+                    $this->_result['response'] = 'KO';
+                    $this->_result['data'] = -1;
+                    $this->_result['msg'] = "Impossibile salvare il rendiconto";
+                }
             }
+
         }
     }
 

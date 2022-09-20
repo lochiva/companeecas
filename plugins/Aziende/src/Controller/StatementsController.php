@@ -250,9 +250,34 @@ class StatementsController extends AppController
             $data = $this->request->data;
             $attachment = $this->request->getUploadedFile('file');
 
+            $attachment_compliance = $this->request->getUploadedFile('file_compliance');
+
             $statement = $this->Statements->get($id, [
                 'contain' => ['StatementCompany']
             ]);
+
+            // Controllo i file allegati 
+            $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
+
+            if(strlen($attachment_compliance->getClientFilename())) {
+
+                $filePath = $data['companies'][0]['id'] . DS . 'compliance';
+
+                $dir = new Folder($uploadPath . $filePath, true, 0755);
+                
+                $fName = uniqid().'_'.$attachment_compliance->getClientFilename();
+
+                try {
+                    $attachment_compliance->moveTo($uploadPath . $filePath . DS . $fName);
+                    $data['companies'][0]['compliance'] = $filePath . DS . $fName;
+                    $data['companies'][0]['compliance_filename'] = $attachment_compliance->getClientFilename();
+
+                } catch (RuntimeException $e) {
+                    $this->Flash->error(__("Impossibile salvare il rendiconto. Si è verificato un errore durante l'upload del file"));
+                    return $this->redirect(['action' => 'view', $id]);
+                }
+
+            } 
 
             // Controllo se è stato allegato un file
             if(strlen($attachment->getClientFilename())) {
@@ -270,35 +295,23 @@ class StatementsController extends AppController
                     $data['companies'][0]['filename'] = $attachment->getClientFilename();
                 
                     $statement = $this->Statements->patchEntity($statement, $data);
-
-                    if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
-                        $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
-        
-                        return $this->redirect(['action' => 'index']);
-                    } else {
-                        $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
-                    }
-
                 } catch (RuntimeException $e) {
                     $this->Flash->error(__("Impossibile salvare il rendiconto. Si è verificato un errore durante l'upload del file"));
                     return $this->redirect(['action' => 'view', $id]);
 
                 }
 
-            } else {
-                $statement = $this->Statements->patchEntity($statement, $data);
-
-                if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
-                    $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
-    
-                    return $this->redirect(['action' => 'index']);
-                } else {
-                    $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
-                    return $this->redirect(['action' => 'view', $id]);
-                }
-
             }
+            $statement = $this->Statements->patchEntity($statement, $data);
 
+            if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
+                $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
+
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
+                return $this->redirect(['action' => 'view', $id]);
+            }
 
         }
     }

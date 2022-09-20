@@ -49,6 +49,8 @@ class StatementCompany extends Entity
         'modified' => true,
         'statement' => true,
         'agreements_company' => true,
-        'status' => true
+        'status' => true,
+        'compliance' => true,
+        'compliance_filename' => true
     ];
 }

@@ -114,11 +114,16 @@ use Cake\Routing\Router;
         <div class="form-group">
             <div class="col-md-6">
                 <label class="control-label">File Fattura</label>
-                
-
                 <div class="d-flex">
                     <input type="file" name="file" class="form-control">
-                    <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                    <a id="file_upload" class="btn btn-info" href="#" target="_blank" style="margin-left: 10px;">Download</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="control-label">Dichiarazione sostitutiva conformità documenti agli atti</label>
+                <div class="d-flex">
+                    <input type="file" name="file_compliance" class="form-control">
+                    <a id="file_compliance_upload" class="btn btn-info" href="#" target="_blank" style="margin-left: 10px;">Download</a>
                 </div>
             </div>
         </div>
@@ -172,15 +177,26 @@ use Cake\Routing\Router;
 
         <div class="form-group">
 
-                    <div class="col-sm-6">
-                        <label class="control-label">File Fattura</label>
-                        <div class="d-flex">
-                            <input type="file" name="file" class="form-control">
-                            <?php if ($statement->companies[0]->uploaded_path) : ?>
-                                <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
-                            <?php endif ?>
-                        </div>
-                    </div>
+            <div class="col-sm-6">
+                <label class="control-label">File Fattura</label>
+                <div class="d-flex">
+                    <input type="file" name="file" class="form-control">
+                    <?php if ($statement->companies[0]->uploaded_path) : ?>
+                        <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                    <?php endif ?>
+                </div>
+            </div>
+
+
+            <div class="col-sm-6">
+                <label class="control-label">Dichiarazione sostitutiva conformità documenti agli atti</label>
+                <div class="d-flex">
+                    <input type="file" name="file_compliance" class="form-control">
+                    <?php if ($statement->companies[0]->compliance) : ?>
+                        <a id="file_compliance_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                    <?php endif ?>
+                </div>
+            </div>
 
         </div>
 
