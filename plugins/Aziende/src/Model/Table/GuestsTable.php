@@ -434,7 +434,7 @@ class GuestsTable extends AppTable
         $where = [
             'Guests.sede_id' => $sedeId, 
             'Guests.status_id' => 1,
-            'Guests.exit_request_status_id' => null,
+            'Guests.exit_request_status_id IS NULL',
             'Guests.minor_alone' => 0,
              'OR'=>[
                'Guests.surname LIKE ' => '%'.$search.'%',
