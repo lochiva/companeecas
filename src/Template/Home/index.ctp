@@ -43,8 +43,15 @@ $user = $this->request->session()->read('Auth.User');
 		</div>
 	</div>
 
-	<!-- Ricerca ospite -->
-	<?= $this->element('Aziende.box_search_guest'); ?>
+	<?php if (
+		$user['role'] == 'admin' || 
+		$user['role'] == 'area_iv' || 
+		$user['role'] == 'ragioneria' || 
+		($user['role'] == 'ente_ospiti' && $this->Utils->isValidEnte($user['id']))
+	) { ?>
+		<!-- Ricerca ospite -->
+		<?= $this->element('Aziende.box_search_guest'); ?>
+	<?php } ?>
 
 	<?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv') { ?>
 		<!-- Notifiche -->
