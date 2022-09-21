@@ -68,7 +68,7 @@ class WsController extends AppController
                 'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 
-                'downloadFileStatements', 'downloadFileCosts', 'updateStatusStatementCompany',
+                'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements'
             ],
             'ente_ospiti' => [
@@ -91,7 +91,7 @@ class WsController extends AppController
                 'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests','downloadGuestExitFile', 'getFiles', 
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'saveStatement', 'getCosts', 'getStatementCompany', 
-                'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'updateStatusStatementCompany',
+                'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements'
             ]
         ];
@@ -4342,77 +4342,32 @@ class WsController extends AppController
         }
     }
 
-    public function updateStatusStatementCompany($id) {
+    public function checkStatusStatementCompany($id) {
         $table = TableRegistry::get('Aziende.StatementCompany');
+        $msg = "";
         
         if(isset($id)) {
-            $data = $this->request->data;
-
             $entity = $table->get($id);
 
-            if ($data['status'] == 4) {
-                $missingFile = false;
-                $missingCompliance = false;
-                if (empty($entity->uploaded_path)) {
-                    $msg = "Manca il file della fattura\n";
-                    $missingFile = true;
-                }
-                if (empty($entity->compliance)) {
-                    $msg = "Manca il file della dichiarazione\n";
-                    $missingCompliance = true;
-                }
+            $missingFile = false;
+            $missingCompliance = false;
+            if (empty($entity->uploaded_path)) {
+                $msg .= "Manca il file della fattura\n";
+                $missingFile = true;
+            }
+            if (empty($entity->compliance)) {
+                $msg .= "Manca il file della dichiarazione\n";
+                $missingCompliance = true;
+            }
 
-                if ($missingFile || $missingCompliance) {
-                    $this->_result['response'] = 'KO';
-                    $this->_result['data'] = -1;
-                    $this->_result['msg'] = "Impossibile salvare il rendiconto\n" . $msg;
-                } else {
-                    $entity->status_id = $data['status'];
-
-                    if(isset($data['notes'])) {
-                        $entity->notes = $data['notes'];
-                    }
-        
-                    if ($data['status'] == 2) {
-                        $entity->approved_date = date('Y-m-d');
-                    }
-        
-                    $ret = $table->save($entity);
-        
-                    if ($ret) {
-                        $this->_result['response'] = 'OK';
-                        $this->_result['data'] = $table->get($id, ['contain' => ['Status']]);
-                        $this->_result['msg'] = "";
-                    } else {
-                        $this->_result['response'] = 'KO';
-                        $this->_result['data'] = -1;
-                        $this->_result['msg'] = "Impossibile salvare il rendiconto";
-                    }
-
-                }
-
+            if ($missingFile || $missingCompliance) {
+                $this->_result['response'] = 'KO';
+                $this->_result['data'] = -1;
+                $this->_result['msg'] = "Impossibile salvare il rendiconto\n" . $msg;
             } else {
-                $entity->status_id = $data['status'];
-
-                if(isset($data['notes'])) {
-                    $entity->notes = $data['notes'];
-                }
-    
-                if ($data['status'] == 2) {
-                    $entity->approved_date = date('Y-m-d');
-                }
-    
-                $ret = $table->save($entity);
-    
-                if ($ret) {
-                    $this->_result['response'] = 'OK';
-                    $this->_result['data'] = $table->get($id, ['contain' => ['Status']]);
-                    $this->_result['msg'] = "";
-                } else {
-                    $this->_result['response'] = 'KO';
-                    $this->_result['data'] = -1;
-                    $this->_result['msg'] = "Impossibile salvare il rendiconto";
-                }
+                $this->_result['response'] = 'OK';
+                $this->_result['data'] = 1;
+                $this->_result['msg'] = "";
             }
 
         }
@@ -4448,6 +4403,12 @@ class WsController extends AppController
                         $files[] = [
                             'path' => $statementsFilesPath . $company->uploaded_path,
                             'name' => $company->company->name . DS . $company->filename
+                        ];
+                    }
+                    if (!empty($company->compliance)) {
+                        $files[] = [
+                            'path' => $statementsFilesPath . $company->compliance,
+                            'name' => $company->company->name . DS . $company->compliance_filename
                         ];
                     }
                     $costs = TableRegistry::get('Aziende.CostsCategories')->find('all')

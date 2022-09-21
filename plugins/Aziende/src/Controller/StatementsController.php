@@ -337,4 +337,37 @@ class StatementsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    public function updateStatusStatementCompany($id) {
+        $this->request->allowMethod(['post']);
+        $table = TableRegistry::get('Aziende.StatementCompany');
+        
+        if(isset($id)) {
+            $data = $this->request->data;
+
+            $entity = $table->get($id);
+
+            $entity->status_id = $data['status'];
+
+            if(isset($data['notes'])) {
+                $entity->notes = $data['notes'];
+            }
+
+            if ($data['status'] == 2) {
+                $entity->approved_date = date('Y-m-d');
+            }
+
+            $ret = $table->save($entity);
+
+            if ($ret) {
+                $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
+                return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
+
+            } else {
+                $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
+                return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
+            }
+
+        }
+    }
 }
