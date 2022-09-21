@@ -182,7 +182,7 @@ use Cake\Routing\Router;
                 <div class="d-flex">
                     <input type="file" name="file" class="form-control">
                     <?php if ($statement->companies[0]->uploaded_path) : ?>
-                        <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                        <a id="file_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', 'invoice',$statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
                     <?php endif ?>
                 </div>
             </div>
@@ -193,7 +193,7 @@ use Cake\Routing\Router;
                 <div class="d-flex">
                     <input type="file" name="file_compliance" class="form-control">
                     <?php if ($statement->companies[0]->compliance) : ?>
-                        <a id="file_compliance_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
+                        <a id="file_compliance_upload" class="btn btn-info" href="<?= Router::url(['plugin' => 'Aziende', 'controller' => 'Ws', 'action' => 'downloadFileStatements', 'compliance', $statement->companies[0]->id ]) ?>" target="_blank" style="margin-left: 10px;">Download</a>
                     <?php endif ?>
                 </div>
             </div>
