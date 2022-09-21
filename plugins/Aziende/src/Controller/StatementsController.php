@@ -256,7 +256,7 @@ class StatementsController extends AppController
                 'contain' => ['StatementCompany']
             ]);
 
-            // Controllo i file allegati 
+            // Controllo file dichiarazione
             $uploadPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
 
             if(strlen($attachment_compliance->getClientFilename())) {
@@ -270,7 +270,7 @@ class StatementsController extends AppController
                 try {
                     $attachment_compliance->moveTo($uploadPath . $filePath . DS . $fName);
                     $data['companies'][0]['compliance'] = $filePath . DS . $fName;
-                    $data['companies'][0]['compliance_filename'] = $attachment_compliance->getClientFilename();
+                    $data['companies'][0]['compliance_filename'] = 'DICH_' . $attachment_compliance->getClientFilename();
 
                 } catch (RuntimeException $e) {
                     $this->Flash->error(__("Impossibile salvare il rendiconto. Si è verificato un errore durante l'upload del file"));
@@ -292,7 +292,7 @@ class StatementsController extends AppController
                 try {
                     $attachment->moveTo($uploadPath . $filePath . DS . $fName);
                     $data['companies'][0]['uploaded_path'] = $filePath . DS . $fName;
-                    $data['companies'][0]['filename'] = $attachment->getClientFilename();
+                    $data['companies'][0]['filename'] =  'FATT_' . $attachment->getClientFilename();
                 
                     $statement = $this->Statements->patchEntity($statement, $data);
                 } catch (RuntimeException $e) {
@@ -307,10 +307,10 @@ class StatementsController extends AppController
             if ($this->Statements->save($statement, ['associated' => 'StatementCompany'])) {
                 $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', $id, $data['companies'][0]['id']]);
             } else {
                 $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
-                return $this->redirect(['action' => 'view', $id]);
+                return $this->redirect(['action' => 'view', $id, $data['companies'][0]['id']]);
             }
 
         }

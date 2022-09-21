@@ -4234,7 +4234,7 @@ class WsController extends AppController
                     $attachment->moveTo($uploadPath . $filePath . DS . $fName);
 
                     $entity->attachment = $filePath . DS . $fName;
-                    $entity->filename = $attachment->getClientFilename();
+                    $entity->filename = $entity->id . '_' . $attachment->getClientFilename();
     
                     $table->save($entity);
 
