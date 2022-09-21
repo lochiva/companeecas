@@ -612,10 +612,37 @@ function deleteCost (id) {
   }
 };
 
+function checkStatus (id, status) {
+  var ret = false;
+  if (status != 4) {
+    ret = true;
+  } else {
+    $.ajax({
+      url: pathServer + "aziende/ws/checkStatusStatementCompany/" + id,
+      type: "GET",
+      dataType: "json",
+      async: false
+    })
+    .done(function (res) {
+      if (res.response == "OK") {
+        ret = true;
+      } else {
+        alert(res.msg);
+        ret = false;
+      }
+    })
+    .fail(function (richiesta, stato, errori) {
+      alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+      ret = false;
+    })
+  }
+  return ret;
+}
 
 function changeStatus (id, status) {
-
+  if (checkStatus(id, status)) {
     let msg = "ATTENZIONE!\n" + "Operazione irreversibile!\n";
+
     switch(status) {
       // Approva
       case 2:
@@ -624,7 +651,7 @@ function changeStatus (id, status) {
   
       // Integrazione
       case 3:
-        msg += "Si desidera richiedere l'interazione del rendiconto?";
+        msg += "Si desidera richiedere l'integrazione del rendiconto?";
         break;
   
       // In approvazione
@@ -632,76 +659,23 @@ function changeStatus (id, status) {
         msg += "Si desidera inviare il rendiconto in approvazione?";
         break;
     }
-  
-    if (confirm(msg)) {
-      let notes = $('textarea[name=notes]').val();
-      $.ajax({
-        url: pathServer + "aziende/ws/updateStatusStatementCompany/" + id,
-        type: "POST",
-        data: {notes: notes, status: status},
-        dataType: "json",
-      })
-      .done(function (res) {
-        if (res.response == "OK") {
-          window.location.reload();
-  
-/*           $('#status').data('status_id', status);
-          $('#text-notes').text(res.data.notes);
-    
-          // Approvato
-           if (status == 2) {
-            $('#btn-actions').hide();
-            $('#status').removeClass().addClass('badge btn-success');
-            $('#status').text(res.data.status.name);
-            
-            $('#comments').show();
-  
-            $('textarea[name=notes]').hide();
-  
-            $('#text-notes').show();
-  
-            $('#add-cost').hide();
-    
-          // Integrazione
-          } else if (status == 3) {
-            $('#deny').prop('disabled', true);
-    
-            $('#approve').prop('disabled', true);
-    
-            $('#status').removeClass().addClass('badge btn-warning');
-            $('#status').text(res.data.status.name);
-  
-            $('#comments').show();
-            $('#text-notes').hide();
-            $('textarea[name=notes]').show();
-            $('textarea[name=notes]').prop('disabled', true);
-  
-            $('#add-cost').show();
-    
-          // In approvazione
-          } else if (status == 4) {
-            $('#add-cost').hide();
-  
-            $('#send').prop('disabled', true);
-            $('#save-statement').prop('disabled', true);
-            $('#delete-statement').prop('disabled', true);
-            $('form#add-cost').hide();
-            $('#status').removeClass().addClass('badge btn-info');
-            $('#status').text(res.data.status.name);
-  
-            $('#comments').show();
-            $('#text-notes').hide();
-            $('textarea[name=notes]').show();
-            $('textarea[name=notes]').prop('disabled', true);
-          } */
-        } else {
-          alert(res.msg);
-        }
-      })
-        .fail(function (richiesta, stato, errori) {
-          alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-        }) 
-    }
 
+    if (confirm(msg)) {
+      var form = $('<form></form>');
+      form.attr("method", "post");
+      form.attr("action", pathServer + "aziende/statements/updateStatusStatementCompany/" + id);
+
+      form.append($('textarea[name=notes]').val());
+
+      var field = $('<input></input>');
+      field.attr("type", "hidden");
+      field.attr("name", 'status');
+      field.attr("value", status);
+      form.append(field);
+  
+      $(document.body).append(form);
+      form.submit();
+    }
+  }
 };
 
