@@ -13,6 +13,8 @@ use Cake\I18n\Date;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use RuntimeException;
+use Cake\ORM\Query;
+use Cake\Database\Expression\QueryExpression;
 
 /**
  * Aziende Controller
@@ -3886,7 +3888,7 @@ class WsController extends AppController
                 if(!$error){
                     $entity = $table->newEntity($fileData);
                     $entity->file = $att->getClientFilename();
-                    $entity->filepath = $basePath.$path.DS.$fileName;
+                    $entity->filepath = $path.DS.$fileName;
     
                     if(!$save = $table->save($entity)){
                         $error = true;
@@ -3914,7 +3916,7 @@ class WsController extends AppController
 
         $fileData = $table->get($id);
 
-        $file = new File(ROOT . DS . $fileData['filepath'], false);
+        $file = new File(ROOT . DS . Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH') . $fileData['filepath'], false);
 
         if($file->exists()){
             $this->response->file($file->path , array(
@@ -4377,15 +4379,35 @@ class WsController extends AppController
         $costsFilesPath = ROOT.DS.Configure::read('dbconfig.aziende.COSTS_UPLOAD_PATH');
         // path della testa
         $statementsFilesPath = ROOT.DS.Configure::read('dbconfig.aziende.STATEMENTS_UPLOAD_PATH');
+        // path firme
+        $signaturesPath = ROOT.DS.Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
 
         $files = [];
 
         if (isset($statement_id)) {
-            $statement = TableRegistry::get('Aziende.Statements')->get($statement_id, ['contain' => ['Agreements', 'StatementCompany' => 'AgreementsCompanies']]);
+            $statement = TableRegistry::get('Aziende.Statements')->get($statement_id, ['contain' => ['Agreements' => 'AgreementsToSedi', 'StatementCompany' => 'AgreementsCompanies']]);
 
             $folderPath = $statement->id;
             $archiveName = 'rendiconto_' . $statement->agreement->cig . '_' . $statement->period_label . '.zip';
             $archivePath = $statementsFilesPath.$folderPath.$archiveName;
+
+            // Firme
+            $agrToSe = new Collection($statement->agreement->agreements_to_sedi);
+            $agrToSe = $agrToSe->extract('sede_id')->toList();
+            $firme = TableRegistry::get('Aziende.PresenzeUpload')->find('all')
+                ->select(['id', 'sede_id', 'date', 'file', 'filepath', 'deleted'])
+                ->select(['code_centro' => 'Sedi.code_centro'])
+                ->leftJoinWith('Sedi')
+                ->where(['PresenzeUpload.sede_id IN' => $agrToSe])
+                ->where(['PresenzeUpload.date'])
+                ->where(function (QueryExpression $exp, Query $q) use ($statement) {
+                    return $exp->between('PresenzeUpload.date', $statement->period_start_date, $statement->period_end_date);
+                })
+                ->groupBy('code_centro')
+                ->toArray();
+
+
+                //echo"<pre>";print_r($firme);die(); 
 
             if (!empty($statement->companies)) {
                 foreach ($statement->companies as $company) {
@@ -4422,8 +4444,21 @@ class WsController extends AppController
                         }
                     }
 
+                    if ($company->company->isDefault) {
+                        foreach ($firme as $key => $sede) {
+                            foreach ($sede as $firma) {
+                                $d = new Date($firma->date);
+                                $files[] = [
+                                    'path' => $signaturesPath . $firma->filepath,
+                                    'name' => $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file
+                                ];
+                            }
+
+                        }
+                    }
                 }
             }
+
 
             if (!empty($files)) {
                 //Eliminazione vecchio archivio se presente
