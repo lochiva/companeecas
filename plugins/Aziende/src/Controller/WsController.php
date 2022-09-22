@@ -3833,28 +3833,18 @@ class WsController extends AppController
         $table = TableRegistry::get('Aziende.PresenzeUpload');
         $entity = $table->get($fileId);
 
-        $file = new File(ROOT . DS . $entity->filepath, false);
+        $ret = TableRegistry::get('Aziende.PresenzeUpload')->softDelete($entity);
 
-        if($file->delete()) {
-
-            $ret = TableRegistry::get('Aziende.PresenzeUpload')->softDelete($entity);
-    
-            if ($ret) {
-                $this->_result['response'] = 'OK';
-                $this->_result['data'] = 1;
-                $this->_result['msg'] = "File cancellato";
-            } else {
-                $this->_result['response'] = 'KO';
-                $this->_result['data'] = -1;
-                $this->_result['msg'] = "Impossibile cancellare il file";
-            }
-
+        if ($ret) {
+            $this->_result['response'] = 'OK';
+            $this->_result['data'] = 1;
+            $this->_result['msg'] = "File cancellato";
         } else {
             $this->_result['response'] = 'KO';
             $this->_result['data'] = -1;
-            $this->_result['msg'] = "Impossibile eliminare il file";
-
+            $this->_result['msg'] = "Impossibile cancellare il file";
         }
+
     }
 
     public function saveFiles() {
