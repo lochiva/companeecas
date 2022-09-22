@@ -399,3 +399,61 @@ a.contact-login:hover{
 .d-align-items-center {
 	align-items: center;
 }
+
+.statement-status-body {
+	overflow: auto; 
+	width: auto; 
+	height: 250px;
+	padding: 10px;
+}
+
+.statement-status-actions .dropdown-menu {
+	left: auto;
+	right: 0;
+}
+
+#status-container .statement-status-body .badge-statement-status {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 120px;
+    height: 30px;
+    font-size: 14px;
+}
+
+#status-container .statement-status-body .message {
+	margin-left: 130px;
+    margin-top: -35px;
+}
+
+#status-container .box-title {
+	display: inline-block;
+}
+
+#status-container .box-header #lastStatusLabel {
+	margin-left: 50px;
+}
+
+#status-container .box-header .badge-statement-status {
+	display: inline-block;
+	text-align: center;
+	width: 120px;
+    font-size: 14px;
+}
+
+#status-container .box-header .statement-status-date {
+	margin-left: 50px;
+}
+
+.statement-status-actions a[disabled] {
+	pointer-events: none;
+}
+
+.statement-status-body .item .message {
+	min-height: 40px;
+}
+
+.statement-status-body .item .message .name .user-info.no-message {
+	position: relative;
+	top: 10px;
+}

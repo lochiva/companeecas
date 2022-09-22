@@ -67,6 +67,14 @@ class StatementCompanyTable extends AppTable
             'propertyName' => 'costs'
         ]);
 
+        $this->hasMany('History', [
+            'foreignKey' => 'statement_company_id',
+            'bindingKey' => 'id',
+            'sort' => ['History.created' => 'ASC'],
+            'className' => 'Aziende.StatementsStatusHistory',
+            'propertyName' => 'history'
+        ]);
+
     }
 
     /**

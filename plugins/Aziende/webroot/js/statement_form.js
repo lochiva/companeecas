@@ -114,22 +114,21 @@ $(document).ready(function () {
             } else {
               $("#file_compliance_upload").addClass("hidden");
             }
-            $('#status').text(res.data.status.name);
-            $('#status').data('status_id', res.data.status_id);
-            $('textarea[name=notes]').val(res.data.notes);
-            $('#text-notes').text(res.data.notes);
+
+            //Storico stato rendiconto
+            renderHistory(res.data.history);
+
+            var lastStatus = res.data.history[res.data.history.length - 1];
 
             // In corso
-            if (res.data.status_id == 1) {
-              $('#status').removeClass().addClass('badge btn-default');
-
+            if (lastStatus.status.id == 1) {
               if (role === 'ente_contabile') {
-                $('#send').data('id', res.data.id);
-                $('#send').prop('disabled', false);
+                $('.action-status').each(function(index, element) {
+                  $(element).attr('data-id', res.data.id);
+                  $(element).prop('disabled', false);
+                });
 
-                $('#btn-actions').show();
-                $('#comments').hide();
-                $('textarea[name=notes]').prop('disabled', true);
+                $('#statusNote').prop('disabled', true);
 
                 $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
@@ -138,88 +137,84 @@ $(document).ready(function () {
               } else {
                 $('#save-statement').prop('disabled', true);
                 $('#delete-statement').prop('disabled', true);
-                $('textarea[name=notes]').prop('disabled', true);
-                $('#btn-actions').hide();
-                $('#comments').hide();
+                $('#statusNote').prop('disabled', true);
+
+                $('.action-status').each(function(index, element) {
+                  $(element).attr('data-id', res.data.id);
+                  $(element).prop('disabled', true);
+                });
+
+                $('.action-status-dropdown').prop('disabled', true);
               }
 
-            // Approvato
-            }  else if (res.data.status_id == 2) {
-              $('#status').removeClass().addClass('badge btn-success');
+              $('#status-container .box-footer').show();
 
-              $('textarea[name=notes]').prop('disabled', true);
-              $('textarea[name=notes]').hide();
-              $('#btn-actions').hide();
-              $('#comments').show();
+            // Approvato
+            }  else if (lastStatus.status.id == 2) {
+              $('#status-container .box-footer').hide();
 
               $('#save-statement').prop('disabled', true);
               $('#delete-statement').prop('disabled', true);
-
-              $('#text-notes').show();
 
               $('form#add-cost').hide();
 
             // Integrazione
-            } else if (res.data.status_id == 3) {
-              $('#status').removeClass().addClass('badge btn-warning');
-
-              $('#text-notes').hide();
+            } else if (lastStatus.status.id == 3) {
               if(role === 'ente_contabile') {
-                $('#send').data('id', res.data.id);
-                $('#send').prop('disabled', false);
+                $('.action-status').each(function(index, element) {
+                  $(element).attr('data-id', res.data.id);
+                  $(element).prop('disabled', false);
+                });
                 
                 $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
 
-                $('#btn-actions').show();
-                $('#comments').show();
-
-                $('textarea[name=notes]').prop('disabled', false);
+                $('#statusNote').prop('disabled', false);
 
                 $('form#add-cost').show();
 
               } else {
-                $('#deny').prop('disabled', true);
-                $('#approve').prop('disabled', true);
+                $('.action-status').each(function(index, element) {
+                  $(element).attr('data-id', res.data.id);
+                  $(element).prop('disabled', true);
+                });
 
-                $('#btn-actions').show();
-                $('#comments').show();
+                $('.action-status-dropdown').prop('disabled', true);
 
-                $('textarea[name=notes]').prop('disabled', true);
+                $('#statusNote').prop('disabled', true);
 
                 $('#save-statement').prop('disabled', true);
                 $('#delete-statement').prop('disabled', true);
               }
 
+              $('#status-container .box-footer').show();
+
             // In approvazione
-            } else if (res.data.status_id == 4) {
+            } else if (lastStatus.status.id == 4) {
               $('form#add-cost').hide();
 
-              $('#status').removeClass().addClass('badge btn-info');
-              $('#text-notes').hide();
               $('#save-statement').prop('disabled', true);
               $('#delete-statement').prop('disabled', true);
 
               if (role === 'ente_contabile') {
-                $('#btn-actions').show();
-                $('#send').prop('disabled', true);
+                $('.action-status').each(function(index, element) {
+                  $(element).attr('data-id', res.data.id);
+                  $(element).prop('disabled', true);
+                });
 
-                $('#comments').show();
-                $('textarea[name=notes]').prop('disabled', true);
+                $('#statusNote').prop('disabled', true);
               } else {
-                $('#deny').data('id', res.data.id);
-                $('#deny').prop('disabled', false);
+                $('.action-status').each(function(index, element) {
+                  $(element).attr('data-id', res.data.id);
+                  $(element).prop('disabled', false);
+                });
 
-                $('#approve').data('id', res.data.id);
-                $('#approve').prop('disabled', false);
+                $('.action-status-dropdown').prop('disabled', false);
 
-                $('#btn-actions').show();
-                $('#comments').show();
-
-                $('textarea[name=notes]').prop('disabled', false);
+                $('#statusNote').prop('disabled', false);
               }
 
-              
+              $('#status-container .box-footer').show();
             }
           } else {
             alert(res.msg);
@@ -440,7 +435,7 @@ $(document).ready(function () {
 
 
 
-  $('.action-status:not(:disabled)').click(function() {
+  $(document).on('click', '.action-status:not(:disabled)', function() {
     changeStatus($(this).data('id'), $(this).data('status-id'))
   });
 
@@ -664,11 +659,11 @@ function changeStatus (id, status) {
       var form = $('<form></form>');
       form.attr("method", "post");
       form.attr("action", pathServer + "aziende/statements/updateStatusStatementCompany/" + id);
+      form.attr("hidden", true);
 
-      form.append($('textarea[name=notes]').val());
+      form.append($('#statusNote').html());
 
       var field = $('<input></input>');
-      field.attr("type", "hidden");
       field.attr("name", 'status');
       field.attr("value", status);
       form.append(field);
@@ -678,4 +673,78 @@ function changeStatus (id, status) {
     }
   }
 };
+
+function renderHistory(history) {
+  var htmlLastStatusLabel = '';
+  var lastStatus = history[history.length - 1];
+  var badgeClass = '';
+  switch (lastStatus.status.id) {
+    case 1:
+      badgeClass = 'btn-default';
+      break;
+    case 2:
+      badgeClass = 'btn-success';
+      break;
+    case 3:
+      badgeClass = 'btn-warning';
+      break;
+    case 4:
+      badgeClass = 'btn-info';
+      break;  
+    default:
+      badgeClass = 'btn-default';
+  } 
+  htmlLastStatusLabel += '<span data-status-id="<?= $lastStatus->status->id ?>" class="badge ' + badgeClass + ' badge-statement-status">' + lastStatus.status.name + '</span>';
+  if (lastStatus.status.id == 2) {
+    var createdLastStatus = lastStatus.created.split('T');
+    var lastStatusDate = createdLastStatus[0].split('-').reverse().join('/');
+    htmlLastStatusLabel += ' <span class="statement-status-date">approvato il ' + lastStatusDate + '</span>';
+  }
+
+  if (lastStatus.status.id == 4 && (role == 'admin' || role == 'ragioneria')) {
+    var createdObj = new Date(lastStatus.created);
+    createdObj.setMonth(createdObj.getMonth() + 1);
+    var dueDate = [createdObj.getDate(), (createdObj.getMonth() < 9 ? '0'+(createdObj.getMonth()+1) : createdObj.getMonth()+1), createdObj.getFullYear()].join('/');
+    htmlLastStatusLabel += ' <span class="statement-status-date">da approvare entro il ' + dueDate + '</span>';
+  }
+
+  var htmlStatusHistory = '';
+  history.forEach(function(h) {
+    htmlStatusHistory += '<div class="item">';
+    switch (h.status.id) {
+      case 1:
+        badgeClass = 'btn-default';
+        break;
+      case 2:
+        badgeClass = 'btn-success';
+          break;
+      case 3:
+        badgeClass = 'btn-warning';
+          break;
+      case 4:
+        badgeClass = 'btn-info';
+          break;  
+      default:
+        badgeClass = 'btn-default';
+    }
+    htmlStatusHistory += '<span data-status-id="' + h.status.id + '" class="badge ' + badgeClass + ' badge-statement-status">' + h.status.name + '</span>';
+    htmlStatusHistory += '<p class="message">';
+    htmlStatusHistory += '<span class="name">';
+    var created = h.created.split('T');
+    var date = created[0].split('-').reverse().join('/');
+    var time = created[1].substring(0, 8);
+    var statusdate = date + ' ' + time;
+    htmlStatusHistory += '<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> ' + statusdate + '</small>';
+    var userName = (h.user.nome.length == 0 && h.user.cognome.length == 0) ? '-' : h.user.nome+' '+h.user.cognome;
+    var userRole = h.user.role.replace('_', ' ');
+    htmlStatusHistory += '<span class="user-info '+ (h.note.length == 0 ? 'no-message' : '' ) +'">' + userName + ' (' + userRole + ')</span>';
+    htmlStatusHistory += '</span>';
+    htmlStatusHistory += h.note;
+    htmlStatusHistory += '</p>';
+    htmlStatusHistory += '</div>';
+  });
+
+  $('#status-container .statement-status-header #lastStatusLabel').html(htmlLastStatusLabel);
+  $('#status-container .statement-status-body').html(htmlStatusHistory);
+}
 

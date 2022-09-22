@@ -27,6 +27,7 @@ class StatementsController extends AppController
         parent::initialize();
 
         $this->loadComponent('Aziende.Azienda');
+        $this->loadComponent('Aziende.StatementCompany');
 
         $this->user = $this->request->session()->read('Auth.User');
 
@@ -57,7 +58,7 @@ class StatementsController extends AppController
                 'index', 'view'
             ],
             'ragioneria' => [
-                'index', 'view'
+                'index', 'view', 'updateStatusStatementCompany'
             ]
         ];
 
@@ -97,7 +98,14 @@ class StatementsController extends AppController
         if (isset($id)) {
 
             $statement = $this->Statements->get($id, [
-                'contain' => ['Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 'Periods', 'StatementCompany' => ['Status']]
+                'contain' => [
+                    'Agreements' => ['AgreementsCompanies', 'Aziende', 'Procedures'], 
+                    'Periods', 
+                    'StatementCompany' => [
+                        'Status', 
+                        'History' => ['Users', 'Status']
+                    ]
+                ]
             ]);
 
             if ($statement->deleted) {
@@ -360,6 +368,9 @@ class StatementsController extends AppController
             $ret = $table->save($entity);
 
             if ($ret) {
+                //Salvataggio stato nello storico
+                $this->StatementCompany->saveStatusHistory($id, $data['status'], isset($data['notes']) ? $data['notes'] : '');
+
                 $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
                 return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
 

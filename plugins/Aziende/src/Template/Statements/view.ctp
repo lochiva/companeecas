@@ -8,7 +8,6 @@ echo $this->Element('Aziende.include');
 echo $this->Html->script('Aziende.statements.js');
 echo $this->Html->script('Aziende.statement_form.js');
 echo $this->Html->script('AttachmentManager.modal_attachment.js');
-
 ?>
 <script>
     var company = <?= $company ?? 'false' ?>;
@@ -31,163 +30,106 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
     <div class="row">
 
     <div class="col-xs-12">
-
-        <div class="box box-x11yellow" id="status-container">
-                <div class="box-header with-border">
+        <div id="app-statement-status" class="col-xs-12">
+            <div class="box box-x11yellow" id="status-container">
+                <div class="box-header with-border statement-status-header">
                     <i class="fa fa-tasks"></i>
                     <h3 class="box-title"><?= __c('Stato rendiconto') ?></h3>
+                    <span id="lastStatusLabel">
+                        <?php 
+                            $lastStatus = $statement->companies[0]->history[count($statement->companies[0]->history)-1];
+                            switch ($lastStatus->status->id) {
+                                case 1:
+                                    $badgeClass = 'btn-default';
+                                    break;
+                                case 2:
+                                    $badgeClass = 'btn-success';
+                                    break;
+                                case 3:
+                                    $badgeClass = 'btn-warning';
+                                    break;
+                                case 4:
+                                    $badgeClass = 'btn-info';
+                                    break;  
+                                default:
+                                    $badgeClass = 'btn-default';
+                            } 
+                        ?>
+                        <span data-status-id="<?= $lastStatus->status->id ?>" class="badge <?= $badgeClass ?> badge-statement-status"><?= $lastStatus->status->name ?></span>
+                        <?php if ($lastStatus->status->id == 2) { ?>
+                            <span class="statement-status-date">approvato il <?= $lastStatus->created->format('d/m/Y') ?></span>
+                        <?php } ?>
+                        <?php if ($lastStatus->status->id == 4 && ($user['role'] == 'admin' || $user['role'] == 'ragioneria')) {
+                            $dueDate = clone $lastStatus->created;
+                            $dueDate->modify('+1 month');
+                        ?>
+                            <span class="statement-status-date">da approvare entro il <?= $dueDate->format('d/m/Y') ?></span>
+                        <?php } ?>
+                    </span>
                 </div>
-
-                <div class="box-body">
-
-                    <div class="row margin d-flex d-align-items-center">
-                        <div class="col-md-1"><b>Stato:</b></div>
-                        <div class="col-md-11">
-                        <?php if ($ati) : ?>
-                            <span id="status" data-status_id='' class="badge"></span>
-                        <?php else : ?>
-                            <?php switch ($statement->companies[0]->status_id):
-                            case 1: ?>
-                            <span id="status" data-status_id="<?=$statement->companies[0]->status_id;?>" class="badge btn-default"><?=$statement->companies[0]->status->name;?></span>
-                            <?php break; ?>
-                            <?php case 2 :?>
-                                <span id="status" data-status_id="<?=$statement->companies[0]->status_id;?>" class="badge btn-success"><?=$statement->companies[0]->status->name;?></span>
-                            <?php break; ?>
-                            <?php case 3 :?>
-                                <span id="status" data-status_id="<?=$statement->companies[0]->status_id;?>" class="badge btn-warning"><?=$statement->companies[0]->status->name;?></span>
-                            <?php break; ?>
-                            <?php case 4 :?>
-                                <span id="status" data-status_id="<?=$statement->companies[0]->status_id;?>" class="badge btn-info"><?=$statement->companies[0]->status->name;?></span>
-                            <?php break; ?>
-                            <?php endswitch ?>
-                        <?php endif ?>
+                <div class="box-body chat statement-status-body">
+                <?php foreach ($statement->companies[0]->history as $history) { ?>
+                    <div class="item">
+                        <?php switch ($history->status->id) {
+                            case 1:
+                                $badgeClass = 'btn-default';
+                                break;
+                            case 2:
+                                $badgeClass = 'btn-success';
+                                break;
+                            case 3:
+                                $badgeClass = 'btn-warning';
+                                break;
+                            case 4:
+                                $badgeClass = 'btn-info';
+                                break;  
+                            default:
+                                $badgeClass = 'btn-default';
+                        } ?>
+                        <span data-status-id="<?= $history->status->id ?>" class="badge <?= $badgeClass ?> badge-statement-status"><?= $history->status->name ?></span>
+                        <p class="message">
+                            <span class="name">
+                                <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> <?= $history->created->format('d/m/Y H:i:s') ?></small>
+                                <span class="user-info <?= empty($history->note) ? 'no-message' : '' ?>"><?= empty($history->user->nome) && empty($history->user->cognome) ? '-' : $history->user->nome . ' '. $history->user->cognome ?> (<?= str_replace('_', ' ', $history->user->role) ?>)</span>
+                            </span>
+                            <?= $history->note ?>
+                        </p>
+                    </div>
+                <?php } ?>
+                </div>
+                <?php 
+                    $statusDisabled = '';
+                    if (
+                        ($user['role'] == 'ente_contabile' && ($ati || in_array($lastStatus->status->id, [1, 4]))) ||
+                        (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
+                    ) {
+                        $statusDisabled = 'disabled';
+                    } 
+                ?>
+                <div class="box-footer" <?= $lastStatus->status->id == 2 ? 'hidden' : '' ?>>
+                    <div class="input-group">
+                        <input id="statusNote" name="notes" class="form-control" placeholder="Inserisci un commento..." <?= $statusDisabled ?>>
+                        <div class="input-group-btn statement-status-actions">
+                        <?php if ($user['role'] == 'ente_contabile') { ?>
+                            <button id="send" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="btn btn-success action-status" <?= $statusDisabled ?>>Invia per approvazione</button>
+                        <?php } elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') { ?>
+                            <button class="btn btn-success action-status" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" <?= $statusDisabled ?>>Approva</button>
+                            <button class="btn btn-success dropdown-toggle action-status-dropdown" data-toggle="dropdown" <?= $statusDisabled ?>><span class="caret"></span></button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" class="dropdown-item action-status" <?= $statusDisabled ?>>
+                                        Approva
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" id="deny" data-id="<?= $statement->companies[0]->id ?>" data-status-id="3" class="dropdown-item action-status" <?= $statusDisabled ?>>
+                                        Richiesta integrazione
+                                    </a>
+                                </li>
+                            </ul>
+                        <?php } ?>
                         </div>
                     </div>
-
-                    <?php if ($ati) : ?>
-                        <div class="row margin d-flex d-align-items-center" id="comments">
-                            <div class="col-md-1"><b>Commenti:</b></div>
-
-                            <div class="col-md-11">
-                                <span id="text-notes"></span>
-                            
-                            <?php if ($user['role'] == 'ente_contabile') : ?>
-                                <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled></textarea>
-                            <?php else : ?>
-                                <textarea class="form-control" style="overflow:auto;resize:none;border-color: #e08e0b;" name="notes"></textarea>
-                            <?php endif ?>
-
-                            </div>
-                        </div>
-
-                    <?php else : ?>
-
-                        <?php if ($statement->companies[0]->status_id == 1) : ?>
-                            <?php if ($user['role'] == 'ente_contabile') : ?>
-                                <div class="row margin d-flex d-align-items-center" id="comments" style="display:none;">
-                                    <div class="col-md-1"><b>Commenti:</b></div>
-                                    <div class="col-md-11">
-                                        <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
-                                    </div>
-                                </div>
-                            <?php endif?>
-
-                        <?php elseif ($statement->companies[0]->status_id == 2) : ?>
-                            <div class="row margin d-flex d-align-items-center" id="comments">
-                                <div class="col-md-1"><b>Commenti:</b></div>
-                                <div class="col-md-11">
-                                    <span id="text-notes"><?=$statement->companies[0]->notes?></span>
-                                </div>
-                            </div>
-                            
-                        <?php elseif ($statement->companies[0]->status_id == 3) : ?>
-                            <div class="row margin d-flex d-align-items-center" id="comments">
-
-                                <div class="col-md-1"><b>Commenti:</b></div>
-                                <div class="col-md-11">
-                                <?php if ($user['role'] == 'ente_contabile') : ?>
-                                    <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes"><?=$statement->companies[0]->notes?></textarea>
-                                <?php else : ?>
-                                    <textarea class="form-control" style="overflow:auto;resize:none;border-color: #e08e0b;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
-                                <?php endif ?>
-                                </div>
-
-                            </div>
-                                
-
-                        <?php elseif ($statement->companies[0]->status_id == 4) :  ?>
-                            <div class="row margin d-flex d-align-items-center" id="comments">
-                                <div class="col-md-1"><b>Commenti:</b></div>
-                                <div class="col-md-11">
-                                <?php if ($user['role'] == 'ente_contabile') : ?>
-                                        <textarea class="form-control" style="overflow:auto;resize:none;border-color: #00acd6;" name="notes" disabled><?=$statement->companies[0]->notes?></textarea>
-                                <?php else : ?>
-                                        <textarea class="form-control" style="overflow:auto;resize:none;border-color: #e08e0b;" name="notes"><?=$statement->companies[0]->notes?></textarea>
-                                <?php endif ?>
-                                </div>
-                            </div>
-        
-                        <?php endif ?>
-
-                    <?php endif ?>
-
-                    
-                    <?php if ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ente_contabile') : ?>
-                        <div class="row margin d-flex d-align-items-center" id="btn-actions">
-                            <?php if ($ati) : ?>
-                                <div class="col-md-1"><b>Azioni:</b></div>
-                                <div class="col-md-11">
-                                
-                                <?php if ($user['role'] == 'ente_contabile') : ?>
-                                    <button id="send" data-id="" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
-                                <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
-                                    <button id="deny" data-id="" data-status-id=3 type="button" class="btn btn-warning action-status" data-toggle="tooltip" data-placement="top" title="Fare click qui per richiedere l'integrazione">Richiesta integrazione</button>
-                                    <button id="approve" data-status-id=2 data-id="" type="button" class="btn btn-success action-status">Approva</button>
-                                <?php endif ?>
-                                </div>
-
-                            <?php else : ?>
-
-                                <?php if ($statement->companies[0]->status_id == 1) : ?>
-
-                                    <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
-                                        <div class="col-md-1"><b>Azioni:</b></div>
-                                        <div class="col-md-11">
-                                            <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
-                                        </div>
-                                    <?php endif ?>
-
-                                <?php elseif ($statement->companies[0]->status_id == 2) : ?>
-
-                                <?php elseif ($statement->companies[0]->status_id == 3) : ?>
-                                    <div class="col-md-1"><b>Azioni:</b></div>
-                                    <div class="col-md-11">
-                                    <?php if ($user['role'] == 'ente_contabile') : ?>
-                                        <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status">Invia per approvazione</button>
-                                    <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
-                                        <button id="deny" data-id="<?=$statement->companies[0]->id?>" data-status-id=3 type="button" class=" btn btn-warning" disabled>Richiesta integrazione</button>
-                                        <button id="approve" data-status-id=2 data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success action-status" disabled>Approva</button>
-                                    <?php endif ?>
-                                    </div>
-                                        
-
-                                <?php elseif ($statement->companies[0]->status_id == 4) :  ?>
-                                    <div class="col-md-1"><b>Azioni:</b></div>
-                                    <div class="col-md-11">
-                                    <?php if ($user['role'] == 'ente_contabile') : ?>
-                                        <button id="send" data-id="<?=$statement->companies[0]->id?>" data-status-id=4 type="button" class="btn btn-info action-status" disabled>Invia per approvazione</button>
-                                    <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
-                                        <button id="deny" data-id="<?=$statement->companies[0]->id?>" data-status-id=3 type="button" class="btn btn-warning action-status">Richiesta integrazione</button>
-                                        <button id="approve" data-status-id=2 data-id="<?=$statement->companies[0]->id?>" type="button" class="btn btn-success action-status">Approva</button>
-                                    <?php endif ?>
-                                    </div>
-                                        
-                                <?php endif ?>
-
-                            <?php endif ?>
-
-                        </div>
-                    <?php endif ?>
                 </div>
             </div>
         </div>

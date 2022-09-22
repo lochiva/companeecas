@@ -4137,6 +4137,12 @@ class WsController extends AppController
             $ret = $table->patchEntity($statement, $data, ['associated' => 'StatementCompany']);
     
             if ($table->save($statement, ['associated' => 'StatementCompany'])) {
+
+                //Salvataggio stato nello storico
+                foreach ($statement->companies as $statementCompany) {
+                    $this->StatementCompany->saveStatusHistory($statementCompany->id, 1, '');
+                }
+
                 $this->_result['response'] = "OK";
                 $this->_result['data'] = $ret;
                 $this->_result['msg'] = '';
@@ -4170,7 +4176,12 @@ class WsController extends AppController
 
     public function getStatementCompany($id) {
         if (isset($id)) {
-            $company =  TableRegistry::get('Aziende.StatementCompany')->get($id, ['contain' => ['Status']])->toArray();
+            $company =  TableRegistry::get('Aziende.StatementCompany')->get($id, [
+                'contain' => [
+                    'Status', 
+                    'History' => ['Users', 'Status']
+                ]
+            ])->toArray();
 
             if ($company) {
                 if(isset($company['billing_date'])) {

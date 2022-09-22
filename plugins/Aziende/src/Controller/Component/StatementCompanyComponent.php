@@ -93,6 +93,24 @@ class StatementCompanyComponent extends Component
 
         return $ret;
     }
+
+    public function saveStatusHistory($id, $status, $note)
+    {
+        $history = TableRegistry::get('Aziende.StatementsStatusHistory');
+
+        $entity = $history->newEntity();
+
+        $data = [
+            'statement_company_id' => $id,
+            'user_id' => $this->request->session()->read('Auth.User.id'),
+            'status_id' => $status,
+            'note' => $note
+        ];
+
+        $entity = $history->patchEntity($entity, $data);
+
+        return $history->save($entity);
+    }
 }
 
 
