@@ -15,6 +15,7 @@ use Cake\Filesystem\Folder;
 use RuntimeException;
 use Cake\ORM\Query;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * Aziende Controller
@@ -4487,26 +4488,34 @@ class WsController extends AppController
                     }
 
                     $archive->close();
-                    $this->response->file($archivePath, array(
-                        'download'=> true,
-                        'name'=> $archiveName
-                    ));
-                    setcookie('downloadStarted', '1', false, '/');
-                    return $this->response;
+                    try {
+                        $this->response->file($archivePath, array(
+                            'download'=> true,
+                            'name'=> $archiveName
+                        ));
+                        setcookie('downloadStarted', '1', false, '/');
+                        return $this->response;
+
+                    } catch (NotFoundException $e) {
+                        setcookie('downloadStarted', '1', false, '/');
+                        $this->Flash->error('Impossibile creare il file ZIP');
+                        $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+                    }
+
                 } else {
                     setcookie('downloadStarted', '1', false, '/');
-                    $this->_result['response'] = "KO";
-                    $this->_result['msg'] = 'Errore nello scaricamento dello ZIP: errore nella creazione dell\'archivio ZIP.';
+                    $this->Flash->error('Errore nello scaricamento dello ZIP: errore nella creazione dell\'archivio ZIP.');
+                    $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
                 }
             } else {
                 setcookie('downloadStarted', '1', false, '/');
-                $this->_result['response'] = "KO";
-                $this->_result['msg'] = 'Errore nello scaricamento dello ZIP: nessun documento da scaricare.';
+                $this->Flash->error('Errore nello scaricamento dello ZIP: nessun documento da scaricare.');
+                $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
             }
         } else {
             setcookie('downloadStarted', '1', false, '/');
-            $this->_result['response'] = "KO";
-            $this->_result['msg'] = 'Errore nello scaricamento dello ZIP: dati mancanti.';
+            $this->Flash->error('Errore nello scaricamento dello ZIP: dati mancanti.');
+            $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
         }
     }
 
