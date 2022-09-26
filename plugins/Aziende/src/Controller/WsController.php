@@ -4394,10 +4394,6 @@ class WsController extends AppController
         // path firme
         $signaturesPath = ROOT.DS.Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
 
-        $files = [];
-
-        $defaultCompany = '';
-
         if (isset($statement_id)) {
             $statement = TableRegistry::get('Aziende.Statements')->get($statement_id, ['contain' => ['Agreements' => 'AgreementsToSedi', 'StatementCompany' => 'AgreementsCompanies']]);
 
@@ -4429,10 +4425,7 @@ class WsController extends AppController
             $archive = new \ZipArchive();
 
             if ($archive->open($archivePath, \ZIPARCHIVE::CREATE)) {
-
-                // Creo la cartella delle firme
-                $archive->addEmptyDir($defaultCompany . DS . 'fogli_firme');
-
+                
                 if (!empty($statement->companies)) {
                     foreach ($statement->companies as $company) {
                         if (!empty($company->uploaded_path)) {
@@ -4480,7 +4473,7 @@ class WsController extends AppController
                         }
     
                         if ($company->company->isDefault) {
-                            $defaultCompany = $company->company->name;
+                            $archive->addEmptyDir($company->company->name . DS . 'fogli_firme');
                             foreach ($firme as $key => $sede) {
                                 foreach ($sede as $firma) {
                                     $d = new Date($firma->date);
