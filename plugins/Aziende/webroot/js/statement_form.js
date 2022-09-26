@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $('select[name="companies[0][id]"]').on("change", function () {
+  $('select.select-company').on("change", function () {
 
     $('form#add-cost')[0].reset();
     $('form#add-cost input[required], form#add-costt select[required]').each(function() {
@@ -10,6 +10,7 @@ $(document).ready(function () {
 
     if ($(this).val() == "all") {
       $('#save-statement').prop('disabled', true);
+      $('#save-statement').show();
       $("#company_specific").addClass("hidden");
       $('#add-cost').hide();
       $('#add-cost input[type=hidden][name=statement_company]').val('');
@@ -84,6 +85,7 @@ $(document).ready(function () {
       })
         .done(function (res) {
           if (res.response == "OK") {
+            $('input[name="companies[0][id]"]').val(res.data.id);
             $('input[name="companies[0][company_id]"]').val(res.data.company_id);
             $('input[name="companies[0][billing_reference]"]').val(
               res.data.billing_reference
@@ -131,11 +133,15 @@ $(document).ready(function () {
                 $('#statusNote').prop('disabled', false);
 
                 $('#save-statement').prop('disabled', false);
+                $('#save-statement').show();
                 $('#delete-statement').prop('disabled', false);
 
                 $('form#add-cost').show();
               } else {
-                $('#save-statement').prop('disabled', true);
+                if (role === 'admin') {
+                  $('#save-statement').prop('disabled', false);
+                  $('#save-statement').show();
+                }
                 $('#delete-statement').prop('disabled', true);
                 $('#statusNote').prop('disabled', true);
 
@@ -154,6 +160,8 @@ $(document).ready(function () {
               $('#status-container .box-footer').hide();
 
               $('#save-statement').prop('disabled', true);
+              $('#save-statement').hide();
+
               $('#delete-statement').prop('disabled', true);
 
               $('form#add-cost').hide();
@@ -183,7 +191,11 @@ $(document).ready(function () {
 
                 $('#statusNote').prop('disabled', true);
 
-                $('#save-statement').prop('disabled', true);
+                if (role === 'admin') {
+                  $('#save-statement').prop('disabled', false);
+                  $('#save-statement').show();
+                }
+
                 $('#delete-statement').prop('disabled', true);
               }
 
@@ -208,6 +220,11 @@ $(document).ready(function () {
                   $(element).attr('data-id', res.data.id);
                   $(element).prop('disabled', false);
                 });
+
+                if (role === 'admin') {
+                  $('#save-statement').prop('disabled', true);
+                  $('#save-statement').show();
+                }
 
                 $('.action-status-dropdown').prop('disabled', false);
 
@@ -400,11 +417,11 @@ $(document).ready(function () {
 
   if (ati) {
     if (company) {
-      $('select[name="companies[0][id]"]').val(company);
-      $('select[name="companies[0][id]"]').change();
+      $('select.select-company').val(company);
+      $('select.select-company').change();
     } else {
-      $('select[name="companies[0][id]"]').val('all');
-      $('select[name="companies[0][id]"]').change();
+      $('select.select-company').val('all');
+      $('select.select-company').change();
     }
 
   } else {
