@@ -57,17 +57,8 @@ use Cake\Routing\Router;
     </div>
 
 <?php if ($ati) : ?>
-    <div class="form-group">
-        <?= $this->Form->control('companies.0.id', [
-            'type' => 'select',
-            'multiple' => false,
-            'options' => $companies,
-            'empty' => "Selezionare un'azienda",
-            'value' => '',
-            'disabled' => [''],
-            'label' => ['text' => 'Report di', 'class' => 'control-label required']
-        ]); ?>
-    </div>
+
+        <?= $this->Form->hidden('companies.0.id'); ?>
 
         <?= $this->Form->hidden('companies.0.company_id'); ?>
 

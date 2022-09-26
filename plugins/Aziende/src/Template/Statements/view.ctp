@@ -28,9 +28,29 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
 <section class="content">
     <div class="row">
+    <?php if ($ati) : ?>
+    <div class="col-xs-12">
+        <div class="section-select-company col-xs-12 form-horizontal">
+            <div class="container-select-company form-group">
+                <div class="col-xs-4">
+                    <?= $this->Form->control('select-company', [
+                        'class' => 'select-company form-control',
+                        'type' => 'select',
+                        'multiple' => false,
+                        'options' => $companies,
+                        'empty' => "Selezionare un'azienda",
+                        'value' => '',
+                        'disabled' => [''],
+                        'label' => ['text' => 'Report di', 'class' => 'control-label']
+                    ]); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif ?>
 
     <div class="col-xs-12">
-        <div id="app-statement-status" class="col-xs-12">
+        <div class="col-xs-12">
             <div class="box box-x11yellow" id="status-container">
                 <div class="box-header with-border statement-status-header">
                     <i class="fa fa-tasks"></i>
@@ -100,7 +120,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                 <?php 
                     $statusDisabled = '';
                     if (
-                        ($user['role'] == 'ente_contabile' && ($ati || in_array($lastStatus->status->id, [1, 4]))) ||
+                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4)) ||
                         (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
                     ) {
                         $statusDisabled = 'disabled';
@@ -169,6 +189,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 <button class="btn btn-primary" type="submit" id="save-statement">Salva</button>
                             <?php elseif ($statement->companies[0]->status_id == 4) : ?>
                                 <button class="btn btn-primary" type="submit" id="save-statement" disabled>Salva</button>
+                            <?php elseif ($statement->companies[0]->status_id == 2) : ?>
+                                <button class="btn btn-primary" type="submit" id="save-statement" style="display: none">Salva</button>
                             <?php endif ?>
                         <?php endif ?>
                     </div>

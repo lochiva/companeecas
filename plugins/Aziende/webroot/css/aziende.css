@@ -457,3 +457,13 @@ a.contact-login:hover{
 	position: relative;
 	top: 10px;
 }
+
+.section-select-company {
+	margin-bottom: 20px;
+}
+
+.container-select-company {
+	background-color: #FFFFFF;
+	margin: 0px !important;
+	padding-bottom: 15px;
+}
