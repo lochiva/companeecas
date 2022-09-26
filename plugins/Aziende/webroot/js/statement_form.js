@@ -128,7 +128,7 @@ $(document).ready(function () {
                   $(element).prop('disabled', false);
                 });
 
-                $('#statusNote').prop('disabled', true);
+                $('#statusNote').prop('disabled', false);
 
                 $('#save-statement').prop('disabled', false);
                 $('#delete-statement').prop('disabled', false);
@@ -661,7 +661,7 @@ function changeStatus (id, status) {
       form.attr("action", pathServer + "aziende/statements/updateStatusStatementCompany/" + id);
       form.attr("hidden", true);
 
-      form.append($('#statusNote').html());
+      form.append($('#statusNote').clone());
 
       var field = $('<input></input>');
       field.attr("name", 'status');
