@@ -294,8 +294,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     </div>
 
                 <div class="box-body">
+                    <div class="container-fluid">
                     <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
-                        <div class="container-fluid">
                         <?php if ($ati) :?>
                             <form id="add-cost">
                         <?php else :?>
@@ -316,6 +316,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             <?php endswitch ?>
 
                         <?php endif ?>
+                        <?php else: ?>
+                            <form id="add-cost" style="display: none;">
+                        <?php endif ?>   
                                 <div class="row">
 
                                     <?php if (!$ati) :?>
@@ -382,7 +385,6 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </div>
                             </form>
                         </div>
-                    <?php endif ?>
 
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"></div>
                 </div>
