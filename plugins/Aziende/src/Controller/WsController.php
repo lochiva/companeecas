@@ -4442,7 +4442,7 @@ class WsController extends AppController
                             if (file_exists($statementsFilesPath . $company->compliance)) {
                                 $archive->addFile($statementsFilesPath . $company->compliance, $company->company->name . DS . $company->compliance_filename);
                             } else {
-                                $this->Flash->error('File fattura mancante per l\'ente ' . $company->company->name);
+                                $this->Flash->error('File dichiarazione mancante per l\'ente ' . $company->company->name);
                                 $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
                                 return $this->response;
                             }
