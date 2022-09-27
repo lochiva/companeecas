@@ -83,6 +83,9 @@ class StatementCompanyComponent extends Component
             if ($company->uploaded_path) {
                 $ret = true;
             }
+            if ($company->compliance) {
+                $ret = true;
+            }
             foreach ($company['costs'] as $cost) {
                 if ($cost->attachment && !$cost->deleted) {
                     $ret = true;
