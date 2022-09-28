@@ -43,6 +43,7 @@ class HomeController extends AppController
       }
 
       $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+      $statementsNotifications = TableRegistry::get('Aziende.StatementsNotifications');
       // Notifiche
       $notificationsCount = $guestsNotifications->countGuestsNotifications(1);
       $notifications = $guestsNotifications->getGuestsNotificationsForHome(1);
@@ -61,11 +62,11 @@ class HomeController extends AppController
           $notificationsUkraine[$i]['message'] = str_replace('{N}', $notificationsUkraine[$i]['type_count'], $notificationsUkraine[$i]['message']);
         }
       }
+
+      // Notifiche Rendiconti
+      $statementsNotificationsCount = $statementsNotifications->find('all')->where(['done' => false])->count();
       
-      $this->set('notifications', $notifications);
-      $this->set('notificationsCount', $notificationsCount);
-      $this->set('notificationsUkraine', $notificationsUkraine);
-      $this->set('notificationsUkraineCount', $notificationsUkraineCount);
+      $this->set(compact('notifications', 'notificationsCount', 'notificationsUkraine', 'notificationsUkraineCount', 'statementsNotificationsCount'));
     }
 
     /*public function index2()

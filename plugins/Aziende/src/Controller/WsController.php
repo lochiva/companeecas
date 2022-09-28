@@ -38,6 +38,7 @@ class WsController extends AppController
         $this->loadComponent('Aziende.Agreement');
         $this->loadComponent('Aziende.StatementCompany');
         $this->loadComponent('Aziende.Costs');
+        $this->loadComponent('Aziende.StatementsNotifications');
     }
 
     public function isAuthorized($user)
@@ -72,7 +73,7 @@ class WsController extends AppController
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements'
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone'
             ],
             'ente_ospiti' => [
                 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda', 
@@ -4522,6 +4523,119 @@ class WsController extends AppController
             $this->Flash->error('Errore nello scaricamento dello ZIP: dati mancanti.');
             $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
             return $this->response;
+        }
+    }
+
+    public function getStatementsNotifications() {
+        $pass['query'] = $this->request->query;
+
+        $res = $this->StatementsNotifications->getStatementsNotifications($pass);
+
+        $out['total_rows'] = $res['tot'];
+
+        if(!empty($res['res'])){
+            //echo "<pre>"; print_r($res['res']); die();
+
+            foreach ($res['res'] as $key => $notification) {
+
+                if ($notification['done']) {
+                    $checkDone = '<td class="text-center"><input type="checkbox" checked class="inline-check-done" data-id="'.$notification['id'].'" data-field="done"></td>';
+                } else {
+                    $checkDone = '<td class="text-center"><input type="checkbox" class="inline-check-done" data-id="'.$notification['id'].'" data-field="done"></td>';
+                }
+
+                ########### buttons START
+                $button= '<td class="text-center">';
+
+                $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $notification->Statements['id'], $notification->StatementCompany['id']]) .'" >
+                <i data-toggle="tooltip" title="Visualizza" class="fa fa-eye"></i>
+                </a>';
+                $button.= '</td>';
+                ########### buttons END
+
+				$out['rows'][] = [
+                    $notification->AgreementsCompanies['name'],
+                    $notification->Agreements['cig'],
+                    $notification->Statements['period_label'],
+                    $notification->Statements['period_start_date'],
+                    $notification->Statements['period_end_date'],
+                    'Invio rendiconto',
+                    $checkDone,
+                    $button
+				];
+
+            }
+
+        }
+        $this->_result = $out;
+    }
+
+    public function saveStatementsNotificationsDone()
+    {
+        $data = $this->request->data;
+
+        if (!empty($data['id'])) {
+            $statementsNotifications = TableRegistry::get('Aziende.StatementsNotifications');
+            $entity = $statementsNotifications->get($data['id']);
+
+            $entity->done = $data['value'];
+
+            if ($data['value']) {
+                $entity->user_done_id = $this->request->session()->read('Auth.User.id');
+                $entity->done_date = date('Y-m-d');
+            } else {
+                $entity->user_done_id = NULL;
+                $entity->done_date = NULL;
+            }
+
+
+            if ($statementsNotifications->save($entity)) {
+                $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'Valore salvato correttamente.';
+            } else { 
+                $this->_result['response'] = 'KO';
+                $this->_result['msg'] = 'Errore nel salvataggio del valore.';
+            }
+        } else { 
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'Errore nel salvataggio del valore: dati mancanti.';
+        }
+    }
+
+        public function saveAllStatementsNotificationsDone() {
+
+        $pass['query'] = $this->request->query;
+
+        $table = TableRegistry::get('Aziende.StatementsNotifications');
+        $notifications = $this->StatementsNotifications->getStatementsNotificationsForBulkMarking($pass);
+
+        if (!empty($notifications)) {
+            $dataToSave = [
+                'done' => 1,
+                'user_done_id' => $this->request->session()->read('Auth.User.id'),
+                'done_date' => date('Y-m-d')
+            ];
+
+            $error = false;
+
+            foreach ($notifications as $notification) {
+                $table ->patchEntity($notification, $dataToSave);
+
+                if (!$table ->save($notification)) {
+                    $error = true;
+                }
+            }
+
+            if (!$error) {
+                $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'Notifiche salvate correttamente.';
+            } else { 
+                $this->_result['response'] = 'KO';
+                $this->_result['msg'] = 'Errore nel salvataggio di una o più notifiche.';
+            }
+        } else {
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'Nessuna notifica trovata.';
         }
     }
 

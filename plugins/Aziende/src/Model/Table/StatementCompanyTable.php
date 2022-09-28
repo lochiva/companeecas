@@ -75,6 +75,13 @@ class StatementCompanyTable extends AppTable
             'propertyName' => 'history'
         ]);
 
+        $this->hasMany('StatementsNotifications', [
+            'foreignKey' => 'statement_company_id',
+            'bindingKey' => 'id',
+            'className' => 'aziende.StatementsNotifications',
+            'propertyName' => 'notifications'
+        ]);
+
     }
 
     /**

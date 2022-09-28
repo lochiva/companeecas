@@ -63,6 +63,7 @@ $user = $this->request->session()->read('Auth.User');
 
 	<?php if ($user['role'] == 'admin' || $user['role'] == 'ragioneria') { ?>
 		<!-- Notifiche Ragioneria -->
+		<?= $this->element('Aziende.box_statements_notifications', ['notificationsCount' => $statementsNotificationsCount]); ?>
 		
 	<?php } ?>
 </section>

@@ -353,20 +353,32 @@ class StatementsController extends AppController
         if(isset($id)) {
             $data = $this->request->data;
 
+            $associated = [];
+
             $entity = $table->get($id);
 
             $entity->status_id = $data['status'];
 
+            // Approvato
             if ($data['status'] == 2) {
                 $entity->approved_date = date('Y-m-d');
             }
 
-            $ret = $table->save($entity);
+            if ($data['status'] == 4) {
+                // Se si richiede l'approvazione salva la notifica
+                $tableN = TableRegistry::get('Aziende.StatementsNotifications');
+                $entityN = $tableN->newEntity();
+                $entityN->statement_id = $entity->statement_id;
+                $entityN->user_maker_id = $this->user['id'];
+                $entity->notifications = [$entityN];
+                $associated = ['associated' => ['StatementsNotifications']];
+            }
+            //echo "<pre>"; print_r($entity);die();
+            $ret = $table->save($entity, $associated);
 
             if ($ret) {
                 //Salvataggio stato nello storico
                 $this->StatementCompany->saveStatusHistory($id, $data['status'], isset($data['notes']) ? $data['notes'] : '');
-
                 $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
                 return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
 
