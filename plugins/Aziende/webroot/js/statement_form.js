@@ -556,7 +556,7 @@ function loadCosts(cats) {
           let end = new Date($("input[name=period_end_date]").val()).getTime();
 
           let [d, m, y] = cats[cat]["costs"][cost]["date"].split(/\D/);
-          let date = new Date(y, m-1, d).getTime();
+          let date = new Date(y + '-' + m + '-' + d).getTime(); 
 
           if (date < start || date > end  ) {
             toAppend += `
