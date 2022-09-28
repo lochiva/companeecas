@@ -355,8 +355,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-4">
-                                        <label class="control-label required">Descrizione</label>
-                                        <input type="text" class="form-control" name="description" required>
+                                        <label class="control-label">Descrizione</label>
+                                        <input type="text" class="form-control" name="description">
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label class="control-label required">Fornitore</label>

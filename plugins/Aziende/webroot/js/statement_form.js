@@ -377,6 +377,16 @@ $(document).ready(function () {
         })
           .done(function (res) {
             if (res.response == "OK") {
+              /*
+                Resetto il form tranne
+                categoria,
+                data,
+                fornitore
+              */
+              $('#add-cost input[name=amount]').val('');
+              $('#add-cost input[name=share]').val('');
+              $('#add-cost input[name=description]').val('');
+              $('#add-cost input[name=notes]').val('');
               $('#add-cost input[name=number]').val('');
               $('#add-cost input[name=file]').val('');
               let cats = res.data;
