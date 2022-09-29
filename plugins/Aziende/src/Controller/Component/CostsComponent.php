@@ -20,6 +20,7 @@ class CostsComponent extends Component
     protected $_defaultConfig = [];
 
     public function getCosts($all, $id) {
+        $return = false;
         if($all == 'all') {
             $companies =  TableRegistry::get('Aziende.StatementCompany')->find('list')
             ->select('company_id')
@@ -40,6 +41,12 @@ class CostsComponent extends Component
                 })
                 ->order(['CostsCategories.ordering'])
                 ->toArray();
+
+            $cs = TableRegistry::get('Aziende.StatementCompany')->get($id, ['contain' => 'Statements']);
+
+            $statement['status_id'] = $cs->status_id;
+            $statement['start'] = $cs->statement->period_start_date;
+            $statement['end'] = $cs->statement->period_end_date;
         }
 
         $grandTotal = 0;
@@ -51,13 +58,19 @@ class CostsComponent extends Component
                     $tot += $cost['share'];
                     $cost['amount'] = number_format($cost['amount'], 2, '.', '');
                     $cost['share'] = number_format($cost['share'], 2, '.', '');
-                    $cost['date'] = $cost['date']->format('d/m/Y');;
+                    $cost['real_date'] = $cost['date'];
+                    $cost['date'] = $cost['date']->format('d/m/Y');
                 }
                 $grandTotal += $tot;
                 $cat['tot'] = number_format($tot, 2, '.', '');
             }
+            array_unshift($ret, ['id' => 'grandTotal', 'name' => 'Totale generale', 'tot' => number_format($grandTotal, 2, '.', '')]);
+            $return['costs'] = $ret;
+            if (isset($statement)) {
+                $return['statement'] = $statement;
+            }
         }
-        array_unshift($ret, ['id' => 'grandTotal', 'name' => 'Totale generale', 'tot' => number_format($grandTotal, 2, '.', '')]);
-        return $ret;
+        
+        return $return;
     }
 }

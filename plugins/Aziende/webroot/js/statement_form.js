@@ -34,7 +34,7 @@ $(document).ready(function () {
       })
         .done(function (res) {
           if (res.response == "OK") {
-            let cats = res.data;
+            let cats = res.data['costs'];
             for (let cat in cats) {
               let toAppend = '<div class="panel panel-default">';
 
@@ -249,8 +249,9 @@ $(document).ready(function () {
       })
         .done(function (res) {
           if (res.response == "OK") {
-            let cats = res.data;
-            loadCosts(cats);
+            let costs = res.data.costs;
+            let statement = res.data.statement;
+            displayCosts(costs, statement);
           } else {
             $("#accordion").append("<div>Nessuna spesa presente</div>");
           }
@@ -277,7 +278,7 @@ $(document).ready(function () {
     }
   });
 
-  $("select[name=period_id]").on("change", function () {
+  $("select[name=period_id]").on("change", function (e) {
     let opt = $("select[name=period_id] option:selected").text();
 
     if (opt == "Personalizzato") {
@@ -389,9 +390,10 @@ $(document).ready(function () {
               $('#add-cost input[name=notes]').val('');
               $('#add-cost input[name=number]').val('');
               $('#add-cost input[name=file]').val('');
-              let cats = res.data;
-              if (cats) {
-                loadCosts(cats);
+              let costs = res.data.costs;
+              let statement = res.data.statement;
+              if (costs) {
+                displayCosts(costs, statement);
               } else {
                 $("#accordion").append("<div>Nessuna spesa presente</div>");
               }
@@ -442,8 +444,9 @@ $(document).ready(function () {
     })
       .done(function (res) {
         if (res.response == "OK") {
-          let cats = res.data;
-          loadCosts(cats);
+          let costs = res.data.costs;
+          let statement = res.data.statement;
+          displayCosts(costs, statement);
         } else {
           $("#accordion").append("<div>Nessuna spesa presente</div>");
         }
@@ -478,9 +481,10 @@ $(document).ready(function () {
   );
 });
 
-function loadCosts(cats) {
+function displayCosts(cats, statement) {
   $("#accordion").html("");
-  let status_id = $('#status').data('status_id');
+  let status_id = statement.status_id;
+
   for (let cat in cats) {
     let toAppend = '';
     if (cats[cat]['id'] == 'grandTotal') {
@@ -552,11 +556,9 @@ function loadCosts(cats) {
           `<td>` +
           cats[cat]["costs"][cost]["date"];
 
-          let start = new Date($("input[name=period_start_date]").val()).getTime();
-          let end = new Date($("input[name=period_end_date]").val()).getTime();
-
-          let [d, m, y] = cats[cat]["costs"][cost]["date"].split(/\D/);
-          let date = new Date(y + '-' + m + '-' + d).getTime(); 
+          let start = new Date(statement.start).getTime();
+          let end = new Date(statement.end).getTime();
+          let date = new Date(cats[cat]["costs"][cost]["real_date"]).getTime(); 
 
           if (date < start || date > end  ) {
             toAppend += `
@@ -617,10 +619,10 @@ function deleteCost (id) {
   })
   .done(function (res) {
     if (res.response == "OK") {
-      let cats = res.data;
-      loadCosts(cats);
-      if (cats.length) {
-        loadCosts(cats);
+      let costs = res.data.costs;
+      let statement = res.data.statement;
+      if (costs.length) {
+        displayCosts(costs, statement);
       } else {
         $("#accordion").append("<div>Nessuna spesa presente</div>");
       }

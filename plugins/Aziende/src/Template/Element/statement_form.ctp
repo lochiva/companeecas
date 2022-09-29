@@ -12,9 +12,9 @@ use Cake\Routing\Router;
         'multiple' => false,
         'options' => $periods,
         'empty' => 'Selezionare un periodo',
-        'disabled' => [''],
         'required' => true,
-        'label' => ['text' => 'Periodo', 'class' => 'control-label required']
+        'disabled' => true,
+        'label' => ['text' => 'Periodo', 'class' => 'control-label required'],
     ]);
 
     echo $this->Form->control('period_label', [
