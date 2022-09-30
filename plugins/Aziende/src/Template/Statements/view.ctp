@@ -286,7 +286,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
 
 
-        <div class="col-xs-12">
+        <div class="col-xs-12" id="costs-box">
             <div class="box box-info">
                     <div class="box-header with-border">
                         <i class="fa fa-money"></i>
@@ -377,9 +377,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 
                                 <div class="form-group">
                                 <?php if (!$ati) :?>
-                                    <button id="save-cat" class="btn btn-success">Aggiungi</button>
+                                    <button id="save-cat" class="btn btn-success" data-cost=false>Aggiungi</button>
                                 <?php else: ?>
-                                    <button id="save-cat" class="btn btn-success" disabled>Aggiungi</button>
+                                    <button id="save-cat" class="btn btn-success" data-cost=false disabled>Aggiungi</button>
                                 <?php endif?>
                                 <button type="reset" class="btn btn-warning">Svuota</button>
                                 </div>

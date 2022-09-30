@@ -337,75 +337,13 @@ $(document).ready(function () {
   }); */
 
   $('#add-cost button[type=reset]').click(function() {
-    $('form#add-cost #searchCat').val('');
-    $('form#add-cost #searchCat').trigger('change');
+    endEdit();
+    $('#add-cost .form-group').removeClass('has-error');
   });
 
   $('#save-cat').click(function (e) {
     e.preventDefault();
-    let start = new Date($("input[name=period_start_date]").val()).getTime();
-    let end = new Date($("input[name=period_end_date]").val()).getTime();
-    let date = new Date($("input[name=date]").val()).getTime();
-
-    var conf = true;
-    let errors = 0;
-
-    if (date < start || date > end) {
-      conf = confirm('Data non conforme al periodo, vuoi comunque inserire la la spesa?');
-    } else {
-      conf = true;
-    }
-
-    if (conf == true) {
-      $('form#add-cost input[required], form#add-cost select[required]').each(function() {
-        if($(this).val() == null ||  $(this).val()=='') {
-          $(this).parent().addClass('has-error');
-          errors ++;
-        }
-      });
-  
-      if(errors) {
-        alert('Compilare tutti i campi in rosso');
-      } else {
-        var formData = new FormData($('#add-cost')[0]);
-        $.ajax({
-          url: pathServer + "aziende/ws/saveCost",
-          type: "POST",
-          data: formData,
-          processData: false,
-          contentType: false,
-          dataType: "json",
-        })
-          .done(function (res) {
-            if (res.response == "OK") {
-              /*
-                Resetto il form tranne
-                categoria,
-                data,
-                fornitore
-              */
-              $('#add-cost input[name=amount]').val('');
-              $('#add-cost input[name=share]').val('');
-              $('#add-cost input[name=description]').val('');
-              $('#add-cost input[name=notes]').val('');
-              $('#add-cost input[name=number]').val('');
-              $('#add-cost input[name=file]').val('');
-              let costs = res.data.costs;
-              let statement = res.data.statement;
-              if (costs) {
-                displayCosts(costs, statement);
-              } else {
-                $("#accordion").append("<div>Nessuna spesa presente</div>");
-              }
-            } else {
-              alert(res.msg)
-            }
-          })
-          .fail(function (richiesta, stato, errori) {
-            alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-          });
-      }
-    }
+    saveCost($(this).data('cost'));
   });
 
   $('#searchCat').select2({
@@ -588,10 +526,19 @@ function displayCosts(cats, statement) {
           toAppend += `</td>`;
 
           if((role == 'admin' || role == 'ente_contabile') && ![2,4].includes(status_id)) {
-            toAppend += `<td class="spesa-col"> <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
-            <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
-            </a>` +
-            `</td>`;
+            // Modifica la spesa
+            toAppend += `
+            <td class="spesa-col"> 
+              <a class="btn btn-xs btn-default modify-cost" onclick=modifyCost(`+cats[cat]["costs"][cost]["id"]+`)>
+                <i data-toggle="tooltip" class="fa fa-pencil" data-original-title="Modifica spesa"></i>
+              </a>`;
+
+            // Elimina la spesa
+            toAppend += `
+                <a class="btn btn-xs btn-default delete-cost" onclick=deleteCost(`+cats[cat]["costs"][cost]["id"]+`)>
+                  <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina spesa"></i>
+                </a>
+              </td>`;
           }
 
           toAppend += `</tr>`;
@@ -776,4 +723,164 @@ function renderHistory(history) {
   $('#status-container .statement-status-header #lastStatusLabel').html(htmlLastStatusLabel);
   $('#status-container .statement-status-body').html(htmlStatusHistory);
 }
+
+function modifyCost(cost_id) {
+  $.ajax({
+    url: pathServer + "aziende/ws/getCost/" + cost_id,
+    type: "GET",
+    dataType: "json"
+  })
+    .done(function (res) {
+      if (res.response == "OK") {
+        let position = $('#costs-box').offset().top;
+        $( document ).scrollTop( position - 100 );
+
+        // Form
+        $('#add-cost')[0].reset();
+
+        // Attachment
+        $('#cost-file').remove();
+
+        // Pulsanti
+        $('#save-cat').text('Modifica');
+        $('#save-cat').data('cost', cost_id);
+        $('#add-cost button[type=reset]').text('Annulla');
+
+        // Titolo
+        $('#cost-headers').text('Modifica spesa del ' + new Date(res.data.date).toLocaleDateString());
+
+        for (let prop in res.data) {
+          if (prop.indexOf('date') === 0) {
+            $('#add-cost input[name='+prop+']').val(new Date(res.data[prop]).toISOString().split('T')[0]);
+          } else if (prop.indexOf('category_id') === 0) {
+            var newOption = new Option(res.data.category.name, res.data.category.id, false, false);
+            $('#searchCat').append(newOption).trigger('change');
+          } else {
+            $('#add-cost input[name='+prop+']').val(res.data[prop]);
+          }
+          if (prop.indexOf('attachment') === 0) {
+            if (res.data[prop].length > 1) {
+              $('#add-cost input[name=file]').hide();
+              let fileString =  '<span id="cost-file"><a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cost_id + '">'+res.data.filename+'</a>';
+              fileString += `<a class="btn btn-xs btn-default" id="remove-file"> <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina file"></i> </a></span>`;
+              $('#add-cost input[name=file]').before(fileString);
+              $('#remove-file').click(()=>removeFile());
+              $('#add-cost input[name=file]').prop('required', false);
+            }
+          }
+        }
+      } else {
+        alert(res.data.msg);
+        endEdit();
+      }
+    })
+    .fail(function (richiesta, stato, errori) {
+      alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+      endEdit();
+    });
+  }
+
+    function saveCost(cost_id) {
+      let start = new Date($("input[name=period_start_date]").val()).getTime();
+      let end = new Date($("input[name=period_end_date]").val()).getTime();
+      let date = new Date($("input[name=date]").val()).getTime();
+  
+      var conf = true;
+      let errors = 0;
+  
+      if (date < start || date > end) {
+        conf = confirm('Data non conforme al periodo, vuoi comunque inserire la la spesa?');
+      } else {
+        conf = true;
+      }
+  
+      if (conf == true) {
+        $('form#add-cost input[required], form#add-cost select[required]').each(function() {
+          if($(this).val() == null ||  $(this).val()=='') {
+            $(this).parent().addClass('has-error');
+            errors ++;
+          }
+        });
+
+        if(errors) {
+          alert('Compilare tutti i campi in rosso');
+        } else {
+          let url = pathServer + "aziende/ws/saveCost";
+          if (cost_id) {
+            url += '/' + cost_id;
+          }
+
+
+          var formData = new FormData($('#add-cost')[0]);
+          $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+          })
+            .done(function (res) {
+              if (res.response == "OK") {
+                if (cost_id) {
+                  $('#add-cost')[0].reset();
+                  endEdit();
+                } else {
+                                  /*
+                  Resetto il form tranne
+                  categoria,
+                  data,
+                  fornitore
+                */
+                $('#add-cost input[name=amount]').val('');
+                $('#add-cost input[name=share]').val('');
+                $('#add-cost input[name=description]').val('');
+                $('#add-cost input[name=notes]').val('');
+                $('#add-cost input[name=number]').val('');
+                $('#add-cost input[name=file]').val('');
+
+                }
+
+                let costs = res.data.costs;
+                let statement = res.data.statement;
+                if (costs) {
+                  displayCosts(costs, statement);
+                } else {
+                  $("#accordion").append("<div>Nessuna spesa presente</div>");
+                }
+              } else {
+                alert(res.msg)
+              }
+            })
+            .fail(function (richiesta, stato, errori) {
+              alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+            });
+        }
+      }
+    }
+
+  function endEdit() {
+    $('#cost-file').remove();
+    $('#add-cost input[name=file]').show();
+    $('#add-cost input[name=file]').prop('required', true);
+
+    // Pulsanti
+    $('#save-cat').text('Aggiungi');
+    $('#save-cat').data('cost', false);
+    $('#add-cost button[type=reset]').text('Svuota');
+
+    // Titolo
+    $('#cost-headers').text('Spese');
+
+    // Categoria
+    $('form#add-cost #searchCat').val('');
+    $('form#add-cost #searchCat').trigger('change');
+  }
+
+  function removeFile () {
+    $('#cost-file').remove();
+    $('#add-cost input[name=file]').show();
+    $('#add-cost input[name=file]').prop('required', true);
+  }
+
 
