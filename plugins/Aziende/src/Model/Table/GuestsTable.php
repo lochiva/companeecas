@@ -592,7 +592,7 @@ class GuestsTable extends AppTable
 
         $data[0] = [
             'ENTE', 'CODICE CENTRO', 'INDIRIZZO CENTRO', 'CHECK-IN', 'CHECK-OUT', 'NOME', 'COGNOME', 'DATA DI NASCITA', 'SESSO', 
-            'MINORE', 'MINORE SOLO', 'NOTE', 'NAZIONALITA\'', 'TITOLO DI STUDIO', 'DETTAGLIO TITOLO DI STUDIO', 'STATO'
+            'MINORE', 'MINORE SOLO', 'NOTE', 'NAZIONALITA\'', 'TITOLO DI STUDIO', 'DETTAGLIO TITOLO DI STUDIO', 'STATO', 'CUI', 'VESTANET'
         ];
 
         foreach ($guests as $guest) {
@@ -619,7 +619,9 @@ class GuestsTable extends AppTable
                 $guest['n']['des_luo'],
                 $educationaQualification,
                 $educationaQualificationDetail,
-                $guest['gs']['name']
+                $guest['gs']['name'],
+                $guest['cui'],
+                $guest['vestanet_id']
             ];
         }
 
