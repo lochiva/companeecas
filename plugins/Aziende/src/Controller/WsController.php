@@ -96,7 +96,7 @@ class WsController extends AppController
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests','downloadGuestExitFile', 'getFiles', 
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'saveStatement', 'getCosts', 'getStatementCompany', 
                 'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements'
+                'downloadZipStatements', 'getCost'
             ]
         ];
 
@@ -4210,7 +4210,10 @@ class WsController extends AppController
     }
 
     public function saveCost($id = null) {
+        $this->request->allowMethod(['post']);
+
         $table =  TableRegistry::get('Aziende.Costs');
+        
         $cost = $this->request->getData();
 
         $attachment = $this->request->getUploadedFile('file');
@@ -4637,6 +4640,22 @@ class WsController extends AppController
             $this->_result['response'] = 'KO';
             $this->_result['msg'] = 'Nessuna notifica trovata.';
         }
+    }
+
+    public function getCost($cost_id) {
+        $this->request->allowMethod(['get']);
+
+        $cost = TableRegistry::getTableLocator()->get('Aziende.Costs')->get($cost_id, ['contain' => ['CostsCategories']]);
+
+        if ($cost) {
+            $this->_result['response'] = 'OK';
+            $this->_result['data'] = $cost;
+            $this->_result['msg'] = '';
+        } else { 
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'Impossibile recuperare i dati relativi al costo';
+        }
+
     }
 
 }
