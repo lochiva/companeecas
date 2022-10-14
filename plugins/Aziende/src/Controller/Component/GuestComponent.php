@@ -27,7 +27,7 @@ class GuestComponent extends Component
 			$columns[] = ['val' => 'Guests.draft_expiration', 'type' => 'date'];
 			$columns[] = ['val' => 'Guests.suspended', 'type' => 'number'];
 		}
-		$columns[] = ['val' => 'CONCAT(gs.name, IF(Guests.exit_request_status_id IS NOT NULL, CONCAT(" - ", gers.name), ""))', 'type' => 'text'];
+		$columns[] = ['val' => 'CONCAT(gs.name, IF(exit_request_status_id IS NOT NULL, CONCAT(" - ", gers.name), ""))', 'type' => 'text'];
         
         $opt['fields'] = [
 			'Guests.id', 
