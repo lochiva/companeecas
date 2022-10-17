@@ -1,4 +1,5 @@
 Vue.component('v-select', VueSelect.VueSelect);
+Vue.component('toggle-switch', ToggleSwitch.ToggleSwitch);
 
 Vue.use(VueMaterial.default);
 
@@ -12,64 +13,38 @@ var nested = {
         'parentitem',
         'label',
         'elements',
-        'questions',
-        'survey'
+        'survey',
+        'editor',
+        'placeholders'
     ],
     data: function () {
         return {
             isOpen: false,
-            editorInit: {
-                resize: false, 
-                height: 300, 
-                language: 'it_IT', 
-                branding: false, 
-                plugins: ['image table'],
-                relative_urls : false,
-                remove_script_host : false,
-                convert_urls : true,
-                file_picker_callback: function(callback, value, meta) {
-                    // svuoto l'input
-                    $('#tinymce_upload').val('');
-                    // Provide image and alt text for the image dialog
-                    $('#tinymce_upload').off('change');
-                    $('#tinymce_upload').trigger('click');
-                    $('#tinymce_upload').on('change', function(){
-                    // eseguo opportuni controlli sul file
-                        file = this.files[0];
-                        if(file === undefined){
-                            return;
-                        }
-                        var fileType = file.type.substr(0,file.type.indexOf('/'));
-                        
-                        if(fileType != 'image'){
-                            alert('Il file non è del formato corretto!');
-                            return;
-                        }
-        
-                        formData= new FormData(document.getElementById('tinymce_upload_form') );
-                        // eseguo la chiamata ajax ache salva l'immagine, e di ritorno avrò l'url
-                        $.ajax({
-                            url: pathServer+'surveys/ws/saveImagePath/1',
-                            type: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            dataType: 'json',
-                            success: function(data){
-                                if(data.response == 'OK'){
-                                    callback(data.data, {
-                                    alt: ''
-                                    });
-                                }else{
-                                    alert(data.msg);
-                                }
-                            },
-        
-                        });
-        
-                    });
+            sectionToggleOptions: {
+				layout: {
+					color: '#007aff',
+					backgroundColor: '#ffffff',
+					borderColor: '#007aff',
+					fontFamily: 'Arial',
+					fontWeight: 'normal',
+					fontWeightSelected: 'bold',
+					squareCorners: false,
+					noBorder: false
+				},
+				size: {
+					fontSize: '1',
+					height: '2.3',
+					padding: '0.3',
+					width: '18'
+				},
+                config: {
+                    delay: .4,
+                    items: [
+                        { name: '1 colonna', value: 'single', color: '#ffffff', backgroundColor: '#16A1E7' },
+                        { name: '2 colonne', value: 'double', color: '#ffffff', backgroundColor: '#16A1E7' }
+                    ]
                 }
-            }
+			}
         }
     },
     components: {
@@ -259,19 +234,32 @@ var nested = {
         updateShortLabels: function(question) { 
             this.$root.updateShortLabels(question);
         },
+        onMovedItem: function(event) {
+            console.log(event.draggedContext.element);
+            console.log(event.relatedContext.element);
+            if (
+                typeof event.relatedContext.element === 'undefined' ||
+                event.draggedContext.element.primary !== event.relatedContext.element.primary
+            ) {
+                return false;
+            }
+            return true;
+        },
+        showModalItemVisibility: function(item, type) { 
+            this.$root.showModalItemVisibility(item, type);
+        },
     }
 };
 
 var app = new Vue({
     el: '#app-surveys',
     data: {
-        statuses: {},
-        partners: [],
-        selectedPartner: null,
-        questions: questions,
+        configurators: [],
+        statuses: [],
         elements: elements,
         surveyData: {
             idSurvey: '',
+            id_configurator: '',
             title: '',
             subtitle: '',
             description: '',
@@ -290,6 +278,110 @@ var app = new Vue({
         questionToPreview: {},
         standardTexts: [],
         selectedStandardText: {},
+        baseImageUrl: baseImageUrl,
+        placeholders: placeholders,
+        searchedDataSheets: [],
+        dataSheetOptions: {
+            data_sheet: '',
+            visibility_by_component: false,
+            components: [],
+            section: {
+                disabled: true,
+                value: ''
+            },
+            block: {
+                disabled: true,
+                value: ''
+            },
+            component: {
+                disabled: true,
+                value: ''
+            }
+        },
+        itemVisibilityOptions: {
+            visibility_by_component: false,
+            components: [],
+            section: {
+                disabled: true,
+                value: ''
+            },
+            block: {
+                disabled: true,
+                value: ''
+            },
+            component: {
+                disabled: true,
+                value: ''
+            }
+        },
+        currentVisibilityItem: {},
+        currentVisibilityItemType: {},
+        sectionsList: [],
+        blocksList: [],
+        componentsList: [],
+        editorInit: {
+            resize: false, 
+            height: 300, 
+            language: 'it_IT', 
+            branding: false, 
+            plugins: ['image table'],
+            relative_urls : false,
+            remove_script_host : false,
+            convert_urls : true,
+            file_picker_callback: function(callback, value, meta) {
+                // svuoto l'input
+                $('#tinymce_upload').val('');
+                // Provide image and alt text for the image dialog
+                $('#tinymce_upload').off('change');
+                $('#tinymce_upload').trigger('click');
+                $('#tinymce_upload').on('change', function(){
+                // eseguo opportuni controlli sul file
+                    file = this.files[0];
+                    if(file === undefined){
+                        return;
+                    }
+                    var fileType = file.type.substr(0,file.type.indexOf('/'));
+                    
+                    if(fileType != 'image'){
+                        alert('Il file non è del formato corretto!');
+                        return;
+                    }
+    
+                    formData= new FormData(document.getElementById('tinymce_upload_form') );
+                    // eseguo la chiamata ajax ache salva l'immagine, e di ritorno avrò l'url
+                    $.ajax({
+                        url: pathServer+'surveys/ws/saveImagePath/1',
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(data){
+                            if(data.response == 'OK'){
+                                callback(data.data, {
+                                    alt: ''
+                                });
+                            }else{
+                                alert(data.msg);
+                            }
+                        },
+    
+                    });
+    
+                });
+            }
+        },
+
+        previewEditorInit: {
+            resize: false, 
+            height: 300, 
+            language: 'it_IT', 
+            branding: false, 
+            plugins: ['image table'],
+            relative_urls : false,
+            remove_script_host : false,
+            convert_urls : true
+        }
     },
 
     computed: {
@@ -297,6 +389,7 @@ var app = new Vue({
     },
 
     components: {
+        'editor': Editor,
         "nested-draggable" : nested
     },
       
@@ -310,9 +403,8 @@ var app = new Vue({
             this.loadSurvey(this.surveyData.idSurvey);
         }
 
+        this.getConfigurators();
         this.getSurveyStatuses();
-        this.getPartners();
-
         this.getStandardTexts();
 
     },
@@ -322,6 +414,10 @@ var app = new Vue({
             axios.get(pathServer + 'surveys/ws/getSurvey/' + id)
                 .then(res => { 
                     if (res.data.response == 'OK') { 
+                        this.surveyData.id_configurator = res.data.data.id_configurator;
+                        if (this.surveyData.id_configurator != '') {
+                            this.updateSectionsList();
+                        }
                         this.surveyData.title = res.data.data.title;
                         this.surveyData.subtitle = res.data.data.subtitle;
                         this.surveyData.description = res.data.data.description;
@@ -343,12 +439,12 @@ var app = new Vue({
                     console.log(error);
                 });
         },
-        getSurveyStatuses: function(){
+        getConfigurators: function(){
 
-            axios.get(pathServer + 'surveys/ws/getSurveyStatuses')
+            axios.get(pathServer + 'surveys/ws/getConfigurators')
                 .then(res => { 
                     if (res.data.response == 'OK') {
-                        this.statuses = res.data.data; 
+                        this.configurators = res.data.data; 
                     } else {
                         alert(res.data.msg);
                     }
@@ -357,12 +453,55 @@ var app = new Vue({
                 });
 
         },
-        getPartners: function(){
+        warningChangeConfigurator: function(e) {
+            if (this.surveyData.id_configurator != '') {
+                e.currentTarget.blur();
+                alert('Attenzione! Cambiando il configuratore tutti i componenti del preventivo la cui visibilità dipende da questo configuratore verranno impostati come "Sempre presente".');
+            }
+        },
+        updateSectionsList: function() {
+            // Visibilità componenti a "Sempre presente"
+            this.resetVisibility(this.surveyData.items);
 
-            axios.get(pathServer + 'surveys/ws/getPartners')
+            // Lista sezioni per configuratore
+            this.sectionsList = [];
+
+            axios.get(pathServer + 'building/ws/getSectionsByConfigurator/'+this.surveyData.id_configurator)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.sectionsList = res.data.data;
+                } else {
+                    this.sectionsList = [];
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        resetVisibility: function(items) {
+            items.forEach((item) => {
+                item.visibility.visibility_by_component = false;
+                item.visibility.components = [];
+
+                if (item.questions.length > 0) {
+                    item.questions.forEach((question) => {
+                        if (question.type == 'data_sheet') {
+                            question.visibility_by_component = false;
+                            question.components = [];
+                        }
+                    });
+                }
+
+                if (item.items.length > 0) {
+                    this.resetVisibility(item.items);
+                }
+            });
+        },
+        getSurveyStatuses: function(){
+
+            axios.get(pathServer + 'surveys/ws/getSurveyStatuses')
                 .then(res => { 
-                    if (res.data.response == 'OK') { 
-                        this.partners = res.data.data; 
+                    if (res.data.response == 'OK') {
+                        this.statuses = res.data.data; 
                     } else {
                         alert(res.data.msg);
                     }
@@ -387,7 +526,7 @@ var app = new Vue({
 
             var errors = false;
 
-            /*if (this.surveyData.title == "" || this.surveyData.title == null){
+            if (this.surveyData.title == "" || this.surveyData.title == null){
                 errors = true;
             }
 
@@ -395,9 +534,11 @@ var app = new Vue({
                 errors = true;
             }
 
+            /*
             if (this.surveyData.status == "" || this.surveyData.status == null){
                 errors = true;
-            }*/
+            }
+            */
 
             if(errors){
                 alert('Si prega di compilare tutti i campi obbligatori.');
@@ -417,11 +558,11 @@ var app = new Vue({
 
             this.setItemsClosed(this.surveyData.items);
 
+            params.append('id_configurator', this.surveyData.id_configurator);
             params.append('title', this.surveyData.title);
             params.append('subtitle', this.surveyData.subtitle);
             params.append('description', this.surveyData.description);
             params.append('status', this.surveyData.status);
-            params.append('partners', JSON.stringify(this.surveyData.partners));
             params.append('chapters', JSON.stringify(this.surveyData.items));
             params.append('yes_no_questions', JSON.stringify(this.surveyData.conditioningQuestions));
 
@@ -462,52 +603,7 @@ var app = new Vue({
                 }
             });
         },
-        setSelectedPartner: function(value){
-            if(value !== null){
-                var partners = this.surveyData.partners;
-                var enabled = false
-                for( var i = 0; i < partners.length; i++) {
-                    if(partners[i].code == value.code){
-                        enabled = true;
-                    }
-                };
-
-                if(enabled){
-                    alert("L'azienda selezionata è gia stata associata.");
-                    value = null;
-                }
-            }
-
-            this.selectedPartner = value;
-        },
-        addPartner: function(){
-            var partner = this.selectedPartner;
-            if (partner === null || Object.keys(partner).length === 0){
-                alert('Selezionare un\'azienda da associare.');
-            }else{ 
-                axios.get(pathServer + 'surveys/ws/getPartnerStructures/' + partner.code)
-                .then(res => { 
-                    if (res.data.response == 'OK') { 
-                        this.surveyData.partners.push({
-                            code: partner.code,
-                            label: partner.label,
-                            structures: res.data.data
-                        });
-                    } else {
-                        alert(res.data.msg);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
-                this.selectedPartner = null;
-            }
-        },
-        removePartner: function(index){
-            if(confirm("Si è sicuri di voler rimuovere l'ente abilitato?")){
-                this.surveyData.partners.splice(index, 1);
-            }
-        },
-        addItem: function(item){
+        addItem: function(item, primary = false){
             if(item.color != undefined && item.color != ''){
                 color = item.color;
             }else{
@@ -516,6 +612,12 @@ var app = new Vue({
 
             item.items.push({
                 open: true,
+                primary: primary,
+                layout: 'single',
+                visibility: {
+                    visibility_by_component: false,
+                    components: []
+                },
                 title: '',
                 subtitle: '',
                 color: color,
@@ -646,10 +748,12 @@ var app = new Vue({
         addQuestion: function(params) { 
             let elem = $.extend(true, {}, params.question); 
 
-            if(elem.type == 'standard_text'){
+            if(elem.type == 'data_sheet'){
 
-                $(this.$refs['modalStandardTexts']).find('#element_index').val(params.index);
-                $(this.$refs['modalStandardTexts']).modal('show');
+                $(this.$refs['modalDataSheetOptions']).find('#element_index').val(params.index);
+                //Reset options
+                this.resetModalDataSheetOptions();
+                $(this.$refs['modalDataSheetOptions']).modal('show');
 
             }else{
                 let index = $(this.$refs['modalElements']).find('#clicked_index').val();
@@ -671,25 +775,33 @@ var app = new Vue({
                 $(this.$refs['modalElements']).modal('hide');
             }
         },
-        addElementStandardText: function() { 
-            let elem_index = $(this.$refs['modalStandardTexts']).find('#element_index').val();
-            let elem = $.extend(true, {}, this.elements[elem_index]); 
-            let index = $(this.$refs['modalElements']).find('#clicked_index').val();
+        addElementDataSheet: function() {
+            if (
+                this.dataSheetOptions.data_sheet && 
+                (!this.dataSheetOptions.visibility_by_component || this.dataSheetOptions.components.length > 0)
+            ) {
+                let elem_index = $(this.$refs['modalDataSheetOptions']).find('#element_index').val();
+                let elem = $.extend(true, {}, this.elements[elem_index]); 
+                let index = $(this.$refs['modalElements']).find('#clicked_index').val();
 
-            elem.id = new Date().valueOf();
-            elem.name = this.standardTexts[this.selectedStandardText].name;
-            elem.value = this.standardTexts[this.selectedStandardText].content;
+                elem.id = new Date().valueOf();
+                elem.data_sheet = this.dataSheetOptions.data_sheet;
+                elem.visibility_by_component = this.dataSheetOptions.visibility_by_component;
+                elem.components = this.dataSheetOptions.components;
 
-            if(index === ''){
-                this.currentItem.questions.push(elem);
-            }else{
-                this.currentItem.questions.splice(index, 0, elem);
+                if(index === ''){
+                    this.currentItem.questions.push(elem);
+                }else{
+                    this.currentItem.questions.splice(index, 0, elem);
+                }
+
+                $(this.$refs['modalDataSheetOptions']).modal('hide');
+                
+                $(this.$refs['modalElements']).find('#clicked_index').val('');
+                $(this.$refs['modalElements']).modal('hide');
+            } else {
+                alert('Selezionare una scheda tecnica e un criterio di visualizzazione (se si seleziona "Guidato dal componente" è necessario aggiungere almeno un componente).');
             }
-
-            $(this.$refs['modalStandardTexts']).modal('hide');
-            
-            $(this.$refs['modalElements']).find('#clicked_index').val('');
-            $(this.$refs['modalElements']).modal('hide');
         },
         setConditionedQuestion: function() {
             if(this.connected_to !== '' && this.show_on !== ''){
@@ -758,7 +870,248 @@ var app = new Vue({
             if (!question.show_in_export) {
                 question.label_export = '';
             }
+        },
+        searchDataSheet: function(search, loading) { 
+            search = search || this.$refs.selectDataSheet.search;
+            loading = loading || this.$refs.selectDataSheet.toggleLoading;
+
+            loading(true);
+            axios.get(pathServer + 'surveys/ws/searchDataSheet/'+search)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.searchedDataSheets = res.data.data; 
+                    loading(false);
+                } else {
+                    this.searchedDataSheets = [];
+                    loading(false);
+                }
+            }).catch(error => {
+                console.log(error);
+                loading(false);
+            });
+        },
+        resetModalDataSheetOptions: function() {
+            this.dataSheetOptions.data_sheet = '';
+            this.dataSheetOptions.visibility_by_component = false;
+            this.dataSheetOptions.components = [];
+            this.dataSheetOptions.section = {
+                disabled: true,
+                value: ''
+            };
+            this.dataSheetOptions.block = {
+                disabled: true,
+                value: ''
+            };
+            this.dataSheetOptions.component = {
+                disabled: true,
+                value: ''
+            };  
+            this.blocksList = [];
+            this.componentsList = [];
+        },
+        changeDataSheetVisibilityByComponent: function() {
+            if (this.dataSheetOptions.visibility_by_component) {
+                this.dataSheetOptions.section.disabled = false;
+                this.dataSheetOptions.block.disabled = false;
+                this.dataSheetOptions.component.disabled = false;
+            } else {
+                this.dataSheetOptions.components = [];
+                this.dataSheetOptions.section = {
+                    disabled: true,
+                    value: ''
+                };
+                this.dataSheetOptions.block = {
+                    disabled: true,
+                    value: ''
+                };
+                this.dataSheetOptions.component = {
+                    disabled: true,
+                    value: ''
+                };
+                this.blocksList = [];
+                this.componentsList = [];
+            }
+        },
+        updateBlocksList: function() {
+            this.dataSheetOptions.block.value = '';
+            this.blocksList = [];
+            this.dataSheetOptions.component.value = '';
+            this.componentsList = [];
+
+            axios.get(pathServer + 'building/ws/getBlocksBySection/'+this.dataSheetOptions.section.value.id)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.blocksList = res.data.data;
+                } else {
+                    this.blocksList = [];
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        updateComponentsList: function() {
+            this.dataSheetOptions.component.value = '';
+            this.componentsList = [];
+
+            axios.get(pathServer + 'building/ws/getComponentsByBlock/'+this.dataSheetOptions.block.value.id)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.componentsList = res.data.data;
+                } else {
+                    this.componentsList = [];
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        addComponentToDataSheet: function() {
+            if (this.dataSheetOptions.section.value && this.dataSheetOptions.block.value && this.dataSheetOptions.component.value) {
+                this.dataSheetOptions.components.push({
+                    id: this.dataSheetOptions.component.value.id,
+                    text: this.dataSheetOptions.section.value.name + ' / ' + this.dataSheetOptions.block.value.name + ' / ' + this.dataSheetOptions.component.value.name
+                });
+
+                //Reset select
+                this.dataSheetOptions.section.value = '';
+                this.dataSheetOptions.block.value = '';
+                this.blocksList = [];
+                this.dataSheetOptions.component.value = '';
+                this.componentsList = [];
+            } else {
+                alert('Selezionare un componente da aggiungere.');
+            }
+        },
+        removeComponentFromDataSheet: function(index) {
+            this.dataSheetOptions.components.splice(index, 1);
+        },
+        showModalItemVisibility: function(item, type) {
+            this.resetModalItemVisibility();
+
+            this.currentVisibilityItem = item;
+            this.currentVisibilityItemType = type;
+            if (type == 'section') {
+                this.itemVisibilityOptions.visibility_by_component = JSON.parse(JSON.stringify(item.visibility.visibility_by_component));
+            } else if (type == 'element') {
+                this.itemVisibilityOptions.visibility_by_component = JSON.parse(JSON.stringify(item.visibility_by_component));
+            }
+            this.changeItemVisibilityByComponent();
+            if (type == 'section') {
+                this.itemVisibilityOptions.components = JSON.parse(JSON.stringify(item.visibility.components));
+            } else if (type == 'element') {
+                this.itemVisibilityOptions.components = JSON.parse(JSON.stringify(item.components));
+            }
+
+            $(this.$refs['modalItemVisibility']).modal('show');
+        },
+        resetModalItemVisibility: function() {
+            this.itemVisibilityOptions.visibility_by_component = false;
+            this.itemVisibilityOptions.components = [];
+            this.itemVisibilityOptions.section = {
+                disabled: true,
+                value: ''
+            };
+            this.itemVisibilityOptions.block = {
+                disabled: true,
+                value: ''
+            };
+            this.itemVisibilityOptions.component = {
+                disabled: true,
+                value: ''
+            };  
+            this.blocksList = [];
+            this.componentsList = [];
+        },
+        changeItemVisibilityByComponent: function() {
+            if (this.itemVisibilityOptions.visibility_by_component) {
+                this.itemVisibilityOptions.section.disabled = false;
+                this.itemVisibilityOptions.block.disabled = false;
+                this.itemVisibilityOptions.component.disabled = false;
+            } else {
+                this.itemVisibilityOptions.components = [];
+                this.itemVisibilityOptions.section = {
+                    disabled: true,
+                    value: ''
+                };
+                this.itemVisibilityOptions.block = {
+                    disabled: true,
+                    value: ''
+                };
+                this.itemVisibilityOptions.component = {
+                    disabled: true,
+                    value: ''
+                };
+                this.blocksList = [];
+                this.componentsList = [];
+            }
+        },
+        updateBlocksListForVisibility: function() {
+            this.itemVisibilityOptions.block.value = '';
+            this.blocksList = [];
+            this.itemVisibilityOptions.component.value = '';
+            this.componentsList = [];
+
+            axios.get(pathServer + 'building/ws/getBlocksBySection/'+this.itemVisibilityOptions.section.value.id)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.blocksList = res.data.data;
+                } else {
+                    this.blocksList = [];
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        updateComponentsListForVisibility: function() {
+            this.itemVisibilityOptions.component.value = '';
+            this.componentsList = [];
+
+            axios.get(pathServer + 'building/ws/getComponentsByBlock/'+this.itemVisibilityOptions.block.value.id)
+            .then(res => { 
+                if (res.data.response == 'OK') {
+                    this.componentsList = res.data.data;
+                } else {
+                    this.componentsList = [];
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        addComponentToItemVisibility: function() {
+            if (this.itemVisibilityOptions.section.value && this.itemVisibilityOptions.block.value && this.itemVisibilityOptions.component.value) {
+                this.itemVisibilityOptions.components.push({
+                    id: this.itemVisibilityOptions.component.value.id,
+                    text: this.itemVisibilityOptions.section.value.name + ' / ' + this.itemVisibilityOptions.block.value.name + ' / ' + this.itemVisibilityOptions.component.value.name
+                });
+
+                //Reset select
+                this.itemVisibilityOptions.section.value = '';
+                this.itemVisibilityOptions.block.value = '';
+                this.blocksList = [];
+                this.itemVisibilityOptions.component.value = '';
+                this.componentsList = [];
+            } else {
+                alert('Selezionare un componente da aggiungere.');
+            }
+        },
+        setItemVisibility: function() {
+            if (!this.itemVisibilityOptions.visibility_by_component || this.itemVisibilityOptions.components.length > 0) {
+                if (this.currentVisibilityItemType == 'section') {
+                    this.currentVisibilityItem.visibility.visibility_by_component = this.itemVisibilityOptions.visibility_by_component;
+                    this.currentVisibilityItem.visibility.components = this.itemVisibilityOptions.components;
+                } else if (this.currentVisibilityItemType == 'element') {
+                    this.currentVisibilityItem.visibility_by_component = this.itemVisibilityOptions.visibility_by_component;
+                    this.currentVisibilityItem.components = this.itemVisibilityOptions.components;
+                }
+                $(this.$refs['modalItemVisibility']).modal('hide');
+            } else {
+                alert('Selezionare un criterio di visualizzazione (se si seleziona "Guidato dal componente" è necessario aggiungere almeno un componente).');
+            }
+           
+        },
+        removeComponentFromItemVisibility: function(index) {
+            this.itemVisibilityOptions.components.splice(index, 1);
         }
+
     },
       
     filters: {

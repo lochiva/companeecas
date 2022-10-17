@@ -13,13 +13,24 @@ use Cake\Routing\Router;
 			</div>			
 			<div class="box-body">
 
-				 <!-- TESTO LIBERO -->
-				 <div v-if="questionToPreview.type == 'free_text'" v-html="questionToPreview.value" class="answer-div" ></div>
+				 <!-- TESTO FISSO -->
+				 <div v-if="questionToPreview.type == 'fixed_text'" v-html="questionToPreview.value" class="answer-div" ></div>
 
 				<!-- IMMAGINE -->
 				<div v-if="questionToPreview.type == 'image' && questionToPreview.path != ''" class="answer-div" >
-					<img :src="'<?=Router::url('/surveys/ws/viewImage/');?>'+questionToPreview.path" class="element-image" >
+					<img :src="baseImageUrl + questionToPreview.path" class="element-image" >
 					<p v-html="questionToPreview.caption"></p>
+				</div>
+
+				<!-- RISPOSTA EDITOR DI TESTO -->
+				<div v-if="questionToPreview.type == 'answer_text_editor'" class="answer-div" >
+					<div class="question-text">   
+                        <span v-if="questionToPreview.required" class="question-required">*&nbsp;</span><p v-html="questionToPreview.question"></p>
+						&nbsp;
+						<a v-if="questionToPreview.tooltip != ''" class="question-tooltip" data-toggle="modal" data-target="#modalTooltipQuestion"><i class="fa fa-info-circle"></i></a>
+						<span hidden class="text-question-tooltip" v-html="questionToPreview.tooltip"></span>
+					</div>
+					<editor v-model="questionToPreview.answer" :init="previewEditorInit"></editor>
 				</div>
 
 				<!-- RISPOSTA BREVE -->

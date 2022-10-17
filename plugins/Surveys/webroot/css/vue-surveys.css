@@ -1,6 +1,6 @@
 #surveyDescription{
     resize: none;
-    height: 80px;
+    height: 60px;
 }
 
 #survey-partners{
@@ -22,6 +22,7 @@
 }
 
 .remove-item,
+.add-subsection,
 .add-element{
     margin-left: 10px;
 }
@@ -166,14 +167,25 @@
     margin-left: 5px;
 }
 
+.btn-visibility-hover{
+    color: #FFF;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+    bottom: 3px;
+    margin-left: 5px;
+}
+
 .btn-delete-hover:hover,
 .btn-add-hover:hover,
 .btn-move-hover:hover,
 .btn-preview-hover:hover,
+.btn-visibility-hover:hover,
 .btn-delete-hover:active,
 .btn-add-hover:active,
 .btn-move-hover:active,
-.btn-preview-hover:active{
+.btn-preview-hover:active,
+.btn-visibility-hover:active{
     color: #FFF;
     text-shadow: 1px 1px #000;
 }
@@ -204,6 +216,13 @@
 .fab-primary{
     color: #FFF;
     background-color: #3C8DBC;
+    width: 35px;
+    height: 35px;
+}
+
+.fab-info{
+    background-color: #00C0EF;
+    color: #FFF;
     width: 35px;
     height: 35px;
 }
@@ -332,4 +351,45 @@
     display: inline;
     width: 500px;
     margin-left: 20px;
+}
+
+.list-placeholders{
+    margin-top: 20px;
+    margin-left: -25px;
+}
+
+.chapter-actions {
+    display: flex;
+    align-items: center;
+}
+
+.layout-switch {
+    display: inline-block;
+    height: 23px;
+}
+
+.grey-box-survey-element{
+    background-color: #DBDBDB;
+    text-align: center;
+    padding: 50px;
+}
+
+.margintop30 {
+    margin-top: 30px;
+}
+.margintop20 {
+    margin-top: 20px;
+}
+.margintop10 {
+    margin-top: 10px;
+}
+.margintop5 {
+    margin-top: 5px;
+}
+
+.component-label-element-survey {
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 3px;
+    margin-right: 5px;
 }

@@ -81,6 +81,13 @@
     height: 35px;
 }
 
+.fab-info{
+    background-color: #00C0EF;
+    color: #FFF;
+    width: 35px;
+    height: 35px;
+}
+
 .fab-default{
     color: #333;
     background-color: #E0E0E0;
@@ -173,4 +180,59 @@
 
 .survey-description{
     display: inline-block;
+}
+
+.warning-interview-version{
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.warning-interview-preview {
+    color: #000000;
+    border-color: #FFCC00;
+    background-color: #FFE100;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.document-word-icon{
+    font-size: 0.9em;
+}
+
+.data-sheet-title {
+    font-weight: 600;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.data-sheet-specifications {
+    color: #92C45A;
+}
+
+.data-sheet-image {
+    max-width: 250px;
+    max-height: 250px;
+    margin: 10px;
+}
+
+.question-text-page-break {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.div-dimensions {
+    display: inline-block;
+    border: 1px solid #92C45A;
+    padding: 1px;
+}
+
+.table-dimensions {
+    border: 1px solid #92C45A;
+    font-weight: 600;
+}
+
+.table-dimensions td {
+    padding: 5px 25px;
 }

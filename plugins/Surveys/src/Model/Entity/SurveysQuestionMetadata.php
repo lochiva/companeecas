@@ -10,7 +10,9 @@ use Cake\ORM\Entity;
  * @property int $survey_id
  * @property int $question_id
  * @property bool $show_in_table
- * @property string $short_label
+ * @property bool $show_in_export
+ * @property string $label_table
+ * @property string $label_export
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */

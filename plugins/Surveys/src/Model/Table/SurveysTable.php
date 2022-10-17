@@ -80,6 +80,25 @@ class SurveysTable extends AppTable
         return $validator;
     }
 
+    public function beforeSave($event, $entity, $options)
+    {
+		// Check unicità modello per configuratore
+        $where = [
+            'id_configurator' => $entity->getOriginal('id_configurator')
+        ];
+        if (!empty($entity->getOriginal('id'))) {
+            $where['id !='] = $entity->getOriginal('id');
+        }
+        $survey = $this->find()->where($where)->first();
+        if (!empty($survey)) {
+            $entity->setError('Configuratore', "Esiste già un modello associato al configuratore selezionato.");
+            return false;
+        }
+
+		return true;
+
+	}
+
     public function verifySurveysStructure($partnerId, $managingEntityId, $structureId)
 	{
         return $this->find()

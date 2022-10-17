@@ -55,8 +55,6 @@ $role = $this->request->session()->read('Auth.User.role');
                         <table id="table-interviews" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Azienda</th>
-                                    <th>Sede</th>
                                     <th>Titolo</th>
                                     <th>Sottotitolo</th>
                                     <th>Descrizione</th>

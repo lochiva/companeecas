@@ -59,12 +59,9 @@ class SurveysInterviewsTable extends AppTable
             ->allowEmpty('id_survey', false);
 
         $validator
-            ->integer('id_azienda')
-            ->allowEmpty('id_azienda', true);
-
-        $validator
-            ->integer('id_sede')
-            ->allowEmpty('id_sede', true);
+            ->integer('id_quotation')
+            ->requirePresence('id_quotation', 'create')
+            ->allowEmpty('id_quotation', false);
 
         $validator
             ->integer('id_user')

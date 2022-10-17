@@ -10,6 +10,9 @@ use Cake\ORM\Entity;
  * @property int $interview_id
  * @property int $question_id
  * @property string $value
+ * @property string $options
+ * @property string $type
+ * @property string $final_value
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */

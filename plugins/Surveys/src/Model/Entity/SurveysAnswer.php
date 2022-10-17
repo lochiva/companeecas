@@ -10,6 +10,9 @@ use Cake\ORM\Entity;
  * @property int $id_interviews
  * @property int $chapter
  * @property string $chapter_data
+ * @property string $color
+ * @property string $group
+ * @property bool $deleted
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */

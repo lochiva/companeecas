@@ -19,7 +19,6 @@ class WsController extends AppController
     {
         parent::initialize();
 		$this->loadComponent('Surveys.Surveys');
-		$this->loadComponent('Reports.Reports');
     }
 
     public function beforeFilter(Event $event)
@@ -38,16 +37,11 @@ class WsController extends AppController
 			return true;
 		}
 
-		if($user['role'] == 'centro'){
-			$centroActions = ['getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey'];
-			if (in_array($this->request->getParam('action'), $centroActions)) {
-				return true;
-			}
-		}
-
-		if($user['role'] == 'nodo'){
-			$nodoActions = ['getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey'];
-			if (in_array($this->request->getParam('action'), $nodoActions)) {
+		if($user['role'] == 'user'){
+			$userActions = ['getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey',
+				'getActiveComponentsByInterview', 'getActiveComponentsByQuotation'
+			];
+			if (in_array($this->request->getParam('action'), $userActions)) {
 				return true;
 			}
 		}
@@ -108,16 +102,17 @@ class WsController extends AppController
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
 				$buttons .= '<a href="'.Router::url('/surveys/surveys/edit?survey='.$survey->id).'" class="btn btn-xs btn-warning edit-survey" title="Modifica questionario"><i class="fa fa-pencil"></i></a>'; 
-				$buttons .= '<a href="'.Router::url('/surveys/surveys/interviews/'.$survey->id).'" class="btn btn-xs btn-primary survey-interviews" title="Visualizza interviste"><i class="fa fa-list"></i></a>'; 
-				$buttons .= '<a class="btn btn-xs btn-info survey-clone" data-id="'.$survey->id.'" title="Clona questionario"><i class="fa fa-clone"></i></a>';
+				//$buttons .= '<a href="'.Router::url('/surveys/surveys/interviews/'.$survey->id).'" class="btn btn-xs btn-primary survey-interviews" title="Visualizza interviste"><i class="fa fa-list"></i></a>'; 
+				//$buttons .= '<a class="btn btn-xs btn-info survey-clone" data-id="'.$survey->id.'" title="Clona questionario"><i class="fa fa-clone"></i></a>';
 				$buttons .= '<a class="btn btn-xs btn-danger delete-survey" data-id="'.$survey->id.'" title="Annulla questionario"><i class="fa fa-trash"></i></a>';
 				$buttons .= '</div>';
 
 				$out['rows'][] = [
+					htmlspecialchars($survey['c']['name']),
 					htmlspecialchars($survey['title']),
 					htmlspecialchars($survey['subtitle']),
 					htmlspecialchars($survey['description']),
-					$status,
+					//$status,
 					$buttons
 				];
 
@@ -131,7 +126,7 @@ class WsController extends AppController
         }
 	}
 
-	public function getSurvey($id = false)
+	public function getSurvey($id = false, $forInterview = false, $idQuotation = null)
 	{
 		
 		$surveys = TableRegistry::get('Surveys.Surveys');
@@ -142,18 +137,51 @@ class WsController extends AppController
 			$survey = $surveys->find()->first();
 		}
 
-		$survey['partners'] = $this->Surveys->getSurveyPartners($survey['id']);
-
 		$surveysChapters = TableRegistry::get('Surveys.SurveysChapters');
 		$survey['chapters'] = $surveysChapters->getChaptersBySurvey($survey['id']);
+
+		//Se dati per interview
+		if ($forInterview) {
+			//Sotituzione placeholders
+			$valuePlaceholders = $this->Surveys->getValuePlaceholders($idQuotation);
+			foreach($survey['chapters'] as $chapter){
+				$chapter = $this->Surveys->replacePlaceholdersTexts($chapter, $valuePlaceholders);
+			}
+
+			//Dati per schede tecniche
+			$dataSheetsInfo = [];
+			foreach($survey['chapters'] as $chapter){
+				$dataSheetsInfo = $this->Surveys->getDataSheetsInfo($chapter, $dataSheetsInfo);
+			}
+			$survey['data_sheets_info'] = $dataSheetsInfo;
+
+			//Misure
+			$survey['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($idQuotation);
+		}
 
 		if($survey){
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $survey;
-			$this->_result['msg'] = 'Scheda recuperata correttamente.';
+			$this->_result['msg'] = 'Modello recuperato correttamente.';
 		}else{
 			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero della scheda.';
+			$this->_result['msg'] = 'Errore nel recupero del modello.';
+		}		
+	}
+
+	public function getConfigurators()
+	{
+		$configurators = TableRegistry::get('Building.Configurators')
+			->find()
+			->toArray();
+
+		if($configurators){
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $configurators;
+			$this->_result['msg'] = 'Configuratori modello recuperati con sucesso.';
+		}else{
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore nel recupero dei configuratori del modello.';
 		}		
 	}
 
@@ -167,29 +195,10 @@ class WsController extends AppController
 		if($statuses){
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $statuses;
-			$this->_result['msg'] = 'Stati scheda recuperati con sucesso.';
+			$this->_result['msg'] = 'Stati modello recuperati con sucesso.';
 		}else{
 			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero degli stati della scheda.';
-		}		
-	}
-
-	public function getPartners()
-	{
-		$partners = TableRegistry::get('Aziende.Aziende')
-			->find()
-			->select(['code' => 'id', 'label' => 'denominazione'])
-			->where(['deleted' => '0'])
-			->order('denominazione ASC')
-			->toArray();
-
-		if($partners){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $partners;
-			$this->_result['msg'] = 'Aziende recuperati con sucesso.';
-		}else{
-			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero delle aziende.';
+			$this->_result['msg'] = 'Errore nel recupero degli stati del modello.';
 		}		
 	}
 
@@ -219,30 +228,6 @@ class WsController extends AppController
 		$surveys->patchEntity($entity, $data);
 
 		if($surveys->save($entity)){
-
-			/*$aziendeStructures = TableRegistry::get('Surveys.SurveysToStructures');
-
-			foreach(json_decode($data['partners']) as $partner){
-				if(!empty($partner->structures)){
-					foreach($partner->structures as $sede){ 
-						if($sede->selected){
-							$structure = $aziendeStructures->newEntity();
-							$structure->id_survey = $entity->id;
-							$structure->id_azienda = $partner->code;
-							$structure->id_sede = $sede->id;
-
-							$aziendeStructures->save($structure);
-						}
-					}
-				}else{
-					$structure = $aziendeStructures->newEntity();
-					$structure->id_survey = $entity->id;
-					$structure->id_azienda = $partner->code;
-
-					$aziendeStructures->save($structure);
-				}
-			}*/
-
 			//Delete chapters for survey
 			$surveysChapters = TableRegistry::get('Surveys.SurveysChapters');
 			$groupCode = uniqid('', true);
@@ -273,9 +258,9 @@ class WsController extends AppController
 
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $entity;
-			$this->_result['msg'] = "Scheda salvata con successo.";
+			$this->_result['msg'] = "Modello salvato con successo.";
 		}else{
-			$message = "Errore nel salvataggio della scheda."; 
+			$message = "Errore nel salvataggio del modello."; 
 			foreach($entity->errors() as $field => $errors){ 
 				foreach($errors as $rule => $msg){ 
 					$message .= "\n" . $field.': '.$msg;
@@ -298,9 +283,9 @@ class WsController extends AppController
 
 		if($surveys->save($survey)){
 			$this->_result['response'] = "OK";
-            $this->_result['msg'] = "Questionario annullato con successo.";
+            $this->_result['msg'] = "Modello annullato con successo.";
         }else{
-			$message = "Errore nell'annullamento del questionario."; 
+			$message = "Errore nell'annullamento del modello."; 
 			foreach($survey->errors() as $field){ 
 				foreach($field as $rule => $msg){ 
 					$message .= "\n" . $msg;
@@ -368,8 +353,6 @@ class WsController extends AppController
 
 				
 				$out['rows'][] = [
-					htmlspecialchars($interview['azienda']),
-					htmlspecialchars($interview['struttura']),
 					htmlspecialchars($interview['title']),
 					htmlspecialchars($interview['subtitle']),
 					htmlspecialchars($interview['description']),
@@ -401,18 +384,30 @@ class WsController extends AppController
 
 		$surveysAnswers = TableRegistry::get('Surveys.SurveysAnswers');
 		$interview['answers'] = $surveysAnswers->getAnswersByInterview($id);
-		$interview['date_update'] = $interview['modified']->format('d/m/Y');
 
-		$user = TableRegistry::get('Users')->get($interview['id_user']);
-		$interview['user_update'] = $user['nome'].' '.$user['cognome'];
+		//Sotituzione placeholders
+		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview['id_quotation']);
+		foreach($interview['answers'] as $answer){
+            $answer = $this->Surveys->replacePlaceholdersTexts($answer, $valuePlaceholders);
+        }
+
+		//Dati per schede tecniche
+		$dataSheetsInfo = [];
+		foreach($interview['answers'] as $answer){
+            $dataSheetsInfo = $this->Surveys->getDataSheetsInfo($answer, $dataSheetsInfo);
+        }
+		$interview['data_sheets_info'] = $dataSheetsInfo;
+
+		//Misure
+		$interview['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($interview['id_quotation']);
 
 		if($interview){
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $interview;
-			$this->_result['msg'] = 'Scheda recuperata correttamente.';
+			$this->_result['msg'] = 'Documento recuperato correttamente.';
 		}else{
 			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero della scheda.';
+			$this->_result['msg'] = 'Errore nel recupero del documento.';
 		}		
 	}
 
@@ -435,98 +430,35 @@ class WsController extends AppController
 
 		$interview['answers'] = $this->Surveys->setQuestionsValue($chapters, $answers);
 
+		//Sotituzione placeholders
+		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview['id_quotation']);
+		foreach($interview['answers'] as $answer){
+            $answer = $this->Surveys->replacePlaceholdersTexts($answer, $valuePlaceholders);
+        }
+
+		//Dati per schede tecniche
+		$dataSheetsInfo = [];
+		foreach($interview['answers'] as $answer){
+            $dataSheetsInfo = $this->Surveys->getDataSheetsInfo($answer, $dataSheetsInfo);
+        }
+		$interview['data_sheets_info'] = $dataSheetsInfo;
+
+		//Misure
+		$interview['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($interview['id_quotation']);
+
 		$interview['title'] = $survey['title'];
 		$interview['subtitle'] = $survey['subtitle'];
 		$interview['description'] = $survey['description'];
 		$interview['version'] = $survey['version'];
 		$interview['survey_version'] = $survey['version'];
-		$interview['date_update'] = $interview['modified']->format('d/m/Y');
-
-		$user = TableRegistry::get('Users')->get($interview['id_user']);
-		$interview['user_update'] = $user['nome'].' '.$user['cognome'];
 
 		if($interview){
 			$this->_result['response'] = "OK";
 			$this->_result['data'] = $interview;
-			$this->_result['msg'] = 'Scheda recuperata correttamente.';
+			$this->_result['msg'] = 'Documento recuperato correttamente.';
 		}else{
 			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero della scheda.';
-		}		
-	}
-
-	public function getEnabledPartners($surveyId)
-	{
-		$partners = TableRegistry::get('Aziende.Aziende')
-			->find()
-			->select(['code' => 'Aziende.id', 'label' => 'denominazione'])
-			->where(['Aziende.id = sts.id_azienda', 'deleted' => '0'])
-			->order('label ASC')
-			->join([
-				[
-					'table' => 'surveys_to_structures',
-					'alias' => 'sts',
-					'type' => 'LEFT',
-					'conditions' => ['sts.id_survey' => $surveyId]
- 				]
-			])
-			->group(['Aziende.id'])
-			->toArray();
-
-		if($partners){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $partners;
-			$this->_result['msg'] = 'Enti recuperati con sucesso.';
-		}else{
-			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero degli enti.';
-		}		
-	}
-
-	public function getStructuresInterview($partnerId)
-	{
-		$structures = TableRegistry::get('Aziende.Sedi')
-			->find()
-			->select(['code' => 'Sedi.id', 'label' => 'CONCAT(UPPER(Sedi.comune), " - ", Sedi.indirizzo)'])
-			->where(['Sedi.id_azienda' => $partnerId, 'deleted' => '0'])
-			->order('label ASC')
-			->toArray();
-
-		if($structures){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $structures;
-			$this->_result['msg'] = 'Sedi recuperate con sucesso.';
-		}else{
-			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero delle sedi.';
-		}		
-	}
-
-	public function getEnabledStructures($surveyId, $partnerId)
-	{
-		$structures = TableRegistry::get('Aziende.Sedi')
-			->find()
-			->select(['code' => 'Sedi.id', 'label' => 'CONCAT(UPPER(Sedi.comune), " - ", Sedi.indirizzo)'])
-			->where(['Sedi.id = sts.id_sede', 'deleted' => '0'])
-			->order('label ASC')
-			->join([
-				[
-					'table' => 'surveys_to_structures',
-					'alias' => 'sts',
-					'type' => 'LEFT',
-					'conditions' => ['sts.id_survey' => $surveyId, 'sts.id_azienda' => $partnerId]
- 				]
-			])
-			->group(['Sedi.id'])
-			->toArray();
-
-		if($structures){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $structures;
-			$this->_result['msg'] = 'Sedi recuperate con sucesso.';
-		}else{
-			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero delle sedi.';
+			$this->_result['msg'] = 'Errore nel recupero del Documento.';
 		}		
 	}
 
@@ -553,203 +485,56 @@ class WsController extends AppController
 
 		$interviews->patchEntity($entity, $data);
 
-		//assegnazione nodo e codice provincia
-		if($user['role'] == 'nodo'){
-			$contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($user['id']);
-			$nodeId = $contatto['id_azienda'];
-		}elseif($user['role'] == 'centro'){
-			$nodeId = NULL;
-		}else{
-			$nodeId = empty($data['node_id']) ? NULL : $data['node_id'];
-		}
+		if($interviews->save($entity)){
 
-		if(empty($data['report_id'])) {
-			if(empty($nodeId)){
-				$provinceCode = 'PIE';
-			}else{
-				$azienda = TableRegistry::get('Aziende.Aziende')->get($nodeId);
-				$provinceCode = $azienda['codice_provincia'];
+			if($frozen){
+				$surveys = TableRegistry::get('Surveys.Surveys');
+				$survey = $surveys->get($data['id_survey']);
+				$survey->status = 4;
+				$surveys->save($survey);
 			}
-		}
 
-		if(empty($data['report_id']) && empty($provinceCode)) {
+			//Delete answers for interview
+			$surveysAnswers = TableRegistry::get('Surveys.SurveysAnswers');
+			$groupCode = uniqid('', true);
+			$surveysAnswers->updateAll(['group_id' => $groupCode, 'deleted' => 1], ['id_interview' => $entity->id, 'deleted' => 0]);
+
+			//Delete answer data for interview
+			$surveysAnswerData = TableRegistry::get('Surveys.SurveysAnswerData');
+			$surveysAnswerData->deleteAll(['interview_id' => $entity->id]);
+
+			$answersData = json_decode($data['answers']);
+
+			//Save answers
+			foreach($answersData as $index => $answers){
+				$surveyAnswer = $surveysAnswers->newEntity();
+
+				$surveyAnswer->id_interview = $entity->id;
+				$surveyAnswer->chapter = $index+1;
+				$surveyAnswer->chapter_data = json_encode($answers);
+				$surveyAnswer->color = $answers->color;
+
+				$surveysAnswers->save($surveyAnswer);
+			}
+
+			//Save answers data
+			if(!empty($answersData)){
+				$this->saveItemsAnswersData($answersData, $entity->id);
+			}
+
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $entity->id;
+			$this->_result['msg'] = "Documento salvato con successo.";
+		}else{
+			$message = "Errore nel salvataggio del Documento.";  
+			foreach($entity->errors() as $field => $errors){ 
+				foreach($errors as $rule => $msg){ 
+					$message .= "\n" . $field.': '.$msg;
+				}
+			} 
 			$this->_result['response'] = "KO";
-			$this->_result['msg'] = "Attenzione! Il codice provincia del nodo non è impostato correttamente e non si possono salvare i casi. Contattare l'amministratore di sistema per risolvere.";
-		}else{
-			if($interviews->save($entity)){
-
-				if($frozen){
-					$surveys = TableRegistry::get('Surveys.Surveys');
-					$survey = $surveys->get($data['id_survey']);
-					$survey->status = 4;
-					$surveys->save($survey);
-				}
-
-				//Delete answers for interview
-				$surveysAnswers = TableRegistry::get('Surveys.SurveysAnswers');
-				$groupCode = uniqid('', true);
-				$surveysAnswers->updateAll(['group_id' => $groupCode, 'deleted' => 1], ['id_interview' => $entity->id, 'deleted' => 0]);
-
-				//Delete answer data for interview
-				$surveysAnswerData = TableRegistry::get('Surveys.SurveysAnswerData');
-				$surveysAnswerData->deleteAll(['interview_id' => $entity->id]);
-
-				$answersData = json_decode($data['answers']);
-
-				//Save answers
-				foreach($answersData as $index => $answers){
-					$surveyAnswer = $surveysAnswers->newEntity();
-
-					$surveyAnswer->id_interview = $entity->id;
-					$surveyAnswer->chapter = $index+1;
-					$surveyAnswer->chapter_data = json_encode($answers);
-					$surveyAnswer->color = $answers->color;
-
-					$surveysAnswers->save($surveyAnswer);
-				}
-
-				//Save answers data
-				if(!empty($answersData)){
-					$this->saveItemsAnswersData($answersData, $entity->id);
-				}
-
-				//salvataggio report
-				$reportsTable = TableRegistry::get('Reports.Reports');
-				if(empty($data['report_id'])){
-					$newReport = true;
-					$report = $reportsTable->newEntity();
-					$report->user_create_id = $user['id'];
-					$report->status = 'open';
-					$report->province_code = $provinceCode;
-					$report->opening_date = date('Y-m-d');
-				}else{
-					$newReport = false;
-					$report = $reportsTable->get($data['report_id']);
-				}
-				$report->user_update_id = $user['id'];
-				$report->interview_id = $entity->id;
-				$report->node_id = $nodeId;
-
-				$report = $reportsTable->save($report);
-
-				if ($newReport && $report) {
-					// Salvo storico apertura
-					$date = new Time();
-					$this->Reports->saveHistory($report['id'], $report['node_id'], 'open', $date);
-				}
-
-				$history = TableRegistry::get('Reports.Histories')->find()
-					->where(['report_id' => $report['id']])
-					->order(['date' => 'ASC'])
-					->toArray();
-
-				$this->_result['response'] = "OK";
-				$this->_result['data'] = ['report' => $report, 'interview' => $entity->id, 'history' => $history];
-				$this->_result['msg'] = "Scheda salvata con successo.";
-			}else{
-				$message = "Errore nel salvataggio della scheda.";  
-				foreach($entity->errors() as $field => $errors){ 
-					foreach($errors as $rule => $msg){ 
-						$message .= "\n" . $field.': '.$msg;
-					}
-				} 
-				$this->_result['response'] = "KO";
-				$this->_result['msg'] = $message;
-			}
+			$this->_result['msg'] = $message;
 		}
-	}
-
-	public function getPartnerStructures($idPartner)
-	{
-		$sedi = TableRegistry::get('Aziende.Sedi');
-
-		$res = $sedi->find()
-			->select(['id', 'comune', 'indirizzo'])
-			->where(['id_azienda' => $idPartner, 'deleted' => 0])
-			->order(['comune ASC', 'indirizzo ASC'])
-			->toArray();
-
-		$data = [];
-		foreach($res as $sede){
-			$data[] = [
-				'id' => $sede['id'],
-				'label' => strtoupper($sede['comune']).' - '.$sede['indirizzo'],
-				'selected' => false
-			];
-		}
-
-		$this->_result['response'] = "OK";
-		$this->_result['data'] = $data;
-		$this->_result['msg'] = "Sedi dell'ente recuperate con successo.";		
-	}
-
-	public function getManagingEntities()
-	{
-		$pass['query'] = $this->request->query;
-
-		$userId = $this->request->session()->read('Auth.User.id');
-
-        $res = $this->Surveys->getManagingEntities($pass, $userId);
-     
-        $out['total_rows'] = $res['tot'];
-
-        if(!empty($res['res'])){
-
-            foreach ($res['res'] as $key => $entity) {
-
-                $buttons = "";
-				$buttons .= '<div class="button-group">';
-				$buttons .= '<a href="'.Router::url('/surveys/surveys/structures/'.$entity->id).'" class="btn btn-xs btn-primary view-structures" title="Visualizza sedi"><i class="fa fa-industry"></i> Sedi</a>';
-				$buttons .= '</div>';
-
-				$out['rows'][] = [
-					htmlspecialchars($entity['denominazione']),
-					$buttons
-				];
-
-            }
-
-            $this->_result = $out;
-
-        }else{
-
-            $this->_result = array();
-        }
-	}
-
-	public function getStructures($idManagingEntity)
-	{
-		$pass['query'] = $this->request->query;
-
-		$userId = $this->request->session()->read('Auth.User.id');
-
-        $res = $this->Surveys->getStructures($pass, $userId, $idManagingEntity);
-
-        $out['total_rows'] = $res['tot'];
-
-        if(!empty($res['res'])){
-
-            foreach ($res['res'] as $key => $structure) {
-
-                $buttons = "";
-				$buttons .= '<div class="button-group">';
-				$buttons .= '<a href="'.Router::url('/surveys/surveys/interviews/0/'.$idManagingEntity.'/'.$structure['id']).'" class="btn btn-xs btn-primary view-interviews" title="Visualizza interviste"><i class="fa fa-list"></i> interviste</a>';
-				$buttons .= '</div>';
-
-				$out['rows'][] = [
-					htmlspecialchars(strtoupper($structure['comune'])),
-					htmlspecialchars($structure['indirizzo']),
-					$buttons
-				];
-
-            }
-
-            $this->_result = $out;
-
-        }else{
-
-            $this->_result = array();
-        }
 	}
 
 	public function getInterviewsUser($managingEntityId, $structureId)
@@ -831,28 +616,9 @@ class WsController extends AppController
         }
 	}
 
-	public function verifySurveysStructure($managingEntityId, $structureId)
-	{
-		$userId = $this->request->session()->read('Auth.User.id');
-		$partner = TableRegistry::get('Aziende.Aziende')->getPartnerByUser($userId);
-
-		$surveys = TableRegistry::get('Surveys.Surveys')->verifySurveysStructure($partner['id'], $managingEntityId, $structureId);
-
-		if($surveys){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $surveys;
-            $this->_result['msg'] = 'Questionari trovati.';		
-        }else{
-            $this->_result['response'] = "KO";
-            $this->_result['msg'] = 'Nessun questionario trovato per questa sede.';
-        }
-	}
-
-
 	public function saveImagePath($url = false)
 	{
 		$file = $this->request->data['file'];
-		$surveyId = $this->request->data['survey'];
 
         $type = finfo_file(finfo_open(FILEINFO_MIME_TYPE),$file['tmp_name']);
         $type = substr($type, 0, strpos($type, '/'));
@@ -867,8 +633,8 @@ class WsController extends AppController
             return;
 		}
 		
-		$basePath = ROOT.DS.Configure::read('dbconfig.surveys.ELEMENT_IMAGE_FILE_BASE_PATH');
-        $uploadPath = date('Y').DS.date('m').DS.$surveyId;
+		$basePath = WWW_ROOT.Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
+        $uploadPath = date('Y').DS.date('m');
         $fileName = uniqid().'_'.$file['name'];
 
         if (!is_dir($basePath.$uploadPath) && !mkdir($basePath.$uploadPath, 0755, true)){
@@ -884,25 +650,27 @@ class WsController extends AppController
         $this->_result['response'] = "OK";
 		$this->_result['data'] = $uploadPath.DS.$fileName;
 		if($url){
-			/*$type = pathinfo($basePath.$uploadPath.DS.$fileName, PATHINFO_EXTENSION);
+			$type = pathinfo($basePath.$uploadPath.DS.$fileName, PATHINFO_EXTENSION);
 			$image = file_get_contents($basePath.$uploadPath.DS.$fileName);
-			$this->_result['data'] = 'data:image/' . $type . ';base64,' . base64_encode($image);*/
-			$baseUrl = $_SERVER['HTTP_ORIGIN'].Router::url('/');
-			$this->_result['data'] = $baseUrl.Configure::read('dbconfig.surveys.ELEMENT_IMAGE_FILE_BASE_PATH').$uploadPath.DS.$fileName;
+			$this->_result['data'] = 'data:image/' . $type . ';base64,' . base64_encode($image);
+			/*$baseUrl = $_SERVER['HTTP_ORIGIN'].Router::url('/');
+			$this->_result['data'] = $baseUrl.Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH').$uploadPath.DS.$fileName;*/
 		}
         $this->_result['msg'] = "Salvataggio avvenuto con successo.";
 	}
 
 	public function viewImage($path)
 	{
-		$basePath = ROOT.DS.Configure::read('dbconfig.surveys.ELEMENT_IMAGE_FILE_BASE_PATH');
+		$basePath = WWW_ROOT.Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
 
 		if(file_exists($basePath.$path)){
-            $this->response->file($basePath.$path , array(
-                'download'=> false,
-                'name'=> end(explode('/', $path))
-            ));
-            return $this->response;
+			$pathArray = explode('/', $path);
+			$fileName = end($pathArray);
+			$this->response->file($basePath.$path , array(
+				'download'=> false,
+				'name'=> $fileName
+			));
+			return $this->response;
         }else{
             $this->_result['msg'] = 'Il file richiesto non esiste.';
         }
@@ -911,7 +679,7 @@ class WsController extends AppController
 	public function deleteImage()
 	{
 		$path = $this->request->data['path'];
-		$basePath = ROOT.DS.Configure::read('dbconfig.surveys.ELEMENT_IMAGE_FILE_BASE_PATH');
+		$basePath = WWW_ROOT.DS.Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
 		
 		if(unlink($basePath.$path)){
 			$this->_result['response'] = "OK";
@@ -941,30 +709,6 @@ class WsController extends AppController
 		$cloned->cloned_by = $surveyId;
 
 		if($surveys->save($cloned)){
-				
-			//Associazione strutture
-			$surveysStructures = TableRegistry::get('Surveys.SurveysToStructures');
-
-			$aziende = $surveysStructures->getStructuresForSurvey($surveyId);
-
-			$errorStructures = false;
-
-			foreach($aziende as $a){ 
-				if($errorStructures){
-					break;
-				}
-				foreach(explode(',', $a->sedi) as $s){ 
-					$entityStructure = $surveysStructures->newEntity();
-
-					$entityStructure->id_survey = $cloned->id;
-					$entityStructure->id_gestore = $a->id_azienda;
-					$entityStructure->id_sede = $s;
-
-					if(!$surveysStructures->save($entityStructure)){
-						$errorStructures = true;
-					}		
-				}		
-			} 
 
 			//Salvataggio sezioni
 			if(!$errorStructures){
@@ -1007,7 +751,7 @@ class WsController extends AppController
 				$this->_result['msg'] = "Clonazione del questionario avvenuta con successo.";
 			}
 		}else{
-			$this->_result['msg'] = "Errore nella clonazione del questionario.";
+			$this->_result['msg'] = "Errore nella clonazione del modello.";
 		}
 
 	}
@@ -1025,9 +769,9 @@ class WsController extends AppController
 
 		if($interviews->save($interview)){
 			$this->_result['response'] = "OK";
-			$this->_result['msg'] = "Stato dell'intervista impostato su 'Firmata'.";
+			$this->_result['msg'] = "Stato del documento impostato su 'Firmata'.";
 		}else{
-			$this->_result['msg'] = "Errore. Stato dell'intervista non impostato.";
+			$this->_result['msg'] = "Errore. Stato del documento non impostato.";
 		}
 	}
 
@@ -1082,13 +826,13 @@ class WsController extends AppController
 
 			if($errorAnswers){
 				$surveys->delete($cloned->id);
-				$this->_result['msg'] = "Errore nella clonazione dell'intervista. Salvataggio sezioni non riuscito.";
+				$this->_result['msg'] = "Errore nella clonazione del documento. Salvataggio sezioni non riuscito.";
 			}else{
 				$this->_result['response'] = "OK";
-				$this->_result['msg'] = "Clonazione dell'intervista avvenuta con successo.";
+				$this->_result['msg'] = "Clonazione del documento avvenuta con successo.";
 			}
 		}else{
-			$this->_result['msg'] = "Errore nella clonazione del questionario.";
+			$this->_result['msg'] = "Errore nella clonazione del documento.";
 		}
 
 	}
@@ -1216,6 +960,49 @@ class WsController extends AppController
         }
 	}
 
+	public function searchDataSheet($search = "") 
+    {
+        $dataSheets = TableRegistry::get('Building.DataSheets')->searchDataSheets($search);
+
+		if ($dataSheets) {
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $dataSheets;
+			$this->_result['msg'] = 'Schede tecniche recuperate con sucesso.';
+		} else {
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Nessuna scheda tecnica trovata.';
+		}
+	}
+
+	public function getActiveComponentsByInterview($interviewId = '')
+	{
+		if (!empty($interviewId)) {
+			$interview = TableRegistry::get('Surveys.SurveysInterviews')->get($interviewId);
+			$activeComponents = TableRegistry::get('Building.ComponentQuotation')->getComponentIdsByQuotation($interview['id_quotation']);
+			
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $activeComponents;
+			$this->_result['msg'] = 'Componenti attivi recuperati con successo.';
+		} else {
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore: ID mancante.';
+		}
+	}
+
+	public function getActiveComponentsByQuotation($quotationId = '')
+	{
+		if (!empty($quotationId)) {
+			$activeComponents = TableRegistry::get('Building.ComponentQuotation')->getComponentIdsByQuotation($quotationId);
+
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $activeComponents;
+			$this->_result['msg'] = 'Componenti attivi recuperati con successo.';
+		} else {
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = 'Errore: ID mancante.';
+		}
+	}
+
 	private function saveItemsQuestionsMetadata($items, $surveyId){
 		$surveysQuestionMetadata = TableRegistry::get('Surveys.SurveysQuestionMetadata');
 
@@ -1249,20 +1036,35 @@ class WsController extends AppController
 				$data = [
 					'interview_id' => $interviewId,
 					'question_id' => $question->id,
-					'value' => json_encode($question->answer),
 					'type' => $question->type
 				];
 				if(isset($question->options)){
 					$data['options'] = json_encode($question->options);
 				}
-				if($question->type == 'multiple_choice'){
-					$data['value'] = json_encode([
-						'answer' => $question->answer,
-						'other_answer_check' => $question->other_answer_check,
-						'other_answer' => $question->other_answer
-					]);
+
+				//value
+				switch ($question->type) {
+					case 'fixed_text':
+						$data['value'] = json_encode($question->value);
+						break;
+					case 'image':
+						$data['value'] = json_encode(['path' => $question->path, 'caption' => $question->caption]);
+						break;
+					case 'multiple_choice':
+						$data['value'] = json_encode([
+							'answer' => $question->answer,
+							'other_answer_check' => $question->other_answer_check,
+							'other_answer' => $question->other_answer
+						]);
+						break;
+					case 'page_break':
+						$data['value'] = '';
+						break;
+					default:
+						$data['value'] = json_encode($question->answer);
 				}
 
+				//final value
 				switch ($question->type) {
 					case 'yes_no':
 						$a = '';
@@ -1311,6 +1113,15 @@ class WsController extends AppController
 							$a[] = 'altro: '.$question->other_answer;
 						}
 						$data['final_value'] = implode(', ', $a);
+						break;
+					case 'fixed_text':
+						$data['final_value'] = $question->value;
+						break;
+					case 'image':
+						$data['final_value'] = $question->path;
+						break;
+					case 'page_break':
+						$data['value'] = '';
 						break;
 					default:
 						$data['final_value'] = $question->answer;

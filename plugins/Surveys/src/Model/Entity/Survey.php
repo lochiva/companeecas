@@ -7,10 +7,15 @@ use Cake\ORM\Entity;
  * Survey Entity
  *
  * @property int $id
+ * @property int $id_configurator
  * @property string $title
  * @property string $subtitle
  * @property string $description
  * @property string $status
+ * @property string $yes_no_questions
+ * @property string $version
+ * @property \Cake\I18n\Date $valid_from
+ * @property int $cloned_by
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */
@@ -27,6 +32,7 @@ class Survey extends Entity
      * @var array
      */
     protected $_accessible = [
+        'id_configurator' => true,
         'title' => true,
         'subtitle' => true,
         'description' => true,
