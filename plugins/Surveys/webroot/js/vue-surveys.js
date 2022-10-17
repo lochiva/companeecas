@@ -254,12 +254,10 @@ var nested = {
 var app = new Vue({
     el: '#app-surveys',
     data: {
-        configurators: [],
         statuses: [],
         elements: elements,
         surveyData: {
             idSurvey: '',
-            id_configurator: '',
             title: '',
             subtitle: '',
             description: '',
@@ -402,8 +400,6 @@ var app = new Vue({
         if(this.surveyData.idSurvey){
             this.loadSurvey(this.surveyData.idSurvey);
         }
-
-        this.getConfigurators();
         this.getSurveyStatuses();
         this.getStandardTexts();
 
@@ -413,11 +409,8 @@ var app = new Vue({
         loadSurvey: function(id){
             axios.get(pathServer + 'surveys/ws/getSurvey/' + id)
                 .then(res => { 
-                    if (res.data.response == 'OK') { 
-                        this.surveyData.id_configurator = res.data.data.id_configurator;
-                        if (this.surveyData.id_configurator != '') {
-                            this.updateSectionsList();
-                        }
+                    if (res.data.response == 'OK') {
+                        this.updateSectionsList();
                         this.surveyData.title = res.data.data.title;
                         this.surveyData.subtitle = res.data.data.subtitle;
                         this.surveyData.description = res.data.data.description;
@@ -438,44 +431,6 @@ var app = new Vue({
                 }).catch(error => {
                     console.log(error);
                 });
-        },
-        getConfigurators: function(){
-
-            axios.get(pathServer + 'surveys/ws/getConfigurators')
-                .then(res => { 
-                    if (res.data.response == 'OK') {
-                        this.configurators = res.data.data; 
-                    } else {
-                        alert(res.data.msg);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
-
-        },
-        warningChangeConfigurator: function(e) {
-            if (this.surveyData.id_configurator != '') {
-                e.currentTarget.blur();
-                alert('Attenzione! Cambiando il configuratore tutti i componenti del preventivo la cui visibilità dipende da questo configuratore verranno impostati come "Sempre presente".');
-            }
-        },
-        updateSectionsList: function() {
-            // Visibilità componenti a "Sempre presente"
-            this.resetVisibility(this.surveyData.items);
-
-            // Lista sezioni per configuratore
-            this.sectionsList = [];
-
-            axios.get(pathServer + 'building/ws/getSectionsByConfigurator/'+this.surveyData.id_configurator)
-            .then(res => { 
-                if (res.data.response == 'OK') {
-                    this.sectionsList = res.data.data;
-                } else {
-                    this.sectionsList = [];
-                }
-            }).catch(error => {
-                console.log(error);
-            });
         },
         resetVisibility: function(items) {
             items.forEach((item) => {
@@ -558,7 +513,6 @@ var app = new Vue({
 
             this.setItemsClosed(this.surveyData.items);
 
-            params.append('id_configurator', this.surveyData.id_configurator);
             params.append('title', this.surveyData.title);
             params.append('subtitle', this.surveyData.subtitle);
             params.append('description', this.surveyData.description);

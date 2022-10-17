@@ -14,11 +14,10 @@ class SurveysComponent extends Component
 		$surveys = TableRegistry::get('Surveys.Surveys');
 		
 		$columns = [
-			0 => ['val' => 'c.name', 'type' => 'text'],
-			1 => ['val' => 'Surveys.title', 'type' => 'text'],
-			2 => ['val' => 'Surveys.subtitle', 'type' => 'text'],
-			3 => ['val' => 'Surveys.description', 'type' => 'text'],
-			4 => ['val' => 'Surveys.status', 'type' => '']
+			0 => ['val' => 'Surveys.title', 'type' => 'text'],
+			1 => ['val' => 'Surveys.subtitle', 'type' => 'text'],
+			2 => ['val' => 'Surveys.description', 'type' => 'text'],
+			3 => ['val' => 'Surveys.status', 'type' => '']
 		];
 		
 		$opt['join'] = [
@@ -27,17 +26,11 @@ class SurveysComponent extends Component
 				'alias' => 'ss',
 				'type' => 'LEFT',
 				'conditions' => 'ss.id = Surveys.status',
-			],
-			[
-				'table' => 'bui_configurators',
-				'alias' => 'c',
-				'type' => 'LEFT',
-				'conditions' => 'c.id = Surveys.id_configurator',
 			]
 		];
 
-		$opt['fields'] = ['Surveys.id', 'Surveys.title', 'Surveys.subtitle', 'Surveys.description', 'Surveys.status', 'c.name'];
-		$opt['order'] = ['ss.ordering ASC', 'c.name ASC', 'Surveys.title ASC'];
+		$opt['fields'] = ['Surveys.id', 'Surveys.title', 'Surveys.subtitle', 'Surveys.description', 'Surveys.status'];
+		$opt['order'] = ['ss.ordering ASC','Surveys.title ASC'];
 
         $toRet['res'] = $surveys->queryForTableSorter($columns, $opt, $pass);
         $toRet['tot'] = $surveys->queryForTableSorter($columns, $opt, $pass, true);

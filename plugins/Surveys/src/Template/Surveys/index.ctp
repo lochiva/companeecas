@@ -8,12 +8,12 @@ $role = $this->request->session()->read('Auth.User.role');
 <?= $this->Html->script( 'Surveys.surveys', ['block']); ?>
 <section class="content-header">
     <h1>
-        <?=__c('Modelli preventivi')?>
-        <small>Gestione <?=__c('modelli preventivi')?></small>
+        <?=__c('Modelli')?>
+        <small>Gestione <?=__c('modelli')?></small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <li class="active"><?=__c('Modelli preventivi')?></li>
+        <li class="active"><?=__c('Modelli')?></li>
     </ol>
 </section>
 
@@ -51,7 +51,6 @@ $role = $this->request->session()->read('Auth.User.role');
                         <table id="table-surveys" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Configuratore</th>
                                     <th>Titolo</th>
                                     <th>Sottotitolo</th>
                                     <th>Descrizione</th>

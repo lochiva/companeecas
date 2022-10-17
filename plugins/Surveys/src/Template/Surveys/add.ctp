@@ -35,7 +35,7 @@ $role = $this->request->session()->read('Auth.User.role');
     var placeholders = <?= json_encode($placeholders) ?>;
 </script>
 
-<?php $this->assign('title', 'Modelli preventivi') ?>
+<?php $this->assign('title', 'Modelli') ?>
 <?= $this->Html->css('Surveys.surveys'); ?>
 <?= $this->Html->css('Surveys.vue-surveys'); ?>
 <!--<?= $this->Html->script('Surveys.questions.js', ['block']); ?>-->
@@ -53,7 +53,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </h1>
         <ol class="breadcrumb">
             <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-            <li><a href="<?=Router::url('/surveys/surveys/index');?>">Modelli preventivi</a></li>
+            <li><a href="<?=Router::url('/surveys/surveys/index');?>">Modelli</a></li>
             <li class="active">
                 <span v-if="surveyData.idSurvey">Modifica modello</span>
                 <span v-else>Nuovo modello</span>
@@ -75,16 +75,6 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-body">
                         <form id="formSurvey" class="form-horizontal">
                             <div id="survey-header">
-                                <div class="form-group">
-                                    <div class="col-md-6">
-                                        <label class="required" for="surveyConfigurator"><?= __('Configuratore') ?></label>
-                                        <select class="form-control" name="configurator" id="surveyConfigurator" v-model="surveyData.id_configurator"
-                                            @change="updateSectionsList()" @focus="warningChangeConfigurator($event)">
-                                            <option value=""></option>
-                                            <option v-for="configurator in configurators" :value="configurator.id">{{configurator.name}}</option>
-                                        </select>
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <div class="col-md-6">
                                         <label class="required" for="surveyTitle"><?= __('Titolo') ?></label>
@@ -132,7 +122,9 @@ $role = $this->request->session()->read('Auth.User.role');
                                         </div>
                                         <div class="chapter-actions">
                                             <button v-if="!item.primary" type="button" class="btn btn-warning btn-xs" @click.stop="showModalItemVisibility(item, 'section')" title="Configurazione visibilià della sottosezione"><i class="fa fa-eye"></i> Visibilità</button>
+<!-- 
                                             <toggle-switch v-if="item.primary" class="layout-switch" :options="sectionToggleOptions" :group="'layoutSwitch'+index" v-model="item.layout" />
+                                             -->
                                             <button v-if="item.primary" type="button" class="btn btn-info btn-xs add-subsection" @click.stop="$emit('add-item', item); forceOpen()" title="Aggiungi sottosezione"><i class="fa fa-plus"></i> Sottosezione</button>
                                             <button type="button" class="btn btn-danger btn-xs remove-item" @click.stop="$emit('remove-item', {'item':parentitem, 'index':index})" title="Cancella"><i class="fa fa-trash"></i></button>
                                         </div>
@@ -268,7 +260,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                         -->                                                    
                                                     </div>
 
-                                                    <!-- MISURE -->
+                                                    <!-- MISURE 
                                                     <div v-if="question.type == 'dimensions'" class="col-md-12 padding0">
                                                         <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
                                                         <div class="col-md-12">
@@ -276,15 +268,15 @@ $role = $this->request->session()->read('Auth.User.role');
                                                                 Misure
                                                             </div>
                                                         </div>
-                                                        <!--
+
                                                         <div class="col-md-12">
                                                             <label>Domanda condizionata</label>
                                                             <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
                                                             <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
                                                         </div>    
-                                                        -->                                                    
+                                           
                                                     </div>
-
+                                                    -->
                                                     <!-- SALTO PAGINA -->
                                                     <div v-if="question.type == 'page_break'" class="col-md-12 padding0">
                                                         <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>

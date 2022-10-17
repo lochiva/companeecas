@@ -39,6 +39,23 @@ class SurveysTable extends AppTable
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('SurveysChapters')
+            ->setForeignKey('id_survey')
+            ->setConditions(['SurveysChapters.deleted' => false])
+            ->setSort(['SurveysChapters.chapter' => 'ASC'])
+            ->setProperty('chapters')
+            ->setDependent(true);
+
+        $this->hasMany('SurveyInterviews')
+            ->setForeignKey('id_survey')
+            ->setProperty('interviews')
+            ->setDependent(true);
+
+        $this->belongsTo('SurveysStatuses')
+            ->setForeignKey('status')
+            ->setProperty('status_name');
+
     }
 
     /**

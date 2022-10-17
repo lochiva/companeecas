@@ -108,6 +108,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                 </div>
 
                                                 <!-- SCHEDA TECNICA -->
+<!--                                                 
                                                 <div v-if="question.type == 'data_sheet' && existsDataSheet(question.data_sheet.id) && (!question.visibility_by_component || isComponentActive(question.components))" class="question-div"  v-show="typeof question.visible == 'undefined' || question.visible">
                                                     <span v-html="getDataSheetTitle(question.data_sheet.id)" class="data-sheet-title"></span>:
                                                     <span v-html="getDataSheetContent(question.data_sheet.id)" class="data-sheet-content"></span><br>
@@ -116,8 +117,9 @@ $role = $this->request->session()->read('Auth.User.role');
                                                         <img v-for="image in getDataSheetImages(question.data_sheet.id)" :src="'data:'+image.type+';base64, '+image.content" class="data-sheet-image">
                                                     </span>
                                                 </div>
-
+ -->
                                                 <!-- MISURE -->
+<!-- 
                                                 <div v-if="question.type == 'dimensions'" class="question-div text-center"  v-show="typeof question.visible == 'undefined' || question.visible">
                                                     <div class="div-dimensions">    
                                                         <table class="table-dimensions">
@@ -128,6 +130,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                         </table>
                                                     </div>
                                                 </div>
+                                                 -->
 
                                                 <!-- SALTO PAGINA -->
                                                 <div v-if="question.type == 'page_break'" class="question-div" v-show="typeof question.visible == 'undefined' || question.visible">

@@ -62,20 +62,6 @@ class WsController extends AppController
 
 		$pass['query'] = $this->request->query;
 
-		if($user['role'] == 'admin'){
-			if(isset($pass['query']['filter'][3])){
-				if($pass['query']['filter'][3] == 'Pubblicato'){
-					$pass['query']['filter'][3] = 1;
-				}elseif($pass['query']['filter'][3] == 'Bozza'){
-					$pass['query']['filter'][3] = 2;
-				}elseif($pass['query']['filter'][3] == 'Annullato'){
-					$pass['query']['filter'][3] = 3;
-				}elseif($pass['query']['filter'][3] == 'Pubblicato (congelato)'){
-					$pass['query']['filter'][3] = 4;
-				}
-			}
-		}
-
         $res = $this->Surveys->getSurveys($pass, $user);
         
         $out['total_rows'] = $res['tot'];
@@ -84,7 +70,7 @@ class WsController extends AppController
 
             foreach ($res['res'] as $key => $survey) {
 
-				switch($survey->status){
+/* 				switch($survey->status){
 					case '1':
 						$status = '<span class="status-pubblicato">Pubblicato</span>';
 						break;
@@ -97,18 +83,17 @@ class WsController extends AppController
 					case '4':
 						$status = '<span class="status-frozen">Pubblicato (congelato)</span>';
 						break;
-				}
+				} */
 
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
 				$buttons .= '<a href="'.Router::url('/surveys/surveys/edit?survey='.$survey->id).'" class="btn btn-xs btn-warning edit-survey" title="Modifica questionario"><i class="fa fa-pencil"></i></a>'; 
-				//$buttons .= '<a href="'.Router::url('/surveys/surveys/interviews/'.$survey->id).'" class="btn btn-xs btn-primary survey-interviews" title="Visualizza interviste"><i class="fa fa-list"></i></a>'; 
-				//$buttons .= '<a class="btn btn-xs btn-info survey-clone" data-id="'.$survey->id.'" title="Clona questionario"><i class="fa fa-clone"></i></a>';
+
+				
 				$buttons .= '<a class="btn btn-xs btn-danger delete-survey" data-id="'.$survey->id.'" title="Annulla questionario"><i class="fa fa-trash"></i></a>';
 				$buttons .= '</div>';
 
 				$out['rows'][] = [
-					htmlspecialchars($survey['c']['name']),
 					htmlspecialchars($survey['title']),
 					htmlspecialchars($survey['subtitle']),
 					htmlspecialchars($survey['description']),
@@ -166,22 +151,6 @@ class WsController extends AppController
 		}else{
 			$this->_result['response'] = "KO";
 			$this->_result['msg'] = 'Errore nel recupero del modello.';
-		}		
-	}
-
-	public function getConfigurators()
-	{
-		$configurators = TableRegistry::get('Building.Configurators')
-			->find()
-			->toArray();
-
-		if($configurators){
-			$this->_result['response'] = "OK";
-			$this->_result['data'] = $configurators;
-			$this->_result['msg'] = 'Configuratori modello recuperati con sucesso.';
-		}else{
-			$this->_result['response'] = "KO";
-			$this->_result['msg'] = 'Errore nel recupero dei configuratori del modello.';
 		}		
 	}
 
