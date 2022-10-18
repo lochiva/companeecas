@@ -251,11 +251,20 @@ $(document).on('change', '#inputProvincia', function(){
 
 		}
 	});
+  $('#inputPolice').empty();
 });
 
 $(document).on('change', '#inputComune', function(){
 	$('#comuneValue').val($(this).val());
 });
+
+$(document).on('select2:select', '#inputComune', function (e) { 
+    loadPoliceStations(e.params.data.id);
+    $('#inputPolice').val('').trigger('change');
+
+    console.log($('#inputPolice').val());
+  }
+);
 
 
 function deleteSede(id){
@@ -341,6 +350,17 @@ function loadInputModale(idSede){
             $('[name="id_procedura_affidamento"]').val(data.data.id_procedura_affidamento);
             $('[name="operativita"]').val(data.data.operativita);
             $('[name="note"]').val(data.data.note);
+            $('#policeStationValue').val(data.data.police_station_id);
+
+            loadPoliceStations(data.data.comune);
+
+            if (data.data.police_station_id > 0) {
+              $('#inputPolice').val(data.data.police_station_id).trigger('change');
+            } else {
+              $('#inputPolice').val('').trigger('change');
+              console.log("TRIGG");
+              
+            }
 
             enableInputModale();
 
@@ -454,6 +474,7 @@ function clearModale(){
   $('[name="note"]').val('');
   $('[name="note"]').prop("disabled", false);
   $('[name="note"]').removeClass('disabled-approved');
+  $('[name="police_station_id"]').val("").trigger('change');
 
 }
 
@@ -505,4 +526,35 @@ function disableApprovedModal() {
   $('[name="operativita"]').addClass('disabled-approved');
   $('[name="note"]').prop("disabled", true);
   $('[name="note"]').addClass('disabled-approved');
+}
+
+function loadPoliceStations(comuneVal) {
+  $.ajax({
+		url : pathServer+'ws/autocompletePoliceStations/'+comuneVal,
+		type: "GET",
+		dataType: "json",
+    async: false,
+		success : function(response) { 
+			$('#inputPolice').empty();
+
+      var data = $.map(response.data, function (obj) {
+        obj.text = obj.name;
+        obj.id = obj.id;
+        return obj;
+      });
+
+
+			$('#inputPolice').select2({
+				language: 'it',
+				width: '100%',
+				placeholder: 'Seleziona una stazione di polizia',
+				closeOnSelect: true,
+				dropdownParent: $('#inputPolice').parent(),
+				data: data
+      });
+		},
+		error : function (response){
+
+		}
+	});
 }

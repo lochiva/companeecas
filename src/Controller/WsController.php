@@ -204,5 +204,17 @@ class WsController extends AppController
     {
         $this->Trading->processErrevicodesFile($filename, $verified);
     }
+
+    public function autoCompletePoliceStations($comune = '')
+    {   
+        $search = isset($this->request->query['q']) ? $this->request->query['q'] : ''; 
+        
+        $res = array();
+
+        $policeStations = TableRegistry::get('Aziende.PoliceStations');
+        $res = $policeStations->getAutocompletePoliceStations($search, $comune);
+
+        $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Elenco risultati.");
+    }
     
 }

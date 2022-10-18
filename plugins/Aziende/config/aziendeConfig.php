@@ -28,7 +28,9 @@ return [
                     'guests_exit_types' => 'Tipologie uscite ospiti',
                     'periods' => 'Periodi',
                     'costs_categories' => 'Categorie dei costi',
-                    'status' => 'Status dei rendiconti'
+                    'status' => 'Status dei rendiconti',
+                    'police_station_types' => 'Tipi di stazioni di polizia',
+                    'police_stations' => 'Stazioni di polizia'
                 ]
             ]
         ],
