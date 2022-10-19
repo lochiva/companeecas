@@ -18,7 +18,8 @@ return [
                 'user_level' => 500, 
                 'controllers' => [
                     'surveys_statuses' => 'Stati dei modelli',
-                    'surveys_interviews_statuses' => 'Stati dei moduli'
+                    'surveys_interviews_statuses' => 'Stati dei moduli',
+                    'surveys_placeholders' => 'Segnaposto'
                 ]
             ]
         ]

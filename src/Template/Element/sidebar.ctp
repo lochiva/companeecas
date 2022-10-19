@@ -293,7 +293,7 @@ $menu = [
     'controller' => ['Surveys'],
     'action' => ['index'],
     'levels' => ['admin'],
-    'url' => '#',
+    'url' => Router::url(['plugin' => 'Surveys', 'controller' => 'Surveys', 'action' => 'index']),
     'target' => '',
     'icon-class' => 'fa fa-list-alt',
     'children' => [
