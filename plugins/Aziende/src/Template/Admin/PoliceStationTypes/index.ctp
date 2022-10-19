@@ -2,8 +2,6 @@
     <ul class="nav nav-tabs">
         <li class="active" ><a href="#"><?= __('Azioni') ?></a></li>
         <li><?= $this->Html->link(__('New Police Station Type'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Police Stations'), ['controller' => 'PoliceStations', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Police Station'), ['controller' => 'PoliceStations', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="policeStationTypes index large-9 medium-8 columns content">

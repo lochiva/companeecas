@@ -897,6 +897,67 @@ msgstr ""
 msgid "Delete Grado Parentela"
 msgstr "Cancella Grado di Parentela"
 
+#: Template/Admin/PoliceStations/index.ctp:8
+msgid "Police Stations"
+msgstr "Stazioni di polizia"
+
+#: Template/Admin/PoliceStations/view.ctp:18
+msgid "Police Station Type"
+msgstr "Tipo"
+
+#: Template/Admin/PoliceStations/view.ctp:35
+msgid "Description"
+msgstr "Descrizione"
+
+#: Template/Admin/PoliceStations/view.ctp:4
+msgid "Edit Police Station"
+msgstr "Modifica"
+
+#: Template/Admin/PoliceStations/view.ctp:6
+msgid "Delete Police Station"
+msgstr "Cancella"
+
+#: Template/Admin/PoliceStations/view.ctp:6
+msgid "List Police Stations"
+msgstr "Elenco"
+
+#: Template/Admin/PoliceStations/view.ctp:9
+msgid "New Police Station"
+msgstr "Nuovo"
+
+#: Template/Admin/PoliceStations/view.ctp:6
+#: Template/Admin/PoliceStations/index.ctp:34
+msgid "Are you sure you want to delete # {0}?"
+msgstr "Sei sicuro di voler eliminare la stazione di polizia #{0}?"
+
+#: Template/Admin/PoliceStationTypes/index.ctp:15
+msgid "Type"
+msgstr "Tipo"
+
+#: Template/Admin/PoliceStationTypes/index.ctp:16
+msgid "Label In Letter"
+msgstr "Etichetta"
+
+#: Template/Admin/PoliceStationTypes/index.ctp:4
+msgid "New Police Station Type"
+msgstr "Nuovo"
+
+#: Template/Admin/PoliceStationTypes/index.ctp:10
+msgid "Police Station Types"
+msgstr "Tipi Stazioni di polizia"
+
+#: Template/Admin/PoliceStationTypes/add.ctp:5
+msgid "List Police Station Types"
+msgstr "Elenco"
+
+#: Template/Admin/PoliceStationTypes/add.ctp:11
+msgid "Add Police Station Type"
+msgstr "Aggiungi"
+
+#: Template/Admin/PoliceStations/add.ctp:11
+msgid "Add Police Station"
+msgstr "Aggiungi"
+
 #
 # END PLUGIN PROGEST
 #

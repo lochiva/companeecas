@@ -3,8 +3,6 @@
     <ul class="nav nav-tabs">
         <li class="active" ><a href="#"><?= __('Azioni') ?></a></li>
         <li><?= $this->Html->link(__('List Police Stations'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Police Station Types'), ['controller' => 'PoliceStationTypes', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Police Station Type'), ['controller' => 'PoliceStationTypes', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="policeStations form col-lg-9 col-md-8 columns content">
