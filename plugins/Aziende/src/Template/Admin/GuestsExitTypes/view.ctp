@@ -51,6 +51,14 @@
             <td><?= $guestsExitType->tipo->name ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Modello decreto') ?></th>
+            <td><?= $guestsExitType->decreto ? $guestsExitType->decreto->title : '' ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Modello notifica') ?></th>
+            <td><?= $guestsExitType->notifica ? $guestsExitType->notifica->title : '' ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Ordinamento') ?></th>
             <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
         </tr>

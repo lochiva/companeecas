@@ -45,6 +45,8 @@ class GuestsExitType extends Entity
         'ente_type' => true,
         'ordering' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
+        'modello_decreto' => true,
+        'modello_notifica' => true
     ];
 }
