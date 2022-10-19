@@ -2,8 +2,6 @@
     <ul class="nav nav-tabs">
         <li class="active" ><a href="#"><?= __('Azioni') ?></a></li>
         <li><?= $this->Html->link(__('New Police Station'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Police Station Types'), ['controller' => 'PoliceStationTypes', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Police Station Type'), ['controller' => 'PoliceStationTypes', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="policeStations index large-9 medium-8 columns content">
@@ -24,7 +22,7 @@
             <tr>
                 <td><?= $this->Number->format($policeStation->id) ?></td>
               <td><?= h($policeStation->name) ?></td>
-                <td><?= $policeStation->has('police_station_type') ? $this->Html->link($policeStation->police_station_type->type, ['controller' => 'PoliceStationTypes', 'action' => 'view', $policeStation->police_station_type->id]) : '' ?></td>
+                <td><?= $policeStation->has('police_station_type') ? $policeStation->police_station_type->type : '' ?></td>
               <td><?= h($policeStation->created) ?></td>
               <td><?= h($policeStation->modified) ?></td>
                 <td class="actions">

@@ -5,8 +5,6 @@
         <li><?= $this->Form->postLink(__('Delete Police Station'), ['action' => 'delete', $policeStation->id], ['confirm' => __('Are you sure you want to delete # {0}?', $policeStation->id)]) ?> </li>
         <li><?= $this->Html->link(__('List Police Stations'), ['action' => 'index']) ?> </li>
         <li><?= $this->Html->link(__('New Police Station'), ['action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Police Station Types'), ['controller' => 'PoliceStationTypes', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Police Station Type'), ['controller' => 'PoliceStationTypes', 'action' => 'add']) ?> </li>
     </ul>
 </nav>
 <div class="policeStations view large-9 medium-8 columns content">
@@ -18,7 +16,7 @@
         </tr>
         <tr>
             <th scope="row"><?= __('Police Station Type') ?></th>
-            <td><?= $policeStation->has('police_station_type') ? $this->Html->link($policeStation->police_station_type->type, ['controller' => 'PoliceStationTypes', 'action' => 'view', $policeStation->police_station_type->id]) : '' ?></td>
+            <td><?= $policeStation->has('police_station_type') ? $policeStation->police_station_type->type : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Id') ?></th>
