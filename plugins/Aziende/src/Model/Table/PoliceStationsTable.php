@@ -100,6 +100,7 @@ class PoliceStationsTable extends Table
             ->contain(['PoliceStationTypes'])
             ->where(['PoliceStationTypes.type LIKE' => $type])
             ->where(['PoliceStations.name LIKE' =>'%'.$search.'%'])
+            ->order(['PoliceStations.ordering' => 'ASC'])
             ->toArray();
     
         return $res;

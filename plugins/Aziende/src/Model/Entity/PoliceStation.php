@@ -32,6 +32,7 @@ class PoliceStation extends Entity
         'police_station_type_id' => true,
         'created' => true,
         'modified' => true,
-        'police_station_type' => true
+        'police_station_type' => true,
+        'ordering' => true
     ];
 }

@@ -19,6 +19,10 @@
             <td><?= $policeStation->has('police_station_type') ? $policeStation->police_station_type->type : '' ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Ordering') ?></th>
+            <td><?= $policeStation->ordering ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Id') ?></th>
             <td><?= $this->Number->format($policeStation->id) ?></td>
         </tr>

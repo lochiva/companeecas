@@ -19,6 +19,7 @@
             echo $this->Form->input('name');
             echo $this->Form->input('description');
             echo $this->Form->input('police_station_type_id', ['options' => $policeStationTypes]);
+            echo $this->Form->input('ordering');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Save'),['class' => 'btn btn-success']) ?>

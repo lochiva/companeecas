@@ -12,6 +12,7 @@
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('name') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('police_station_type_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('ordering') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
                 <th scope="col" class="actions"><?= __('Azioni') ?></th>
@@ -23,6 +24,7 @@
                 <td><?= $this->Number->format($policeStation->id) ?></td>
               <td><?= h($policeStation->name) ?></td>
                 <td><?= $policeStation->has('police_station_type') ? $policeStation->police_station_type->type : '' ?></td>
+                <td><?= $policeStation->ordering ?></td>
               <td><?= h($policeStation->created) ?></td>
               <td><?= h($policeStation->modified) ?></td>
                 <td class="actions">
