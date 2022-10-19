@@ -547,7 +547,7 @@ function loadPoliceStations(comuneVal) {
 			$('#inputPolice').select2({
 				language: 'it',
 				width: '100%',
-				placeholder: 'Seleziona una stazione di polizia',
+				placeholder: "Seleziona dall'elenco",
 				closeOnSelect: true,
 				dropdownParent: $('#inputPolice').parent(),
 				data: data
