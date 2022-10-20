@@ -231,6 +231,11 @@ $role = $this->request->session()->read('Auth.User.role');
                                                         <div class="col-md-12">
                                                             <editor v-model="question.answer" :init="editor"></editor>
                                                         </div>
+                                                        <div class="col-md-12">
+                                                            <ul class="list-placeholders">
+                                                                <li v-for="placeholder in placeholders"><span v-html="placeholder.label"></span> - <span v-html="placeholder.description"></span></li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
 
                                                     <!-- SCHEDA TECNICA -->

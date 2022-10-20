@@ -410,7 +410,7 @@ var app = new Vue({
             axios.get(pathServer + 'surveys/ws/getSurvey/' + id)
                 .then(res => { 
                     if (res.data.response == 'OK') {
-                        this.updateSectionsList();
+                        //this.updateSectionsList();
                         this.surveyData.title = res.data.data.title;
                         this.surveyData.subtitle = res.data.data.subtitle;
                         this.surveyData.description = res.data.data.description;
