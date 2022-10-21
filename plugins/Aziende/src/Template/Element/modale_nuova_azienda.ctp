@@ -196,7 +196,7 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="inputTelefono">Logo</label>
                                 <div ng-show="vm.azienda.logo" class="col-sm-10">
-                                    <img src="{{vm.azienda.logo}}" class="preview-nodo-logo" />
+                                    <img ng-src="{{vm.azienda.logo}}" class="preview-nodo-logo" />
                                     <button class="btn btn-danger btn-remove-logo" title="Rimuovi logo" ng-click="vm.azienda.logo = ''"><i class=" fa fa-trash"></i></button>
                                 </div>
                                 <div ng-show="!vm.azienda.logo" class="col-sm-10">
