@@ -44,13 +44,13 @@ class AddFieldsToSurveysPlaceholders extends AbstractMigration
                 'modified' => date('Y-m-d H:i:s')
             ],
             [
-                'label' => '{{denominazione_ente}}',
+                'label' => '{{ente_denominazione}}',
                 'description' => 'Nome dell\'ente ospitante',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
             [
-                'label' => '{{responsabile_ente}}',
+                'label' => '{{ente_responsabile}}',
                 'description' => 'Nome del responsabile',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')

@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
+use Cake\Utility\Inflector;
 
 /**
  * Surveys Controller
@@ -139,9 +140,6 @@ class WsController extends AppController
 				$dataSheetsInfo = $this->Surveys->getDataSheetsInfo($chapter, $dataSheetsInfo);
 			}
 			$survey['data_sheets_info'] = $dataSheetsInfo;
-
-			//Misure
-			$survey['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($idQuotation);
 		}
 
 		if($survey){
@@ -346,7 +344,7 @@ class WsController extends AppController
 	{
 		$interviews = TableRegistry::get('Surveys.SurveysInterviews');
 
-		$interview = $interviews->get($id);
+		$interview = $interviews->get($id, ['contain' => 'SurveysInterviewsGuests']);
 
 		$survey = TableRegistry::get('Surveys.Surveys')->get($interview['id_survey']);
 		$interview['survey_version'] = $survey['version'];
@@ -354,21 +352,13 @@ class WsController extends AppController
 		$surveysAnswers = TableRegistry::get('Surveys.SurveysAnswers');
 		$interview['answers'] = $surveysAnswers->getAnswersByInterview($id);
 
+		//echo "<pre>"; print_r($interview); die();
+
 		//Sotituzione placeholders
-		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview['id_quotation']);
+		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview);
 		foreach($interview['answers'] as $answer){
             $answer = $this->Surveys->replacePlaceholdersTexts($answer, $valuePlaceholders);
         }
-
-		//Dati per schede tecniche
-		$dataSheetsInfo = [];
-		foreach($interview['answers'] as $answer){
-            $dataSheetsInfo = $this->Surveys->getDataSheetsInfo($answer, $dataSheetsInfo);
-        }
-		$interview['data_sheets_info'] = $dataSheetsInfo;
-
-		//Misure
-		$interview['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($interview['id_quotation']);
 
 		if($interview){
 			$this->_result['response'] = "OK";
@@ -383,7 +373,7 @@ class WsController extends AppController
 	public function getInterviewForNewSurvey($id)
 	{
 		$interviews = TableRegistry::get('Surveys.SurveysInterviews');
-		$interview = $interviews->get($id);
+		$interview = $interviews->get($id, ['contain' => 'SurveysInterviewsGuests']);
 
 		$survey = TableRegistry::get('Surveys.Surveys')->get($interview['id_survey']);
 
@@ -400,20 +390,10 @@ class WsController extends AppController
 		$interview['answers'] = $this->Surveys->setQuestionsValue($chapters, $answers);
 
 		//Sotituzione placeholders
-		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview['id_quotation']);
+		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview);
 		foreach($interview['answers'] as $answer){
             $answer = $this->Surveys->replacePlaceholdersTexts($answer, $valuePlaceholders);
         }
-
-		//Dati per schede tecniche
-		$dataSheetsInfo = [];
-		foreach($interview['answers'] as $answer){
-            $dataSheetsInfo = $this->Surveys->getDataSheetsInfo($answer, $dataSheetsInfo);
-        }
-		$interview['data_sheets_info'] = $dataSheetsInfo;
-
-		//Misure
-		$interview['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($interview['id_quotation']);
 
 		$interview['title'] = $survey['title'];
 		$interview['subtitle'] = $survey['subtitle'];
@@ -1103,6 +1083,57 @@ class WsController extends AppController
 			if(!empty($item->items)){
 				$this->saveItemsAnswersData($item->items, $interviewId);
 			}
+		}
+	}
+
+	public function createInterview()
+	{
+		$this->request->allowMethod(['POST']);
+
+		extract($this->request->data);
+
+		$survey = TableRegistry::get('Surveys.Surveys')->get($survey_id, ['contain' => 'SurveysChapters']);
+		//echo "<pre>"; print_r($survey); die();
+
+		$user = $this->request->session()->read('Auth.User');
+		
+		$interviewsTable = TableRegistry::get('Surveys.SurveysInterviews');
+
+		$int['id_survey']= $survey_id;
+		$int['id_user'] = $user['id'];
+		$int['title'] = $survey->title;
+		$int['subtitle'] = $survey->subtitle;
+		$int['description'] = $survey->description;
+		$int['version'] = $survey->version;
+		$int['status'] = 1;
+		$int['guest'] = ['guest_id' => $guest_id];
+
+		for ($i = 0; $i < count($survey->chapters); $i++) {
+			$int['answers'][$i] = [
+				'chapter' => $survey->chapters[$i]->chapter,
+				'chapter_data' => $survey->chapters[$i]->chapter_data,
+				'color' => $survey->chapters[$i]->color,
+				'group_id' => $survey->chapters[$i]->group_id,
+			];
+		}
+
+		$entity = $interviewsTable->newEntity($int, ['associated' => ['SurveysInterviewsGuests', 'SurveysAnswers']]);
+
+		//echo "<pre>"; print_r($entity); die();
+		if($interviewsTable->save($entity)){
+			$entity['interview_id'] = $entity->id;
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = $entity;
+			$this->_result['msg'] = "Documento salvato con successo.";
+		}else{
+			$message = "Errore nel salvataggio del Documento.";  
+			foreach($entity->errors() as $field => $errors){ 
+				foreach($errors as $rule => $msg){ 
+					$message .= "\n" . $field.': '.$msg;
+				}
+			} 
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = $message;
 		}
 	}
 }

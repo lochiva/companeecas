@@ -48,16 +48,16 @@ class SurveysInterviewsTable extends AppTable
             ->setForeignKey('status')
             ->setProperty('status_details');
 
-        $this->hasMany('SurveysAnswers')
+        $this->hasMany('SurveysAnswers', ['className' => 'Surveys.SurveysAnswers'])
             ->setForeignKey('id_interview')
             ->setConditions(['SurveysAnswers.deleted' => false])
             ->setSort(['SurveysAnswers.chapter' => 'ASC'])
             ->setProperty('answers')
             ->setDependent(true);
 
-        $this->hasOne('SurveysInterviewsGuests')
+        $this->hasOne('SurveysInterviewsGuests', ['className' => 'Surveys.SurveysInterviewsGuests'])
             ->setProperty('guest')
-            ->setForeignKey('id_interview')
+            ->setForeignKey('interview_id')
             ->setDependent(true);
     }
 
@@ -77,11 +77,6 @@ class SurveysInterviewsTable extends AppTable
             ->integer('id_survey')
             ->requirePresence('id_survey', 'create')
             ->allowEmpty('id_survey', false);
-
-        $validator
-            ->integer('id_quotation')
-            ->requirePresence('id_quotation', 'create')
-            ->allowEmpty('id_quotation', false);
 
         $validator
             ->integer('id_user')
@@ -119,7 +114,7 @@ class SurveysInterviewsTable extends AppTable
         $validator
             ->scalar('version')
             ->maxLength('version', 64)
-            ->allowEmpty('version', false); 
+            ->allowEmpty('version', true); 
 
         return $validator;
     }

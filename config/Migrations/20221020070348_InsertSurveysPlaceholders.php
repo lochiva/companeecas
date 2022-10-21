@@ -14,13 +14,13 @@ class InsertSurveysPlaceholders extends AbstractMigration
     {
         $rows = [
             [
-                'label' => '{{indirizzo_ente}}',
+                'label' => '{{ente_indirizzo}}',
                 'description' => 'Indirizzo dell\'ente',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')
             ],
             [
-                'label' => '{{email_ente}}',
+                'label' => '{{ente_email}}',
                 'description' => 'Indirizzo di posta elettronica dell\'ente',
                 'created' => date('Y-m-d H:i:s'),
                 'modified' => date('Y-m-d H:i:s')

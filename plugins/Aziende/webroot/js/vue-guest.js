@@ -144,7 +144,9 @@ var app = new Vue({
         requestExitData: {
             type: {
                 id: '',
-                name: ''
+                name: '',
+                modello_decreto: '',
+                modello_notifica: ''
             },
             file: '',
             note: '',
@@ -263,7 +265,9 @@ var app = new Vue({
         searchedGuest: null,
         searchGuestSelectVisible: false,
         loadedData: '',
-        loadedFamily: ''
+        loadedFamily: '',
+        decreti: false,
+        notifiche: false
     },
 
     components: {
@@ -297,6 +301,16 @@ var app = new Vue({
             }
             
             return "Rimuovi ospite dal nucleo familiare";
+        },
+        decreti_url() {
+            if (this.decreti) {
+                return pathServer + 'surveys/surveys/answers?interview=' + this.decreti.interview_id;
+            }
+        }, 
+        notifiche_url() {
+            if (this.decreti) {
+                return pathServer + 'surveys/surveys/answers?interview=' + this.notifiche.interview_id;
+            }
         }
     },
 
@@ -403,6 +417,12 @@ var app = new Vue({
                             this.requestExitData.type.name = res.data.data.history_exit_type_name;
                             this.requestExitData.file = res.data.data.history_file;
                             this.requestExitData.note = res.data.data.history_note;
+
+                            this.requestExitData.type.modello_decreto = res.data.data.history_exit_type_modello_decreto;
+                            this.requestExitData.type.modello_notifica = res.data.data.history_exit_type_modello_notifica;
+
+                            this.decreti = res.data.data.decreti;
+                            this.notifiche = res.data.data.notifiche;
                         }
                         if (this.guestStatus == 1 && this.guestExitRequestStatus == 2) {
                             this.authorizeRequestExitData.type.id = res.data.data.history_exit_type_id;
@@ -1721,7 +1741,36 @@ var app = new Vue({
             document.cookie = 'downloadStarted=0;path=/';    
             window.location = pathServer + 'aziende/ws/downloadGuestExitFile?file=' + encodeURIComponent(file);
             checkCookieForLoader('downloadStarted', '1');
-        }
+        },
+
+        createInterview: function(type){
+            let params = new URLSearchParams();
+            params.append('guest_id', this.guestData.id.value);
+
+            if (type.indexOf('decreto') === 0) {
+                params.append('survey_id', this.requestExitData.type.modello_decreto);
+            } else if (type.indexOf('notifica') === 0) {
+                params.append('survey_id', this.requestExitData.type.modello_notifica);
+            }
+
+            axios.post(pathServer + 'surveys/ws/create_interview', params)
+            .then(res => {
+                if (res.data.response == 'OK') {
+                    if (type.indexOf('decreto') === 0) {
+                        this.decreti = res.data.data;
+                    } else if (type.indexOf('notifica') === 0) {
+                        this.notifiche = res.data.data;
+                    }
+                    console.log(res.data.data);
+                } else {
+                    alert(res.data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+                
+        },
         
     }
 

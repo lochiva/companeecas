@@ -41,7 +41,7 @@ class SurveyHelper extends Helper
 				}
 		
 				foreach ($section->questions as $key => $question) {
-			
+
 					if ($question->visible) {
 				
 						//TESTO FISSO
@@ -62,7 +62,8 @@ class SurveyHelper extends Helper
 
 						//RISPOSTA EDITOR DI TESTO
 						if($question->type == 'answer_text_editor'){
-							$html .= '<span>'.$question->answer.'</span>';
+							//$html .= '<span>'.$question->answer.'</span>';
+							$html .= '<span>'.$question->value_to_show.'</span>';
 						}
 
 						//SCHEDA TECNICA

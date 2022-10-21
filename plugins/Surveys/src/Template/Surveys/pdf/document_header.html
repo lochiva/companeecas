@@ -21,41 +21,10 @@
             color: #9E9E9E
         }
     </style>
-    <script>
-        function subst() {
-            var vars = {};
-            var query_strings_from_url = document.location.search.substring(1).split('&');
-            for (var query_string in query_strings_from_url) {
-                if (query_strings_from_url.hasOwnProperty(query_string)) {
-                    var temp_var = query_strings_from_url[query_string].split('=', 2);
-                    vars[temp_var[0]] = decodeURI(temp_var[1]);
-                }
-            }
-            if (vars['page'] == 1) {
-                var elementToHide = document.getElementsByClassName('header');
-                for (var j = 0; j < elementToHide.length; ++j) {
-                    elementToHide[j].style.display = 'none';
-                }
-            }
-            var elementImg = document.getElementsByClassName('logo-img');
-            for (var k = 0; k < elementImg.length; ++k) {
-                elementImg[k].src = vars['logosrc'];
-            }
-        }
-    </script>
 </head>
-<body onload="subst()">
+<body>
     <span class="page"></span>
     <div class="header">
-        <div class="logo">
-            <img class="logo-img" src="">
-        </div><div class="info">
-            Sede Legale<br>
-            Via Bard, 33<br>
-            10142 Torino - Italia<br>
-            P.IVA 11284670012<br>
-            Telefono +39 011-7681448
-        </div>
     </div>
 </body>
 </html>

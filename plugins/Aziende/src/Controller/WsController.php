@@ -2208,6 +2208,29 @@ class WsController extends AppController
                     $exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
                     $guest['history_exit_type_id'] = $exitType['id'];
                     $guest['history_exit_type_name'] = $exitType['name'];
+
+                    $guest['history_exit_type_modello_decreto'] = $exitType['modello_decreto'];
+                    $guest['history_exit_type_modello_notifica'] = $exitType['modello_notifica'];
+
+                    $sig = TableRegistry::get('Surveys.SurveysInterviewsGuests');
+
+                    $decreti = $sig->find()
+                        ->select($sig)
+                        ->select(['id_survey' => 'SurveysInterviews.id_survey'])
+                        ->leftJoinWith('SurveysInterviews')
+                        ->where(['SurveysInterviewsGuests.guest_id' => $guest->id, 'SurveysInterviews.id_survey' => $exitType['modello_decreto']])
+                        ->first();
+
+                    $notifiche = $sig->find()
+                        ->select($sig)
+                        ->select(['id_survey' => 'SurveysInterviews.id_survey'])
+                        ->leftJoinWith('SurveysInterviews')
+                        ->where(['SurveysInterviewsGuests.guest_id' => $guest->id, 'SurveysInterviews.id_survey' => $exitType['modello_notifica']])
+                        ->toArray();
+                    $guest['decreti'] = empty($decreti) ? false : $decreti;
+                    $guest['notifiche'] = empty($notifiche) ? false : $notifiche;
+
+                    // Decreti e notifiche 
                 } else {
                     $guest['history_exit_type_id'] = '';
                     $guest['history_exit_type_name'] = '';

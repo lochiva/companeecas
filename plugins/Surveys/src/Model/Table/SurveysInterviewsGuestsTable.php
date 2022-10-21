@@ -41,15 +41,16 @@ class SurveysInterviewsGuestsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Interviews', [
+        $this->belongsTo('SurveysInterviews', [
             'foreignKey' => 'interview_id',
             'joinType' => 'INNER',
-            'className' => 'Surveys.Interviews'
+            'className' => 'Surveys.SurveysInterviews',
+            'propertyName' => 'interview'
         ]);
         $this->belongsTo('Guests', [
             'foreignKey' => 'guest_id',
             'joinType' => 'INNER',
-            'className' => 'Surveys.Guests'
+            'className' => 'Aziende.Guests'
         ]);
     }
 
@@ -66,20 +67,5 @@ class SurveysInterviewsGuestsTable extends Table
             ->allowEmptyString('id', null, 'create');
 
         return $validator;
-    }
-
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['interview_id'], 'Interviews'));
-        $rules->add($rules->existsIn(['guest_id'], 'Guests'));
-
-        return $rules;
     }
 }

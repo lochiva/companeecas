@@ -42,14 +42,12 @@ $role = $this->request->session()->read('Auth.User.role');
 <div id='app-interviews'>
 
     <section class="content-header">
-        <h1 v-if="interviewData.idInterview"><?=__c('Modifica preventivo')?></h1>
-        <h1 v-else><?=__c('Nuova preventivo')?></h1>
+        <h1 v-if="interviewData.idInterview"><?=__c('Modifica documento')?></h1>
+        <h1 v-else><?=__c('Nuova documento')?></h1>
         <ol class="breadcrumb">
             <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-            <li><a href="<?=Router::url('/crm/home/');?>">Crm</a></li>
-            <li><a href="<?=Router::url('/crm/offers/');?>">Offerte</a></li>
-            <li v-if="interviewData.idInterview" class="active">Modifica preventivo</li>
-            <li v-else class="active">Nuovo preventivo</li>
+            <li v-if="interviewData.idInterview" class="active">Modifica documento</li>
+            <li v-else class="active">Nuovo documento</li>
         </ol>
     </section>
 
@@ -104,7 +102,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                         <a v-if="question.tooltip != ''" class="question-tooltip" data-toggle="modal" data-target="#modalTooltipQuestion"><i class="fa fa-info-circle"></i></a>
                                                         <span hidden class="text-question-tooltip" v-html="question.tooltip"></span>
                                                     </div>
-                                                    <editor v-model="question.answer" :init="editorInit"></editor>
+                                                    <editor v-model="question.value_to_show" :init="editorInit"></editor>
                                                 </div>
 
                                                 <!-- SCHEDA TECNICA -->
@@ -322,8 +320,8 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div 
                     class="box-footer" 
                     v-observe-visibility="{callback: checkInViewport}">
-                    <button v-if="interviewData.idInterview" type="button" class="btn btn-default interview-pdf" :data-id="interviewData.idInterview"><i class="fa fa-file-pdf-o" title="Scarica preventivo in PDF"></i> PDF preventivo</button>
-                    <!--<button v-if="interviewData.idInterview" type="button" class="btn btn-primary interview-word" :data-id="interviewData.idInterview"><i class="fa fa-file-word-o" title="Scarica preventivo in word"></i> Documento word</button>-->
+                    <button v-if="interviewData.idInterview" type="button" class="btn btn-default interview-pdf" :data-id="interviewData.idInterview"><i class="fa fa-file-pdf-o" title="Scarica documento in PDF"></i> PDF documento</button>
+                    <!--<button v-if="interviewData.idInterview" type="button" class="btn btn-primary interview-word" :data-id="interviewData.idInterview"><i class="fa fa-file-word-o" title="Scarica documento in word"></i> Documento word</button>-->
                     <button v-if="interviewData.idInterview" type="button" class="btn btn-info" @click="documentPreview()"><i class="fa fa-eye" title="Visualizza anteprima"></i> Anteprime</button>
                     <!--<button v-if="interviewData.idInterview && interviewData.status !== 2" type="button" class="btn btn-warning" @click="setInterviewSigned()" >Firmata</button>-->
                     <button class="btn btn-primary pull-right save-interview-exit button-margin" @click="saveInterview(true)">Salva ed esci</button>
@@ -341,11 +339,11 @@ $role = $this->request->session()->read('Auth.User.role');
         </md-speed-dial-target>
 
         <md-speed-dial-content>
-            <md-button v-show="interviewData.idInterview" class="md-fab fab-light interview-pdf" :data-id="interviewData.idInterview" title="Scarica preventivo in PDF">
+            <md-button v-show="interviewData.idInterview" class="md-fab fab-light interview-pdf" :data-id="interviewData.idInterview" title="Scarica documento in PDF">
                 <md-icon>picture_as_pdf</md-icon>
             </md-button>
 
-            <!--<md-button v-show="interviewData.idInterview" class="md-fab fab-primary interview-word" :data-id="interviewData.idInterview" title="Scarica preventivo in word">
+            <!--<md-button v-show="interviewData.idInterview" class="md-fab fab-primary interview-word" :data-id="interviewData.idInterview" title="Scarica documento in word">
                 <md-icon><i class="fa fa-file-word-o document-word-icon"></i></md-icon>
             </md-button>-->
 

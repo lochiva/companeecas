@@ -46,6 +46,8 @@ class SurveysInterview extends Entity
         'cloned_by' => true,
         'version' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
+        'guest' => true,
+        'answers' => true
     ];
 }

@@ -42,7 +42,7 @@ class SurveysTable extends AppTable
 
         $this->hasMany('SurveysChapters')
             ->setForeignKey('id_survey')
-            ->setConditions(['SurveysChapters.deleted' => false])
+            ->setConditions(['SurveysChapters.deleted' => 0])
             ->setSort(['SurveysChapters.chapter' => 'ASC'])
             ->setProperty('chapters')
             ->setDependent(true);

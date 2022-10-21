@@ -132,9 +132,6 @@ Vue.component('tree-item', {
 
             return number;
         },
-        existsDataSheet: function(id) {
-            return id in this.$root.dataSheetsInfo;
-        },
         isComponentActive: function(components) {
             var activeComponents = this.$root.activeComponents;
             var componentIds = [];
@@ -142,18 +139,6 @@ Vue.component('tree-item', {
                 componentIds.push(component.id);
             });
             return componentIds.some(id => activeComponents.includes(id));
-        },
-        getDataSheetTitle: function(id) {
-            return this.$root.dataSheetsInfo[id].title;
-        },
-        getDataSheetContent: function(id) {
-            return this.$root.dataSheetsInfo[id].content;
-        },
-        getDataSheetSpecifications: function(id) {
-            return this.$root.dataSheetsInfo[id].specifications;
-        },
-        getDataSheetImages: function(id) {
-            return this.$root.dataSheetsInfo[id].images;
         },
         getDimensions: function() {
             return this.$root.dimensions;
@@ -181,7 +166,6 @@ var app = new Vue({
         footerInViewport: true,
         preview: 0,
         activeComponents: [],
-        dataSheetsInfo: [],
         dimensions: []
     },
       
@@ -204,10 +188,8 @@ var app = new Vue({
         }
 
         if(this.interviewData.idInterview){
-            this.getActiveComponentsByInterview();
             this.loadInterview(this.interviewData.idInterview);
         }else{
-            this.getActiveComponentsByQuotation();
             this.loadSurvey(this.idSurvey);
         }
     },
@@ -221,7 +203,7 @@ var app = new Vue({
             }
             axios.get(url)
                 .then(res => { 
-                    if (res.data.response == 'OK') { 
+                    if (res.data.response == 'OK') {
                         this.idSurvey = res.data.data.id_survey;
                         this.surveyVersion = res.data.data.survey_version;
                         this.interviewData.title = res.data.data.title;
@@ -231,7 +213,6 @@ var app = new Vue({
                         this.interviewData.version = res.data.data.version;
                         this.interviewData.items = res.data.data.answers;
 
-                        this.dataSheetsInfo = res.data.data.data_sheets_info;
                         this.dimensions = res.data.data.dimensions;
 
                         if (this.preview) {
@@ -258,7 +239,6 @@ var app = new Vue({
                         this.interviewData.version = res.data.data.version;
                         this.interviewData.items = res.data.data.chapters;
 
-                        this.dataSheetsInfo = res.data.data.data_sheets_info;
                         this.dimensions = res.data.data.dimensions;
                     } else {
                         alert(res.data.msg);

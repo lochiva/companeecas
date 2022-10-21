@@ -16,11 +16,32 @@ use Cake\Core\Configure;
 class SurveysController extends AppController
 {
 
-    public function isAuthorized($user = null)
+    public function isAuthorized($user)
     {
-        if($user['role'] == 'admin'){
-			return true;
-		}
+        if ($user['role'] == 'admin') {
+            return true;
+        }
+
+        $authorizedActions = [
+            'area_iv' => [
+                'chapterPreview',
+                'chapters',
+                'documentPreview',
+                'documentPdf',
+                'answers'
+            ],
+            'ragioneria' => [],
+            'ente_ospiti' => [],
+            'ente_contabile' => []
+        ];
+
+        if (
+            !empty($user['role']) && 
+            !empty($authorizedActions[$user['role']]) && 
+            in_array($this->request->getParam('action'), $authorizedActions[$user['role']])
+        ) {
+            return true;
+        }
 
         // Default deny
         return false;
@@ -69,9 +90,19 @@ class SurveysController extends AppController
 
     public function answers()
     {
-        $baseImageUrl = Router::url('/').Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
+        $interview = $this->request->getQuery('interview');
 
-        $this->set('baseImageUrl', $baseImageUrl);
+        if (isset($interview)) {
+            $baseImageUrl = Router::url('/').Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
+
+            $this->set('baseImageUrl', $baseImageUrl);
+        } else {
+            $this->Flash->error('Id documento mancante');
+            $this->redirect('/');
+            return null;
+        }
+
+
     }
 
     public function documentPdf($id)
@@ -80,26 +111,16 @@ class SurveysController extends AppController
 
         $interviews = TableRegistry::get('Surveys.SurveysInterviews');
 
-        $interview = $interviews->get($id);
+        $interview = $interviews->get($id, ['contain' => 'SurveysInterviewsGuests']);
 
         $surveysAnswers = TableRegistry::get('Surveys.SurveysAnswers');
         $interview['answers'] = $surveysAnswers->getAnswersByInterview($id);
 
         //Sotituzione placeholders
-		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview['id_quotation']);
+		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview);
 		foreach($interview['answers'] as $answer){
             $answer = $this->Surveys->replacePlaceholdersTexts($answer, $valuePlaceholders);
         }
-
-        //Dati per schede tecniche
-		$dataSheetsInfo = [];
-		foreach($interview['answers'] as $answer){
-            $dataSheetsInfo = $this->Surveys->getDataSheetsInfo($answer, $dataSheetsInfo);
-        }
-		$interview['data_sheets_info'] = $dataSheetsInfo;
-
-        //Misure
-		$interview['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($interview['id_quotation']);
 
         //Adeguamento ordine elementi a tipologia layout
         foreach($interview['answers'] as $answer){
@@ -108,11 +129,8 @@ class SurveysController extends AppController
             }
         }
 
-        //Lista componenti attivi
-        $interview['active_components'] = TableRegistry::get('Building.ComponentQuotation')->getComponentIdsByQuotation($interview['id_quotation']);
-
         $interviewTitle = str_replace(' ', '_', $interview['title']);
-        $pdfName = 'Preventivo_' . $interviewTitle . '.pdf';
+        $pdfName = 'doc_' . $interviewTitle . '.pdf';
 
         $viewVars = ['interview' => $interview];
 
@@ -126,8 +144,6 @@ class SurveysController extends AppController
 
         $logoPath = WWW_ROOT.DS.'img'.DS.'building_evolution_logo.png';
         $type = pathinfo($logoPath, PATHINFO_EXTENSION);
-        $image = file_get_contents($logoPath);
-        $logoSrc = 'data:image/' . $type . ';base64,' . base64_encode($image); 
 
         $this->viewBuilder()->options([
             'pdfConfig' => [
@@ -137,7 +153,6 @@ class SurveysController extends AppController
                     'options' => [
                         'header-html' => 'file://'.$pathHeader,
                         'header-spacing' => 7,
-                        'replace' => ['logosrc' => $logoSrc],
                         'footer-html' => 'file://'.$pathFooter,
                         'footer-spacing' => 7,
                     ]
@@ -163,26 +178,16 @@ class SurveysController extends AppController
     {
         $interviews = TableRegistry::get('Surveys.SurveysInterviews');
 
-        $interview = $interviews->get($id);
+        $interview = $interviews->get($id, ['contain' => 'SurveysInterviewsGuests']);
 
         $surveysAnswers = TableRegistry::get('Surveys.SurveysAnswers');
         $interview['answers'] = $surveysAnswers->getAnswersByInterview($id);
 
         //Sotituzione placeholders
-		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview['id_quotation']);
+		$valuePlaceholders = $this->Surveys->getValuePlaceholders($interview);
 		foreach($interview['answers'] as $answer){
             $answer = $this->Surveys->replacePlaceholdersTexts($answer, $valuePlaceholders);
         }
-
-        //Dati per schede tecniche
-		$dataSheetsInfo = [];
-		foreach($interview['answers'] as $answer){
-            $dataSheetsInfo = $this->Surveys->getDataSheetsInfo($answer, $dataSheetsInfo);
-        }
-		$interview['data_sheets_info'] = $dataSheetsInfo;
-
-        //Misure
-		$interview['dimensions'] = TableRegistry::get('Building.Dimensions')->getQuotationDimensionsForDocument($interview['id_quotation']);
 
         //Adeguamento ordine elementi a tipologia layout
         foreach($interview['answers'] as $answer){
@@ -190,9 +195,6 @@ class SurveysController extends AppController
                 $answer = $this->Surveys->reorderItemsForDoubleLayout($answer);
             }
         }
-
-        //Lista componenti attivi
-        $interview['active_components'] = TableRegistry::get('Building.ComponentQuotation')->getComponentIdsByQuotation($interview['id_quotation']);
 
         $this->viewBuilder()->setLayout('/pdf/default');
         $this->viewBuilder()->setTemplate('/Surveys/pdf/document');
@@ -234,11 +236,8 @@ class SurveysController extends AppController
             }
         }
 
-        //Lista componenti attivi
-        $interview['active_components'] = TableRegistry::get('Building.ComponentQuotation')->getComponentIdsByQuotation($interview['id_quotation']);
-
         $interviewTitle = str_replace(' ', '_', $interview['title']);
-        $fileName = 'Preventivo_' . $interviewTitle . '.docx';
+        $fileName = 'doc_' . $interviewTitle . '.docx';
 
         $this->viewBuilder()->setLayout('/pdf/default');
 

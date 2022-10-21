@@ -120,7 +120,7 @@ class SurveysComponent extends Component
 	{
 		foreach($item->questions as $key => $question){
 
-			if($question->type == 'fixed_text'){
+			if($question->type == 'fixed_text' || $question->type == 'answer_text_editor'){
 				//sostituzione segnaposto
 				$search = [];
 				$replace = [];
@@ -128,7 +128,15 @@ class SurveysComponent extends Component
 					$search[] = '{{'.$label.'}}';
 					$replace[] = $value;
 				}
-				$question->value_to_show = str_replace($search, $replace, $question->value);
+				if (isset($question->answer)) {
+					$question->value_to_show = str_replace($search, $replace, $question->answer);
+				}
+				if (isset($question->value)) {
+					$question->value_to_show = str_replace($search, $replace, $question->value);
+				}
+				
+				//$question->value_to_show = str_replace($search, $replace, $question->value);
+				//var_dump($question);
 			}
 		}
 
@@ -256,21 +264,21 @@ class SurveysComponent extends Component
 		return $dataSheetsInfo;
 	}
 
-	public function getValuePlaceholders($quotationId)
+	public function getValuePlaceholders($interview)
 	{
-		$quotation = TableRegistry::get('Building.Quotations')->get($quotationId);
-		$offer = TableRegistry::get('Crm.Offers')->get($quotation['offer_id'], ['contain' => ['AziendaDest', 'Sedi' => ['Comuni', 'Province']]]);
-
+		$guest = TableRegistry::get('Aziende.Guests')->get($interview->guest->guest_id, ['contain' => ['Sedi' => ['Aziende', 'Comuni', 'Province'], 'Countries']]);
+		//echo "<pre>"; print_r($guest); die();
 		$values = [
-			'azienda_denominazione' => empty($offer['azienda_dest']['denominazione']) ? '/' : $offer['azienda_dest']['denominazione'],
-			'sede_indirizzo' => empty($offer['sede_dest']['indirizzo']) ? '/' : $offer['sede_dest']['indirizzo'],
-			'sede_civico' => empty($offer['sede_dest']['num_civico']) ? '/' : $offer['sede_dest']['num_civico'],
-			'sede_comune' => empty($offer['sede_dest']['comune']['des_luo']) ? '/' : $offer['sede_dest']['comune']['des_luo'],
-			'sede_provincia' => empty($offer['sede_dest']['provincia']['des_luo']) ? '/' : $offer['sede_dest']['provincia']['des_luo'],
-			'sede_telefono' => empty($offer['sede_dest']['telefono']) ? '/' : $offer['sede_dest']['telefono'],
-			'offerta_data' => empty($offer['emission_date']) ? '/' : $offer['emission_date']->format('d/m/Y'),
-			'offerta_descrizione' => empty($offer['description']) ? '/' : $offer['description'],
-			'quotazione_importo' => empty($quotation['amount']) ? '/' : $quotation['amount']
+			'ospite_nome' => empty($guest['name']) ? '/' : $guest['name'],
+			'ospite_cognome' => empty($guest['surname']) ? '/' : $guest['surname'],
+			'ospite_data_nascita' => empty($guest['birthdate']) ? '/' : $guest['birthdate']->format('d/m/Y'),
+			'ospite_luogo_nascita' => empty($guest['country_birth']) ? '/' : $guest->country['des_luo'],
+			'ospite_vestanet' => empty($guest['vestanet_id']) ? '/' : $guest['vestanet_id'],
+
+			'ente_denominazione' => empty($guest->sedi->azienda['denominazione']) ? '/' : $guest->sedi->azienda['denominazione'],
+			'ente_responsabile' => empty($guest->sedi['referente']) ? '/' : $guest->sedi['referente'],
+			'ente_indirizzo' => empty($guest->sedi['indirizzo']) ? '/' : $guest->sedi['indirizzo'] . ' ' . $guest->sedi['num_civico'] . ', ' . $guest->sedi['cap'] . ' ' . $guest->sedi->comune['des_luo'] . '(' . $guest->sedi->provincia['s_prv'] . ')',
+			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
 		];
 
 		return $values;

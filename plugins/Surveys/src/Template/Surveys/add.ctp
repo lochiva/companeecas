@@ -199,6 +199,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                     <!-- RISPOSTA EDITOR DI TESTO -->
                                                     <div v-if="question.type == 'answer_text_editor'" class="col-md-12 padding0">
                                                         <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
+                                                        <!--
                                                         <div class="col-md-12">
                                                             <label>Domanda</label>
                                                             <input type="text" class="form-control" v-model="question.question" />
@@ -211,7 +212,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                             <label>Obbligatoria</label>
                                                             <input type="checkbox" v-model="question.required" />
                                                         </div>
-                                                        <!--
+                                                        
                                                         <div class="col-md-12">
                                                             <label>Domanda condizionata</label>
                                                             <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
