@@ -324,7 +324,6 @@ $role = $this->request->session()->read('Auth.User.role');
                     <!--<button v-if="interviewData.idInterview" type="button" class="btn btn-primary interview-word" :data-id="interviewData.idInterview"><i class="fa fa-file-word-o" title="Scarica documento in word"></i> Documento word</button>-->
                     <button v-if="interviewData.idInterview" type="button" class="btn btn-info" @click="documentPreview()"><i class="fa fa-eye" title="Visualizza anteprima"></i> Anteprime</button>
                     <!--<button v-if="interviewData.idInterview && interviewData.status !== 2" type="button" class="btn btn-warning" @click="setInterviewSigned()" >Firmata</button>-->
-                    <button class="btn btn-primary pull-right save-interview-exit button-margin" @click="saveInterview(true)">Salva ed esci</button>
                     <button class="btn btn-success pull-right save-interview-stay button-margin" @click="saveInterview()">Salva</button>
                     <a :href="'<?=Router::url('/surveys/surveys/interviews/');?>'+idSurvey" class="btn btn-default pull-right">Annulla</a>
                 </div>
