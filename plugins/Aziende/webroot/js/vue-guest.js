@@ -1744,6 +1744,7 @@ var app = new Vue({
         },
 
         createInterview: function(type){
+            $('#template-spinner').show();
             let params = new URLSearchParams();
             params.append('guest_id', this.guestData.id.value);
 
@@ -1765,9 +1766,11 @@ var app = new Vue({
                 } else {
                     alert(res.data.msg);
                 }
+                $('#template-spinner').hide();
             })
             .catch(error => {
                 console.log(error);
+                $('#template-spinner').hide();
             });
                 
         },
