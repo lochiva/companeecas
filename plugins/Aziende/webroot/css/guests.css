@@ -429,3 +429,6 @@ a.btn-info.disabled-anchor:visited {
 #authorizeRequestExitFamily {
     z-index: 99999;
 }
+.exit-survey:disabled {
+    pointer-events: none;
+}

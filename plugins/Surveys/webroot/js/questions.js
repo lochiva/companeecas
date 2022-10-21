@@ -15,7 +15,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -33,7 +34,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -51,7 +53,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -74,7 +77,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -97,7 +101,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -115,7 +120,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -133,7 +139,8 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
     {
         "id": "",
@@ -152,6 +159,7 @@ const questions = [
         "show_in_table": false,
         "label_table": "",
         "show_in_export": false,
-        "label_export": ""
+        "label_export": "",
+        "layout_alignment": "left"
     },
 ];

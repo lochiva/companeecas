@@ -45,6 +45,10 @@
             echo $this->Form->label('ente_type', 'Tipologia Ente');
             echo $this->Form->select('ente_type', $tipi);
             echo $this->Form->input('ordering');
+            echo $this->Form->label('modello_decreto', 'Modello decreto');
+            echo $this->Form->select('mdodello_decreto', $surveys, ['empty' => 'Selezionare']);
+            echo $this->Form->label('modello_notifica', 'Modello Notifica');
+            echo $this->Form->select('modello_notifica', $surveys, ['empty' => 'Selezionare']);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Save'),['class' => 'btn btn-success']) ?>

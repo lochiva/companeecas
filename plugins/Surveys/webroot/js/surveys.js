@@ -65,100 +65,102 @@ $(document).ready(function(){
         $(this).val(value.replace('.', ',')).trigger('keyup');
     });
 
-    //Tabella questionari
-    $('#table-surveys').tablesorter({
-        theme: 'bootstrap',
-        headerTemplate: '{content} {icon}',
-        widthFixed: false,
-        widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
-        widgetOptions: {
-            filter_functions:{
-                '.status-filter':{
-                    'Pubblicato': function(e,n,f,i,$r){return e===f;},
-                    'Pubblicato (congelato)': function(e,n,f,i,$r){return e===f;},
-                    'Bozza': function(e,n,f,i,$r){return e===f},
-                    'Annullato': function(e,n,f,i,$r){return e===f}
-                }
-            }
-        },
-    }).tablesorterPager({
-        container: $("#pager-surveys"),
-
-        ajaxUrl: pathServer + 'surveys/ws/getSurveys/?{filterList:filter}&{sortList:column}&size={size}&page={page}',
-
-        // modify the url after all processing has been applied
-        customAjaxUrl: function(table, url) {
-            // manipulate the url string as you desire
-        // url += '&cPage=' + window.location.pathname;
-        // trigger my custom event
-            $(table).trigger('changingUrl', url);
-            // send the server the current page
-            $('#template-spinner').show();
-            return url;
-        },
-
-        // add more ajax settings here
-        // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-        ajaxObject: {
-            dataType: 'json'
-        },
-        // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
-        ajaxProcessing: function(data){
-            if (data && data.hasOwnProperty('rows')) {
-                var r, row, c, d = data.rows,
-                // total number of rows (required)
-                total = data.total_rows,
-                // array of header names (optional)
-                headers = data.headers,
-                // all rows: array of arrays; each internal array has the table cell data for that row
-                rows = [],
-                // len should match pager set size (c.size)
-                len = d.length;
-                // this will depend on how the json is set up - see City0.json
-                // rows
-                for ( r=0; r <= len; r++ ) {
-                    row = []; // new row array
-                    // cells
-                    for ( c in d[r] ) {
-                        if (typeof(c) === "string") {
-                        row.push(d[r][c]); // add each table cell data to row array
-                        }
+    if($('#table-surveys').length > 0){
+        //Tabella questionari
+        $('#table-surveys').tablesorter({
+            theme: 'bootstrap',
+            headerTemplate: '{content} {icon}',
+            widthFixed: false,
+            widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
+            widgetOptions: {
+                filter_functions:{
+                    '.status-filter':{
+                        'Pubblicato': function(e,n,f,i,$r){return e===f;},
+                        'Pubblicato (congelato)': function(e,n,f,i,$r){return e===f;},
+                        'Bozza': function(e,n,f,i,$r){return e===f},
+                        'Annullato': function(e,n,f,i,$r){return e===f}
                     }
-                    rows.push(row); // add new row array to rows array
                 }
-                // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
+            },
+        }).tablesorterPager({
+            container: $("#pager-surveys"),
+
+            ajaxUrl: pathServer + 'surveys/ws/getSurveys/?{filterList:filter}&{sortList:column}&size={size}&page={page}',
+
+            // modify the url after all processing has been applied
+            customAjaxUrl: function(table, url) {
+                // manipulate the url string as you desire
+            // url += '&cPage=' + window.location.pathname;
+            // trigger my custom event
+                $(table).trigger('changingUrl', url);
+                // send the server the current page
+                $('#template-spinner').show();
+                return url;
+            },
+
+            // add more ajax settings here
+            // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
+            ajaxObject: {
+                dataType: 'json'
+            },
+            // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
+            ajaxProcessing: function(data){
+                if (data && data.hasOwnProperty('rows')) {
+                    var r, row, c, d = data.rows,
+                    // total number of rows (required)
+                    total = data.total_rows,
+                    // array of header names (optional)
+                    headers = data.headers,
+                    // all rows: array of arrays; each internal array has the table cell data for that row
+                    rows = [],
+                    // len should match pager set size (c.size)
+                    len = d.length;
+                    // this will depend on how the json is set up - see City0.json
+                    // rows
+                    for ( r=0; r <= len; r++ ) {
+                        row = []; // new row array
+                        // cells
+                        for ( c in d[r] ) {
+                            if (typeof(c) === "string") {
+                            row.push(d[r][c]); // add each table cell data to row array
+                            }
+                        }
+                        rows.push(row); // add new row array to rows array
+                    }
+                    // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
+
+                    $('#template-spinner').hide();
+                    return [ total, rows, headers ];
+
+                }
 
                 $('#template-spinner').hide();
-                return [ total, rows, headers ];
+            },
+            // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
+            output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
+            // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
+            updateArrows: true,
+            // starting page of the pager (zero based index)
+            page: 0,
+            // Number of visible rows - default is 10
+            size: 10,
+            // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
+            // table row set to a height to compensate; default is false
+            fixedHeight: false,
+            // remove rows from the table to speed up the sort of large tables.
+            // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+            removeRows: false,
+            // go to page selector - select dropdown that sets the current page
+            cssGoto: '.gotoPage'
+        }).bind("pagerComplete pagerInitialized",function(e, options){
 
+            if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
+                $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
             }
+            calculateTableDropdownPosition();
 
-            $('#template-spinner').hide();
-        },
-        // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-        output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
-        // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-        updateArrows: true,
-        // starting page of the pager (zero based index)
-        page: 0,
-        // Number of visible rows - default is 10
-        size: 10,
-        // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-        // table row set to a height to compensate; default is false
-        fixedHeight: false,
-        // remove rows from the table to speed up the sort of large tables.
-        // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-        removeRows: false,
-        // go to page selector - select dropdown that sets the current page
-        cssGoto: '.gotoPage'
-    }).bind("pagerComplete pagerInitialized",function(e, options){
-
-        if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
-            $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
-        }
-        calculateTableDropdownPosition();
-
-    });
+        });
+    }
 
     //Annulla survey
     $(document).on('click', '.delete-survey', function(){
@@ -183,383 +185,201 @@ $(document).ready(function(){
     });
 
     if($('#table-interviews').length > 0){
-    //Tabella interviste
-    $('#table-interviews').tablesorter({
-        theme: 'bootstrap',
-        headerTemplate: '{content} {icon}',
-        widthFixed: false,
-        widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
-        widgetOptions: {
-            filter_functions:{
-                '.status-filter':{
-                    'Compilazione': function(e,n,f,i,$r){return e===f;},
-                    'Firmata': function(e,n,f,i,$r){return e===f;},
-                },
-                '.valid-filter':{
-                    'Sì': function(e,n,f,i,$r){return e===f;},
-                    'No': function(e,n,f,i,$r){return e===f;},
-                }
-            }
-        },
-    }).tablesorterPager({
-        container: $("#pager-interviews"),
-
-        ajaxUrl: pathServer + 'surveys/ws/getInterviews/'+id_survey+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
-
-        // modify the url after all processing has been applied
-        customAjaxUrl: function(table, url) {
-            // manipulate the url string as you desire
-        // url += '&cPage=' + window.location.pathname;
-        // trigger my custom event
-            $(table).trigger('changingUrl', url);
-            // send the server the current page
-            $('#template-spinner').show();
-            return url;
-        },
-
-        // add more ajax settings here
-        // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-        ajaxObject: {
-            dataType: 'json'
-        },
-        // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
-        ajaxProcessing: function(data){
-            if (data && data.hasOwnProperty('rows')) {
-                var r, row, c, d = data.rows,
-                // total number of rows (required)
-                total = data.total_rows,
-                // array of header names (optional)
-                headers = data.headers,
-                // all rows: array of arrays; each internal array has the table cell data for that row
-                rows = [],
-                // len should match pager set size (c.size)
-                len = d.length;
-                // this will depend on how the json is set up - see City0.json
-                // rows
-                for ( r=0; r <= len; r++ ) {
-                    row = []; // new row array
-                    // cells
-                    for ( c in d[r] ) {
-                        if (typeof(c) === "string") {
-                        row.push(d[r][c]); // add each table cell data to row array
-                        }
+        //Tabella interviste
+        $('#table-interviews').tablesorter({
+            theme: 'bootstrap',
+            headerTemplate: '{content} {icon}',
+            widthFixed: false,
+            widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
+            widgetOptions: {
+                filter_functions:{
+                    '.status-filter':{
+                        'Compilazione': function(e,n,f,i,$r){return e===f;},
+                        'Firmata': function(e,n,f,i,$r){return e===f;},
+                    },
+                    '.valid-filter':{
+                        'Sì': function(e,n,f,i,$r){return e===f;},
+                        'No': function(e,n,f,i,$r){return e===f;},
                     }
-                    rows.push(row); // add new row array to rows array
                 }
-                // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
+            },
+        }).tablesorterPager({
+            container: $("#pager-interviews"),
+
+            ajaxUrl: pathServer + 'surveys/ws/getInterviews/'+id_survey+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
+
+            // modify the url after all processing has been applied
+            customAjaxUrl: function(table, url) {
+                // manipulate the url string as you desire
+            // url += '&cPage=' + window.location.pathname;
+            // trigger my custom event
+                $(table).trigger('changingUrl', url);
+                // send the server the current page
+                $('#template-spinner').show();
+                return url;
+            },
+
+            // add more ajax settings here
+            // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
+            ajaxObject: {
+                dataType: 'json'
+            },
+            // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
+            ajaxProcessing: function(data){
+                if (data && data.hasOwnProperty('rows')) {
+                    var r, row, c, d = data.rows,
+                    // total number of rows (required)
+                    total = data.total_rows,
+                    // array of header names (optional)
+                    headers = data.headers,
+                    // all rows: array of arrays; each internal array has the table cell data for that row
+                    rows = [],
+                    // len should match pager set size (c.size)
+                    len = d.length;
+                    // this will depend on how the json is set up - see City0.json
+                    // rows
+                    for ( r=0; r <= len; r++ ) {
+                        row = []; // new row array
+                        // cells
+                        for ( c in d[r] ) {
+                            if (typeof(c) === "string") {
+                            row.push(d[r][c]); // add each table cell data to row array
+                            }
+                        }
+                        rows.push(row); // add new row array to rows array
+                    }
+                    // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
+
+                    $('#template-spinner').hide();
+                    return [ total, rows, headers ];
+
+                }
 
                 $('#template-spinner').hide();
-                return [ total, rows, headers ];
+            },
+            // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
+            output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
+            // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
+            updateArrows: true,
+            // starting page of the pager (zero based index)
+            page: 0,
+            // Number of visible rows - default is 10
+            size: 10,
+            // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
+            // table row set to a height to compensate; default is false
+            fixedHeight: false,
+            // remove rows from the table to speed up the sort of large tables.
+            // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+            removeRows: false,
+            // go to page selector - select dropdown that sets the current page
+            cssGoto: '.gotoPage'
+        }).bind("pagerComplete pagerInitialized",function(e, options){
 
+            if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
+                $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
             }
+            calculateTableDropdownPosition();
 
-            $('#template-spinner').hide();
-        },
-        // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-        output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
-        // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-        updateArrows: true,
-        // starting page of the pager (zero based index)
-        page: 0,
-        // Number of visible rows - default is 10
-        size: 10,
-        // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-        // table row set to a height to compensate; default is false
-        fixedHeight: false,
-        // remove rows from the table to speed up the sort of large tables.
-        // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-        removeRows: false,
-        // go to page selector - select dropdown that sets the current page
-        cssGoto: '.gotoPage'
-    }).bind("pagerComplete pagerInitialized",function(e, options){
-
-        if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
-            $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
-        }
-        calculateTableDropdownPosition();
-
-    });
-    }
-
-    //Tabella enti gestori
-    if($('#table-managing-entities').length > 0){
-    $('#table-managing-entities').tablesorter({
-        theme: 'bootstrap',
-        headerTemplate: '{content} {icon}',
-        widthFixed: false,
-        widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
-        widgetOptions: {
-            filter_functions:{
-            }
-        },
-    }).tablesorterPager({
-        container: $("#pager-managing-entities"),
-
-        ajaxUrl: pathServer + 'surveys/ws/getManagingEntities/?{filterList:filter}&{sortList:column}&size={size}&page={page}',
-
-        // modify the url after all processing has been applied
-        customAjaxUrl: function(table, url) {
-            // manipulate the url string as you desire
-        // url += '&cPage=' + window.location.pathname;
-        // trigger my custom event
-            $(table).trigger('changingUrl', url);
-            // send the server the current page
-            $('#template-spinner').show();
-            return url;
-        },
-
-        // add more ajax settings here
-        // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-        ajaxObject: {
-            dataType: 'json'
-        },
-        // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
-        ajaxProcessing: function(data){
-            if (data && data.hasOwnProperty('rows')) {
-                var r, row, c, d = data.rows,
-                // total number of rows (required)
-                total = data.total_rows,
-                // array of header names (optional)
-                headers = data.headers,
-                // all rows: array of arrays; each internal array has the table cell data for that row
-                rows = [],
-                // len should match pager set size (c.size)
-                len = d.length;
-                // this will depend on how the json is set up - see City0.json
-                // rows
-                for ( r=0; r <= len; r++ ) {
-                    row = []; // new row array
-                    // cells
-                    for ( c in d[r] ) {
-                        if (typeof(c) === "string") {
-                        row.push(d[r][c]); // add each table cell data to row array
-                        }
-                    }
-                    rows.push(row); // add new row array to rows array
-                }
-                // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
-
-                $('#template-spinner').hide();
-                return [ total, rows, headers ];
-
-            }
-
-            $('#template-spinner').hide();
-        },
-        // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-        output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
-        // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-        updateArrows: true,
-        // starting page of the pager (zero based index)
-        page: 0,
-        // Number of visible rows - default is 10
-        size: 10,
-        // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-        // table row set to a height to compensate; default is false
-        fixedHeight: false,
-        // remove rows from the table to speed up the sort of large tables.
-        // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-        removeRows: false,
-        // go to page selector - select dropdown that sets the current page
-        cssGoto: '.gotoPage'
-    }).bind("pagerComplete pagerInitialized",function(e, options){
-
-        if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
-            $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
-        }
-        calculateTableDropdownPosition();
-
-    });
-    }
-
-    //Tabella strutture enti gestori
-    if($('#table-structures').length > 0){
-    $('#table-structures').tablesorter({
-        theme: 'bootstrap',
-        headerTemplate: '{content} {icon}',
-        widthFixed: false,
-        widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
-        widgetOptions: {
-            filter_functions:{
-            }
-        },
-    }).tablesorterPager({
-        container: $("#pager-structures"),
-
-        ajaxUrl: pathServer + 'surveys/ws/getStructures/'+idManagingEntity+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
-
-        // modify the url after all processing has been applied
-        customAjaxUrl: function(table, url) {
-            // manipulate the url string as you desire
-        // url += '&cPage=' + window.location.pathname;
-        // trigger my custom event
-            $(table).trigger('changingUrl', url);
-            // send the server the current page
-            $('#template-spinner').show();
-            return url;
-        },
-
-        // add more ajax settings here
-        // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-        ajaxObject: {
-            dataType: 'json'
-        },
-        // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
-        ajaxProcessing: function(data){
-            if (data && data.hasOwnProperty('rows')) {
-                var r, row, c, d = data.rows,
-                // total number of rows (required)
-                total = data.total_rows,
-                // array of header names (optional)
-                headers = data.headers,
-                // all rows: array of arrays; each internal array has the table cell data for that row
-                rows = [],
-                // len should match pager set size (c.size)
-                len = d.length;
-                // this will depend on how the json is set up - see City0.json
-                // rows
-                for ( r=0; r <= len; r++ ) {
-                    row = []; // new row array
-                    // cells
-                    for ( c in d[r] ) {
-                        if (typeof(c) === "string") {
-                        row.push(d[r][c]); // add each table cell data to row array
-                        }
-                    }
-                    rows.push(row); // add new row array to rows array
-                }
-                // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
-
-                $('#template-spinner').hide();
-                return [ total, rows, headers ];
-
-            }
-
-            $('#template-spinner').hide();
-        },
-        // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-        output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
-        // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-        updateArrows: true,
-        // starting page of the pager (zero based index)
-        page: 0,
-        // Number of visible rows - default is 10
-        size: 10,
-        // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-        // table row set to a height to compensate; default is false
-        fixedHeight: false,
-        // remove rows from the table to speed up the sort of large tables.
-        // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-        removeRows: false,
-        // go to page selector - select dropdown that sets the current page
-        cssGoto: '.gotoPage'
-    }).bind("pagerComplete pagerInitialized",function(e, options){
-
-        if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
-            $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
-        }
-        calculateTableDropdownPosition();
-
-    });
+        });
     }
 
     if($('#table-interviews-user').length > 0){
-    //Tabella interviste
-    $('#table-interviews-user').tablesorter({
-        theme: 'bootstrap',
-        headerTemplate: '{content} {icon}',
-        widthFixed: false,
-        widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
-        widgetOptions: {
-            filter_functions:{
-                '.status-filter':{
-                    'Compilazione': function(e,n,f,i,$r){return e===f;},
-                    'Firmata': function(e,n,f,i,$r){return e===f;},
-                },
-                '.valid-filter':{
-                    'Sì': function(e,n,f,i,$r){return e===f;},
-                    'No': function(e,n,f,i,$r){return e===f;},
-                }
-            }
-        },
-    }).tablesorterPager({
-        container: $("#pager-interviews-user"),
-
-        ajaxUrl: pathServer + 'surveys/ws/getInterviewsUser/'+id_managing_entity+'/'+id_structure+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
-
-        // modify the url after all processing has been applied
-        customAjaxUrl: function(table, url) {
-            // manipulate the url string as you desire
-        // url += '&cPage=' + window.location.pathname;
-        // trigger my custom event
-            $(table).trigger('changingUrl', url);
-            // send the server the current page
-            $('#template-spinner').show();
-            return url;
-        },
-
-        // add more ajax settings here
-        // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-        ajaxObject: {
-            dataType: 'json'
-        },
-        // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
-        ajaxProcessing: function(data){
-            if (data && data.hasOwnProperty('rows')) {
-                var r, row, c, d = data.rows,
-                // total number of rows (required)
-                total = data.total_rows,
-                // array of header names (optional)
-                headers = data.headers,
-                // all rows: array of arrays; each internal array has the table cell data for that row
-                rows = [],
-                // len should match pager set size (c.size)
-                len = d.length;
-                // this will depend on how the json is set up - see City0.json
-                // rows
-                for ( r=0; r <= len; r++ ) {
-                    row = []; // new row array
-                    // cells
-                    for ( c in d[r] ) {
-                        if (typeof(c) === "string") {
-                        row.push(d[r][c]); // add each table cell data to row array
-                        }
+        //Tabella interviste
+        $('#table-interviews-user').tablesorter({
+            theme: 'bootstrap',
+            headerTemplate: '{content} {icon}',
+            widthFixed: false,
+            widgets: [ "zebra" , 'columns', 'filter', 'uitheme', 'bootstrap'],
+            widgetOptions: {
+                filter_functions:{
+                    '.status-filter':{
+                        'Compilazione': function(e,n,f,i,$r){return e===f;},
+                        'Firmata': function(e,n,f,i,$r){return e===f;},
+                    },
+                    '.valid-filter':{
+                        'Sì': function(e,n,f,i,$r){return e===f;},
+                        'No': function(e,n,f,i,$r){return e===f;},
                     }
-                    rows.push(row); // add new row array to rows array
                 }
-                // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
+            },
+        }).tablesorterPager({
+            container: $("#pager-interviews-user"),
+
+            ajaxUrl: pathServer + 'surveys/ws/getInterviewsUser/'+id_managing_entity+'/'+id_structure+'?{filterList:filter}&{sortList:column}&size={size}&page={page}',
+
+            // modify the url after all processing has been applied
+            customAjaxUrl: function(table, url) {
+                // manipulate the url string as you desire
+            // url += '&cPage=' + window.location.pathname;
+            // trigger my custom event
+                $(table).trigger('changingUrl', url);
+                // send the server the current page
+                $('#template-spinner').show();
+                return url;
+            },
+
+            // add more ajax settings here
+            // see http://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
+            ajaxObject: {
+                dataType: 'json'
+            },
+            // return [ total_rows, $rows (jQuery object; optional), headers (array; optional) ]
+            ajaxProcessing: function(data){
+                if (data && data.hasOwnProperty('rows')) {
+                    var r, row, c, d = data.rows,
+                    // total number of rows (required)
+                    total = data.total_rows,
+                    // array of header names (optional)
+                    headers = data.headers,
+                    // all rows: array of arrays; each internal array has the table cell data for that row
+                    rows = [],
+                    // len should match pager set size (c.size)
+                    len = d.length;
+                    // this will depend on how the json is set up - see City0.json
+                    // rows
+                    for ( r=0; r <= len; r++ ) {
+                        row = []; // new row array
+                        // cells
+                        for ( c in d[r] ) {
+                            if (typeof(c) === "string") {
+                            row.push(d[r][c]); // add each table cell data to row array
+                            }
+                        }
+                        rows.push(row); // add new row array to rows array
+                    }
+                    // in version 2.10, you can optionally return $(rows) a set of table rows within a jQuery object
+
+                    $('#template-spinner').hide();
+                    return [ total, rows, headers ];
+
+                }
 
                 $('#template-spinner').hide();
-                return [ total, rows, headers ];
+            },
+            // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
+            output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
+            // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
+            updateArrows: true,
+            // starting page of the pager (zero based index)
+            page: 0,
+            // Number of visible rows - default is 10
+            size: 10,
+            // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
+            // table row set to a height to compensate; default is false
+            fixedHeight: false,
+            // remove rows from the table to speed up the sort of large tables.
+            // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+            removeRows: false,
+            // go to page selector - select dropdown that sets the current page
+            cssGoto: '.gotoPage'
+        }).bind("pagerComplete pagerInitialized",function(e, options){
 
+            if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
+                $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
             }
+            calculateTableDropdownPosition();
 
-            $('#template-spinner').hide();
-        },
-        // output string - default is '{page}/{totalPages}'; possible variables: {page}, {totalPages}, {startRow}, {endRow} and {totalRows}
-        output: '{startRow} - {endRow} / {filteredRows} ({totalRows})',
-        // apply disabled classname to the pager arrows when the rows at either extreme is visible - default is true
-        updateArrows: true,
-        // starting page of the pager (zero based index)
-        page: 0,
-        // Number of visible rows - default is 10
-        size: 10,
-        // if true, the table will remain the same height no matter how many records are displayed. The space is made up by an empty
-        // table row set to a height to compensate; default is false
-        fixedHeight: false,
-        // remove rows from the table to speed up the sort of large tables.
-        // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-        removeRows: false,
-        // go to page selector - select dropdown that sets the current page
-        cssGoto: '.gotoPage'
-    }).bind("pagerComplete pagerInitialized",function(e, options){
-
-        if(parseInt(options.totalRows) == 0 && $('span#no-result').length == 0){
-            $('#'+$(this).attr("id")+' tbody').append('<tr><td colspan="'+$('#'+$(this).attr("id")).find('thead th').length+'" style="text-align:center;"><span id="no-result">Nessun risultato trovato.</span></td></tr>');
-        }
-        calculateTableDropdownPosition();
-
-    });
+        });
     }
 
     $('#addInterview').click(function(){
@@ -628,21 +448,21 @@ $(document).ready(function(){
         $(this).find('.action-buttons').hide();
     });
 
-    //tasto delete ente gestore sull'hover
-    $(document).on('mouseover', '.partner-structures', function() { 
-        $(this).find('.delete-inspec-partner').show();
-    });
-
-    $(document).on('mouseout', '.partner-structures', function() { 
-        $(this).find('.delete-inspec-partner').hide();
-    });
-
-    //Scarica ispezione in pdf
+    //Scarica preventivo in pdf
 	$(document).on('click','.interview-pdf', function(){
 		var interview = $(this).attr('data-id');
 		$('#template-spinner').show();
 		document.cookie = 'downloadStarted=0;path=/';
-		window.location = pathServer + "surveys/surveys/interviewPdf/"+interview;
+		window.location = pathServer + "surveys/surveys/documentPdf/"+interview;
+        checkCookieForLoader('downloadStarted', '1');
+    });
+
+     //Scarica preventivo in word
+	$(document).on('click','.interview-word', function(){
+		var interview = $(this).attr('data-id');
+		$('#template-spinner').show();
+		document.cookie = 'downloadStarted=0;path=/';
+		window.location = pathServer + "surveys/surveys/documentWord/" + interview;
         checkCookieForLoader('downloadStarted', '1');
     });
     

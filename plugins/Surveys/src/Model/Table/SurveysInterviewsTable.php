@@ -39,6 +39,26 @@ class SurveysInterviewsTable extends AppTable
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Surveys')
+            ->setForeignKey('id_survey')
+            ->setProperty('surveys');
+
+        $this->belongsTo('SurveysInterviewsStatuses')
+            ->setForeignKey('status')
+            ->setProperty('status_details');
+
+        $this->hasMany('SurveysAnswers', ['className' => 'Surveys.SurveysAnswers'])
+            ->setForeignKey('id_interview')
+            ->setConditions(['SurveysAnswers.deleted' => false])
+            ->setSort(['SurveysAnswers.chapter' => 'ASC'])
+            ->setProperty('answers')
+            ->setDependent(true);
+
+        $this->hasOne('SurveysInterviewsGuests', ['className' => 'Surveys.SurveysInterviewsGuests'])
+            ->setProperty('guest')
+            ->setForeignKey('interview_id')
+            ->setDependent(true);
     }
 
     /**
@@ -57,14 +77,6 @@ class SurveysInterviewsTable extends AppTable
             ->integer('id_survey')
             ->requirePresence('id_survey', 'create')
             ->allowEmpty('id_survey', false);
-
-        $validator
-            ->integer('id_azienda')
-            ->allowEmpty('id_azienda', true);
-
-        $validator
-            ->integer('id_sede')
-            ->allowEmpty('id_sede', true);
 
         $validator
             ->integer('id_user')
@@ -102,7 +114,7 @@ class SurveysInterviewsTable extends AppTable
         $validator
             ->scalar('version')
             ->maxLength('version', 64)
-            ->allowEmpty('version', false); 
+            ->allowEmpty('version', true); 
 
         return $validator;
     }

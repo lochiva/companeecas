@@ -286,18 +286,18 @@ $menu = [
         'icon-class' => 'fa fa-microphone text-blue'
       ],
     ]
-  ], 
+  ],*/
   [
-    'name' => 'Questionari',
+    'name' => 'Modelli',
     'plugin' => ['Surveys'],
     'controller' => ['Surveys'],
     'action' => ['index'],
     'levels' => ['admin'],
-    'url' => '#',
+    'url' => Router::url(['plugin' => 'Surveys', 'controller' => 'Surveys', 'action' => 'index']),
     'target' => '',
     'icon-class' => 'fa fa-list-alt',
     'children' => [
-      [
+/*       [
         'name' => 'Capitoli',
         'plugin' => ['Surveys'],
         'controller' => ['Surveys'],
@@ -318,10 +318,10 @@ $menu = [
         'target' => '',
         'icon-class' => 'fa fa-list-alt',
         'children' => []
-      ]
-    ]
+      ]*/
+    ] 
   ],
-  [
+  /*[
     'name' => 'Interviste',
     'plugin' => ['Surveys'],
     'controller' => ['Surveys'],

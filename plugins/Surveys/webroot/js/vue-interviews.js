@@ -8,22 +8,73 @@ Vue.component('tree-item', {
         'index',
         'item',
         'parentitem',
-        'label',
+        'number-label',
         'role',
-        'selected-partner',
-        'selected-gestore',
-        'selected-structure',
         'id-interview',
         'status'
     ],
     data: function () {
         return {
             isOpen: false,
-            datepickerItalian: vdp_translation_it.js
+            datepickerItalian: vdp_translation_it.js,
+            baseImageUrl: baseImageUrl,
+            editorInit: {
+                resize: false, 
+                height: 300, 
+                language: 'it_IT', 
+                branding: false, 
+                plugins: ['image table'],
+                relative_urls : false,
+                remove_script_host : false,
+                convert_urls : true,
+                file_picker_callback: function(callback, value, meta) {
+                    // svuoto l'input
+                    $('#tinymce_upload').val('');
+                    // Provide image and alt text for the image dialog
+                    $('#tinymce_upload').off('change');
+                    $('#tinymce_upload').trigger('click');
+                    $('#tinymce_upload').on('change', function(){
+                    // eseguo opportuni controlli sul file
+                        file = this.files[0];
+                        if(file === undefined){
+                            return;
+                        }
+                        var fileType = file.type.substr(0,file.type.indexOf('/'));
+                        
+                        if(fileType != 'image'){
+                            alert('Il file non è del formato corretto!');
+                            return;
+                        }
+        
+                        formData= new FormData(document.getElementById('tinymce_upload_form') );
+                        // eseguo la chiamata ajax ache salva l'immagine, e di ritorno avrò l'url
+                        $.ajax({
+                            url: pathServer+'surveys/ws/saveImagePath/1',
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: function(data){
+                                if(data.response == 'OK'){
+                                    callback(data.data, {
+                                        alt: ''
+                                    });
+                                }else{
+                                    alert(data.msg);
+                                }
+                            },
+        
+                        });
+        
+                    });
+                }
+            }
         }
     },
     components: {
         'datepicker': vuejsDatepicker,
+        'editor': Editor
     },
     mounted: function () {
 
@@ -67,6 +118,31 @@ Vue.component('tree-item', {
                 params.answer.splice(params.index, 1);
             }
         },
+        computeNumberLabel: function(items, index) {
+            var excludedItems = 0;
+            var number = '';
+            if (items[index].questions.length > 0) {
+                for(i = 0; i <= index; i++) {
+                    if (items[i].questions.length == 0) {
+                        excludedItems++;
+                    }
+                }
+                number = (index + 1) - excludedItems + '.';
+            }
+
+            return number;
+        },
+        isComponentActive: function(components) {
+            var activeComponents = this.$root.activeComponents;
+            var componentIds = [];
+            components.forEach(function(component) {
+                componentIds.push(component.id);
+            });
+            return componentIds.some(id => activeComponents.includes(id));
+        },
+        getDimensions: function() {
+            return this.$root.dimensions;
+        },
     }
 });
 
@@ -74,24 +150,23 @@ var app = new Vue({
     el: '#app-interviews',
     data: {
         idSurvey: 0,
-        selectedPartner: null,
-        selectedStructure: null,
+        idQuotation: 0,
+        surveyVersion: '',
         role: role,
-        partners: [],
-        gestori: [],
-        structures: [],
         interviewData: {
             idInterview: 0,
-            idPartner: 0,
-            idStructure: 0,
             title: '',
             subtitle: '',
             description: '',
             status: '',
+            version: '',
             items: []
         },
         loadedData: '',
         footerInViewport: true,
+        preview: 0,
+        activeComponents: [],
+        dimensions: []
     },
       
     mounted: function () {
@@ -100,16 +175,16 @@ var app = new Vue({
 
         this.idSurvey = url.searchParams.get("survey");
 
+        if(url.searchParams.get("quotation") != null){
+            this.idQuotation = url.searchParams.get("quotation");
+        }
+
         if(url.searchParams.get("interview") != null){
             this.interviewData.idInterview = url.searchParams.get("interview");
         }
 
-        if(url.searchParams.get("managentity") != null){
-            this.interviewData.idPartner = url.searchParams.get("managentity");
-        }
-
-        if(url.searchParams.get("structure") != null){
-            this.interviewData.idStructure = url.searchParams.get("structure");
+        if (url.searchParams.get("preview")) {
+            this.preview = url.searchParams.get("preview");
         }
 
         if(this.interviewData.idInterview){
@@ -117,24 +192,32 @@ var app = new Vue({
         }else{
             this.loadSurvey(this.idSurvey);
         }
-
-        if(this.role == 'admin'){
-            this.getPartners();
-        }
     },
        
     methods: {
         loadInterview: function(id){
-            axios.get(pathServer + 'surveys/ws/getInterview/' + id)
+            if (this.preview) {
+                var url = pathServer + 'surveys/ws/getInterviewForNewSurvey/' + id;
+            } else {
+                var url = pathServer + 'surveys/ws/getInterview/' + id;
+            }
+            axios.get(url)
                 .then(res => { 
-                    if (res.data.response == 'OK') { 
+                    if (res.data.response == 'OK') {
+                        this.idSurvey = res.data.data.id_survey;
+                        this.surveyVersion = res.data.data.survey_version;
                         this.interviewData.title = res.data.data.title;
                         this.interviewData.subtitle = res.data.data.subtitle;
                         this.interviewData.description = res.data.data.description;
-                        this.interviewData.idPartner = res.data.data.id_azienda;
-                        this.interviewData.idStructure = res.data.data.id_sede;
                         this.interviewData.status = res.data.data.status;
+                        this.interviewData.version = res.data.data.version;
                         this.interviewData.items = res.data.data.answers;
+
+                        this.dimensions = res.data.data.dimensions;
+
+                        if (this.preview) {
+                            this.updateInterviewQuestionsVisibility();
+                        }
 
                         this.loadedData = JSON.stringify(this.interviewData);
                     } else {
@@ -145,13 +228,18 @@ var app = new Vue({
                 });
         },
         loadSurvey: function(id){
-            axios.get(pathServer + 'surveys/ws/getSurvey/' + id)
+            axios.get(pathServer + 'surveys/ws/getSurvey/' + id + '/' + 1 + '/' + this.idQuotation)
                 .then(res => { 
                     if (res.data.response == 'OK') { 
+                        this.idSurvey = res.data.data.id;
+                        this.surveyVersion = res.data.data.version;
                         this.interviewData.title = res.data.data.title;
                         this.interviewData.subtitle = res.data.data.subtitle;
                         this.interviewData.description = res.data.data.description;
+                        this.interviewData.version = res.data.data.version;
                         this.interviewData.items = res.data.data.chapters;
+
+                        this.dimensions = res.data.data.dimensions;
                     } else {
                         alert(res.data.msg);
                     }
@@ -159,126 +247,36 @@ var app = new Vue({
                     console.log(error);
                 }); 
         },
-        getPartners: function(){
-
-            axios.get(pathServer + 'surveys/ws/getPartners/')
-                .then(res => { 
-                    if (res.data.response == 'OK') { 
-                        this.partners = res.data.data; 
-                    } else {
-                        alert(res.data.msg);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
-
-        },
-        getStructures: function(){
-
-            axios.get(pathServer + 'surveys/ws/getStructuresInterview/' + this.interviewData.idPartner)
-                .then(res => { 
-                    if (res.data.response == 'OK') { 
-                        this.structures = res.data.data; 
-                    } else {
-                        alert(res.data.msg);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
-
-        },
-        setSelectedPartner: function(value){
-            if(value !== null){ 
-                this.selectedPartner = value;
-                this.interviewData.idPartner = value.code;
-                this.getStructures();
-            }
-        },
-        setSelectedStructure: function(value){
-            if(value !== null){ 
-                this.selectedStructure = value;
-                this.interviewData.idStructure = value.code;
-            }
-        },
         saveInterview: function(exit){
-            if(this.role == 'admin' && this.interviewData.idPartner == 0){
-                alert("Selezionare un'azienda per poter salvare l'intervista.");
-                return false;
-            /*}else if(this.role == 'admin' && this.interviewData.idGestore == 0){
-                alert("Selezionare un ente gestore per poter salvare l'intervista.");
-                return false;
-            */}else if(this.role == 'admin' && this.interviewData.idStructure == 0){
-                alert("Selezionare una sede per poter salvare l'intervista.");
-                return false;
-            }else{
+            notValid = this.checkInterviewRequiredQuestions(this.interviewData.items, false);
+
+            if (notValid) {
+                alert("Si prega di compilare tutti i campi obbligatori.");
+            } else {
                 let params = new URLSearchParams();
                 if(this.interviewData.idInterview){
                     params.append('idInterview', this.interviewData.idInterview);
                 }
                 params.append('id_survey', this.idSurvey);
+                if (this.idQuotation) {
+                    params.append('id_quotation', this.idQuotation);
+                }
                 params.append('title', this.interviewData.title);
                 params.append('subtitle', this.interviewData.subtitle);
                 params.append('description', this.interviewData.description);
-                params.append('id_azienda', this.interviewData.idPartner);
-                //params.append('id_gestore', this.interviewData.idGestore);
-                params.append('id_sede', this.interviewData.idStructure);
+                params.append('version', this.interviewData.version);
                 params.append('answers', JSON.stringify(this.interviewData.items));
-
-                var notValid = false;
-
-                this.interviewData.items.forEach(function(item){
-                    item.questions.forEach(function(question){ 
-                        if(question.required){
-                            switch(question.type){
-                                case 'short_answer':
-                                case 'free_answer':
-                                case 'yes_no':
-                                case 'date':
-                                case 'number':
-                                    if(question.answer === ''){
-                                        notValid = true;
-                                    }
-                                    break;
-                                case 'table':
-                                    if(question.answer.length == 0){
-                                        notValid = true;
-                                    }
-                                    break;
-                                case 'single_choice':
-                                    if(question.answer.check === ''){
-                                        notValid = true;
-                                    };
-                                    break;
-                                case 'multiple_choice':
-                                    var checked = false;
-                                    question.options.forEach(function(){
-                                        if(question.answer.check !== ''){
-                                            checked = true;
-                                        }
-                                    });
-                                    if(!checked){
-                                        notValid = true;
-                                    }
-                                    break;
-                            }
-                        }
-                    });
-                });
-
                 params.append('not_valid', notValid);
 
                 axios.post(pathServer + 'surveys/ws/saveInterview', params)
                     .then(res => {
                         if (res.data.response == 'OK') {
+                            this.loadedInterview = JSON.stringify(this.interviewData);
                             if(exit){
-                                if(this.role == 'admin'){
-                                    window.location = pathServer + 'surveys/surveys/interviews/'+this.idSurvey;
-                                }else{
-                                    window.location = pathServer + 'surveys/surveys/interviews/'+this.idSurvey/*+'/'+this.interviewData.idGestore+'/'+this.interviewData.idStructure*/;
-                                }
+                                window.location = pathServer + 'surveys/surveys/interviews/'+this.idSurvey;
                             }else{
                                 alert(res.data.msg);
-                                if(!this.interviewData.idInterview){
+                                if(!this.interviewData.idInterview || this.preview){
                                     window.location = pathServer + 'surveys/surveys/answers?survey='+this.idSurvey+'&interview='+res.data.data;
                                 }
                             }
@@ -289,8 +287,66 @@ var app = new Vue({
                     .catch(error => {
                         console.log(error);
                     });
-
             }
+        },
+        checkInterviewRequiredQuestions: function(items, notValid) {
+            items.every(item => {
+                item.questions.every(question => {
+                    if(question.required && question.visible){
+                        switch(question.type){
+                            case 'short_answer':
+                            case 'free_answer':
+                            case 'yes_no':
+                            case 'date':
+                            case 'number':
+                            case 'answer_text_editor':
+                                if(question.answer === ''){
+                                    notValid = true;
+                                }
+                                break;
+                            case 'table':
+                                if(question.answer.length == 0){
+                                    notValid = true;
+                                }
+                                break;
+                            case 'single_choice':
+                                if(question.answer.check === ''){
+                                    notValid = true;
+                                };
+                                break;
+                            case 'multiple_choice':
+                                var checked = false;
+                                question.options.forEach(function(){
+                                    if(question.answer.check !== ''){
+                                        checked = true;
+                                    }
+                                });
+                                if(!checked){
+                                    notValid = true;
+                                }
+                                break;
+                        }
+                    }
+
+                    if (notValid) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (!notValid && item.items.length > 0) {
+                    notValid = this.checkInterviewRequiredQuestions(item.items, notValid);
+                }
+
+                if (notValid) {
+                    return false;
+                }
+                
+                return true;
+            });
+
+            return notValid;
         },
         checkInViewport: function(isInViewport) {
             this.footerInViewport = isInViewport;
@@ -372,6 +428,55 @@ var app = new Vue({
 
             updateQuestionsVisibility(this.interviewData.items, question.id, question.answer, question.type);
         },
+
+        updateInterviewQuestionsVisibility: function() {
+            var updateItemsQuestionsVisibility = (items) =>  {
+                items.forEach((item) => {
+                    item.questions.forEach((q) => {
+                        this.updateConditionedQuestions(q);
+                    });
+
+                    if(item.items.length > 0){
+                        updateItemsQuestionsVisibility(item.items);
+                    }
+                });
+            }
+            updateItemsQuestionsVisibility(this.interviewData.items);
+        },
+
+        updateInterviewStructure: function() {
+            window.location.href = pathServer + "surveys/surveys/answers?survey=" + this.idSurvey + "&interview=" + this.interviewData.idInterview + "&preview=1";
+        },
+
+        documentPreview: function() {
+            window.open(pathServer + 'surveys/surveys/documentPreview/' + this.interviewData.idInterview);
+        },
+
+        getActiveComponentsByInterview: function() {
+            axios.get(pathServer + 'surveys/ws/getActiveComponentsByInterview/' + this.interviewData.idInterview)
+                .then(res => { 
+                    if (res.data.response == 'OK') { 
+                        this.activeComponents = res.data.data;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                }); 
+        },
+
+        getActiveComponentsByQuotation: function() {
+            axios.get(pathServer + 'surveys/ws/getActiveComponentsByQuotation/' + this.idQuotation)
+                .then(res => { 
+                    if (res.data.response == 'OK') { 
+                        this.activeComponents = res.data.data;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                }); 
+        }
     },
       
     filters: {

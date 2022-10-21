@@ -23,7 +23,7 @@ class GuestsExitTypesController extends AppController
      */
     public function index()
     {
-        $guestsExitTypes = $this->paginate($this->GuestsExitTypes, ['contain' => ['Tipi']]);
+        $guestsExitTypes = $this->paginate($this->GuestsExitTypes, ['contain' => ['Tipi', 'Decreti', 'Notifiche']]);
 
         $this->set(compact('guestsExitTypes'));
         $this->set('_serialize', ['guestsExitTypes']);
@@ -39,7 +39,7 @@ class GuestsExitTypesController extends AppController
     public function view($id = null)
     {
         $guestsExitType = $this->GuestsExitTypes->get($id, [
-            'contain' => ['Tipi']
+            'contain' => ['Tipi', 'Decreti', 'Notifiche']
         ]);
 
         $this->set('guestsExitType', $guestsExitType);
@@ -54,6 +54,9 @@ class GuestsExitTypesController extends AppController
     public function add()
     {
         $guestsExitType = $this->GuestsExitTypes->newEntity();
+        $surveys = TableRegistry::get('Surveys.Surveys')->find('list')
+        ->order(['title' => 'ASC'])
+        ->toArray();
         $aziendeTipi = TableRegistry::get('Aziende.AziendeTipi')->getList();
         $tipi = [];
         foreach ($aziendeTipi as $t) {
@@ -72,6 +75,7 @@ class GuestsExitTypesController extends AppController
         $this->set(compact('guestsExitType'));
         $this->set('_serialize', ['guestsExitType']);
         $this->set('tipi', $tipi);
+        $this->set('surveys', $surveys);
     }
 
     /**
@@ -87,6 +91,9 @@ class GuestsExitTypesController extends AppController
             'contain' => []
         ]);
         $aziendeTipi = TableRegistry::get('Aziende.AziendeTipi')->getList();
+        $surveys = TableRegistry::get('Surveys.Surveys')->find('list')
+            ->order(['title' => 'ASC'])
+            ->toArray();
         $tipi = [];
         foreach ($aziendeTipi as $t) {
             $tipi[$t->id] = $t->name;
@@ -104,6 +111,7 @@ class GuestsExitTypesController extends AppController
         $this->set(compact('guestsExitType'));
         $this->set('_serialize', ['guestsExitType']);
         $this->set('tipi', $tipi);
+        $this->set('surveys', $surveys);
     }
 
     /**

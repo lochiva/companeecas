@@ -43,6 +43,18 @@ class GuestsExitTypesTable extends Table
             'className' => 'Aziende.AziendeTipi',
             'propertyName' => 'tipo'
         ]);
+        $this->belongsTo('Decreti', [
+            'foreignKey' => 'modello_decreto',
+            'className' => 'Surveys.Surveys',
+            'bindingKey' => 'id',
+            'propertyName' => 'decreto'
+        ]);
+        $this->belongsTo('Notifiche', [
+            'foreignKey' => 'modello_notifica',
+            'className' => 'Surveys.Surveys',
+            'bindingKey' => 'id',
+            'propertyName' => 'notifica'
+        ]);
     }
 
     /**

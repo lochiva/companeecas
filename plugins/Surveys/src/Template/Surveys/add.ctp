@@ -23,26 +23,41 @@ $role = $this->request->session()->read('Auth.User.role');
 <script src="https://unpkg.com/intersection-observer@0.5.0"></script>
 <script src="https://unpkg.com/vue-observe-visibility@0.4.2"></script>
 
-<?php $this->assign('title', 'Gestione scheda') ?>
+<!-- TOGGLE SWITCH -->
+<?= $this->Html->script('Surveys.ToggleSwitch.umd.min.js', ['block']); ?>
+
+<!-- TEXT EDITOR -->
+<?= $this->Html->script('tinymce/tinymce.min.js', ['block']); ?>
+<?= $this->Html->script('tinymce/tinymce-vue.min.js', ['block']); ?>
+
+<script>
+    var baseImageUrl = '<?=$baseImageUrl?>';
+    var placeholders = <?= json_encode($placeholders) ?>;
+</script>
+
+<?php $this->assign('title', 'Modelli') ?>
 <?= $this->Html->css('Surveys.surveys'); ?>
 <?= $this->Html->css('Surveys.vue-surveys'); ?>
-<?= $this->Html->script('Surveys.questions.js', ['block']); ?>
+<!--<?= $this->Html->script('Surveys.questions.js', ['block']); ?>-->
 <?= $this->Html->script('Surveys.elements.js', ['block']); ?>
 <?= $this->Html->script('Surveys.surveys', ['block']); ?>
 <?= $this->Html->script('Surveys.vue-surveys', ['block' => 'script-vue']); ?>
-<?= $this->Html->script('tinymce/tinymce.min.js', ['block']); ?>
-<?= $this->Html->script('tinymce/tinymce-vue.min.js', ['block']); ?>
 
 <div id='app-surveys'>
 
     <section class="content-header">
         <h1>
-            <?=__c('Gestione scheda')?>
+            <span v-if="surveyData.idSurvey">Modifica modello</span>
+            <span v-else>Nuovo modello</span>
             <small v-if="surveyData.idSurvey">v{{surveyData.version}}</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-            <li class="active"><?=__c('Gestione scheda')?></li>
+            <li><a href="<?=Router::url('/surveys/surveys/index');?>">Modelli</a></li>
+            <li class="active">
+                <span v-if="surveyData.idSurvey">Modifica modello</span>
+                <span v-else>Nuovo modello</span>
+            </li>
         </ol>
     </section>
 
@@ -54,13 +69,13 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div id="box-surveys" class="box box-surveys">
                     <div class="box-header with-border">
                         <i class="fa fa-list-alt"></i>
-                        <h3 class="box-title">Intestazione scheda</h3>
+                        <h3 class="box-title">Intestazione modello</h3>
                         <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
                     <div class="box-body">
                         <form id="formSurvey" class="form-horizontal">
                             <div id="survey-header">
-                                <!--<div class="form-group">
+                                <div class="form-group">
                                     <div class="col-md-6">
                                         <label class="required" for="surveyTitle"><?= __('Titolo') ?></label>
                                         <input type="text" maxlength="255" class="form-control" name="title" id="surveyTitle" v-model="surveyData.title" />
@@ -69,82 +84,59 @@ $role = $this->request->session()->read('Auth.User.role');
                                         <label class="required" for="surveySubtitle"><?= __('Sottotitolo') ?></label>
                                         <input type="text" maxlength="255" class="form-control" name="subtitle" id="surveySubtitle" v-model="surveyData.subtitle" />
                                     </div>
-                                </div>-->
+                                </div>
                                 <div class="form-group">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label for="surveyDescription"><?= __('Descrizione') ?></label>
                                         <textarea class="form-control" id="surveyDescription" name="description" v-model="surveyData.description"></textarea>
                                     </div>
-                                    <!--<div class="col-md-3">
+                                    <!--
+                                    <div class="col-md-3">
                                         <label class="required" for="surveyStatus"><?= __('Stato') ?></label>
                                         <select class="form-control" name="status" id="surveyStatus" :value="surveyData.status" @change="changeStatus(surveyData.status, $event)" >
                                             <option value=""></option>
                                             <option v-for="status in statuses" v-bind:value="status.id">{{status.name}}</option>
                                         </select>
-                                    </div>-->
+                                    </div>
+                                    -->
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
-                <!--
-                <div id="box-partners" class="box box-surveys">
-                    <div class="box-header with-border">
-                        <i class="fa fa-industry"></i>
-                        <h3 class="box-title">Aziende associate</h3>
-                        <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
-                    </div>
-                    <div class="box-body">
-                        <div class="col-sm-5 div-select-partner">
-                            <v-select :options="partners" id="selectPartner" :value="selectedPartner" @input="setSelectedPartner" placeholder="Seleziona un'azienda">
-                                <div slot="no-options">Nessuna azienda trovata.</div>
-                            </v-select>
-                        </div>
-                        <button type="button" class="btn btn-default" id="addInspecPartner" @click="addPartner()" >Assegna azienda</button>
-                        <div class="clear-both"></div>
-                        <div class="inspec-partners">
-                            <div v-for="(partner, key) in surveyData.partners" class="col-sm-12 partner-structures">
-                                <div>
-                                    <h5 class="label-inspec-partner"><b>{{partner.label}}</b></h5>
-                                    <button class="btn btn-xs btn-danger delete-inspec-partner pull-right" title="Elimina azienda" @click="removePartner(key)"><i class="fa fa-trash"></i></button>
-                                </div>
-                                <div v-for="(structure, index) in partner.structures" class="col-sm-4">
-                                    <input type="checkbox" v-model="structure.selected"> {{structure.label}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                -->
                 <div id="box-chapters" class="box box-surveys">
                     <div class="box-header with-border">
                         <i class="fa fa-list"></i>
                         <h3 class="box-title">Sezioni</h3>
                         <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true" style="margin-left:10px"></i> indietro </a>
-                        <button type="button" id="addChapter" class="btn btn-info btn-xs pull-right" @click="addItem(surveyData)" title="Aggiungi sezione"><i class="fa fa-plus"></i> Sezione</button>
+                        <button type="button" id="addChapter" class="btn btn-info btn-xs pull-right" @click="addItem(surveyData, true)" title="Aggiungi sezione"><i class="fa fa-plus"></i> Sezione</button>
                     </div>
                     <div class="box-body">
                         <script type="text/x-template" id="template-draggable">
-                            <draggable :list="items" ghostClass="ghost" handle=".draggable-area" forceFallback="true" :group="{name: 'g1'}" :empty-insert-threshold="50" :swap-threshold="0.2">
-                                <div v-for="(item, index) in items" class="box box-item survey-section" v-bind:style="{ borderTopColor: item.color }">
+                            <draggable :list="items" ghostClass="ghost" handle=".draggable-area" :move="onMovedItem" forceFallback="true" :group="{name: 'g1'}" :empty-insert-threshold="50" :swap-threshold="0.2">
+                                <div v-for="(item, index) in items" class="box box-item survey-section" v-bind:style="{ borderTopColor: item.color }" >
                                     <div class="box-header draggable-area" style="display:flex;" @click="toggle(item)">
                                         <div class="chapter-label">
                                             <span class="open-icon"><i v-if="item.open" class="fa fa-chevron-down"></i><i v-else class="fa fa-chevron-right"></i></span>
-                                            <h3 class="box-title" v-html="(label == undefined ? (index+1) : label+'.'+(index+1))+' '+item.title"></h3>
+                                            <h3 class="box-title" v-html="item.title"></h3>
                                         </div>
-                                        <div>
-                                            <button type="button" class="btn btn-info btn-xs" @click.stop="$emit('add-item', item); forceOpen()" title="Aggiungi sottosezione"><i class="fa fa-plus"></i> Sottosezione</button>
+                                        <div class="chapter-actions">
+                                            <button v-if="!item.primary" type="button" class="btn btn-warning btn-xs" @click.stop="showModalItemVisibility(item, 'section')" title="Configurazione visibilià della sottosezione"><i class="fa fa-eye"></i> Visibilità</button>
+<!-- 
+                                            <toggle-switch v-if="item.primary" class="layout-switch" :options="sectionToggleOptions" :group="'layoutSwitch'+index" v-model="item.layout" />
+                                             -->
+                                            <button v-if="item.primary" type="button" class="btn btn-info btn-xs add-subsection" @click.stop="$emit('add-item', item); forceOpen()" title="Aggiungi sottosezione"><i class="fa fa-plus"></i> Sottosezione</button>
                                             <button type="button" class="btn btn-danger btn-xs remove-item" @click.stop="$emit('remove-item', {'item':parentitem, 'index':index})" title="Cancella"><i class="fa fa-trash"></i></button>
                                         </div>
                                     </div>
                                     <div v-show="item.open" class="box-body">
                                         <div class="form-group section-detail">
                                             <div class="col-md-6">
-                                                <label class="required"><?= __('Titolo') ?></label>
+                                                <label class="required">Titolo</label>
                                                 <input type="text" maxlength="255" class="form-control" name="title" v-model="item.title" />
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="required" for="surveySubtitle"><?= __('Sottotitolo') ?></label>
+                                                <label class="required" for="surveySubtitle">Sottotitolo</label>
                                                 <input type="text" maxlength="255" class="form-control" name="subtitle" v-model="item.subtitle" />
                                             </div>
                                         </div>
@@ -155,21 +147,29 @@ $role = $this->request->session()->read('Auth.User.role');
                                                 <div v-for="(question, index) in item.questions" class="question-div">
                                                     <div class="action-buttons">
                                                         <a class="btn-add-hover" @click="showModalElements({'item': item, 'index': index, 'label':label, 'type': ''})" title="Aggiungi elemento"><i class="fa fa-plus"></i></a>
-                                                        <a class="btn-preview-hover" title="Anteprima domanda" @click="showModalPreviewQuestion(question)"><i class="fa fa-search"></i></a>
+                                                        <a v-if="question.preview" class="btn-preview-hover" title="Anteprima domanda" @click="showModalPreviewQuestion(question)"><i class="fa fa-search"></i></a>
+                                                        <a v-if="question.type == 'data_sheet'" class="btn-visibility-hover" title="Visibilità elemento" @click="showModalItemVisibility(question, 'element')"><i class="fa fa-eye"></i></a>
                                                         <a class="btn-move-hover draggable-area" title="Sposta elemento"><i class="fa fa-arrows"></i></a>
                                                         <a class="btn-delete-hover" @click="removeQuestion({'questions': item.questions, 'index': index})" title="Elimina elemento"><i class="fa fa-trash"></i></a>
                                                     </div>
 
-                                                    <!-- TESTO LIBERO -->
-                                                    <div v-if="question.type == 'free_text'" class="col-md-12 padding0">
+                                                    <!-- TESTO FISSO -->
+                                                    <div v-if="question.type == 'fixed_text'" class="col-md-12 padding0">
                                                         <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
                                                         <div class="col-md-12">
-                                                            <editor v-model="question.value" :init="editorInit"></editor>
+                                                            <editor v-model="question.value" :init="editor"></editor>
                                                         </div>
+                                                        <!--
                                                         <div class="col-md-12">
                                                             <label>Domanda condizionata</label>
                                                             <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
                                                             <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
+                                                        </div>
+                                                        -->
+                                                        <div class="col-md-12">
+                                                            <ul class="list-placeholders">
+                                                                <li v-for="placeholder in placeholders"><span v-html="placeholder.label"></span> - <span v-html="placeholder.description"></span></li>
+                                                            </ul>
                                                         </div>
                                                     </div>
 
@@ -187,18 +187,124 @@ $role = $this->request->session()->read('Auth.User.role');
                                                             <label>Didascalia</label>
                                                             <input type="text" class="form-control" v-model="question.caption" />
                                                         </div>
+                                                        <!--
                                                         <div class="col-md-12">
                                                             <label>Domanda condizionata</label>
                                                             <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
                                                             <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
                                                         </div>
+                                                        -->
+                                                    </div>
+
+                                                    <!-- RISPOSTA EDITOR DI TESTO -->
+                                                    <div v-if="question.type == 'answer_text_editor'" class="col-md-12 padding0">
+                                                        <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
+                                                        <!--
+                                                        <div class="col-md-12">
+                                                            <label>Domanda</label>
+                                                            <input type="text" class="form-control" v-model="question.question" />
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label>Tooltip</label>
+                                                            <input type="text" class="form-control" v-model="question.tooltip" />
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label>Obbligatoria</label>
+                                                            <input type="checkbox" v-model="question.required" />
+                                                        </div>
+                                                        
+                                                        <div class="col-md-12">
+                                                            <label>Domanda condizionata</label>
+                                                            <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
+                                                            <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label>Visibile in tabella</label>
+                                                            <input type="checkbox" v-model="question.show_in_table" @change="updateShortLabels(question)"/> 
+                                                            <input v-if="question.show_in_table" type="text" maxlength="64" class="form-control question-label-table" placeholder="Etichetta per tabella" v-model="question.label_table" />
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label>Esportabile in excel</label>
+                                                            <input type="checkbox" v-model="question.show_in_export" @change="updateShortLabels(question)"/> 
+                                                            <input v-if="question.show_in_export" type="text" maxlength="64" class="form-control question-label-table" placeholder="Etichetta per excel" v-model="question.label_export" />
+                                                        </div>
+                                                        -->
+                                                        <div class="col-md-12">
+                                                            <editor v-model="question.answer" :init="editor"></editor>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <ul class="list-placeholders">
+                                                                <li v-for="placeholder in placeholders"><span v-html="placeholder.label"></span> - <span v-html="placeholder.description"></span></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- SCHEDA TECNICA -->
+                                                    <div v-if="question.type == 'data_sheet'" class="col-md-12 padding0">
+                                                        <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
+                                                        <div class="col-md-12">
+                                                            <div class="grey-box-survey-element">
+                                                                <span v-html="question.data_sheet.label"></span>:
+                                                                <span v-if="question.visibility_by_component">
+                                                                    <span v-if="question.components.length > 1">
+                                                                        presente se attivo uno o più tra i componenti
+                                                                    </span>
+                                                                    <span v-else>
+                                                                        presente se attivo il componente
+                                                                    </span>
+                                                                    <span v-for="component in question.components" v-html="component.text" class="component-label-element-survey"></span>
+                                                                </span>
+                                                                <span v-else>sempre presente</span>
+                                                            </div>
+                                                        </div>
+                                                        <!--
+                                                        <div class="col-md-12">
+                                                            <label>Domanda condizionata</label>
+                                                            <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
+                                                            <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
+                                                        </div>    
+                                                        -->                                                    
+                                                    </div>
+
+                                                    <!-- MISURE 
+                                                    <div v-if="question.type == 'dimensions'" class="col-md-12 padding0">
+                                                        <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
+                                                        <div class="col-md-12">
+                                                            <div class="grey-box-survey-element">
+                                                                Misure
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <label>Domanda condizionata</label>
+                                                            <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
+                                                            <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
+                                                        </div>    
+                                           
+                                                    </div>
+                                                    -->
+                                                    <!-- SALTO PAGINA -->
+                                                    <div v-if="question.type == 'page_break'" class="col-md-12 padding0">
+                                                        <b><i v-html="question.label"></i></b> <i v-show="question.conditioned" class="fa fa-link"></i>
+                                                        <div class="col-md-12">
+                                                            <div class="grey-box-survey-element">
+                                                                Salto pagina
+                                                            </div>
+                                                        </div>
+                                                        <!--
+                                                        <div class="col-md-12">
+                                                            <label>Domanda condizionata</label>
+                                                            <input type="checkbox" v-model="question.conditioned" @click="showModalQuestions({'question': question, 'index': index, 'isInput': true}, $event)" /> 
+                                                            <a v-if="question.conditioned" class="view-question-condition" @click="showModalQuestions({'question': question, 'index': index, 'isInput': false}, $event)">vedi condizioni</a>
+                                                        </div>    
+                                                        -->                                                    
                                                     </div>
 
                                                     <!-- TESTO STANDARD -->
                                                     <div v-if="question.type == 'standard_text'" class="col-md-12 padding0">
                                                         <b><i v-html="question.label"></i></b> (<span v-html="question.name"></span>) <i v-show="question.conditioned" class="fa fa-link"></i>
                                                         <div class="col-md-12">
-                                                            <editor v-model="question.value" :init="editorInit"></editor>
+                                                            <editor v-model="question.value" :init="editor"></editor>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <label>Domanda condizionata</label>
@@ -409,8 +515,9 @@ $role = $this->request->session()->read('Auth.User.role');
                                             :parentitem="item"
                                             :label="label == undefined ? (index+1) : label+'.'+(index+1)"
                                             :elements="elements"
-                                            :questions="questions"
                                             :survey="survey"
+                                            :editor="editor"
+                                            :placeholders="placeholders"
                                             @add-item="$emit('add-item', $event)"
                                             @remove-item="$emit('remove-item', $event)"
                                         > 
@@ -424,15 +531,15 @@ $role = $this->request->session()->read('Auth.User.role');
                             :items="surveyData.items"
                             :parentitem="surveyData"
                             :elements="elements"
-                            :questions="questions"
                             :survey="surveyData"
+                            :editor="editorInit"
+                            :placeholders="placeholders"
                             @add-item="addItem"
                             @remove-item="removeItem"
                         >
                         </nested-draggable >
 
                         <form id="tinymce_upload_form" enctype="multipart/form-data" class="form-editor-image-upload">      
-                            <input hidden name="survey" :value="surveyData.idSurvey"/>
                             <input hidden name="file" type="file" id="tinymce_upload" class=""/>
                         </form>
                     </div>
@@ -443,7 +550,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     v-observe-visibility="{callback: checkInViewport}">
                     <a href="<?=Router::url('/surveys/surveys/index');?>" class="btn btn-default">Annulla</a>
                     <button class="btn btn-success save-survey-stay" @click="checkFormSurvey()">Salva</button>
-                    <!--<button class="btn btn-primary save-survey-exit" @click="checkFormSurvey(true)">Salva ed esci</button>-->
+                    <button class="btn btn-primary save-survey-exit" @click="checkFormSurvey(true)">Salva ed esci</button>
                 </div>
             </div>
         </div>
@@ -466,9 +573,9 @@ $role = $this->request->session()->read('Auth.User.role');
                 <md-icon><i class="glyphicon glyphicon-floppy-disk fab-icon"></i></md-icon>
             </md-button>
 
-            <!--<md-button class="md-fab fab-primary save-survey-exit" @click="checkFormSurvey(true)" title="Salva ed esci">
+            <md-button class="md-fab fab-primary save-survey-exit" @click="checkFormSurvey(true)" title="Salva ed esci">
                 <md-icon><i class="glyphicon glyphicon-floppy-remove fab-icon"></i></md-icon>
-            </md-button>-->
+            </md-button>
         </md-speed-dial-content>
     </md-speed-dial>
 
@@ -476,6 +583,7 @@ $role = $this->request->session()->read('Auth.User.role');
     <?= $this->element('Surveys.modal_question_choice') ?>
     <?= $this->element('Surveys.modal_preview_question') ?>
     <?= $this->element('Surveys.modal_tooltip_question'); ?>
-    <?= $this->element('Surveys.modal_standard_texts') ?>
+    <?= $this->element('Surveys.modal_data_sheet_options') ?>
+    <?= $this->element('Surveys.modal_item_visibility') ?>
 
 </div>

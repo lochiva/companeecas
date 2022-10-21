@@ -4,18 +4,17 @@ namespace Surveys\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * SurveysToStructure Entity
+ * SurveysPlaceholder Entity
  *
  * @property int $id
- * @property int $id_survey
- * @property int $id_azienda
- * @property int $id_sede
+ * @property string $label
+ * @property string $description
+ * @property bool $deleted
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */
-class SurveysToStructure extends Entity
+class SurveysPlaceholder extends Entity
 {
-
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -26,10 +25,10 @@ class SurveysToStructure extends Entity
      * @var array
      */
     protected $_accessible = [
-        'id_survey' => true,
-        'id_azienda' => true,
-        'id_sede' => true,
+        'label' => true,
+        'description' => true,
+        'deleted' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
     ];
 }

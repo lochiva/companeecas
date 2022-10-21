@@ -24,8 +24,13 @@ $role = $this->request->session()->read('Auth.User.role');
 <script src="https://unpkg.com/vuejs-datepicker"></script>
 <script src="https://unpkg.com/vuejs-datepicker/dist/locale/translations/it.js"></script>
 
+<!-- TEXT EDITOR -->
+<?= $this->Html->script('tinymce/tinymce.min.js', ['block']); ?>
+<?= $this->Html->script('tinymce/tinymce-vue.min.js', ['block']); ?>
+
 <script>
     var role = "<?= $role ?>";
+    var baseImageUrl = '<?=$baseImageUrl?>';
 </script>
 
 <?php $this->assign('title', 'Interviste') ?>
@@ -37,17 +42,12 @@ $role = $this->request->session()->read('Auth.User.role');
 <div id='app-interviews'>
 
     <section class="content-header">
-        <h1 v-if="interviewData.idInterview"><?=__c('Modifica intervista')?></h1>
-        <h1 v-else><?=__c('Nuova intervista')?></h1>
+        <h1 v-if="interviewData.idInterview"><?=__c('Modifica documento')?></h1>
+        <h1 v-else><?=__c('Nuova documento')?></h1>
         <ol class="breadcrumb">
             <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-            <li v-if="role =='admin'"><a href="<?=Router::url('/surveys/surveys/index');?>"> <?=__c('Questionari')?></a></li>
-            <li v-if="role =='admin'"><a :href="'<?=Router::url('/surveys/surveys/interviews/');?>'+idSurvey"> <?=__c('Interviste')?></a></li>
-            <li v-if="role !='admin'"><a href="<?=Router::url('/surveys/surveys/managingEntities');?>"><?=__c('Aziende')?></a></li>
-            <li v-if="role !='admin'"><a :href="'<?=Router::url('/surveys/surveys/structures/');?>'+interviewData.idGestore"><?=__c('Sedi')?></a></li>
-            <li v-if="role !='admin'"><a :href="'<?=Router::url('/surveys/surveys/interviews/0/');?>'+interviewData.idGestore+'/'+interviewData.idStructure"><?=__c('Interviste')?></a></li>
-            <li v-if="interviewData.idInterview" class="active"><?=__c('Modifica intervista')?></li>
-            <li v-else class="active"><?=__c('Nuova intervista')?></li>
+            <li v-if="interviewData.idInterview" class="active">Modifica documento</li>
+            <li v-else class="active">Nuovo documento</li>
         </ol>
     </section>
 
@@ -58,38 +58,25 @@ $role = $this->request->session()->read('Auth.User.role');
             <div class="col-xs-12">
                 <div id="box-answers" class="box box-surveys">
                     <div class="box-header">
+                        <span>v{{interviewData.version}}</span>
                         <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" style="margin-left:10px"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
+                    <div v-show="interviewData.idInterview && surveyVersion != interviewData.version" class="alert alert-warning warning-interview-version">
+                        <p>ATTENZIONE: è stato rilevato che esiste una nuova struttura di modello del preventivo (v{{surveyVersion}}).<br />
+                            Per ovviare ad eventuali problemi, si consiglia di aggiornare la struttura attualmente in uso per questo preventivo. Al termine dell'aggiornamento il nuovo documento vi sarà mostrata in lettura con i dati da voi inseriti, si consiglia di verificarne la validità rispetto la nuova struttura e salvare per consolidare il tutto.</p>
+                        <button class="btn btn-default pull-right" @click="updateInterviewStructure()">Aggiorna</button>
+                    </div>
+                    <div v-show="preview" class="alert warning-interview-preview">
+                        <p>ATTENZIONE: il documento è in modalità preview, è necessario salvarlo per rendere effettive le modifiche.</p>
+                    </div>
                     <div class="box-body body-answers"> 
-                        <div v-if="role == 'admin' && interviewData.idInterview == 0" class="div-selects">
-                            <div class="col-sm-4">
-                                <label>Azienda</label>
-                                <v-select :options="partners" id="selectPartner" @input="setSelectedPartner" :value="selectedPartner" :clearable="false" placeholder="Seleziona un'azienda">
-                                    <div slot="no-options">Nessuna azienda trovata.</div>
-                                </v-select>
-                            </div>
-                            <div class="col-sm-4">
-                                <label>Sede</label>
-                                <v-select :disabled="!selectedPartner" :options="structures" id="selectStructure" @input="setSelectedStructure" :clearable="false" :value="selectedStructure" placeholder="Seleziona una sede">
-                                    <div slot="no-options">Nessuna sede trovata.</div>
-                                </v-select>
-                            </div>
-                        </div>
-
-                        <div v-show="role == 'admin' && interviewData.idInterview == 0 && (!selectedPartner || !selectedStructure)" class="warning-disabled-interview">
-                            <span>ATTENZIONE: La compilazione sarà abilitata solo dopo aver selezionato le informazioni inerenti la sede da intervistare.</span>
-                        </div>
-
-                        <h2 v-html="interviewData.title"></h2>
-                        <h4 v-html="interviewData.subtitle"></h4>
-                        <p v-html="interviewData.description"></p>     
-
                         <div id="interview-answers">
                             <script type="text/x-template" id="item-template">
-                                <div class="box box-item" v-bind:style="{ borderTopColor: item.color }">
+                                <div v-if="item.primary || (!item.visibility.visibility_by_component || isComponentActive(item.visibility.components))" class="box box-item" v-bind:style="{ borderTopColor: item.color }">
                                     <div class="box-header" @click="toggle">
                                         <span class="open-icon"><i v-if="isOpen" class="fa fa-chevron-down"></i><i v-else class="fa fa-chevron-right"></i></span>
-                                        <h3 class="box-surveys-title" v-html="label+' '+item.title"></h3>
+                                        <h3 v-if="!item.primary && item.questions.length > 0" class="box-surveys-title" v-html="numberLabel+' '+item.title"></h3>
+                                        <h3 v-else class="box-surveys-title" v-html="item.title"></h3>
                                     </div>
                                     <div v-show="isOpen" class="box-body">
                                         <h4 v-html="item.subtitle"></h4>
@@ -98,13 +85,56 @@ $role = $this->request->session()->read('Auth.User.role');
                                         <div class="questions-div">
                                             <div v-for="question in item.questions">
                                             
-                                                <!-- TESTO LIBERO -->
-                                                <div v-if="question.type == 'free_text' || question.type == 'standard_text'" v-html="question.value" class="question-div"  v-show="typeof question.visible == 'undefined' || question.visible"></div>
+                                                <!-- TESTO FISSO -->
+                                                <div v-if="question.type == 'fixed_text'" v-html="question.value_to_show" class="question-div"  v-show="typeof question.visible == 'undefined' || question.visible"></div>
 
                                                 <!-- IMMAGINE -->
                                                 <div v-if="question.type == 'image' && question.path != ''" class="question-div"  v-show="typeof question.visible == 'undefined' || question.visible">
-                                                    <img :src="'<?=Router::url('/surveys/ws/viewImage/');?>'+question.path" class="element-image" >
+                                                    <img :src="baseImageUrl + question.path" class="element-image" >
                                                     <p v-html="question.caption"></p>
+                                                </div>
+
+                                                <!-- RISPOSTA EDITOR DI TESTO -->
+                                                <div v-if="question.type == 'answer_text_editor'" class="question-div" v-show="typeof question.visible == 'undefined' || question.visible">
+                                                    <div class="question-text">   
+                                                        <span v-if="question.required" class="question-required">*&nbsp;</span><p v-html="question.question"></p>
+                                                        &nbsp;
+                                                        <a v-if="question.tooltip != ''" class="question-tooltip" data-toggle="modal" data-target="#modalTooltipQuestion"><i class="fa fa-info-circle"></i></a>
+                                                        <span hidden class="text-question-tooltip" v-html="question.tooltip"></span>
+                                                    </div>
+                                                    <editor v-model="question.value_to_show" :init="editorInit"></editor>
+                                                </div>
+
+                                                <!-- SCHEDA TECNICA -->
+<!--                                                 
+                                                <div v-if="question.type == 'data_sheet' && existsDataSheet(question.data_sheet.id) && (!question.visibility_by_component || isComponentActive(question.components))" class="question-div"  v-show="typeof question.visible == 'undefined' || question.visible">
+                                                    <span v-html="getDataSheetTitle(question.data_sheet.id)" class="data-sheet-title"></span>:
+                                                    <span v-html="getDataSheetContent(question.data_sheet.id)" class="data-sheet-content"></span><br>
+                                                    <span v-html="getDataSheetSpecifications(question.data_sheet.id)" class="data-sheet-specifications"></span><br>
+                                                    <span class="data-sheet-images">
+                                                        <img v-for="image in getDataSheetImages(question.data_sheet.id)" :src="'data:'+image.type+';base64, '+image.content" class="data-sheet-image">
+                                                    </span>
+                                                </div>
+ -->
+                                                <!-- MISURE -->
+<!-- 
+                                                <div v-if="question.type == 'dimensions'" class="question-div text-center"  v-show="typeof question.visible == 'undefined' || question.visible">
+                                                    <div class="div-dimensions">    
+                                                        <table class="table-dimensions">
+                                                            <tr v-for="dimension in getDimensions()">
+                                                                <td v-html="'Totale '+dimension.label"></td>
+                                                                <td v-html="dimension.value"></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                 -->
+
+                                                <!-- SALTO PAGINA -->
+                                                <div v-if="question.type == 'page_break'" class="question-div" v-show="typeof question.visible == 'undefined' || question.visible">
+                                                    <div class="question-text-page-break">
+                                                        SALTO PAGINA
+                                                    </div>                                            
                                                 </div>
 
                                                 <!-- RISPOSTA BREVE -->
@@ -262,10 +292,8 @@ $role = $this->request->session()->read('Auth.User.role');
                                             :key="index"
                                             :index="index"
                                             :item="child"
-                                            :label="label+'.'+(index+1)"
+                                            :number-label="computeNumberLabel(item.items, index)"
                                             :role="role"
-                                            :selected-partner="selectedPartner"
-                                            :selected-structure="selectedStructure"
                                             :id-interview="idInterview"
                                             :status="status"
                                         ></tree-item>
@@ -277,13 +305,14 @@ $role = $this->request->session()->read('Auth.User.role');
                                 :key="index"
                                 :index="index"
                                 :item="child"
-                                :label="index+1"
                                 :role="role"
-                                :selected-partner="selectedPartner"
-                                :selected-structure="selectedStructure"
                                 :id-interview="interviewData.idInterview"
                                 :status="interviewData.status"
                             ></tree-item>
+
+                            <form id="tinymce_upload_form" enctype="multipart/form-data" class="form-editor-image-upload">      
+                            <input hidden name="file" type="file" id="tinymce_upload" class=""/>
+                        </form>
                         </div>
                     </div>
                 </div>
@@ -291,12 +320,12 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div 
                     class="box-footer" 
                     v-observe-visibility="{callback: checkInViewport}">
-                    <button v-if="interviewData.idInterview" type="button" class="btn btn-default interview-pdf" :data-id="interviewData.idInterview" ><i class="fa fa-file-pdf-o" title="Scarica ispezione in PDF"></i> PDF ispezione</button>
-                    <button v-if="interviewData.idInterview && interviewData.status !== 2" type="button" class="btn btn-warning" @click="setInterviewSigned()" >Firmata</button>
-                    <button class="btn btn-primary pull-right save-interview-exit button-margin" @click="saveInterview(true)">Salva ed esci</button>
+                    <button v-if="interviewData.idInterview" type="button" class="btn btn-default interview-pdf" :data-id="interviewData.idInterview"><i class="fa fa-file-pdf-o" title="Scarica documento in PDF"></i> PDF documento</button>
+                    <!--<button v-if="interviewData.idInterview" type="button" class="btn btn-primary interview-word" :data-id="interviewData.idInterview"><i class="fa fa-file-word-o" title="Scarica documento in word"></i> Documento word</button>-->
+                    <button v-if="interviewData.idInterview" type="button" class="btn btn-info" @click="documentPreview()"><i class="fa fa-eye" title="Visualizza anteprima"></i> Anteprime</button>
+                    <!--<button v-if="interviewData.idInterview && interviewData.status !== 2" type="button" class="btn btn-warning" @click="setInterviewSigned()" >Firmata</button>-->
                     <button class="btn btn-success pull-right save-interview-stay button-margin" @click="saveInterview()">Salva</button>
-                    <a v-if="role == 'admin'" :href="'<?=Router::url('/surveys/surveys/interviews/');?>'+idSurvey" class="btn btn-default pull-right">Annulla</a>
-                    <a v-if="role != 'admin'" :href="'<?=Router::url('/surveys/surveys/interviews/0/');?>'+interviewData.idGestore+'/'+interviewData.idStructure" class="btn btn-default pull-right">Annulla</a>
+                    <a :href="'<?=Router::url('/surveys/surveys/interviews/');?>'+idSurvey" class="btn btn-default pull-right">Annulla</a>
                 </div>
             </div>
         </div>
@@ -309,20 +338,23 @@ $role = $this->request->session()->read('Auth.User.role');
         </md-speed-dial-target>
 
         <md-speed-dial-content>
-            <md-button v-show="interviewData.idInterview" class="md-fab fab-light interview-pdf" :data-id="interviewData.idInterview" title="Scarica ispezione in PDF">
+            <md-button v-show="interviewData.idInterview" class="md-fab fab-light interview-pdf" :data-id="interviewData.idInterview" title="Scarica documento in PDF">
                 <md-icon>picture_as_pdf</md-icon>
             </md-button>
 
-            <md-button v-show="interviewData.idInterview && interviewData.status !== 2" class="md-fab fab-warning" @click="setInterviewSigned()" title="Firmata">
-                <md-icon>lock</md-icon>
+            <!--<md-button v-show="interviewData.idInterview" class="md-fab fab-primary interview-word" :data-id="interviewData.idInterview" title="Scarica documento in word">
+                <md-icon><i class="fa fa-file-word-o document-word-icon"></i></md-icon>
+            </md-button>-->
+
+            <md-button v-show="interviewData.idInterview" class="md-fab fab-info" @click="documentPreview()" title="Visualizza anteprima">
+                <md-icon>remove_red_eye</md-icon>
             </md-button>
 
-            <a v-if="role == 'admin'" :href="'<?=Router::url('/surveys/surveys/interviews/');?>'+idSurvey">
-                <md-button class="md-fab fab-default" title="Annulla">
-                    <md-icon>arrow_back</md-icon>
-                </md-button>
-            </a>
-            <a v-if="role != 'admin'" :href="'<?=Router::url('/surveys/surveys/interviews/0/');?>'+interviewData.idGestore+'/'+interviewData.idStructure">
+            <!--<md-button v-show="interviewData.idInterview && interviewData.status !== 2" class="md-fab fab-warning" @click="setInterviewSigned()" title="Firmata">
+                <md-icon>lock</md-icon>
+            </md-button>-->
+
+            <a :href="'<?=Router::url('/surveys/surveys/interviews/');?>'+idSurvey">
                 <md-button class="md-fab fab-default" title="Annulla">
                     <md-icon>arrow_back</md-icon>
                 </md-button>

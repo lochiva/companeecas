@@ -18,3 +18,14 @@ Router::scope('/', function ($routes) {
     );
     $routes->fallbacks(DashedRoute::class);
 });
+
+
+Router::prefix('admin', function ($routes) {
+    $routes->plugin('Surveys', function ($routes) {
+        $routes->connect('/',['controller' => 'Surveys' , 'action' => 'index']);
+        $routes->connect('/home/index',['controller' => 'Surveys' , 'action' => 'index']);
+        $routes->connect('/:controller');
+        $routes->fallbacks();
+    });
+
+});

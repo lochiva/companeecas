@@ -53,10 +53,10 @@ class SurveysAnswersTable extends AppTable
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-        $validator
+/*         $validator
             ->integer('id_interview')
             ->requirePresence('id_interview', 'create')
-            ->allowEmpty('id_interview', false);
+            ->allowEmpty('id_interview', false); */
 
         $validator
             ->integer('chapter')

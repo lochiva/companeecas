@@ -8,11 +8,16 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property int $id_survey
- * @property int $id_azienda
+ * @property int $id_quotation
  * @property int $id_user
  * @property string $title
  * @property string $subtitle
  * @property string $description
+ * @property int $status
+ * @property bool $not_valid
+ * @property string $signature_date
+ * @property int $cloned_by
+ * @property string $version
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */
@@ -30,8 +35,7 @@ class SurveysInterview extends Entity
      */
     protected $_accessible = [
         'id_survey' => true,
-        'id_azienda' => true,
-        'id_sede' => true,
+        'id_quotation' => true,
         'id_user' => true,
         'title' => true,
         'subtitle' => true,
@@ -42,6 +46,8 @@ class SurveysInterview extends Entity
         'cloned_by' => true,
         'version' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
+        'guest' => true,
+        'answers' => true
     ];
 }

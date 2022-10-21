@@ -20,6 +20,8 @@
                 <th scope="col"><?= $this->Paginator->sort('startable_by_ente') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('toSAI') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('ente_type') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('modello_decreto') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('modello_notifica') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('ordering') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
@@ -40,6 +42,8 @@
                 <td><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->toSAI ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->tipo->name ?></td>
+                <td><?= $guestsExitType->decreto ? $guestsExitType->decreto->title : '' ?></td>
+                <td><?= $guestsExitType->notifica ? $guestsExitType->notifica->title : '' ?></td>
                 <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
                 <td><?= h($guestsExitType->created) ?></td>
                 <td><?= h($guestsExitType->modified) ?></td>
