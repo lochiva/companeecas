@@ -15,7 +15,7 @@ Vue.component('tree-item', {
     ],
     data: function () {
         return {
-            isOpen: false,
+            isOpen: true,
             datepickerItalian: vdp_translation_it.js,
             baseImageUrl: baseImageUrl,
             editorInit: {
@@ -253,6 +253,14 @@ var app = new Vue({
             if (notValid) {
                 alert("Si prega di compilare tutti i campi obbligatori.");
             } else {
+                for (let item of this.interviewData.items) {
+                    for (let question of item.questions) {
+                        if (question.type.indexOf('answer_text_editor' === 0)) {
+                            question.answer = question.value_to_show;
+                        }
+                    }
+                }
+
                 let params = new URLSearchParams();
                 if(this.interviewData.idInterview){
                     params.append('idInterview', this.interviewData.idInterview);

@@ -16,6 +16,7 @@ class SurveyHelper extends Helper
 		// Se non è una sezione primaria, visibile solo se semrpe visibile o se attivo il componente indicato
 		if ($section->primary || (!$section->visibility->visibility_by_component || $this->isComponentActive($activeComponents, $section->visibility->components))) {
 
+			/* 
 			if ($section->primary) {
 				if ($section->title) {
 					$html .= '<h2 style="text-align: center;">'.$this->computeNumberLabel($parentItems, $index).$section->title.'</h2>';
@@ -24,6 +25,7 @@ class SurveyHelper extends Helper
 					$html .= '<h3 style="text-align: center;">'.$section->subtitle.'</h3>';
 				}
 			}
+			*/
 
 			if ($layout == 'single') {
 				//LAYOUT SINGOLA COLONNA
@@ -31,6 +33,7 @@ class SurveyHelper extends Helper
 				$html .= '<tr style="page-break-inside: auto;">';
 				$html .= '<td style="padding: 10px;">';
 
+				/* 				
 				if (!$section->primary) {
 					if ($section->title) {
 						$html .= '<h2 style="text-align: center;">'.$this->computeNumberLabel($parentItems, $index).$section->title.'</h2>';
@@ -38,7 +41,8 @@ class SurveyHelper extends Helper
 					if ($section->subtitle) {
 						$html .= '<h3 style="text-align: center;">'.$section->subtitle.'</h3>';
 					}
-				}
+				} 
+				*/
 		
 				foreach ($section->questions as $key => $question) {
 
@@ -157,7 +161,7 @@ class SurveyHelper extends Helper
 
 					//COLONNA DESTRA
 					$html .= '<td width="65%" valign="top" style="border-left: 2px solid #92C45A;padding: 10px;">';
-
+					/* 
 					if (!$section->primary) {
 						if ($section->title) {
 							$html .= '<h2 style="text-align: center;">'.$this->computeNumberLabel($parentItems, $index).$section->title.'</h2>';
@@ -166,7 +170,7 @@ class SurveyHelper extends Helper
 							$html .= '<h3 style="text-align: center;">'.$section->subtitle.'</h3>';
 						}
 					}
-
+ 					*/
 					foreach ($section->right_column as $key => $question) {
 				
 						if ($question->visible) {
