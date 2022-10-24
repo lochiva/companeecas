@@ -1,14 +1,5 @@
-DROP TABLE `IRES_applicativocas`.`surveys`;
-DROP TABLE `IRES_applicativocas`.`surveys_answers`;
-DROP TABLE `IRES_applicativocas`.`surveys_answer_data`;
-DROP TABLE `IRES_applicativocas`.`surveys_chapters`;
-DROP TABLE `IRES_applicativocas`.`surveys_chapters_contents`;
-DROP TABLE `IRES_applicativocas`.`surveys_chapters_nuovo_a_mano`;
-DROP TABLE `IRES_applicativocas`.`surveys_interviews`;
-DROP TABLE `IRES_applicativocas`.`surveys_interviews_statuses`;
-DROP TABLE `IRES_applicativocas`.`surveys_question_metadata`;
-DROP TABLE `IRES_applicativocas`.`surveys_statuses`;
-DROP TABLE `IRES_applicativocas`.`surveys_to_structures`;
+DROP TABLE `surveys`, `surveys_answers`, `surveys_answer_data`, `surveys_chapters`, `surveys_chapters_contents`, `surveys_interviews`, `surveys_interviews_guests`, `surveys_interviews_statuses`, `surveys_placeholders`;
+
 
 
 
