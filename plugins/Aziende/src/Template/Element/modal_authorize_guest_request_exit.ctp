@@ -46,7 +46,7 @@
 								</button>
 							</div>
 							<a v-else type="button" class="btn btn-primary" v-bind:href="notifiche_url" target="_blank" data-toggle="tooltip" data-placement="top" title="Visualizzare, compilare e scaricare la notifica">
-								Visualizza decreto
+								Visualizza notifica
 							</a>
 						</div>
 					</div>

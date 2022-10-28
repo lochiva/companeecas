@@ -880,6 +880,8 @@ var app = new Vue({
                     this.requestExitData.type.name = res.data.data.history_exit_type_name;
                     this.requestExitData.file = res.data.data.history_file;
                     this.requestExitData.note = res.data.data.history_note;
+                    this.requestExitData.type.modello_decreto = res.data.data.modello_decreto;
+                    this.requestExitData.type.modello_notifica = res.data.data.modello_notifica;
 
                     if(requestExitFamily){
                         this.guestFamily.forEach((guest) => {
