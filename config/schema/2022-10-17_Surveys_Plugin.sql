@@ -1,14 +1,15 @@
-DROP TABLE `IRES_applicativocas`.`surveys`;
-DROP TABLE `IRES_applicativocas`.`surveys_answers`;
-DROP TABLE `IRES_applicativocas`.`surveys_answer_data`;
-DROP TABLE `IRES_applicativocas`.`surveys_chapters`;
-DROP TABLE `IRES_applicativocas`.`surveys_chapters_contents`;
-DROP TABLE `IRES_applicativocas`.`surveys_chapters_nuovo_a_mano`;
-DROP TABLE `IRES_applicativocas`.`surveys_interviews`;
-DROP TABLE `IRES_applicativocas`.`surveys_interviews_statuses`;
-DROP TABLE `IRES_applicativocas`.`surveys_question_metadata`;
-DROP TABLE `IRES_applicativocas`.`surveys_statuses`;
-DROP TABLE `IRES_applicativocas`.`surveys_to_structures`;
+DROP TABLE IF EXISTS `surveys`;
+DROP TABLE IF EXISTS `surveys_answers`;
+DROP TABLE IF EXISTS `surveys_answer_data`;
+DROP TABLE IF EXISTS `surveys_chapters`;
+DROP TABLE IF EXISTS `surveys_chapters_contents`;
+DROP TABLE IF EXISTS `surveys_chapters_nuovo_a_mano`;
+DROP TABLE IF EXISTS `surveys_interviews`;
+DROP TABLE IF EXISTS `surveys_interviews_statuses`;
+DROP TABLE IF EXISTS `surveys_question_metadata`;
+DROP TABLE IF EXISTS `surveys_statuses`;
+DROP TABLE IF EXISTS `surveys_to_structures`;
+DROP TABLE IF EXISTS `surveys_placeholders`;
 
 
 
