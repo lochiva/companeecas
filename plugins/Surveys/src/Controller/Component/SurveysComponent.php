@@ -281,6 +281,13 @@ class SurveysComponent extends Component
 			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
 		];
 
+		if ($guest->sedi->police_station_id > 0) {
+			$station = $guest = TableRegistry::get('Aziende.PoliceStations')->get($guest->sedi->police_station_id, ['contain' => ['PoliceStationTypes']]);
+			$values['ente_stazione'] = $station->type->label_in_letter;
+		} else {
+			$values['ente_stazione'] = '';
+		}
+
 		return $values;
 	}
 

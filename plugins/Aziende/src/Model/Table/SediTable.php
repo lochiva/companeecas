@@ -24,6 +24,7 @@ class SediTable extends AppTable
         $this->belongsTo('Aziende.SediTipologieCentro',['foreignKey' => 'id_tipologia_centro', 'propertyName' => 'tipologiaCentro']);
         $this->belongsTo('Aziende.SediTipologieOspiti',['foreignKey' => 'id_tipologia_ospiti', 'propertyName' => 'tipologiaOspiti']);
         $this->belongsTo('Aziende.SediProcedureAffidamento',['foreignKey' => 'id_procedura_affidamento', 'propertyName' => 'proceduraAffidamento']);
+        $this->belongsTo('Aziende.PoliceStations',['foreignKey' => 'police_station_id', 'propertyName' => 'police_station']);
 
         $this->hasMany('PresenzeUpload', [
             'foreignKey' => 'sede_id',

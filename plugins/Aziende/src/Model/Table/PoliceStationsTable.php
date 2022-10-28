@@ -43,7 +43,8 @@ class PoliceStationsTable extends Table
         $this->belongsTo('PoliceStationTypes', [
             'foreignKey' => 'police_station_type_id',
             'joinType' => 'INNER',
-            'className' => 'Aziende.PoliceStationTypes'
+            'className' => 'Aziende.PoliceStationTypes',
+            'propertyName' => 'type'
         ]);
     }
 
