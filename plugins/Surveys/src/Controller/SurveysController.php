@@ -142,14 +142,10 @@ class SurveysController extends AppController
         $pathHeader = ROOT.DS.'plugins'.DS.'Surveys'.DS.'src'.DS.'Template'.DS.'Surveys'.DS.'pdf'.DS.'document_header.html';
         $pathFooter = ROOT.DS.'plugins'.DS.'Surveys'.DS.'src'.DS.'Template'.DS.'Surveys'.DS.'pdf'.DS.'document_footer.html';
 
-        $logoPath = WWW_ROOT.DS.'img'.DS.'building_evolution_logo.png';
-        $type = pathinfo($logoPath, PATHINFO_EXTENSION);
-
         $this->viewBuilder()->options([
             'pdfConfig' => [
                 'engine' => [
-                    'className' => 'CakePdf.WkHtmlToPdf',
-                    'binary' => '/usr/local/bin/wkhtmltopdf',
+                    'className' => 'CakePdf.DomPdf',
                     'options' => [
                         'header-html' => 'file://'.$pathHeader,
                         'header-spacing' => 7,
