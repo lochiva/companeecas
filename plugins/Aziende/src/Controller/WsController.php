@@ -2226,7 +2226,7 @@ class WsController extends AppController
                         ->select(['id_survey' => 'SurveysInterviews.id_survey'])
                         ->leftJoinWith('SurveysInterviews')
                         ->where(['SurveysInterviewsGuests.guest_id' => $guest->id, 'SurveysInterviews.id_survey' => $exitType['modello_notifica']])
-                        ->toArray();
+                        ->first();
                     $guest['decreti'] = empty($decreti) ? false : $decreti;
                     $guest['notifiche'] = empty($notifiche) ? false : $notifiche;
 
