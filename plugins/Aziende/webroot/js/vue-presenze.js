@@ -191,9 +191,11 @@ var app = new Vue({
                 .then(res => {
                     this.$refs.attachment.files[0] = null;
                     this.fileCheck = null;
-                    this.file = res.data.data;
+                    
                     if (res.data.response == 'KO') {
                         alert(res.data.msg);
+                    } else {
+                        this.file = res.data.data;
                     }
                 })
                 .catch(error => {
