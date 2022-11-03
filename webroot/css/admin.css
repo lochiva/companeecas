@@ -120,11 +120,11 @@ div.edit-config .btn{
 	margin-left:5px;
 }
 .admin-form label{
-	width:100px;
+	width:200px;
 	padding-left:0px;
 	font-weight:bold;
 }
-.admin-form input {
+.admin-form input, .admin-form select, .admin-form textarea {
 	width:200px;
 }
 .admin-form .input-group-addon{
@@ -175,4 +175,7 @@ div.edit-user div.password input {
 .input-checkbox {
 	margin: 04px 0px 0px 0px !important;
 	width: auto !important;
+}
+div.input {
+	padding-bottom: 5px;
 }

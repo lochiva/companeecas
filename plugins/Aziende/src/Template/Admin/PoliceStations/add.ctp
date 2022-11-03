@@ -12,7 +12,10 @@
         <?php
             echo $this->Form->input('name');
             echo $this->Form->input('description');
-            echo $this->Form->input('police_station_type_id', ['options' => $policeStationTypes]);
+            echo '<div>';
+            echo $this->Form->label('police_station_type_id', 'Tipo');
+            echo $this->Form->select('police_station_type_id', $policeStationTypes, ['empty' => 'Selezionare']);
+            echo '</div>';
             echo $this->Form->input('ordering');
         ?>
     </fieldset>

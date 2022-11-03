@@ -42,13 +42,19 @@
             echo $this->Form->label('toSAI','Destinazione SAI');
             echo $this->Form->checkbox('toSAI', ['class' => 'input-checkbox']);
             echo '</div>';
+            echo '<div>';
             echo $this->Form->label('ente_type', 'Tipologia Ente');
             echo $this->Form->select('ente_type', $tipi);
+            echo '</div>';
             echo $this->Form->input('ordering');
+            echo '<div>';
             echo $this->Form->label('modello_decreto', 'Modello decreto');
             echo $this->Form->select('mdodello_decreto', $surveys, ['empty' => 'Selezionare']);
+            echo '</div>';
+            echo '<div>';
             echo $this->Form->label('modello_notifica', 'Modello Notifica');
             echo $this->Form->select('modello_notifica', $surveys, ['empty' => 'Selezionare']);
+            echo '</div>';
         ?>
     </fieldset>
     <?= $this->Form->button(__('Save'),['class' => 'btn btn-success']) ?>

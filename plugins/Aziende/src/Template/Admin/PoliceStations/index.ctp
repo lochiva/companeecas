@@ -23,7 +23,7 @@
             <tr>
                 <td><?= $this->Number->format($policeStation->id) ?></td>
               <td><?= h($policeStation->name) ?></td>
-                <td><?= $policeStation->has('police_station_type') ? $policeStation->police_station_type->type : '' ?></td>
+                <td><?= $policeStation->has('type') ? $policeStation->type->type : '' ?></td>
                 <td><?= $policeStation->ordering ?></td>
               <td><?= h($policeStation->created) ?></td>
               <td><?= h($policeStation->modified) ?></td>
