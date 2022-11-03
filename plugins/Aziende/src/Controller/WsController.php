@@ -16,6 +16,7 @@ use RuntimeException;
 use Cake\ORM\Query;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\NotFoundException;
+use Aziende\Error\ErrorCodes;
 
 /**
  * Aziende Controller
@@ -3877,63 +3878,87 @@ class WsController extends AppController
     }
 
     public function saveFiles() {
-        $att = $this->request->getUploadedFile('attachment');
+        $table = TableRegistry::get('Aziende.PresenzeUpload');
+
+        $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
+        $path = date('Y').DS.date('m').DS.date('d');
+
         $fileData = json_decode($this->request->data('file'), true);
 
-        if(empty($att)){
-            $this->_result['msg'] = 'Nessun file caricato.';
-            $this->_result['response'] = 'KO';
-            $this->_result['data'] = -1;
+        $data = $this->request->data;
 
-        } else {
-            if (mime_content_type($att->getStream()->getMetadata('uri')) != "application/pdf") {
-                $this->_result['msg'] = 'Il formato del file selezionato non è supportato';
-                $this->_result['response'] = 'KO';
-                $this->_result['data'] = -1;
-            } else {
-                $table = TableRegistry::get('Aziende.PresenzeUpload');
+        if(!array_key_exists('attachment', $data)){
+            //I dati inviati superano il post max size
+            $post_max_size = (int)(ini_get('post_max_size'));
+            ErrorCodes::logMessage(ErrorCodes::ERROR_POST_MAX_SIZE, [$post_max_size]);
+            $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_POST_MAX_SIZE, [$post_max_size]);
+            return;       
+        }
 
-                $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
-    
-                $error = false;
-    
-                $fileName = uniqid().'_'.$att->getClientFilename();
-    
-                $path = date('Y').DS.date('m').DS.date('d');
-    
-                $dir = new Folder(ROOT.DS.$basePath.$path, true, 0755);
-    
-                if(!$dir) {
-                    $dir = new Folder($basePath.$path);
-                }
-    
-    
-                if(!move_uploaded_file($att->getStream()->getMetadata('uri'), $dir->pwd() . DS . $fileName) ){
-                    $error = true;
-                }
-    
-                if(!$error){
-                    $entity = $table->newEntity($fileData);
-                    $entity->file = $att->getClientFilename();
-                    $entity->filepath = $path.DS.$fileName;
-    
-                    if(!$save = $table->save($entity)){
-                        $error = true;
-                    } else {
-                        $save->fullPath = $save->full_path;
-                    }
-                }
-    
-                if($error){
-                    $this->_result['msg'] = 'Errore nel caricamento di un file.';
-                }else{
-                    $this->_result['response'] = 'OK';
-                    $this->_result['msg'] = 'File caricati con successo.';
-                    $this->_result['data'] = $save;
-                }
+        if(count($data['attachment']) == 1 && $data['attachment']['error'] === 4){
+            //Non è stato caricato alcun file
+            ErrorCodes::logMessage(ErrorCodes::ERROR_NO_FILE_UPLOADED, []);
+            $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_NO_FILE_UPLOADED, []);    
+            return;
+        }
 
+
+        if($data['attachment']['error'] === 1){
+            //Il file supera la dimensione massima di upload max filesize
+            $max_upload = (int)(ini_get('upload_max_filesize'));
+            ErrorCodes::logMessage(ErrorCodes::ERROR_UPLOAD_MAX_FILESIZE, [$data['attachment']['name'], $max_upload]);
+            $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_UPLOAD_MAX_FILESIZE, [$data['attachment']['name'], $max_upload]);
+            return;    
+        }
+        if ($data['attachment']['type'] !== "application/pdf") {
+            ErrorCodes::logMessage(ErrorCodes::ERROR_FILE_TYPE, [$data['attachment']['name'], $data['attachment']['type'], '.pdf']);
+            $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_FILE_TYPE, [$data['attachment']['name'], $data['attachment']['type'], '.pdf']);
+            return;   
+        }
+
+        $dir = ROOT.DS.$basePath.$path;
+
+        if (!is_dir($dir)) {
+            try {
+                if (!mkdir($dir, 0755, true)) {
+                    throw new \Exception();
+                }
+            } catch (\Exception $e) {
+                ErrorCodes::logMessage(ErrorCodes::ERROR_FOLDER_CREATION, [$dir, $e->getMessage()]);
+                $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_FOLDER_CREATION, [$dir, $e->getMessage()]);
+                return;
             }
+        }
 
+        $fileName = uniqid().'_'.$data['attachment']['name'];
+
+        try {
+            if (!move_uploaded_file($data['attachment']['tmp_name'], $dir . DS . $fileName)) {
+                throw new \Exception();
+            }
+        } catch (\Exception $e) {
+            ErrorCodes::logMessage(ErrorCodes::ERROR_FILE_MOVE, [$data['attachment']['name'], $dir, $e->getMessage()]);
+            $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_FILE_MOVE, [$data['attachment']['name'], $dir, $e->getMessage()]);
+            return;
+        }
+
+        try {
+            $entity = $table->newEntity($fileData);
+            $entity->file = $data['attachment']['name'];
+            $entity->filepath = $path.DS.$fileName;
+
+            if (!$save = $table->save($entity)) {
+                throw new \Exception(json_encode($entity->getErrors()));
+            } else {
+                $save->fullPath = $save->full_path;
+                $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'File caricati con successo.';
+                $this->_result['data'] = $save;
+            }
+        } catch(\Exception $e) {
+            ErrorCodes::logMessage(ErrorCodes::ERROR_FILE_DB_SAVE, [$data['attachment'], $e->getMessage()]);
+            $this->_result['msg'] = ErrorCodes::getViewMessage(ErrorCodes::ERROR_FILE_DB_SAVE, [$data['attachment'], $e->getMessage()]);
+            return;
         }
     }
 

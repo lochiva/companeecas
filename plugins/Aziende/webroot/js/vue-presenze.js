@@ -199,7 +199,7 @@ var app = new Vue({
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    alert(error);
                 });
 
             } else {
