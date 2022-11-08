@@ -332,16 +332,17 @@ class SediTable extends AppTable
                 'tipo_struttura' => 'stm.name',
                 'ente' => 'a.denominazione',
                 'address' => 'CONCAT(Sedi.indirizzo, " ", Sedi.num_civico)', 
-                'capienza_effettiva' => "Sedi.n_posti_effettivi - (
+                'capienza_effettiva' => "Sedi.n_posti_effettivi", /* - (
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
                     AND g.country_birth = 100000243
-                )",
+                )",*/
                 'presenze' => "(
                     SELECT COUNT(*) FROM guests g
                     WHERE g.sede_id = Sedi.id AND g.check_in_date <= '$date' AND (g.check_out_date > '$date' OR g.check_out_date IS NULL) AND g.deleted = 0
-                    AND g.country_birth != 100000243
                 )",
+                /*    AND g.country_birth != 100000243
+                )",*/
                 'tipo_ospiti' => 'sto.name',
                 'pec' => 'a.pec_commissione',
                 'procedura' => 'spa.name',
