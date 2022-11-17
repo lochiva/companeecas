@@ -19,7 +19,7 @@ return [
                 'controllers' => [
                     'surveys_statuses' => 'Stati dei modelli',
                     'surveys_interviews_statuses' => 'Stati dei moduli',
-                    'surveys_placeholders' => 'Segnaposto'
+                    //'surveys_placeholders' => 'Segnaposto'
                 ]
             ]
         ]
