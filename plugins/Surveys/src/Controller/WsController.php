@@ -71,34 +71,44 @@ class WsController extends AppController
 
             foreach ($res['res'] as $key => $survey) {
 
-/* 				switch($survey->status){
+ 				switch($survey->status){
 					case '1':
 						$status = '<span class="status-pubblicato">Pubblicato</span>';
 						break;
-					case '2':
+					/* case '2':
 						$status = '<span class="status-bozza">Bozza</span>';
-						break;
+						break; */
 					case '3':
 						$status = '<span class="status-annullato">Annullato</span>';
 						break;
-					case '4':
+					/* case '4':
 						$status = '<span class="status-frozen">Pubblicato (congelato)</span>';
+						break; */
+					default:
+						$status = '';
 						break;
-				} */
+				}
 
                 $buttons = "";
 				$buttons .= '<div class="button-group">';
-				$buttons .= '<a href="'.Router::url('/surveys/surveys/edit?survey='.$survey->id).'" class="btn btn-xs btn-warning edit-survey" title="Modifica questionario"><i class="fa fa-pencil"></i></a>'; 
 
+				if ($survey->status == 3) {
+					$buttons .= '<a class="btn btn-xs btn-warning edit-survey" title="Modifica il modello" disabled><i class="fa fa-pencil"></i></a>'; 
 				
-				$buttons .= '<a class="btn btn-xs btn-danger delete-survey" data-id="'.$survey->id.'" title="Annulla questionario"><i class="fa fa-trash"></i></a>';
+					$buttons .= '<a class="btn btn-xs btn-danger delete-survey" data-id="'.$survey->id.'" title="Annulla il modello" disabled><i class="fa fa-trash"></i></a>';
+				} else {
+					$buttons .= '<a href="'.Router::url('/surveys/surveys/edit?survey='.$survey->id).'" class="btn btn-xs btn-warning edit-survey" title="Modifica il modello"><i class="fa fa-pencil"></i></a>'; 
+
+					$buttons .= '<a class="btn btn-xs btn-danger delete-survey" data-id="'.$survey->id.'" title="Annulla il modello"><i class="fa fa-trash"></i></a>';
+				}
+
 				$buttons .= '</div>';
 
 				$out['rows'][] = [
 					htmlspecialchars($survey['title']),
 					htmlspecialchars($survey['subtitle']),
 					htmlspecialchars($survey['description']),
-					//$status,
+					$status,
 					$buttons
 				];
 

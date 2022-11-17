@@ -163,8 +163,8 @@ $(document).ready(function(){
     }
 
     //Annulla survey
-    $(document).on('click', '.delete-survey', function(){
-        if(confirm('Attenzione! Si è sicuri di voler annullare il questionario?')){
+    $(document).on('click', '.delete-survey:enabled', function(){
+        if(confirm('ATTENZIONE!\n' + 'Operazione irreversibile.\n' + 'Si è sicuri di voler annullare il modello?')){
             var id = $(this).attr('data-id');
             $.ajax({
                 url: pathServer + "surveys/ws/deleteSurvey",

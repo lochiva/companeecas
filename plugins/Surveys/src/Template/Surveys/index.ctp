@@ -54,7 +54,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <th>Titolo</th>
                                     <th>Sottotitolo</th>
                                     <th>Descrizione</th>
-                                    <!--<th class="filter-select filter-onlyAvail status-filter">Stato</th>-->
+                                    <th class="filter-select filter-onlyAvail status-filter">Stato</th>
                                     <th width="130px" class="filter-false" data-sorter="false"></th>
                                 </tr>
                             </thead>

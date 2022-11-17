@@ -91,9 +91,17 @@ class GuestsExitTypesController extends AppController
             'contain' => []
         ]);
         $aziendeTipi = TableRegistry::get('Aziende.AziendeTipi')->getList();
-        $surveys = TableRegistry::get('Surveys.Surveys')->find('list')
-            ->order(['title' => 'ASC'])
-            ->toArray();
+        $surveysCollection = TableRegistry::get('Surveys.Surveys')->find('all')
+            ->order(['title' => 'ASC']);
+
+        $surveys = $surveysCollection->map(function ($value, $key) {
+            return [
+                'value' => $value->id,
+                'text' => $value->full_title,
+                'disabled' => $value->status == 3 ? true : false
+            ];
+        });
+
         $tipi = [];
         foreach ($aziendeTipi as $t) {
             $tipi[$t->id] = $t->name;
@@ -111,7 +119,7 @@ class GuestsExitTypesController extends AppController
         $this->set(compact('guestsExitType'));
         $this->set('_serialize', ['guestsExitType']);
         $this->set('tipi', $tipi);
-        $this->set('surveys', $surveys);
+        $this->set('surveys', $surveys->toArray());
     }
 
     /**

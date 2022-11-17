@@ -44,4 +44,13 @@ class Survey extends Entity
         'created' => true,
         'modified' => true
     ];
+
+    protected function _getFullTitle()
+    {
+        $title = $this->title;
+        if ($this->status == 3) {
+            $title = $title . '*';
+        }
+        return $title;
+    }
 }

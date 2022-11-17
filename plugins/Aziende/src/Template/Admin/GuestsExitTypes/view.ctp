@@ -52,11 +52,11 @@
         </tr>
         <tr>
             <th scope="row"><?= __('Modello decreto') ?></th>
-            <td><?= $guestsExitType->decreto ? $guestsExitType->decreto->title : '' ?></td>
+            <td><?= $guestsExitType->decreto ? $guestsExitType->decreto->full_title : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Modello notifica') ?></th>
-            <td><?= $guestsExitType->notifica ? $guestsExitType->notifica->title : '' ?></td>
+            <td><?= $guestsExitType->notifica ? $guestsExitType->notifica->full_title : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Ordinamento') ?></th>

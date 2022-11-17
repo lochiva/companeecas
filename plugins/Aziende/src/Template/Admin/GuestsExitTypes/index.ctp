@@ -42,8 +42,8 @@
                 <td><?= $guestsExitType->startable_by_ente ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->toSAI ? 'Sì' : 'No' ?></td>
                 <td><?= $guestsExitType->tipo->name ?></td>
-                <td><?= $guestsExitType->decreto ? $guestsExitType->decreto->title : '' ?></td>
-                <td><?= $guestsExitType->notifica ? $guestsExitType->notifica->title : '' ?></td>
+                <td><?= $guestsExitType->decreto ? $guestsExitType->decreto->full_title : '' ?></td>
+                <td><?= $guestsExitType->notifica ? $guestsExitType->notifica->full_title : '' ?></td>
                 <td><?= $this->Number->format($guestsExitType->ordering) ?></td>
                 <td><?= h($guestsExitType->created) ?></td>
                 <td><?= h($guestsExitType->modified) ?></td>
