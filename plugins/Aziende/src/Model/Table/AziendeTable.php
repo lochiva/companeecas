@@ -34,7 +34,14 @@ class AziendeTable extends AppTable
           'foreignKey' => 'id_tipo',
           'className' => 'Aziende.AziendeTipi',
           'propertyName' => 'tipo'
-      ]);
+        ]);
+        $this->hasOne('SedeLegale',[
+          'className' => 'Aziende.Contatti',
+          'foreignKey' => 'id_azienda',
+          'bindingKey' => 'id',
+          'conditions' => ['SedeLegale.id_ruolo' => 0],
+          'propertyName' => 'sede_legale'
+        ]);
     }
 
     public function saveAzienda($data)

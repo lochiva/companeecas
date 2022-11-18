@@ -98,6 +98,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                         <?php } ?>
 
                                         <select name="id_ruolo" id="inputRuolo" class="form-control" >
+                                            <option>-- Seleziona un ruolo --</option>
                                             <?php foreach ($ruoli as $key => $ruolo) { ?>
                                                 <option value="<?=$ruolo->id?>"><?=$ruolo->ruolo?></option>
                                             <?php } ?>

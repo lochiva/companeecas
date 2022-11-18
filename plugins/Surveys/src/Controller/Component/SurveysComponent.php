@@ -266,7 +266,7 @@ class SurveysComponent extends Component
 
 	public function getValuePlaceholders($interview)
 	{
-		$guest = TableRegistry::get('Aziende.Guests')->get($interview->guest->guest_id, ['contain' => ['Sedi' => ['Aziende', 'Comuni', 'Province'], 'Countries']]);
+		$guest = TableRegistry::get('Aziende.Guests')->get($interview->guest->guest_id, ['contain' => ['Sedi' => ['Aziende' => ['SedeLegale' => ['Comuni', 'Province']], 'Comuni', 'Province'], 'Countries']]);
 		//echo "<pre>"; print_r($guest); die();
 		$values = [
 			'ospite_nome' => empty($guest['name']) ? '/' : $guest['name'],
@@ -274,11 +274,14 @@ class SurveysComponent extends Component
 			'ospite_data_nascita' => empty($guest['birthdate']) ? '/' : $guest['birthdate']->format('d/m/Y'),
 			'ospite_luogo_nascita' => empty($guest['country_birth']) ? '/' : $guest->country['des_luo'],
 			'ospite_vestanet' => empty($guest['vestanet_id']) ? '/' : $guest['vestanet_id'],
+			'ospite_cui' => empty($guest['cui']) ? '/' : $guest['cui'],
 
 			'ente_denominazione' => empty($guest->sedi->azienda['denominazione']) ? '/' : $guest->sedi->azienda['denominazione'],
 			'ente_responsabile' => empty($guest->sedi['referente']) ? '/' : $guest->sedi['referente'],
-			'ente_indirizzo' => empty($guest->sedi['indirizzo']) ? '/' : $guest->sedi['indirizzo'] . ' ' . $guest->sedi['num_civico'] . ', ' . $guest->sedi['cap'] . ' ' . $guest->sedi->comune['des_luo'] . '(' . $guest->sedi->provincia['s_prv'] . ')',
+			'ente_indirizzo' => !isset($guest->sedi->azienda->sede_legale) ? '/' : $guest->sedi->azienda->sede_legale['indirizzo'] . ' ' . $guest->sedi->azienda->sede_legale['num_civico'] . ', ' . $guest->sedi->azienda->sede_legale['cap'] . ' ' . $guest->sedi->azienda->sede_legale->comune['des_luo'] . ' (' . $guest->sedi->azienda->sede_legale->provincia['s_prv'] . ')',
 			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
+			
+			'sede_indirizzo' => empty($guest->sedi['indirizzo']) ? '/' : $guest->sedi['indirizzo'] . ' ' . $guest->sedi['num_civico'] . ', ' . $guest->sedi['cap'] . ' ' . $guest->sedi->comune['des_luo'] . ' (' . $guest->sedi->provincia['s_prv'] . ')',
 		];
 
 		if ($guest->sedi->police_station_id > 0) {
