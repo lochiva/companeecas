@@ -268,6 +268,26 @@ class SurveysComponent extends Component
 	{
 		$guest = TableRegistry::get('Aziende.Guests')->get($interview->guest->guest_id, ['contain' => ['Sedi' => ['Aziende' => ['SedeLegale' => ['Comuni', 'Province']], 'Comuni', 'Province'], 'Countries']]);
 		//echo "<pre>"; print_r($guest); die();
+
+		$ente_indirizzo = '/';
+		if (isset($guest->sedi->azienda->sede_legale)) {
+			$ente_indirizzo = isset($guest->sedi->azienda->sede_legale['indirizzo']) ? $guest->sedi->azienda->sede_legale['indirizzo'].' ' : '';
+			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale['num_civico']) ? $guest->sedi->azienda->sede_legale['num_civico']. ', ' : '';
+			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale['cap']) ? $guest->sedi->azienda->sede_legale['cap'].' ' : '';
+			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale->comune['des_luo']) ? $guest->sedi->azienda->sede_legale->comune['des_luo'].' ' : '';
+			$ente_indirizzo .=  isset($guest->sedi->azienda->sede_legale->provincia['s_prv']) ? '('.$guest->sedi->azienda->sede_legale->provincia['s_prv'].')' : '';
+		}
+
+		$sede_indirizzo = '/';
+
+		if (!empty($guest->sedi['indirizzo'])) {
+			$sede_indirizzo = $guest->sedi['indirizzo'].' ';
+			$sede_indirizzo .= isset($guest->sedi['num_civico']) ? $guest->sedi['num_civico'].', ' : '';
+			$sede_indirizzo .= isset($guest->sedi['cap']) ? $guest->sedi['cap'].' ' : '';
+			$sede_indirizzo .= isset($guest->sedi->comune['des_luo'] ) ? $guest->sedi->comune['des_luo'] .' ' : '';
+			$sede_indirizzo .= isset($guest->sedi->provincia['s_prv']) ? '('.$guest->sedi->provincia['s_prv'].')' : '';
+		}
+
 		$values = [
 			'ospite_nome' => empty($guest['name']) ? '/' : $guest['name'],
 			'ospite_cognome' => empty($guest['surname']) ? '/' : $guest['surname'],
@@ -278,10 +298,11 @@ class SurveysComponent extends Component
 
 			'ente_denominazione' => empty($guest->sedi->azienda['denominazione']) ? '/' : $guest->sedi->azienda['denominazione'],
 			'ente_responsabile' => empty($guest->sedi['referente']) ? '/' : $guest->sedi['referente'],
-			'ente_indirizzo' => !isset($guest->sedi->azienda->sede_legale) ? '/' : $guest->sedi->azienda->sede_legale['indirizzo'] . ' ' . $guest->sedi->azienda->sede_legale['num_civico'] . ', ' . $guest->sedi->azienda->sede_legale['cap'] . ' ' . $guest->sedi->azienda->sede_legale->comune['des_luo'] . ' (' . $guest->sedi->azienda->sede_legale->provincia['s_prv'] . ')',
+
+			'ente_indirizzo' => $ente_indirizzo,
 			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
 			
-			'sede_indirizzo' => empty($guest->sedi['indirizzo']) ? '/' : $guest->sedi['indirizzo'] . ' ' . $guest->sedi['num_civico'] . ', ' . $guest->sedi['cap'] . ' ' . $guest->sedi->comune['des_luo'] . ' (' . $guest->sedi->provincia['s_prv'] . ')',
+			'sede_indirizzo' => $ede_indirizzo,
 		];
 
 		if ($guest->sedi->police_station_id > 0) {
