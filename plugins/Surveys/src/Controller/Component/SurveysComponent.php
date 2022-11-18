@@ -302,7 +302,7 @@ class SurveysComponent extends Component
 			'ente_indirizzo' => $ente_indirizzo,
 			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
 			
-			'sede_indirizzo' => $ente_indirizzo,
+			'sede_indirizzo' => $sede_indirizzo,
 		];
 
 		if ($guest->sedi->police_station_id > 0) {
