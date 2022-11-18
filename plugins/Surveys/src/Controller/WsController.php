@@ -95,7 +95,7 @@ class WsController extends AppController
 				if ($survey->status == 3) {
 					$buttons .= '<a class="btn btn-xs btn-warning edit-survey" title="Modifica il modello" disabled><i class="fa fa-pencil"></i></a>'; 
 				
-					$buttons .= '<a class="btn btn-xs btn-danger delete-survey" data-id="'.$survey->id.'" title="Annulla il modello" disabled><i class="fa fa-trash"></i></a>';
+					$buttons .= '<a class="btn btn-xs btn-danger" style="margin-left: 5px;" data-id="'.$survey->id.'" title="Annulla il modello" disabled><i class="fa fa-trash"></i></a>';
 				} else {
 					$buttons .= '<a href="'.Router::url('/surveys/surveys/edit?survey='.$survey->id).'" class="btn btn-xs btn-warning edit-survey" title="Modifica il modello"><i class="fa fa-pencil"></i></a>'; 
 
