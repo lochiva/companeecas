@@ -34,6 +34,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-header with-border">
                         <i class="fa fa-calendar"></i>
                         <h3 class="box-title"><?=__c('Presenze per la struttura')?></h3>
+                        <span style="font-size: 1.1em; margin-left: 15px;">Vanno indicati unicamente gli ospiti <b>presenti</b> e che hanno <b>firmato</b></span>
                         <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
                     <div class="box-body">
