@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Table\AppTable;
 
 /**
  * PoliceStationTypes Model
@@ -22,7 +23,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class PoliceStationTypesTable extends Table
+class PoliceStationTypesTable extends AppTable
 {
     /**
      * Initialize method
