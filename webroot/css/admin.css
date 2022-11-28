@@ -86,6 +86,7 @@ div.message{
 	padding:15px;
 }
 div.message.error{
+	position: relative;
 	background-color: #f2dede;
     border-color: #ebccd1;
     color: #a94442;
@@ -178,4 +179,13 @@ div.edit-user div.password input {
 }
 div.input {
 	padding-bottom: 5px;
+}
+
+div.message.error #close-error-message {
+	position: absolute;
+    top: -4px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
 }

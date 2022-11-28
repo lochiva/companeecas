@@ -32,8 +32,8 @@ class UsersTable extends AppTable
     public function buildRules(RulesChecker $rules)
     {
         // Add a rule that is applied for create and update operations
-        $rules->add($rules->isUnique(['username']));
-        $rules->add($rules->isUnique(['email']));
+        $rules->add($rules->isUnique(['username'], 'Lo username inserito è già presente a sistema'));
+        $rules->add($rules->isUnique(['email'], 'L\'email inserita è già presente a sistema'));
 
         return $rules;
     }
