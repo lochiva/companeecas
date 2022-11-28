@@ -481,7 +481,7 @@ div.message.error{
 	position: relative;
 }
 
-div.message.error #close-error-message {
+div.message.error .close-error-message {
     position: absolute;
     top: -4px;
     right: 5px;
