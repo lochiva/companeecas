@@ -33,14 +33,31 @@ class HomeController extends AppController
     public function isAuthorized($user)
     {
         if(
-            $user['role'] == 'admin' || 
-            $user['role'] == 'area_iv' || 
-            $user['role'] == 'ragioneria'
-        ){
+            $user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria') {
             return true;
-        }
-        
-        return false;
+
+        } else if ($user['role'] == 'ente_ospiti') {
+            if (!empty($this->request->getParam('action')) && $this->request->getParam('action') == 'info') {
+                if (!empty($this->request->getParam('pass')) && array_key_exists(0, $this->request->getParam('pass'))) {
+                    $pass = $this->request->getParam('pass');
+
+                    $userId = $this->request->session()->read('Auth.User.id');
+                    $contatto = TableRegistry::get('Aziende.Contatti')->getContattoByUser($userId);
+
+                    if ($pass[0] == $contatto['id_azienda']) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        } 
     }
 
     public function beforeFilter(Event $event)
