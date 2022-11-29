@@ -506,7 +506,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div class="form-group" ng-if="(vm.role == 'admin' || vm.role == 'area_iv')">
                                         <label class="col-sm-2 control-label">Utente</label>
                                         <div class="col-sm-10">
                                             <ui-select ng-model="contatto.id_user" theme="bootstrap" >
@@ -869,7 +869,7 @@ $role = $this->request->session()->read('Auth.User.role');
                         </div>
                     </div>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                    <button ng-if="vm.role == 'admin' || vm.role == 'area_iv'" id="saveModalAziende" type="button" class="btn btn-primary" ng-click="vm.checkSubmit()"  >Salva</button>
+                    <button ng-if="vm.role == 'admin' || vm.role == 'area_iv' || vm.role == 'ente_ospiti'" id="saveModalAziende" type="button" class="btn btn-primary" ng-click="vm.checkSubmit()"  >Salva</button>
 				</div>
                 <!-- /.tab-content -->
             </div>
