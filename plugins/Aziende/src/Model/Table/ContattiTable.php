@@ -34,8 +34,8 @@ class ContattiTable extends AppTable
             'className' => 'Aziende.SkillsContacts',
             'propertyName' => 'skills'
         ]);
-        $this->belongsTo('Comuni',['className' => 'Luoghi','foreignKey' => 'comune', 'propertyName' => 'comune']);
-        $this->belongsTo('Province',['className' => 'Luoghi','foreignKey' => 'provincia', 'propertyName' => 'provincia']);
+        $this->belongsTo('Comuni',['className' => 'Luoghi','foreignKey' => 'comune', 'propertyName' => 'com']);
+        $this->belongsTo('Province',['className' => 'Luoghi','foreignKey' => 'provincia', 'propertyName' => 'prov']);
     }
 
     /**

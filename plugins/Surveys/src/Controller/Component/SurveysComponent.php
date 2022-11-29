@@ -274,8 +274,8 @@ class SurveysComponent extends Component
 			$ente_indirizzo = isset($guest->sedi->azienda->sede_legale['indirizzo']) ? $guest->sedi->azienda->sede_legale['indirizzo'].' ' : '';
 			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale['num_civico']) ? $guest->sedi->azienda->sede_legale['num_civico']. ', ' : '';
 			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale['cap']) ? $guest->sedi->azienda->sede_legale['cap'].' ' : '';
-			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale->comune['des_luo']) ? $guest->sedi->azienda->sede_legale->comune['des_luo'].' ' : '';
-			$ente_indirizzo .=  isset($guest->sedi->azienda->sede_legale->provincia['s_prv']) ? '('.$guest->sedi->azienda->sede_legale->provincia['s_prv'].')' : '';
+			$ente_indirizzo .= isset($guest->sedi->azienda->sede_legale->com['des_luo']) ? $guest->sedi->azienda->sede_legale->com['des_luo'].' ' : '';
+			$ente_indirizzo .=  isset($guest->sedi->azienda->sede_legale->prov['s_prv']) ? '('.$guest->sedi->azienda->sede_legale->prov['s_prv'].')' : '';
 		}
 
 		$sede_indirizzo = '/';
