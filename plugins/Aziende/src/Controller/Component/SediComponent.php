@@ -30,6 +30,8 @@ class SediComponent extends Component
         $col[] = "cap";
         $col[] = "c.des_luo";
         $col[] = "p.des_luo";
+        $col[] = 'police_station_id';
+        $col[] = 'comune';
         if ($aziendaTipo == 1) {
             $col[9] = "sto.name";
         }

@@ -456,6 +456,14 @@ $role = $this->request->session()->read('Auth.User.role');
                                             <textarea ng-model="sede.note" name="note" class="form-control sede-textarea"></textarea>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label required" for="inputPl">Commissariato di Polizia / Stazione dei Carabinieri</label>
+                                        <div class="col-sm-10">
+                                            <select id="inputPolice" class="select2 form-control required select-police">
+                                            </select>
+                                            <input hidden name="police_station_id" ng-model="sede.police_station_id" class="police_id">
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
