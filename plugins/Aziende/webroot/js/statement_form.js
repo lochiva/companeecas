@@ -468,7 +468,7 @@ function displayCosts(cats, statement) {
                   <th>Num doc</th>
                   <th>Data</th>
                   <th>Descrizione</th>
-                  <th>Importo</th>
+                  <th>Totale documento</th>
                   <th>Quota parte</th>
                   <th>Note</th>
                   <th>Allegato</th>`;

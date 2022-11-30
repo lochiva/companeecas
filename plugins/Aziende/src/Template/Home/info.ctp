@@ -95,7 +95,7 @@ $role = $this->request->session()->read('Auth.User.role');
                   </div>
                 </div><!-- /.box-body -->
 
-                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
                     <div class="box-footer clearfix">
 
                         <a class="btn btn-sm btn-default btn-flat pull-right edit"  data-id="<?= $azienda->id ?>"data-toggle="modal"
@@ -171,7 +171,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     </div>
                 </div>
                 
-                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
                     <div class="box-footer clearfix">
 
                         <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_2" data-childTab=".add-tab-sede"
@@ -207,7 +207,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     </div>
 
                                     <div class="product-info" style="position:relative">
-                                        <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                                        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
                                             <a class="product-title edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
                                                 data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">
                                                 <?=h($contatto->cognome . " " . $contatto->nome)?>
@@ -227,7 +227,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                             <?php endif ?>
                                         </span>
                                         <div class="tools-hover " style="margin-top:-20px">
-                                            <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                                            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
                                                 <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
                                                 data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica contatto" class="text-red glyphicon glyphicon-pencil"></i></a>
                                                 &nbsp;
@@ -250,7 +250,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     </ul>
                 </div><!-- /.box-body -->
 
-                <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
                     <div class="box-footer text-center">
                         <!--<a class="uppercase" href="javascript::;">View All Products</a>-->
                         <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_3" data-childTab=".add-tab-contatto"

@@ -333,7 +333,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     </div>
 
                                     <div class="form-group col-sm-2">
-                                        <label class="control-label required">Costo &euro;</label>
+                                        <label class="control-label required">Totale documento &euro;</label>
                                         <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
                                     </div>
 
