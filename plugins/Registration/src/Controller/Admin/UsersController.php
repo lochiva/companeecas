@@ -111,7 +111,14 @@ class UsersController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('Impossibile creare l\'utente, si prega di riprovare.'));
+            $msg = 'Impossibile creare l\'utente. ';
+            foreach ($user->errors() as $field => $error) {
+                foreach ($error as $type => $message) {
+                    $msg .= $message.". ";
+                }
+            }
+            $msg .= 'Si prega di riprovare.';
+            $this->Flash->error(__($msg));
         }
         $this->set('user', $user);
         $this->set('users', $users);
@@ -159,7 +166,14 @@ class UsersController extends AppController
                     $this->Flash->success(__('Utente modificato correttamente.'));
                     return $this->redirect(['action' => 'index']);
                 }
-                $this->Flash->error(__('Impossibile modificare l\'utente, si prega di riprovare.'));
+                $msg = 'Impossibile modificare l\'utente. ';
+                foreach ($user->errors() as $field => $error) {
+                    foreach ($error as $type => $message) {
+                        $msg .= $message.". ";
+                    }
+                }
+                $msg .= 'Si prega di riprovare.';
+                $this->Flash->error(__($msg));
             }
             $this->set('users', $users);
             $this->set(compact('user'));

@@ -386,7 +386,7 @@ table.table {
 }
 table tr .tools-hover, ul li .tools-hover{
     display:none;
-    float: right;ì
+    float: right;
 }
 table tr:hover .tools-hover, ul li:hover .tools-hover{
     display: inline-block;
@@ -475,4 +475,17 @@ a[disabled="disabled"] {
 .box-notifications .notifications-count {
     position: relative;
     top: -2px;
+}
+
+div.message.error{
+	position: relative;
+}
+
+div.message.error .close-error-message {
+    position: absolute;
+    top: -4px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
 }

@@ -25,42 +25,17 @@ class UsersTable extends AppTable
         return $validator
             //->notEmpty('email', 'La email è obbligatoria')
             ->notEmpty('username', 'Lo username è obbligatorio')
-            ->notEmpty('password', 'La password è obbligatoria');
+            ->notEmpty('password', 'La password è obbligatoria')
+            ->notEmpty('email', 'L\'email è obbligatoria');
     }
 
     public function buildRules(RulesChecker $rules)
     {
         // Add a rule that is applied for create and update operations
-        $rules->add($rules->isUnique(['username']));
-
-        // Controllo unicità email
-	    $rules->add(function ($entity, $options) {
-                return $this->isEmailUnique($entity);
-            },
-            'uniqueEmail',
-            [
-                'errorField' => 'email',
-                'message' => 'La mail è già presente nel sistema.'
-            ]
-        );
+        $rules->add($rules->isUnique(['username'], 'Lo username inserito è già presente a sistema'));
+        $rules->add($rules->isUnique(['email'], 'L\'email inserita è già presente a sistema'));
 
         return $rules;
-    }
-
-    public function isEmailUnique($entity)
-    {
-        $email = $this->find()
-            ->where([
-                'email' => $entity->email, 
-                'id !=' => $entity->id
-            ])
-            ->toArray();
-
-        if (empty($email)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }
