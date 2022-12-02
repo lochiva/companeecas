@@ -791,7 +791,7 @@ function modifyCost(cost_id) {
       var errors = 0;
       var error_message = "";
   
-      if ((date < start || date > end) && year < 9999) {
+      if (date < start || date > end) {
         conf = confirm('Data non conforme al periodo, vuoi comunque inserire la la spesa?');
       } else {
         conf = true;
@@ -805,7 +805,7 @@ function modifyCost(cost_id) {
           }
         });
 
-        if (year > 9999) {
+        if (year < 999 || year > 9999) {
           errors = true;
           error_message = "L'anno inserito " + year + " non è corretto.";
           $("input[name=date]").parent().addClass('has-error');
