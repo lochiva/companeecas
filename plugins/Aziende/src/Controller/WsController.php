@@ -4332,9 +4332,18 @@ class WsController extends AppController
                 $this->_result['msg'] = 'Spesa salvata correttamente';
             }
         } else {
+            $msg = "";
+            $errors = $entity->errors();
+            foreach ($errors as $key => $value) {
+                $msg .= $key . ": "; 
+                foreach ($value as $error) {
+                    $msg .=  $error . ".\n";
+                }
+            }
+
             $this->_result['response'] = "KO";
             $this->_result['data'] = "";
-            $this->_result['msg'] = 'Impossibile salvare la spesa';
+            $this->_result['msg'] = "Impossibile salvare la spesa.\n" . $msg;
         }
     }
 
