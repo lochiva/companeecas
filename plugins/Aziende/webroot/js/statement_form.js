@@ -750,8 +750,12 @@ function modifyCost(cost_id) {
         $('#cost-headers').text('Modifica spesa del ' + new Date(res.data.date).toLocaleDateString());
 
         for (let prop in res.data) {
+          let date_value = "";
           if (prop.indexOf('date') === 0) {
-            $('#add-cost input[name='+prop+']').val(new Date(res.data[prop]).toISOString().split('T')[0]);
+            if (res.data[prop] !== null) {
+              date_value = new Date(res.data[prop]).toISOString().split('T')[0];
+            }
+            $('#add-cost input[name='+prop+']').val(date_value);
           } else if (prop.indexOf('category_id') === 0) {
             var newOption = new Option(res.data.category.name, res.data.category.id, false, false);
             $('#searchCat').append(newOption).trigger('change');
