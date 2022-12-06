@@ -779,7 +779,7 @@ class SediTable extends AppTable
                         'g.sede_id = Sedi.id',
                         'g.check_in_date <=' => $year.'-'.$month.'-31',
                         'OR' => [
-                            'g.check_out_date >' => $year.'-'.$month.'-01',
+                            'g.check_out_date >=' => $year.'-'.$month.'-01',
                             'g.check_out_date IS NULL'
                         ],
                         'g.deleted' => 0
