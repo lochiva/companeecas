@@ -71,6 +71,58 @@ class CostsTable extends AppTable
             ->requirePresence('statement_company', 'create')
             ->notEmptyString('statement_company');
 
+        $validator
+            ->decimal('amount')
+            ->requirePresence('amount', 'create')
+            ->notEmptyString('amount');
+
+        $validator
+            ->decimal('share')
+            ->requirePresence('share', 'create')
+            ->notEmptyString('share');
+
+        $validator
+            ->scalar('attachment')
+            ->maxLength('attachment', 255)
+            ->notEmptyString('attachment');
+
+        $validator
+            ->scalar('supplier')
+            ->maxLength('supplier', 255)
+            ->requirePresence('supplier', 'create')
+            ->notEmptyString('supplier');
+
+        $validator
+            ->scalar('description')
+            ->maxLength('description', 255)
+            ->allowEmptyString('description', true)
+            ->requirePresence('description', false);
+
+        $validator
+            ->date('date')
+            ->requirePresence('date', 'create')
+            ->notEmptyDate('date');
+
+        $validator
+            ->scalar('notes')
+            ->maxLength('notes', 255)
+            ->allowEmptyString('notes', true)
+            ->requirePresence('notes', false);
+
+        $validator
+            ->scalar('number')
+            ->maxLength('number', 255)
+            ->requirePresence('number', 'create')
+            ->notEmptyString('number');
+
+        $validator
+            ->boolean('deleted');
+
+        $validator
+            ->scalar('filename')
+            ->maxLength('filename', 255)
+            ->notEmptyFile('filename');
+
         return $validator;
     }
 

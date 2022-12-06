@@ -452,6 +452,9 @@ $(document).on('change', '.select-provincia', function(){
 	var provinciaId = $(this).val();
 	var select_comune = $(this).parentsUntil('.form-sede').find('.select-comune');
 	var comune_value = $(this).parentsUntil('.form-sede').find('.comune-value').val();
+	var select_police = $(this).parentsUntil('.form-sede').find('.select-police');
+
+	select_police.empty();
 
 	$.ajax({
 		url : pathServer+'ws/autocompleteComune/'+provinciaId,
@@ -510,6 +513,40 @@ $(document).on('change', '.select-comune', function(){
 	if($(this).find('option:selected').length > 0){
 		comune_des_value.val($(this).find('option:selected')[0].innerHTML).trigger('change');
 	}
+
+	var comune_id = $(this).val();
+
+	let select_p = $(this).parentsUntil('.form-sede').find('.select-police');
+
+	$.ajax({
+		url : pathServer+'ws/autocompletePoliceStations/'+comune_id,
+		type: "GET",
+		dataType: "json",
+			async: false,
+		success : function(response) { 
+			select_p.empty();
+
+			var data = $.map(response.data, function (obj) {
+				obj.text = obj.name;
+				obj.id = obj.id;
+				return obj;
+			});
+
+			select_p.select2({
+				language: 'it',
+				width: '100%',
+				placeholder: "Seleziona dall'elenco",
+				closeOnSelect: true,
+				dropdownParent: select_p.parent(),
+				data: data
+	  		});
+		},
+		error : function (response){}
+	});
+
+	let police = $(this).parentsUntil('.form-sede').find('.police_id');
+
+    select_p.val(police.val()).trigger('change');
 });
 
 $(document).on('change', '.select-comune-contatto', function(){
@@ -726,3 +763,15 @@ function clearModale(){
 	$('[name="sito_web"]').val("");*/
 
 }
+
+$(document).on('select2:select', '.select-comune', function () { 
+	let select_p = $(this).parentsUntil('.form-sede').find('.select-police');
+    select_p.val('').trigger('change');
+  }
+);
+
+$(document).on('select2:select', '.select-police', function () { 
+	let newV = $(this).val();
+	$(this).parentsUntil('.form-sede').find('.police_id').val(newV).trigger("change");
+  }
+);

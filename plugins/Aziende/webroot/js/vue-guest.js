@@ -308,7 +308,7 @@ var app = new Vue({
             }
         }, 
         notifiche_url() {
-            if (this.decreti) {
+            if (this.notifiche) {
                 return pathServer + 'surveys/surveys/answers?interview=' + this.notifiche.interview_id;
             }
         }

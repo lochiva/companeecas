@@ -86,7 +86,7 @@ class WsController extends AppController
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
                 'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti'
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson'
             ],
             'ente_contabile' => [
                 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
@@ -268,78 +268,83 @@ class WsController extends AppController
     public function loadAzienda($id = 0){
 
         if($id != 0){
+            $user = $this->request->session()->read('Auth.User');
 
-            $azienda = $this->Azienda->_get($id);
+                if(!$this->Azienda->verifyUser($user, $id)){
+                    $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "L'utente non è autorizzato ad accedere alla risorsa");
+                } else {
+                    $azienda = $this->Azienda->_get($id);
 
-            if($this->request->session()->read('Auth.User.role') == 'companee_admin'){
-                unset($azienda->contatti);
-            }
+                    if($this->request->session()->read('Auth.User.role') == 'companee_admin'){
+                        unset($azienda->contatti);
+                    }
+        
+                    if($azienda->logo){
+                        $path = ROOT.DS.Configure::read('dbconfig.aziende.LOGO_PATH').$azienda->logo;
+                        $type = pathinfo($path, PATHINFO_EXTENSION);
+                        $dataImg = file_get_contents($path);
+                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($dataImg);
+                        $azienda->logo = $base64;
+                    }
+        
+                    $data['azienda'] = $azienda;
+        
+                    $sedi = $this->Sedi->getSedi(['idAzienda' => $id], $azienda->id_tipo);
+                    if($sedi){
+                        $data['sede'] = $sedi[0];
+                    }
+        
+                    $http = new Client();
+        
+                    if($azienda->id_cliente_fattureincloud != 0){
+        
+                        $url = Router::url([
+                            'plugin' => 'ficgtw',
+                            'controller' => 'ws',
+                            'action' => 'getcliente',
+                            '_full' => true,
+                            '_ssl' => Configure::read('localconfig.HttpsEnabled')
+                        ]);
+        
+                        $res = $http->post(
+                            $url,
+                            [
+                                'id' => $azienda->id_cliente_fattureincloud,
+                            ]
+                        );
+        
+                        $cliente = json_decode($res->body());
+        
+                        $data['cliente'] = $cliente->data;
+        
+                    }
+        
+                    if($azienda->id_fornitore_fattureincloud != 0){
+        
+                        $url = Router::url([
+                            'plugin' => 'ficgtw',
+                            'controller' => 'ws',
+                            'action' => 'getfornitore',
+                            '_full' => true,
+                            '_ssl' => Configure::read('localconfig.HttpsEnabled')
+                        ]);
+        
+                        $res = $http->post(
+                            $url,
+                            [
+                                'id' => $azienda->id_fornitore_fattureincloud,
+                            ]
+                        );
+        
+                        $fornitore = json_decode($res->body());
+        
+                        $data['fornitore'] = $fornitore->data;
+        
+                    }
+        
+                    $this->_result = array('response' => 'OK', 'data' => $data, 'msg' => "Azienda trovata");
 
-            if($azienda->logo){
-                $path = ROOT.DS.Configure::read('dbconfig.aziende.LOGO_PATH').$azienda->logo;
-                $type = pathinfo($path, PATHINFO_EXTENSION);
-                $dataImg = file_get_contents($path);
-                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($dataImg);
-                $azienda->logo = $base64;
-            }
-
-            $data['azienda'] = $azienda;
-
-			$sedi = $this->Sedi->getSedi(['idAzienda' => $id], $azienda->id_tipo);
-			if($sedi){
-				$data['sede'] = $sedi[0];
-			}
-
-			$http = new Client();
-
-			if($azienda->id_cliente_fattureincloud != 0){
-
-				$url = Router::url([
-					'plugin' => 'ficgtw',
-				    'controller' => 'ws',
-				    'action' => 'getcliente',
-					'_full' => true,
-					'_ssl' => Configure::read('localconfig.HttpsEnabled')
-				]);
-
-				$res = $http->post(
-					$url,
-					[
-						'id' => $azienda->id_cliente_fattureincloud,
-					]
-				);
-
-				$cliente = json_decode($res->body());
-
-				$data['cliente'] = $cliente->data;
-
-			}
-
-			if($azienda->id_fornitore_fattureincloud != 0){
-
-				$url = Router::url([
-					'plugin' => 'ficgtw',
-				    'controller' => 'ws',
-				    'action' => 'getfornitore',
-					'_full' => true,
-					'_ssl' => Configure::read('localconfig.HttpsEnabled')
-				]);
-
-				$res = $http->post(
-					$url,
-					[
-						'id' => $azienda->id_fornitore_fattureincloud,
-					]
-				);
-
-				$fornitore = json_decode($res->body());
-
-				$data['fornitore'] = $fornitore->data;
-
-			}
-
-            $this->_result = array('response' => 'OK', 'data' => $data, 'msg' => "Azienda trovata");
-
+                }
         }else{
             $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nel caricamento dei dati: id mancante.");
         }
@@ -1112,56 +1117,66 @@ class WsController extends AppController
     {
         $data = $this->request->data;
 
-        if(empty($data['id'])){
-            unset($data['id']);
-        }
+        $user = $this->request->session()->read('Auth.User');
 
-        // //Se ci sono sedi con operatività = chiusa controllo che non abbiano ospiti
-        $validOperativita = true;
-        $sedi = json_decode($data['sedi'], true);
-        if (!empty($sedi)) {
-            foreach ($sedi as $sede) {
-                if (!empty($sede['id']) && empty($sede['operativita']) && $this->Sedi->checkSedeHasGuests($sede['id'])) {
-                    $validOperativita = false;
-                    break;
+        if(!empty($data['id']) && !$this->Azienda->verifyUser($user, $data['id'])){
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "L'utente non è autorizzato.");
+        } else {
+            if(empty($data['id'])){
+                unset($data['id']);
+            }
+    
+            // //Se ci sono sedi con operatività = chiusa controllo che non abbiano ospiti
+            $validOperativita = true;
+            $sedi = json_decode($data['sedi'], true);
+            if (!empty($sedi)) {
+                foreach ($sedi as $sede) {
+                    if (!empty($sede['id']) && empty($sede['operativita']) && $this->Sedi->checkSedeHasGuests($sede['id'])) {
+                        $validOperativita = false;
+                        break;
+                    }
                 }
             }
-        }
-
-        if ($validOperativita) {
-            if ($this->Azienda->saveAziendaJson($data)) {
-                if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
-                    $msg = false;
-                    //Aggiorno o creo cliente su fattureincloud
-                    $dataC = $data;
-                    $dataC['fornitore'] = false;
-                    if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
-                        $msg = $this->sendEditAnagrafica($dataC);
-                    }elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
-                        $msg = $this->sendAnagrafica($dataC['id']);
-                    }
-                    //Aggiorno o creo fornitore su fattureincloud
-                    $dataF = $data;
-                    $dataF['cliente'] = false;
-                    if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
-                        $msg = $this->sendEditAnagrafica($dataF);
-                    }elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
-                        $msg = $this->sendAnagrafica($dataF['id']);
-                    }
-                    if(!$msg){
-                        $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+    
+            if ($validOperativita) {
+                if ($this->Azienda->saveAziendaJson($data)) {
+                    if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
+                        $msg = false;
+                        //Aggiorno o creo cliente su fattureincloud
+                        $dataC = $data;
+                        $dataC['fornitore'] = false;
+                        if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
+                            $msg = $this->sendEditAnagrafica($dataC);
+                        }elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
+                            $msg = $this->sendAnagrafica($dataC['id']);
+                        }
+                        //Aggiorno o creo fornitore su fattureincloud
+                        $dataF = $data;
+                        $dataF['cliente'] = false;
+                        if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
+                            $msg = $this->sendEditAnagrafica($dataF);
+                        }elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
+                            $msg = $this->sendAnagrafica($dataF['id']);
+                        }
+                        if(!$msg){
+                            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                        }else{
+                            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
+                        }
                     }else{
-                        $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
+                        $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
                     }
                 }else{
-                    $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                    $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
                 }
-            }else{
-                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
+            } else {
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Attenzione! Non è possibile chiudere una struttura con ospiti presenti.");
             }
-        } else {
-            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Attenzione! Non è possibile chiudere una struttura con ospiti presenti.");
+
+
         }
+
+
     }
 
 	public function sendAnagrafica($idAzienda){
@@ -4317,9 +4332,18 @@ class WsController extends AppController
                 $this->_result['msg'] = 'Spesa salvata correttamente';
             }
         } else {
+            $msg = "";
+            $errors = $entity->errors();
+            foreach ($errors as $key => $value) {
+                $msg .= $key . ": "; 
+                foreach ($value as $error) {
+                    $msg .=  $error . ".\n";
+                }
+            }
+
             $this->_result['response'] = "KO";
             $this->_result['data'] = "";
-            $this->_result['msg'] = 'Impossibile salvare la spesa';
+            $this->_result['msg'] = "Impossibile salvare la spesa.\n" . $msg;
         }
     }
 

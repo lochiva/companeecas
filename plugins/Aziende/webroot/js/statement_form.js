@@ -468,7 +468,7 @@ function displayCosts(cats, statement) {
                   <th>Num doc</th>
                   <th>Data</th>
                   <th>Descrizione</th>
-                  <th>Importo</th>
+                  <th>Totale documento</th>
                   <th>Quota parte</th>
                   <th>Note</th>
                   <th>Allegato</th>`;
@@ -750,11 +750,16 @@ function modifyCost(cost_id) {
         $('#cost-headers').text('Modifica spesa del ' + new Date(res.data.date).toLocaleDateString());
 
         for (let prop in res.data) {
+          let date_value = "";
           if (prop.indexOf('date') === 0) {
-            $('#add-cost input[name='+prop+']').val(new Date(res.data[prop]).toISOString().split('T')[0]);
+            if (res.data[prop] !== null) {
+              date_value = new Date(res.data[prop]).toISOString().split('T')[0];
+            }
+            $('#add-cost input[name='+prop+']').val(date_value);
           } else if (prop.indexOf('category_id') === 0) {
             var newOption = new Option(res.data.category.name, res.data.category.id, false, false);
             $('#searchCat').append(newOption).trigger('change');
+            $('#searchCat').val(res.data.category.id).trigger('change');
           } else {
             $('#add-cost input[name='+prop+']').val(res.data[prop]);
           }
@@ -784,9 +789,11 @@ function modifyCost(cost_id) {
       let start = new Date($("input[name=period_start_date]").val()).getTime();
       let end = new Date($("input[name=period_end_date]").val()).getTime();
       let date = new Date($("input[name=date]").val()).getTime();
+      let year = new Date($("input[name=date]").val()).getFullYear();
   
       var conf = true;
-      let errors = 0;
+      var errors = 0;
+      var error_message = "";
   
       if (date < start || date > end) {
         conf = confirm('Data non conforme al periodo, vuoi comunque inserire la la spesa?');
@@ -802,8 +809,14 @@ function modifyCost(cost_id) {
           }
         });
 
+        if (year < 999 || year > 9999) {
+          errors = true;
+          error_message = "L'anno inserito " + year + " non è corretto.";
+          $("input[name=date]").parent().addClass('has-error');
+        }
+
         if(errors) {
-          alert('Compilare tutti i campi in rosso');
+          alert('Controllare che i campi in rosso siano stati compilati e che i valori inseriti siano corretti.' + "\n" + error_message);
         } else {
           let url = pathServer + "aziende/ws/saveCost";
           if (cost_id) {

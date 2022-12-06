@@ -29,9 +29,7 @@ class SurveyHelper extends Helper
 
 			if ($layout == 'single') {
 				//LAYOUT SINGOLA COLONNA
-				$html .= '<table width="100%" style="border-spacing: 0px;table-layout: fixed;">';
-				$html .= '<tr style="page-break-inside: auto;">';
-				$html .= '<td style="padding: 10px;">';
+				$html .= '<div style="width: 100%; padding: 10px;">';
 
 				/* 				
 				if (!$section->primary) {
@@ -111,9 +109,7 @@ class SurveyHelper extends Helper
 					}
 				}
 
-				$html .= '</td>';
-				$html .= '</tr>';
-				$html .= '</table>';
+				$html .= '</div>';
 
 			} elseif ($layout == 'double') {
 				if (

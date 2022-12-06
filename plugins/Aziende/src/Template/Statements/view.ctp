@@ -333,7 +333,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     </div>
 
                                     <div class="form-group col-sm-2">
-                                        <label class="control-label required">Costo &euro;</label>
+                                        <label class="control-label required">Totale documento &euro;</label>
                                         <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
                                     </div>
 
@@ -343,7 +343,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <label class="control-label required">Data</label>
-                                        <input type="date" class="form-control" name="date" required>
+                                        <input type="date" class="form-control" name="date" min="1900-01-01" max="9999-12-31" required>
                                     </div>
 
                                     <div class="form-group col-sm-2">

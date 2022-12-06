@@ -261,8 +261,6 @@ $(document).on('change', '#inputComune', function(){
 $(document).on('select2:select', '#inputComune', function (e) { 
     loadPoliceStations(e.params.data.id);
     $('#inputPolice').val('').trigger('change');
-
-    console.log($('#inputPolice').val());
   }
 );
 
@@ -358,8 +356,6 @@ function loadInputModale(idSede){
               $('#inputPolice').val(data.data.police_station_id).trigger('change');
             } else {
               $('#inputPolice').val('').trigger('change');
-              console.log("TRIGG");
-              
             }
 
             enableInputModale();

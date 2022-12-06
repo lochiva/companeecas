@@ -19,6 +19,17 @@ $menu = [
     'children' => []
   ],
   [
+    'name' => 'Ente',
+    'plugin' => ['Aziende'],
+    'controller' => ['Ente'],
+    'action' => ['index'],
+    'levels' => ['ente_ospiti'],
+    'url' => Router::url('/aziende/home/info/').$this->Utils->getEnteIDByUserLoggedIn(),
+    'target' => '',
+    'icon-class' => 'fa fa-building-o',
+    'children' => []
+  ],
+  [
     'name' => 'Enti',
     'plugin' => ['Aziende'],
     'controller' => ['Home'],

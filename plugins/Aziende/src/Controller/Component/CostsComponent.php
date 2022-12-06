@@ -59,7 +59,7 @@ class CostsComponent extends Component
                     $cost['amount'] = number_format($cost['amount'], 2, '.', '');
                     $cost['share'] = number_format($cost['share'], 2, '.', '');
                     $cost['real_date'] = $cost['date'];
-                    $cost['date'] = $cost['date']->format('d/m/Y');
+                    $cost['date'] = isset($cost['date']) ? $cost['date']->format('d/m/Y') : '' ;
                 }
                 $grandTotal += $tot;
                 $cat['tot'] = number_format($tot, 2, '.', '');
