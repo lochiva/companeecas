@@ -209,7 +209,7 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group ">
                                 <label class="col-sm-2 control-label required" for="inputTipoEnte">Tipologia ente</label>
                                 <div class="col-sm-10">
-                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required">
+                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required" ng-disabled="!(vm.role == 'admin' || vm.role == 'area_iv')">
                                         <option value="">-- Seleziona una tipologia ente --</option>
                                         <?php foreach ($tipi as $key => $tipo): ?>
                                             <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
