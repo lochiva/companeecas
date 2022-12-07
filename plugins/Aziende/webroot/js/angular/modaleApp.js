@@ -5,13 +5,11 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
         vm.forms = [];
 
         vm.loadAzienda = loadAzienda;
-        vm.addSede = addSede;
         vm.addContatto = addContatto;
         vm.resetModel = resetModel;
         vm.checkSubmit = checkSubmit;
         vm.saveAzienda = saveAzienda;
         vm.aziendaModel = aziendaModel;
-        vm.sedeModel = sedeModel;
         vm.contattoModel = contattoModel;
 
         vm.role = role;
@@ -48,18 +46,7 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                 denominazione:'', codice_provincia:'', nome:'',cognome:'',cod_paese:'IT',piva:'',cf:'',cod_eori:'',
                 telefono:'', pec:'', pec_commissione:'', email_info:'', referente_1: '', referente_2: '', email_contabilita:'',
                 email_solleciti:'', pa_codice:'', sito_web:'', fax:'', cliente:false, fornitore:false, interno:false, logo:'', 
-                logo_to_save:'', id_tipo:'', sedi:[],contatti:[],gruppi:[]
-            };
-        }
-
-        function sedeModel(){
-            this.sede = {
-                id_azienda:(!vm.azienda.id ? '' : vm.azienda.id), id_tipo_ministero:'', id_tipo_capitolato:'', id_tipologia_centro:1, 
-                id_tipologia_ospiti:'', indirizzo:'', num_civico:'', cap:'', comune:'', comune_des:'', provincia:'', nazione:'', 
-                referente:'', telefono:'', email:'', cellulare:'', fax:'', skype:'', n_posti_effettivi:'', 
-                n_posti_convenzione:'', n_posti_incremento:'', id_procedura_affidamento:'', operativita:1, id: 'sede-'+vm.azienda.sedi.length, code_centro:'', 
-                approved:0, exdl_28022022:0, note:'',
-                police_station_id:''
+                logo_to_save:'', id_tipo:'', contatti:[],gruppi:[]
             };
         }
 
@@ -142,9 +129,6 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                 }
 
                 vm.azienda = response.data.data.azienda;
-				if(response.data.data.sede != null){
-					vm.sede = response.data.data.sede;
-				}
 				if(response.data.data.cliente != null){
 					vm.cliente = response.data.data.cliente;
 				}
@@ -176,9 +160,6 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                             closeOnSelect: true,
                             dropdownParent: select_provincia.parent(),
                         });
-                        if(vm.azienda.sedi[index].provincia != ''){
-                            select_provincia.val(vm.azienda.sedi[index].provincia).trigger('change'); 
-                        }
                     });
 
                     $('.select-provincia-contatto').each(function(index){
@@ -204,7 +185,7 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
         function saveAzienda(){ 
             var form_data = new FormData();
             for ( var key in vm.azienda ) {
-                if(key == 'gruppi' || key == 'contatti' || key == 'sedi'){
+                if(key == 'gruppi' || key == 'contatti'){
                     form_data.append(key, JSON.stringify(vm.azienda[key]));
                 }else{
                     form_data.append(key, vm.azienda[key]);
@@ -225,24 +206,6 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
                 alert(response);
                 $('#saveModalAziende').prop('disabled', false);
             });
-        }
-
-        function addSede() {
-            var nuovaSede = new vm.sedeModel().sede;
-            vm.editing = true;
-            vm.azienda.sedi.push(nuovaSede);
-            $timeout(function(){
-                $('#click_subtab_sede_'+nuovaSede.id).trigger("click");
-                var select_provincia = $('#subtab_sede_'+(vm.azienda.sedi.length - 1)).find('.select-provincia');
-                select_provincia.select2({
-                    language: 'it',
-                    width: '100%',
-                    placeholder: 'Seleziona una provincia',
-                    closeOnSelect: true,
-                    dropdownParent: select_provincia.parent(),
-                });
-            }, 0);
-
         }
 
         function addContatto() {
@@ -270,7 +233,6 @@ angular.module("Aziende", ['ui.select', 'ngSanitize'])
 
         function resetModel(){
             vm.azienda = new vm.aziendaModel().azienda;
-			vm.sede = new vm.sedeModel().sede;
 			vm.cliente = [];
 			vm.fornitore = [];
             vm.editing = false;
