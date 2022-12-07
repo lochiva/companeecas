@@ -85,23 +85,23 @@ $role = $this->request->session()->read('Auth.User.role');
                         <table id="table-guests" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th width="8%">Check-in</th>
+                                    <th>Check-in</th>
                                     <?php if ($azienda['id_tipo'] == 1) { ?>
-                                        <th width="8%">CUI</th>
-                                        <th width="8%">ID Vestanet</th>
+                                        <th>CUI</th>
+                                        <th>ID Vestanet</th>
                                     <?php } ?>
-                                    <th width="8%">Nome</th>
-                                    <th width="8%">Cognome</th>
-                                    <th width="8%">Data di nascita</th>
-                                    <th width="5%" class="filter-select filter-sex">Sesso</th>
-                                    <th width="8%">Nazionalità</th>
+                                    <th>Nome</th>
+                                    <th>Cognome</th>
+                                    <th style="min-width:120px;">Data di nascita</th>
+                                    <th class="filter-select filter-sex" style="min-width:80px;">Sesso</th>
+                                    <th>Nazionalità</th>
                                     <?php if ($azienda['id_tipo'] == 1) { ?>
-                                        <th width="8%" class="filter-select filter-draft">Stato bozza</th>
-                                        <th width="8%">Scadenza stato bozza</th>
-                                        <th width="5%" class="filter-select filter-suspended">Sospeso</th>
+                                        <th class="filter-select filter-draft">Stato bozza</th>
+                                        <th>Scadenza stato bozza</th>
+                                        <th class="filter-select filter-suspended">Sospeso</th>
                                     <?php } ?>
-                                    <th width="8%" class="filter-select filter-status">Stato</th>
-                                    <th width="70px" class="filters-reset" data-sorter="false"></th>
+                                    <th class="filter-select filter-status">Stato</th>
+                                    <th style="min-width:50px;" class="filters-reset" data-sorter="false"></th>
                                 </tr>
                             </thead>
                             <tbody>
