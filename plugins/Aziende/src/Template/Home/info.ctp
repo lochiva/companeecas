@@ -149,14 +149,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                             <td><?=h($sede['c']['des_luo'])?></td>
                                             <td><?=h($sede['p']['des_luo'])?></td>
                                             <td width="50px" style="padding-left: 0px; padding-right: 0px">
-                                              <div class="tools-hover">
-                                                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
-                                                    <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_2" data-childTab="#click_subtab_sede_<?=$sede->id?>"
-                                                    data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
-                                                    &nbsp;
-                                                    <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella struttura"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
-                                                <?php } ?>
-                                                </div>
                                             </td>
                                         </tr>
                                     <?php } ?>

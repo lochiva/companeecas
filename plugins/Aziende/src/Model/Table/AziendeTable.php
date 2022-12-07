@@ -44,9 +44,9 @@ class AziendeTable extends AppTable
         ]);
     }
 
-    public function saveAzienda($data)
+    public function saveAzienda($data, $user)
     {
-        if(!empty($data['id']) && is_int($data['id'])){
+        if(isset($data['id'])){
           $entity = $this->get($data['id']/*,['contain' => 'Gruppi']*/);
         }else{
             $entity = $this->newEntity();
@@ -91,7 +91,14 @@ class AziendeTable extends AppTable
         $data['pa_codice'] = strtoupper($data['pa_codice']);
 
         $entity = $this->patchEntity($entity, $data);
-        $entity->cleanDirty(['created','modified']);
+
+        if ($entity->isDirty('id_tipo')) {
+          if ($user['role'] !== 'admin' && $user['role'] !== 'area_iv') {
+            $entity->id_tipo = $entity->getOriginal('id_tipo');
+            $entity->clean('id_tipo');
+          }
+        }
+        //$entity->cleanDirty(['created','modified']);
         if($entity->isDirty()){
             return $this->save($entity);
         }

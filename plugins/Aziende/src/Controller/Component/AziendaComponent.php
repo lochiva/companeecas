@@ -284,6 +284,7 @@ class AziendaComponent extends Component
      */
     public function saveAziendaJson($json)
     {
+        $user = $this->request->session()->read('Auth.User');
         $azienda = $json;
         $aziendeTalbe = TableRegistry::get('Aziende.Aziende');
         $sediTable = TableRegistry::get('Aziende.Sedi');
@@ -297,7 +298,7 @@ class AziendaComponent extends Component
             unset($azienda['logo']);
         }
 
-        if ($azienda = $aziendeTalbe->saveAzienda($azienda)) {
+        if ($azienda = $aziendeTalbe->saveAzienda($azienda, $user)) {
             //salvataggio logo azienda
             if(!empty($json['logo_to_save'])){
                 $uploadPath = Configure::read('dbconfig.aziende.LOGO_PATH');
@@ -315,34 +316,39 @@ class AziendaComponent extends Component
                 }
             }
 
-            foreach (json_decode($json['sedi'], true) as $sede) {
+            $sedi = json_decode($json['sedi'], true);
+            if (!empty($sedi)) {
+                foreach ($sedi as $sede) {
 
-                $sede['id_azienda'] = $azienda->id;
-
-                if ($entity = $sediTable->saveSede($sede)) {
-                    if(empty($sede['id']) || !is_int($sede['id'])){
-                        // Salvataggio notifica creazione struttura
-                        if ($azienda->id_tipo == 2) {
-                            $saveType = 'CREATE_CENTER_UKRAINE';
-                        } else {
-                            $saveType = 'CREATE_CENTER';
+                    $sede['id_azienda'] = $azienda->id;
+    
+                    if ($entity = $sediTable->saveSede($sede)) {
+                        if(empty($sede['id']) || !is_int($sede['id'])){
+                            // Salvataggio notifica creazione struttura
+                            if ($azienda->id_tipo == 2) {
+                                $saveType = 'CREATE_CENTER_UKRAINE';
+                            } else {
+                                $saveType = 'CREATE_CENTER';
+                            }
+                            $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+                            $notification = $guestsNotifications->newEntity();
+                            $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
+                            $notificationData = [
+                                'type_id' => $notificationType->id,
+                                'azienda_id' => $entity->id_azienda,
+                                'sede_id' => $entity->id,
+                                'guest_id' => 0,
+                                'user_maker_id' => $this->request->session()->read('Auth.User.id')
+                            ];
+                            $guestsNotifications->patchEntity($notification, $notificationData);
+                            $guestsNotifications->save($notification);
                         }
-                        $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-                        $notification = $guestsNotifications->newEntity();
-                        $notificationType = TableRegistry::get('Aziende.GuestsNotificationsTypes')->find()->where(['name' => $saveType])->first();
-                        $notificationData = [
-                            'type_id' => $notificationType->id,
-                            'azienda_id' => $entity->id_azienda,
-                            'sede_id' => $entity->id,
-                            'guest_id' => 0,
-                            'user_maker_id' => $this->request->session()->read('Auth.User.id')
-                        ];
-                        $guestsNotifications->patchEntity($notification, $notificationData);
-                        $guestsNotifications->save($notification);
+                        $sediId[$sede['id']] = $entity->id;
                     }
-                    $sediId[$sede['id']] = $entity->id;
                 }
+
             }
+
             if($this->request->session()->read('Auth.User.role') != 'companee_admin'){
                 foreach (json_decode($json['contatti'], true) as $contatto) {
                     $contatto['id_azienda'] = $azienda->id;
