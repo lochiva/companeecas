@@ -284,6 +284,7 @@ class AziendaComponent extends Component
      */
     public function saveAziendaJson($json)
     {
+        $user = $this->request->session()->read('Auth.User');
         $azienda = $json;
         $aziendeTalbe = TableRegistry::get('Aziende.Aziende');
         $sediTable = TableRegistry::get('Aziende.Sedi');
@@ -297,7 +298,7 @@ class AziendaComponent extends Component
             unset($azienda['logo']);
         }
 
-        if ($azienda = $aziendeTalbe->saveAzienda($azienda)) {
+        if ($azienda = $aziendeTalbe->saveAzienda($azienda, $user)) {
             //salvataggio logo azienda
             if(!empty($json['logo_to_save'])){
                 $uploadPath = Configure::read('dbconfig.aziende.LOGO_PATH');
