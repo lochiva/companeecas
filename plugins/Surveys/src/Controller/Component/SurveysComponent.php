@@ -278,15 +278,32 @@ class SurveysComponent extends Component
 			$ente_indirizzo .=  isset($guest->sedi->azienda->sede_legale->prov['s_prv']) ? '('.$guest->sedi->azienda->sede_legale->prov['s_prv'].')' : '';
 		}
 
-		$sede_indirizzo = '/';
+		$cap = '';
+		if (isset($guest->sedi['cap'])) {
+			$cap = $guest->sedi['cap'];
+		}
+
+		$comune = "";
+		if (isset($guest->sedi->comune['des_luo'])) {
+			$comune = $guest->sedi->comune['des_luo'];
+
+		}
+
+		$provincia = "";
+		if (isset($guest->sedi->provincia['s_prv'])) {
+			$provincia = $guest->sedi->provincia['s_prv'];
+		}
+
+		$sede_indirizzo = '';
 
 		if (!empty($guest->sedi['indirizzo'])) {
 			$sede_indirizzo = $guest->sedi['indirizzo'].' ';
 			$sede_indirizzo .= isset($guest->sedi['num_civico']) ? $guest->sedi['num_civico'].', ' : '';
-			$sede_indirizzo .= isset($guest->sedi['cap']) ? $guest->sedi['cap'].' ' : '';
-			$sede_indirizzo .= isset($guest->sedi->comune['des_luo'] ) ? $guest->sedi->comune['des_luo'] .' ' : '';
-			$sede_indirizzo .= isset($guest->sedi->provincia['s_prv']) ? '('.$guest->sedi->provincia['s_prv'].')' : '';
+			$sede_indirizzo .= !empty($cap) ? $cap.' ' : '';
+			$sede_indirizzo .= !empty($comune) ? $comune .' ' : '';
+			$sede_indirizzo .= !empty($provincia) ? '('.$provincia.')' : '';
 		}
+
 
 		$values = [
 			'ospite_nome' => empty($guest['name']) ? '/' : $guest['name'],
@@ -303,6 +320,10 @@ class SurveysComponent extends Component
 			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
 			
 			'sede_indirizzo' => $sede_indirizzo,
+
+			'sede_cap' => $cap,
+			'sede_comune' => $comune,
+			'sede_provincia' => $provincia,
 		];
 
 		if ($guest->sedi->police_station_id > 0) {
