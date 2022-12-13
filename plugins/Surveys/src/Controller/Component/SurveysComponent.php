@@ -317,13 +317,14 @@ class SurveysComponent extends Component
 			'ente_responsabile' => empty($guest->sedi['referente']) ? '/' : $guest->sedi['referente'],
 
 			'ente_indirizzo' => $ente_indirizzo,
-			'ente_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email'],
+			'ente_email' => empty($guest->sedi->azienda['email_info']) ? '/' : $guest->sedi->azienda['email_info'],
 			
 			'sede_indirizzo' => $sede_indirizzo,
 
 			'sede_cap' => $cap,
 			'sede_comune' => $comune,
 			'sede_provincia' => $provincia,
+			'sede_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email']
 		];
 
 		if ($guest->sedi->police_station_id > 0) {
