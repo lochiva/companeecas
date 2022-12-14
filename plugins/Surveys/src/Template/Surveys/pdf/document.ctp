@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<style>
+		*  {
+			font-family: "Times" !important;
+		}
+	</style>
 </head>
 <body>
 	<main>
