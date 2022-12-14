@@ -18,7 +18,6 @@ $role = $this->request->session()->read('Auth.User.role');
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                   <li class="active"><a id="click_tab_1" href="#tab_1" data-toggle="tab">{{ vm.azienda.id ? '' : '<?=__c('Nuovo')?>'}} <b><?=__c('Ente')?></b></a></li>
-                  <li><a id="click_tab_2" href="#tab_2" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuove'}} <b>Strutture</b></a></li>
                   <li><a id="click_tab_3" href="#tab_3" data-toggle="tab">{{ vm.azienda.id ? '' : 'Nuovi'}} <b>Contatti</b></a></li>
 				  <li ng-if="vm.azienda.id && (vm.azienda.id_cliente_fattureincloud != 0 || vm.azienda.id_fornitore_fattureincloud != 0)"><a id="click_tab_4" href="#tab_4" data-toggle="tab"><b>Verifica dati</b></a></li>
 				  <li class="pull-right"><button type="button" class="close" style="padding: 10px 15px;" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>
@@ -208,269 +207,24 @@ $role = $this->request->session()->read('Auth.User.role');
 
                             <div class="form-group ">
                                 <label class="col-sm-2 control-label required" for="inputTipoEnte">Tipologia ente</label>
-                                <div class="col-sm-10">
-                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required" ng-disabled="!(vm.role == 'admin' || vm.role == 'area_iv')">
+                                <div class="col-sm-10" ng-if="(vm.role == 'admin' || vm.role == 'area_iv')">
+                                    <select required ng-model="vm.azienda.id_tipo" convert-to-number name="tipo" id="inputTipoEnte" class="form-control required">
                                         <option value="">-- Seleziona una tipologia ente --</option>
                                         <?php foreach ($tipi as $key => $tipo): ?>
                                             <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
                                         <?php endforeach ?>
                                     </select>
                                 </div>
+                                <div class="col-sm-10" ng-else>
+                                    <span class="form-control" style="border-color: white;">
+                                        {{vm.azienda.tipo.name}}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </form>
 
                   </div>
-
-                  <!-- /.tab-pane -->
-                  <div class="tab-pane tab-secondo-livello" id="tab_2">
-                    <a ng-click="vm.addSede()" class="new-tab add-tab-sede"><span class=" btn btn-xs btn-info">Aggiungi struttura</span></a>
-                    <ul class="nav nav-tabs tabs-sedi" >
-                      <li ng-repeat="sede in vm.azienda.sedi track by $index"  ng-class="{'active': ($first && !vm.editing) }" id="subtabsede_{{sede.id}}" >
-                        <a id="click_subtab_sede_{{sede.id}}" href="#subtab_sede_{{ $index }}" data-toggle="tab">
-                          <i class="fa fa-circle-o sediTipiMinisteroColor-{{sede.id_tipo_ministero}}"></i> {{ !sede.indirizzo ? 'nuova struttura' : sede.comune_des+' - '+sede.indirizzo }} 
-                          <i ng-if="(vm.role == 'admin' || vm.role == 'area_iv') && sede.indirizzo" class="fa fa-times-circle text-red delete-sede" data-id="{{ sede.id }}" title="Cancella struttura"></i>
-                        </a>
-                      </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div repeat-push-form ng-repeat="sede in vm.azienda.sedi track by $index" class="tab-pane" id="subtab_sede_{{$index}}" ng-class="{'active': ($first && !vm.editing) }" >
-                            <div ng-form="angularForm"  class="form-sede form-horizontal">
-                                <div class="box-body">
-                                    <input ng-model="parentTab" type="hidden" name="parentTab" value="#click_tab_2" />
-                                    <input ng-model="childTab" type="hidden" name="childTab" value="#click_subtab_sede_{{sede.id}}" />
-                                    <input ng-model="sede.id" type="hidden" name="id" id="idSede" value="">
-                                    <input type="hidden" name="id_azienda" id="idAzienda" value="">
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputApproved">Approvato</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.approved" type="checkbox" name="approved" id="inputApproved">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCodeCentro">Codice centro</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.code_centro" type="text" maxlength="8" placeholder="Codice centro" name="codice centro" id="inputCodeCentro" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputExDl">Struttura attivata EX DL 28.02.2022</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.exdl_28022022" type="checkbox" name="exdl_28022022" id="inputExDl">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="inputTipoStrutturaMinistero">Tipologia struttura (per ministero)</label>
-                                        <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipo_ministero" convert-to-number name="tipologia struttura (per ministero)" id="inputTipoStrutturaMinistero" data-prova="ccc" 
-                                                class="form-control required">
-                                                <option value="">-- Seleziona una tipologia struttura --</option>
-                                                <?php foreach ($sediTipiMinistero as $key => $tipo): ?>
-                                                    <option value="<?=$tipo->id?>" ng-show="vm.azienda.id_tipo == <?=$tipo->ente_type?>"><?=$tipo->name?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="inputTipoStrutturaCapitolato">Tipologia struttura (da capitolato)</label>
-                                        <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipo_capitolato" convert-to-number name="tipologia struttura (da capitolato)" id="inputTipoStrutturaCapitolato" data-prova="ccc" class="form-control required" >
-                                                <option value="">-- Seleziona una tipologia struttura --</option>
-                                                <?php foreach ($sediTipiCapitolato as $key => $tipo): ?>
-                                                    <option value="<?=$tipo->id?>"><?=$tipo->name?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group ">
-                                        <label class="col-sm-2 control-label required" for="inputTipoCentro">Tipologia centro</label>
-                                        <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipologia_centro" convert-to-number name="tipologia centro" id="inputTipoCentro" class="form-control" >
-                                                <option value="">-- Seleziona una tipologia centro --</option>
-                                                <?php foreach ($tipologieCentro as $key => $tipologia): ?>
-                                                    <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputTipoOspite">Tipologia ospiti</label>
-                                        <div class="col-sm-10">
-                                            <select required ng-model="sede.id_tipologia_ospiti" convert-to-number name="tipologia ospiti" id="inputTipoOspite" class="form-control" >
-                                              <option value="">-- Seleziona una tipologia ospiti --</option>
-                                              <?php foreach ($tipologieOspiti as $tipologia): ?>
-                                                <option value="<?= $tipologia->id ?>"><?= h($tipologia->name) ?></option>
-                                              <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputIndirizzo">Indirizzo</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.indirizzo" type="text" placeholder="Indirizzo" name="indirizzo" id="inputIndirizzo" class="form-control required" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputNumCivico">Numero Civico</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.num_civico" type="text" placeholder="Numero Civico" name="numero civico" id="inputNumCivico" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCap">Cap</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.cap" type="text" placeholder="Cap" name="cap" id="inputCap" class="form-control required">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputProvincia">Provincia</label>
-                                        <div class="select-provincia-parent col-sm-10">
-                                            <select required ng-model="sede.provincia" name="provincia" id="inputProvincia" class="select2 select-provincia form-control required">
-                                                <?php foreach ($province as $prv): ?>
-                                                    <option value="<?=$prv->id?>"><?=$prv->text?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputComune">Comune</label>
-                                        <div class="col-sm-10">
-                                            <input hidden required class="comune-value required" name="comune" ng-model="sede.comune">
-                                            <input hidden class="comune-des-value" name="comune_des" ng-model="sede.comune_des">
-                                            <select id="inputComune" class="select2 select-comune form-control">
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputNazione">Nazione</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.nazione" type="text" placeholder="Nazione" name="nazione" id="inputNazione" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputReferente">Nome referente</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.referente" type="text" placeholder="Nome referente" name="referente" id="inputReferente" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputTelefono">Telefono</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.telefono" type="text" placeholder="Telefono" name="telefono" id="inputTelefono" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCell">Cellulare</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.cellulare" type="text" placeholder="Cellulare" name="cellulare" id="inputCellulare" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputFax">Fax</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.fax" type="text" placeholder="Fax" name="fax" id="inputFax" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputEmail">Email</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.email" type="email" placeholder="Email" name="email" id="inputEmail" class="form-control check-email">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputSkype">Contatto Skype</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="sede.skype" type="text" placeholder="Contatto Skype" name="skype" id="inputSkype" class="form-control" >
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputCapienzaEffettiva">Capienza (effettiva)</label>
-                                        <div class="col-sm-10">
-                                            <input required ng-model="sede.n_posti_effettivi" type="text" placeholder="Capienza (effettiva)" name="capienza (effettiva)" id="inputCapienzaEffettiva" class="form-control number-integer" >
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputCapienzaConvenzione">Capienza (da convenzione)</label>
-                                        <div class="col-sm-10">
-                                            <input disabled ng-model="sede.n_posti_convenzione" type="text" name="capienza (da convenzione)" id="inputCapienzaConvenzione" class="form-control number-integer" >
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputCapienzaIncremento">Capienza (da incremento)</label>
-                                        <div class="col-sm-10">
-                                            <input disabled ng-model="sede.n_posti_incremento" type="text" name="capienza (da incremento)" id="inputCapienzaIncremento" class="form-control number-integer" >
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label" for="inputProceduraAffidamento">Procedura di affidamento</label>
-                                        <div class="col-sm-10">
-                                            <select disabled ng-model="sede.id_procedura_affidamento" convert-to-number name="procedura di affidamento" id="inputProceduraAffidamento" class="form-control" >
-                                              <option value=""></option>
-                                              <?php foreach ($procedureAffidamento as $procedura): ?>
-                                                <option value="<?= $procedura->id ?>"><?= h($procedura->name) ?></option>
-                                              <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div ng-show="vm.azienda.id_tipo == 1" class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputOperativita">Operatività</label>
-                                        <div class="col-sm-10">
-                                            <select required ng-model="sede.operativita" convert-to-number name="operatività" id="inputOperativita" class="form-control" >
-                                              <option value="1">Attivo</option>
-                                              <option value="0">Chiuso</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">Note sulla struttura/ospiti</label>
-                                        <div class="col-sm-10">
-                                            <textarea ng-model="sede.note" name="note" class="form-control sede-textarea"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label required" for="inputPl">Commissariato di Polizia / Stazione dei Carabinieri</label>
-                                        <div class="col-sm-10">
-                                            <select id="inputPolice" class="select2 form-control required select-police">
-                                            </select>
-                                            <input hidden name="police_station_id" ng-model="sede.police_station_id" class="police_id">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                  </div>
-                  <!-- /.tab-pane -->
 
                   <!-- CONTATTI -->
                   <div class="tab-pane tab-secondo-livello" id="tab_3">

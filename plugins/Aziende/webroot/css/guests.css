@@ -432,3 +432,8 @@ a.btn-info.disabled-anchor:visited {
 .exit-survey:disabled {
     pointer-events: none;
 }
+
+td.tablesorter-filter {
+    width:auto;
+    text-align:center;
+}

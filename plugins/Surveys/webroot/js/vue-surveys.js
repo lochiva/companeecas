@@ -326,6 +326,7 @@ var app = new Vue({
             relative_urls : false,
             remove_script_host : false,
             convert_urls : true,
+            content_style: "* { font-family: Times; }",
             file_picker_callback: function(callback, value, meta) {
                 // svuoto l'input
                 $('#tinymce_upload').val('');

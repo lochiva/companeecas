@@ -37,12 +37,14 @@ $role = $this->request->session()->read('Auth.User.role');
                                     </div>
                                 </div>
 
-                                <div class="form-group" id="idUserSelectParent">
-                                    <label class="col-sm-2 control-label" for="idUserSelect">User</label>
-                                    <div class="col-sm-10">
-                                        <select name="id_user" id="idUserSelect" class="select2 form-control"></select>
+                                <?php if ($role == 'admin' || $role == 'area_iv') :?>
+                                    <div class="form-group" id="idUserSelectParent">
+                                        <label class="col-sm-2 control-label" for="idUserSelect">User</label>
+                                        <div class="col-sm-10">
+                                            <select name="id_user" id="idUserSelect" class="select2 form-control"></select>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php endif ?>
 
                                 <?php if($tipo == "azienda"){ ?>
 

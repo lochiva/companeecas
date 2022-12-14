@@ -566,14 +566,14 @@ class WsController extends AppController
                 $button = "";
                 $button.= '<div class="btn-group">';
                 $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $contatto->id . '" data-toggle="modal" data-target="#myModalContatto" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
-                if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') {
+                if (($user['role'] == 'admin') || (($user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') && !isset($contatto->userName))) {
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
                     $button.= '<li><a class="delete" href="#" data-id="' . $contatto->id . '"><i style="margin-right: 7px;" class="fa fa-trash"></i> Elimina</a></li>';
                     $button.= '</ul>';
                     $button.= '</div>';
-                }
+                } 
                 $button.= '</div>';
 
                 $login = "";
@@ -657,13 +657,19 @@ class WsController extends AppController
     public function deleteContatto($id = 0){
 
         if($id != 0){
+            $user = $this->Auth->user();
 
-            $contatto = $this->Contatti->_get($id);
 
-            if($this->Contatti->_delete($contatto)){
-                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
-            }else{
-                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+            $contatto = $this->Contatti->_get($id, ['contain' => ['Users']]);
+
+            if ($user['role'] === 'admin' || empty($contatto->user)) {
+                if($this->Contatti->_delete($contatto)){
+                    $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Cancellazione avvenuta con successo.");
+                }else{
+                    $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore nella cancellazione: id mancante.");
+                }
+            } else {
+                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "L'utente non è abilitato alla cancellazione.");
             }
 
         }else{
@@ -1822,7 +1828,7 @@ class WsController extends AppController
             foreach ($res['res'] as $key => $guest) {  
 
                 $buttons = "";
-				$buttons .= '<div class="button-group">';
+				$buttons .= '<div class="button-group" style="min-width:50px;">';
                 $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
                 if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
                     $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 

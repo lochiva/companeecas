@@ -149,14 +149,6 @@ $role = $this->request->session()->read('Auth.User.role');
                                             <td><?=h($sede['c']['des_luo'])?></td>
                                             <td><?=h($sede['p']['des_luo'])?></td>
                                             <td width="50px" style="padding-left: 0px; padding-right: 0px">
-                                              <div class="tools-hover">
-                                                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
-                                                    <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_2" data-childTab="#click_subtab_sede_<?=$sede->id?>"
-                                                    data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica struttura" class="glyphicon glyphicon-pencil text-red"></i></a>
-                                                    &nbsp;
-                                                    <a class="delete-sede pointer" data-id="<?= $sede->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella struttura"><i class="glyphicon glyphicon-trash pull-right text-red"></i></a>
-                                                <?php } ?>
-                                                </div>
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -170,15 +162,6 @@ $role = $this->request->session()->read('Auth.User.role');
                         </table>
                     </div>
                 </div>
-                
-                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
-                    <div class="box-footer clearfix">
-
-                        <a class="btn btn-sm btn-default btn-flat pull-right edit" data-parentTab="#click_tab_2" data-childTab=".add-tab-sede"
-                        data-id="<?= $azienda->id ?>"data-toggle="modal" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false">Inserisci nuova struttura</a>
-
-                    </div>
-                <?php } ?>
             </div>
         </div>
 
@@ -231,7 +214,9 @@ $role = $this->request->session()->read('Auth.User.role');
                                                 <a class="edit pointer" data-toggle="modal"  data-parentTab="#click_tab_3" data-childTab="#click_subtab_contatto_<?=$contatto->id?>"
                                                 data-id="<?= $azienda->id ?>" data-target="#myModalAzienda" data-backdrop="false" data-keyboard="false"><i data-toggle="tooltip" data-placement="left" title="Modifica contatto" class="text-red glyphicon glyphicon-pencil"></i></a>
                                                 &nbsp;
+                                                <?php if ($role == 'admin' || $contatto->id_user == 0) :?>
                                                 <a class="delete-contatto pointer" data-id="<?= $contatto->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella contatto"><i class="text-red glyphicon glyphicon-trash pull-right"></i></a>
+                                                <? endif ?>
                                             <?php } ?>
                                         </div>
 
