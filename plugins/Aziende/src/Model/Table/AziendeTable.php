@@ -39,7 +39,7 @@ class AziendeTable extends AppTable
           'className' => 'Aziende.Contatti',
           'foreignKey' => 'id_azienda',
           'bindingKey' => 'id',
-          'conditions' => ['SedeLegale.id_ruolo' => 0],
+          'conditions' => ['SedeLegale.id_ruolo' => 18],
           'propertyName' => 'sede_legale'
         ]);
     }
