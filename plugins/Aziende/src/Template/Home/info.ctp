@@ -216,7 +216,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                                 &nbsp;
                                                 <?php if ($role == 'admin' || $contatto->id_user == 0) :?>
                                                 <a class="delete-contatto pointer" data-id="<?= $contatto->id ?>" data-toggle="tooltip" data-placement="left" title="Cancella contatto"><i class="text-red glyphicon glyphicon-trash pull-right"></i></a>
-                                                <? endif ?>
+                                                <?php endif ?>
                                             <?php } ?>
                                         </div>
 
