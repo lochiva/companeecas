@@ -163,4 +163,9 @@
 
 .question-div-pdf{
     margin-bottom: 15px;
+    font-family: "Times";
+}
+
+.question-div-pdf *{
+    font-family: "Times" !important;
 }
