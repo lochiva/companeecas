@@ -66,7 +66,7 @@ class SurveysController extends AppController
     public function add()
     {
         $baseImageUrl = Router::url('/').Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
-        $placeholders = TableRegistry::get('Surveys.SurveysPlaceholders')->find()->toArray();
+        $placeholders = TableRegistry::get('Surveys.SurveysPlaceholders')->find()->order(['label ASC'])->toArray();
 
         $this->set('baseImageUrl', $baseImageUrl);
         $this->set('placeholders', $placeholders);
@@ -75,7 +75,7 @@ class SurveysController extends AppController
     public function edit()
     {
         $baseImageUrl = Router::url('/').Configure::read('dbconfig.surveys.SURVEYS_IMAGE_BASE_PATH');
-        $placeholders = TableRegistry::get('Surveys.SurveysPlaceholders')->find()->toArray();
+        $placeholders = TableRegistry::get('Surveys.SurveysPlaceholders')->find()->order(['label ASC'])->toArray();
 
         $this->set('baseImageUrl', $baseImageUrl);
         $this->set('placeholders', $placeholders);
