@@ -3,7 +3,7 @@ use Cake\Routing\Router;
 
 $role = $this->request->session()->read('Auth.User.role');
 ?>
-<?php $this->assign('title', 'Questionari') ?>
+<?php $this->assign('title', 'Modelli') ?>
 <?= $this->Html->css('Surveys.surveys'); ?>
 <?= $this->Html->script( 'Surveys.surveys', ['block']); ?>
 <section class="content-header">
