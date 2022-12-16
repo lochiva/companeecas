@@ -109,20 +109,18 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div class="box-footer">
-                        <div v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && guests.length > 0">
-                            <button type="button" class="btn btn-success pull-right" id="savePresenzeNext" @click="save(true)"
-                                :disabled="!next_sede" :title="noNextSedeMessage">
-                                Salva e prossimo
-                            </button>
-                            <button type="button" class="btn btn-primary pull-right btn-save-presenze" id="savePresenze" @click="save(false)">
-                                Salva
-                            </button>
-                        </div>
-                        <div v-else>
-                            <button type="button" class="btn btn-success pull-right" id="nextSede" @click="next()">
-                                Prossimo
-                            </button>
-                        </div>
+                        <button v-if="(role == 'admin' || role == 'area_iv' || !saveDisabled) && guests.length > 0" type="button" class="btn btn-success pull-right" id="savePresenzeNext" 
+                            @click="save(true)" :disabled="!next_sede" :title="noNextSedeMessage">
+                            Salva e prossimo
+                        </button>
+                        <button v-if="saveDisabled || guests.length == 0" type="button" class="btn btn-success pull-right" id="nextSede" 
+                            @click="next()" :disabled="!next_sede" :title="noNextSedeMessage">
+                            Prossimo
+                        </button>
+                        <button v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && guests.length > 0" type="button" class="btn btn-primary pull-right btn-save-presenze"
+                            id="savePresenze" @click="save(false)" :disabled="saveDisabled" :title="saveDisabledPastDaysMessage">
+                            Salva
+                        </button>
                     </div>
                 </div>
             </div>
