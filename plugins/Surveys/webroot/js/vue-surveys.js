@@ -421,7 +421,10 @@ var app = new Vue({
                         this.surveyData.status = res.data.data.status;
                         this.surveyData.version = res.data.data.version;
                         this.surveyData.partners = res.data.data.partners;
-                        this.surveyData.items = res.data.data.chapters;
+                        this.surveyData.items = res.data.data.chapters.map((item) => {
+                            item.open= true;
+                            return item;
+                        });
                         if(res.data.data.yes_no_questions !== ''){
                             this.surveyData.conditioningQuestions = JSON.parse(res.data.data.yes_no_questions);
                         }else{
