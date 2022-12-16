@@ -322,12 +322,12 @@ var app = new Vue({
             height: 300, 
             language: 'it_IT', 
             branding: false, 
-            plugins: ['image table', 'code', 'paste'],
+            plugins: ['image', 'table', 'code', 'paste'],
             relative_urls : false,
             remove_script_host : false,
             convert_urls : true,
             content_style: "* { font-family: Times; }",
-            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align',
+            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height',
             file_picker_callback: function(callback, value, meta) {
                 // svuoto l'input
                 $('#tinymce_upload').val('');
@@ -377,7 +377,9 @@ var app = new Vue({
             height: 300, 
             language: 'it_IT', 
             branding: false, 
-            plugins: ['image table'],
+            plugins: ['image', 'table', 'code', 'paste'],
+            content_style: "* { font-family: Times; }",
+            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height',
             relative_urls : false,
             remove_script_host : false,
             convert_urls : true
