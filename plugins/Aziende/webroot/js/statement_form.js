@@ -163,6 +163,7 @@ $(document).ready(function () {
                 if (role === 'admin') {
                   $('#save-statement').prop('disabled', false);
                   $('#save-statement').show();
+                  $('form#add-cost').show();
                 }
                 $('#delete-statement').prop('disabled', true);
                 $('#statusNote').prop('disabled', true);
