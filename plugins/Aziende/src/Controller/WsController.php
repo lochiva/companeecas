@@ -4063,7 +4063,6 @@ class WsController extends AppController
             // die();
 
             foreach ($resRes as $key => $statement) {
-                $download = $this->StatementCompany->checkDownloads($key);
 
                     foreach ($statement as $value) {
                                         ########### buttons START
@@ -4075,17 +4074,10 @@ class WsController extends AppController
                     <i data-toggle="tooltip" title="Visualizza" class="fa fa-eye"></i>
                     </a>';
 
-                    if ($download) {
-                        $button.= '<a class="btn btn-xs btn-default download-statement" href="#" data-statement="'.$value->statement->id.'">
-                        <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
-                        </a>';
+                    $button.= '<a class="btn btn-xs btn-default download-statement" href="#" data-statement="'.$value->statement->id.'">
+                    <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
+                    </a>';
 
-                    } else {
-                        $button.= '<a class="btn btn-xs btn-default" href="#" disabled>
-                        <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
-                        </a>';
-
-                    }
                     $button.= '</div>';
                     ########### buttons END
                     
@@ -4513,6 +4505,9 @@ class WsController extends AppController
                 unlink($archivePath);
             }
 
+            // Conta la quantità totale di file da allegare
+            $files = [];
+
             //Creazione archivio zip
             $archive = new \ZipArchive();
 
@@ -4522,7 +4517,7 @@ class WsController extends AppController
                     foreach ($statement->companies as $company) {
                         if (!empty($company->uploaded_path)) {
                             if (file_exists($statementsFilesPath . $company->uploaded_path)) {
-                                $archive->addFile($statementsFilesPath . $company->uploaded_path, $company->company->name . DS . $company->filename);
+                                $files[$statementsFilesPath . $company->uploaded_path][] = $company->company->name . DS . $company->filename;
                             } else {
                                 $this->Flash->error('File fattura mancante per l\'ente ' . $company->company->name);
                                 $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4532,7 +4527,7 @@ class WsController extends AppController
                         }
                         if (!empty($company->compliance)) {
                             if (file_exists($statementsFilesPath . $company->compliance)) {
-                                $archive->addFile($statementsFilesPath . $company->compliance, $company->company->name . DS . $company->compliance_filename);
+                                $files[$statementsFilesPath . $company->compliance][] = $company->company->name . DS . $company->compliance_filename;
                             } else {
                                 $this->Flash->error('File dichiarazione mancante per l\'ente ' . $company->company->name);
                                 $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4553,8 +4548,8 @@ class WsController extends AppController
                         foreach ($costs as $category) {
                             foreach ($category['costs'] as $cost) {
                                 if (!empty($cost->attachment)) {
-                                    if (file_exists($costsFilesPath . $cost->attachment)) {
-                                        $archive->addFile($costsFilesPath . $cost->attachment, $company->company->name . DS . $category->name . DS . $cost->filename);
+                                    if (file_exists($costsFilesPath . $cost->attachment)) {   
+                                        $files[$costsFilesPath . $cost->attachment][] = $company->company->name . DS . $category->name . DS . $cost->filename;
                                     } else {
                                         $this->Flash->error('Allegato mancante per la spesa ' . $cost->description . ' del ' . $cost->date );
                                         $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4569,8 +4564,8 @@ class WsController extends AppController
                             foreach ($firme as $key => $sede) {
                                 foreach ($sede as $firma) {
                                     $d = new Date($firma->date);
-                                    if (file_exists($signaturesPath . $firma->filepath)) {
-                                        $archive->addFile($signaturesPath . $firma->filepath, $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file);
+                                    if (file_exists($signaturesPath . $firma->filepath)) {    
+                                        $files[$signaturesPath . $firma->filepath][] = $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file;
                                     } else {
                                         $this->Flash->error('Foglio firme mancante per la struttura  ' . $key . ' il ' . $firma->date );
                                         $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4584,20 +4579,32 @@ class WsController extends AppController
                         }
                     }
                 }
+                if (count($files) > 0) {
+                    foreach ($files as $key => $values) {
+                        foreach ($values as $file) {
+                            $archive->addFile($key, $file);
+                        }
+                        
+                    }
+                    $archive->close();
+                    try {
+                        $this->response->file($archivePath, array(
+                            'download'=> true,
+                            'name'=> $archiveName
+                        ));
+                        setcookie('downloadStarted', '1', false, '/');
+                        return $this->response;
+    
+                    } catch (NotFoundException $e) {
+                        setcookie('downloadStarted', '1', false, '/');
+                        $this->Flash->error('Impossibile creare il file ZIP');
+                        $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+                        return $this->response;
+                    }
 
-                $archive->close();
-
-                try {
-                    $this->response->file($archivePath, array(
-                        'download'=> true,
-                        'name'=> $archiveName
-                    ));
+                } else {
                     setcookie('downloadStarted', '1', false, '/');
-                    return $this->response;
-
-                } catch (NotFoundException $e) {
-                    setcookie('downloadStarted', '1', false, '/');
-                    $this->Flash->error('Impossibile creare il file ZIP');
+                    $this->Flash->error('Impossibiletrtr creare il file ZIP. Non ci sono file da inserire.');
                     $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
                     return $this->response;
                 }
