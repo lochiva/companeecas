@@ -9,6 +9,7 @@ $(document).ready(function () {
     $("#accordion").text("");
 
     if ($(this).val() == "all") {
+      let input_id = $('input[name="id"]').val();
       $('#save-statement').prop('disabled', true);
       $('#save-statement').show();
       $("#company_specific").addClass("hidden");
@@ -28,7 +29,7 @@ $(document).ready(function () {
           "aziende/ws/getCosts/" +
           "all" +
           "/" +
-          $('input[name="id"]').val(),
+          input_id,
         type: "GET",
         dataType: "json",
       })
@@ -66,6 +67,27 @@ $(document).ready(function () {
         })
         .fail(function (richiesta, stato, errori) {
           alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+        });
+
+        $.ajax({
+          url: pathServer + "aziende/ws/getPresenzeCount/" + input_id,
+          type: "GET",
+          dataType: "json",
+        })
+          .done(function (res) {
+            $('#totPresenze').html(res.data.presenze);
+            let minors = 'NO';
+            if (parseInt(res.data.minors) > 0) {
+              minors = 'SI';
+            }
+            $('#minors').html(minors);
+            $('#daily_price').html(res.data.guest_daily_price);
+            let rent = parseFloat(res.data.guest_daily_price) * parseFloat(res.data.presenze);
+            $('#presenzeRent').html(rent.toFixed(2));
+
+          })
+          .fail(function (richiesta, stato, errori) {
+            alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
         });
     } else {
       $('#cost-headers').html('Spese');
@@ -233,6 +255,16 @@ $(document).ready(function () {
 
               $('#status-container .box-footer').show();
             }
+            // presenze 
+            $('#totPresenze').html(res.data.presenze);
+            let minors = 'NO';
+            if (parseInt(res.data.minors) > 0) {
+              minors = 'SI';
+            }
+            $('#minors').html(minors);
+            $('#daily_price').html(res.data.guest_daily_price);
+            let rent = parseFloat(res.data.guest_daily_price) * parseFloat(res.data.presenze);
+            $('#presenzeRent').html(rent.toFixed(2));
           } else {
             alert(res.msg);
           }

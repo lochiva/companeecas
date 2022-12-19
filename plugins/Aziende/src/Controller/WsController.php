@@ -62,7 +62,8 @@ class WsController extends AppController
                 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 
                 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
                 'downloadFileCosts',
-                'downloadZipStatements'
+                'downloadZipStatements',
+                'getPresenzeCount'
                 
             ],
             'ragioneria' => [
@@ -74,7 +75,7 @@ class WsController extends AppController
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone'
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
             'ente_ospiti' => [
                 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda', 
@@ -86,7 +87,7 @@ class WsController extends AppController
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
                 'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson'
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount'
             ],
             'ente_contabile' => [
                 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
@@ -97,7 +98,7 @@ class WsController extends AppController
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests','downloadGuestExitFile', 'getFiles', 
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'saveStatement', 'getCosts', 'getStatementCompany', 
                 'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements', 'getCost'
+                'downloadZipStatements', 'getCost', 'getPresenzeCount'
             ]
         ];
 
@@ -4241,19 +4242,26 @@ class WsController extends AppController
 
     public function getStatementCompany($id) {
         if (isset($id)) {
-            $company =  TableRegistry::get('Aziende.StatementCompany')->get($id, [
+            $table = TableRegistry::get('Aziende.StatementCompany');
+            $company =  $table->get($id, [
                 'contain' => [
                     'Status', 
-                    'History' => ['Users', 'Status']
+                    'History' => ['Users', 'Status'],
+                    'Statements' => ['Agreements']
                 ]
-            ])->toArray();
+            ]);
 
             if ($company) {
+                $presenze = TableRegistry::get('Aziende.Presenze')->countPresenze($company->statement, $company->company_id);
+
                 if(isset($company['billing_date'])) {
                     $company['billing_date'] = $company['billing_date']->format('Y-m-d');
                     $company['billing_net_amount'] = number_format($company['billing_net_amount'], 2, '.', '');
                     $company['billing_vat_amount'] = number_format($company['billing_vat_amount'], 2, '.', '');
                 }
+                $company['presenze'] = $presenze['presenze'];
+                $company['minori'] = $presenze['minori'];
+                $company['guest_daily_price'] = $presenze['guest_daily_price'];
                 
                 $this->_result['response'] = "OK";
                 $this->_result['data'] = $company;
@@ -4736,6 +4744,36 @@ class WsController extends AppController
             $this->_result['msg'] = 'Impossibile recuperare i dati relativi al costo';
         }
 
+    }
+
+    public function getPresenzeCount($id) {
+        if (isset($id)) {
+            $table = TableRegistry::get('Aziende.StatementCompany');
+            $company =  $table->get($id, [
+                'contain' => [
+                    'Statements' => ['Agreements']
+                ]
+            ]);
+
+            if ($company) {
+                $presenze = TableRegistry::get('Aziende.Presenze')->countPresenze($company->statement);
+
+                $ret['presenze'] = $presenze['presenze'];
+                $ret['minori'] = $presenze['minori'];
+                $ret['guest_daily_price'] = $presenze['guest_daily_price'];
+                
+                $this->_result['response'] = "OK";
+                $this->_result['data'] = $ret;
+                $this->_result['msg'] = '';
+
+            } else {
+                $this->_result['response'] = "KO";
+                $this->_result['msg'] = 'Impossibile recuperare i dati della fatturazione';
+            }
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Id mancante, impossibile recuperare i dati della fatturazione';
+        }
     }
 
 }

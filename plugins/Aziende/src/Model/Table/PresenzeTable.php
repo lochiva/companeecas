@@ -5,6 +5,9 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\ORM\TableRegistry;
+use Cake\Database\Expression\QueryExpression;
+use Cake\I18n\Date;
 
 /**
  * Presenze Model
@@ -168,5 +171,42 @@ class PresenzeTable extends Table
             ->toArray();
             
         return $presenza;
+    }
+
+    public function countPresenze ($statement, $copmpany_id=null) {
+        $guest_daily_price = $statement->agreement->guest_daily_price;
+        if (isset($copmpany_id)) {
+            $where = ['agreement_company_id' => $copmpany_id];
+        } else {
+            $where = [];
+        }
+        $sedi = TableRegistry::get('Aziende.AgreementsToSedi')->find('all')
+        ->contain(['Sedi'])
+        ->where(['agreement_id' => $statement->agreement_id, 'Sedi.deleted' => 0])
+        ->where($where)
+        ->extract('sede_id')
+        ->toList();
+    
+        if (count($sedi)) {
+            $presenzeQuery = TableRegistry::get('Aziende.Presenze')->find('all')
+            ->contain(['Guests'])
+            ->where(['Presenze.sede_id IN' => $sedi, 'Presenze.presente' => true])
+            ->where(function (QueryExpression $exp, Query $q) use ($statement) {
+                return $exp->between('Presenze.date', $statement->period_start_date, $statement->period_end_date);
+            });
+
+            $presenze = $presenzeQuery->count();
+
+            $dateLimit = new Date($statement->period_end_date);
+            $minors = $presenzeQuery
+                ->select(['Presenze.guest_id'])
+                ->distinct(['Presenze.guest_id'])
+                ->where(['Guests.birthdate >=' => $dateLimit->modify('-30 months')])
+                ->count();
+        } else {
+            $presenze = 0;
+            $minors = 0;
+        }
+        return ['presenze' => $presenze, 'minori' => $minors, 'guest_daily_price' => $guest_daily_price];
     }
 }

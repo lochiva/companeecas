@@ -257,10 +257,11 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </span>
                                 Tot presenti
                             </span> 
-                            <?=$presenze?> 
-                            <span class="label-like">per canone</span> &euro;<?=number_format($statement->agreement->guest_daily_price, 2, '.', '')?> 
+                            <span id="totPresenze"><?=$presenze?></span>
+                            <span class="label-like">per canone</span>
+                            <span id="daily_price">&euro;<?=number_format($statement->agreement->guest_daily_price, 2, '.', '')?></span>
                             <span class="label-like">pari a</span> &euro;
-                            <?= number_format($presenze * $statement->agreement->guest_daily_price, 2, '.', '')?>
+                            <span id="presenzeRent"><?= number_format($presenze * $statement->agreement->guest_daily_price, 2, '.', '')?></span>
 
 
                         </p>
@@ -271,11 +272,13 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </span>
                                 Minori di 30 mesi:
                             </span>
-                            <?php if ($minors > 0) : ?>
-                                SI (<?=$minors?>)
-                            <?php else : ?>
-                                NO
-                            <?php endif ?>
+                            <span id="minors">
+                                <?php if ($minors > 0) : ?>
+                                    SI (<?=$minors?>)
+                                <?php else : ?>
+                                    NO
+                                <?php endif ?>
+                            </span>
                         </p>
                         
                     </div>
