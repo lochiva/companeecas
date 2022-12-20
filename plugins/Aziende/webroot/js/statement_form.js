@@ -23,6 +23,8 @@ $(document).ready(function () {
 
       $('#delete-statement').prop('disabled', true);
       $('#cost-headers').html("Spese (vista aggregata dell'ATI)");
+
+      $('#main-form input[name="file"]').prop('required', false);
       $.ajax({
         url:
           pathServer +
@@ -266,6 +268,9 @@ $(document).ready(function () {
             $('#daily_price').html(res.data.guest_daily_price);
             let rent = parseFloat(res.data.guest_daily_price) * parseFloat(res.data.presenze);
             $('#presenzeRent').html(rent.toFixed(2));
+
+            // File fattura obbligatorio solo per la capofila
+            $('#main-form input[name="file"]').prop('required', res.data.is_default);
           } else {
             alert(res.msg);
           }

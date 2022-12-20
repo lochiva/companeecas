@@ -4245,6 +4245,9 @@ class WsController extends AppController
 
             if ($company) {
                 $presenze = TableRegistry::get('Aziende.Presenze')->countPresenze($company->statement, $company->company_id);
+                $default = TableRegistry::get('Aziende.AgreementsCompanies')->get($company->company_id, ['fields' => ['isDefault']]);
+
+                $company['is_default'] = isset($default->isDefault) ? $default->isDefault : false;
 
                 if(isset($company['billing_date'])) {
                     $company['billing_date'] = $company['billing_date']->format('Y-m-d');
