@@ -327,7 +327,8 @@ var app = new Vue({
             remove_script_host : false,
             convert_urls : true,
             content_style: "* { font-family: Times; }",
-            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height',
+            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height border-collapse collapse width border-style word-wrap border cellpadding page-break-inside',
+            indentation: '10%',
             file_picker_callback: function(callback, value, meta) {
                 // svuoto l'input
                 $('#tinymce_upload').val('');
@@ -379,10 +380,11 @@ var app = new Vue({
             branding: false, 
             plugins: ['image', 'table', 'code', 'paste'],
             content_style: "* { font-family: Times; }",
-            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height',
+            paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height border-collapse collapse width border-style word-wrap border cellpadding page-break-inside',
             relative_urls : false,
             remove_script_host : false,
-            convert_urls : true
+            convert_urls : true,
+            indentation: '10%'
         }
     },
 

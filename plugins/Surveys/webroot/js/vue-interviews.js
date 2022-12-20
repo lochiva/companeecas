@@ -28,7 +28,8 @@ Vue.component('tree-item', {
                 remove_script_host : false,
                 convert_urls : true,
                 content_style: "* { font-family: Times; }",
-                paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height',
+                paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height border-collapse collapse width border-style word-wrap border cellpadding page-break-inside',
+                indentation: '10%',
                 file_picker_callback: function(callback, value, meta) {
                     // svuoto l'input
                     $('#tinymce_upload').val('');
