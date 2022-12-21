@@ -4758,15 +4758,15 @@ class WsController extends AppController
 
     public function getPresenzeCount($id) {
         if (isset($id)) {
-            $table = TableRegistry::get('Aziende.StatementCompany');
-            $company =  $table->get($id, [
+            $table = TableRegistry::get('Aziende.Statements');
+            $stat =  $table->get($id, [
                 'contain' => [
-                    'Statements' => ['Agreements']
+                    'Agreements'
                 ]
             ]);
 
-            if ($company) {
-                $presenze = TableRegistry::get('Aziende.Presenze')->countPresenze($company->statement);
+            if ($stat) {
+                $presenze = TableRegistry::get('Aziende.Presenze')->countPresenze($stat);
 
                 $ret['presenze'] = $presenze['presenze'];
                 $ret['minori'] = $presenze['minori'];
