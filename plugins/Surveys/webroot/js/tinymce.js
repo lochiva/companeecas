@@ -4,6 +4,7 @@ $(function() {
 		language: 'it_IT', 
 		branding: false,
 		plugins: ['image', 'table', 'code', 'paste'],
+		menubar: 'file edit view insert format table',
 		content_style: "* { font-family: Times; }",
 		paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height border-collapse collapse width border-style word-wrap border cellpadding page-break-inside',
 		height: 300,

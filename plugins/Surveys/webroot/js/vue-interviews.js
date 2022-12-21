@@ -24,6 +24,7 @@ Vue.component('tree-item', {
                 language: 'it_IT', 
                 branding: false, 
                 plugins: ['image', 'table', 'code', 'paste'],
+                menubar: 'file edit view insert format table',
                 relative_urls : false,
                 remove_script_host : false,
                 convert_urls : true,

@@ -323,6 +323,7 @@ var app = new Vue({
             language: 'it_IT', 
             branding: false, 
             plugins: ['image', 'table', 'code', 'paste'],
+            menubar: 'file edit view insert format table',
             relative_urls : false,
             remove_script_host : false,
             convert_urls : true,
@@ -379,6 +380,7 @@ var app = new Vue({
             language: 'it_IT', 
             branding: false, 
             plugins: ['image', 'table', 'code', 'paste'],
+            menubar: 'file edit view insert format table',
             content_style: "* { font-family: Times; }",
             paste_retain_style_properties: 'color font-size background-color padding-left padding-right text-align padding-top padding-bottom line-height border-collapse collapse width border-style word-wrap border cellpadding page-break-inside',
             relative_urls : false,
@@ -520,7 +522,7 @@ var app = new Vue({
                 params.append('idSurvey', this.surveyData.idSurvey);
             }
 
-            this.setItemsClosed(this.surveyData.items);
+            //this.setItemsClosed(this.surveyData.items);
 
             params.append('title', this.surveyData.title);
             params.append('subtitle', this.surveyData.subtitle);
