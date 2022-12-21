@@ -79,7 +79,7 @@ $(document).ready(function () {
           .done(function (res) {
             $('#totPresenze').html(res.data.presenze);
             let minors = 'NO';
-            if (parseInt(res.data.minors) > 0) {
+            if (parseInt(res.data.minori) > 0) {
               minors = 'SI';
             }
             $('#minors').html(minors);
@@ -261,7 +261,7 @@ $(document).ready(function () {
             // presenze 
             $('#totPresenze').html(res.data.presenze);
             let minors = 'NO';
-            if (parseInt(res.data.minors) > 0) {
+            if (parseInt(res.data.minori) > 0) {
               minors = 'SI';
             }
             $('#minors').html(minors);
