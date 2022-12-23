@@ -80,7 +80,7 @@ $(document).ready(function () {
             $('#totPresenze').html(res.data.presenze);
             let minors = 'NO';
             if (parseInt(res.data.minori) > 0) {
-              minors = 'SI';
+              minors = 'SI' + ' (' + res.data.minori + ')';
             }
             $('#minors').html(minors);
             $('#daily_price').html(res.data.guest_daily_price);
@@ -262,7 +262,7 @@ $(document).ready(function () {
             $('#totPresenze').html(res.data.presenze);
             let minors = 'NO';
             if (parseInt(res.data.minori) > 0) {
-              minors = 'SI';
+              minors = 'SI' + ' (' + res.data.minori + ')';
             }
             $('#minors').html(minors);
             $('#daily_price').html(res.data.guest_daily_price);
