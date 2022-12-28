@@ -1,0 +1,10 @@
+Licenza del software companee
+
+Il software companee è frutto del lavoro di diverse entità di seguito indicate. 
+L'utilizzo di companee deve rispettare le licenze delle diverse componenti che sono:
+
+CAKE PHP - MIT license
+Tynimce - GNU LESSER GENERAL PUBLIC LICENSE
+Plugin autenticazione - users - ITOA srl
+Plugin survey  - Ires Piemonte - Creative Commons
+Plugin Attachment Manager  ITOA srl  
