@@ -36,13 +36,19 @@ var app = new Vue({
 
     computed: {
         saveDisabled() {
-            return this.role == 'ente_contabile' || (this.role == 'ente_ospiti' && moment(this.date).format('YYYY-MM-DD') != moment(this.today).format('YYYY-MM-DD'));
+            var date = moment(this.date).format('YYYY-MM-DD');
+            var yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+            var todayTime = moment().format('HH:mm');
+            return this.role == 'ente_contabile' || (
+                    this.role == 'ente_ospiti' && 
+                    (date < yesterday || date == yesterday && todayTime > '12:00')
+                );
         },
         noNextSedeMessage() {
             return this.next_sede ? '' : "Questa è l'ultima struttura";
         },
         saveDisabledPastDaysMessage() {
-            return this.saveDisabled ? 'Le presenze vanno comunicate il giorno stesso. Variazioni rispetto alle presenze anche solo del giorno prima vanno richieste.' : '';
+            return this.saveDisabled ? 'Le presenze vanno comunicate il giorno stesso ed al più tardi entro le ore 12 del giorno successivo. Variazioni rispetto alle presenze nei giorni passati vanno richieste.' : '';
         }
     },
       
