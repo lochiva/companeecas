@@ -216,5 +216,18 @@ class WsController extends AppController
 
         $this->_result = array('response' => 'OK', 'data' => $res, 'msg' => "Elenco risultati.");
     }
+
+    public function getCurrentTime()
+    {
+        $now = date('Y-m-d H:i:s');
+        if ($now) {
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $now;
+            $this->_result['msg'] = "Data e ora attuali recuperati con successo.";
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = "Errore nel recupero di data e ora attuali.";
+        }
+    }
     
 }
