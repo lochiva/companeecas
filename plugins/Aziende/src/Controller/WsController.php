@@ -1122,67 +1122,74 @@ class WsController extends AppController
 
     public function saveAziendaJson()
     {
-        $data = $this->request->data;
+        $this->request->allowMethod('post');
 
-        $user = $this->request->session()->read('Auth.User');
+        try {
+            if ($this->request->is('json')) {
+            
+                $data = $this->request->data;
 
-        if(!empty($data['id']) && !$this->Azienda->verifyUser($user, $data['id'])){
-            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "L'utente non è autorizzato.");
-        } else {
-            if(empty($data['id'])){
-                unset($data['id']);
-            }
-    
-            // //Se ci sono sedi con operatività = chiusa controllo che non abbiano ospiti
-            $validOperativita = true;
-            $sedi = json_decode($data['sedi'], true);
-            if (!empty($sedi)) {
-                foreach ($sedi as $sede) {
-                    if (!empty($sede['id']) && empty($sede['operativita']) && $this->Sedi->checkSedeHasGuests($sede['id'])) {
-                        $validOperativita = false;
-                        break;
+                $user = $this->request->session()->read('Auth.User');
+
+                if(!empty($data['id']) && !$this->Azienda->verifyUser($user, $data['id'])){
+                    $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "L'utente non è autorizzato.");
+                } else {
+                    if(empty($data['id'])){
+                        unset($data['id']);
                     }
-                }
-            }
-    
-            if ($validOperativita) {
-                if ($this->Azienda->saveAziendaJson($data)) {
-                    if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
-                        $msg = false;
-                        //Aggiorno o creo cliente su fattureincloud
-                        $dataC = $data;
-                        $dataC['fornitore'] = false;
-                        if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
-                            $msg = $this->sendEditAnagrafica($dataC);
-                        }elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
-                            $msg = $this->sendAnagrafica($dataC['id']);
+            
+                    // //Se ci sono sedi con operatività = chiusa controllo che non abbiano ospiti
+                    $validOperativita = true;
+                    if (isset($data['sedi'])) {
+                        $sedi = json_decode($data['sedi'], true);
+                        foreach ($sedi as $sede) {
+                            if (!empty($sede['id']) && empty($sede['operativita']) && $this->Sedi->checkSedeHasGuests($sede['id'])) {
+                                $validOperativita = false;
+                                break;
+                            }
                         }
-                        //Aggiorno o creo fornitore su fattureincloud
-                        $dataF = $data;
-                        $dataF['cliente'] = false;
-                        if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
-                            $msg = $this->sendEditAnagrafica($dataF);
-                        }elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
-                            $msg = $this->sendAnagrafica($dataF['id']);
-                        }
-                        if(!$msg){
-                            $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                    }
+                    if ($validOperativita) {
+                        if ($this->Azienda->saveAziendaJson($data)) {
+                            if((isset($data['id_cliente_fattureincloud']) && $data['id_cliente_fattureincloud'] != 0) || (isset($data['id_fornitore_fattureincloud']) && $data['id_fornitore_fattureincloud'] != 0)){
+                                $msg = false;
+                                //Aggiorno o creo cliente su fattureincloud
+                                $dataC = $data;
+                                $dataC['fornitore'] = false;
+                                if($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] != 0){
+                                    $msg = $this->sendEditAnagrafica($dataC);
+                                }elseif($dataC['cliente'] && $dataC['id_cliente_fattureincloud'] == 0){
+                                    $msg = $this->sendAnagrafica($dataC['id']);
+                                }
+                                //Aggiorno o creo fornitore su fattureincloud
+                                $dataF = $data;
+                                $dataF['cliente'] = false;
+                                if(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] != 0){
+                                    $msg = $this->sendEditAnagrafica($dataF);
+                                }elseif(!$msg && $dataF['fornitore'] && $dataF['id_fornitore_fattureincloud'] == 0){
+                                    $msg = $this->sendAnagrafica($dataF['id']);
+                                }
+                                if(!$msg){
+                                    $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                                }else{
+                                    $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
+                                }
+                            }else{
+                                $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                            }
                         }else{
-                            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio di Fatture in Cloud: ".$msg);
+                            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
                         }
-                    }else{
-                        $this->_result = array('response' => 'OK', 'data' => 1, 'msg' => "Salvato");
+                    } else {
+                        $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Attenzione! Non è possibile chiudere una struttura con ospiti presenti.");
                     }
-                }else{
-                    $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore durante il salvataggio");
                 }
             } else {
-                $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Attenzione! Non è possibile chiudere una struttura con ospiti presenti.");
+                throw new \Cake\Http\Exception\MethodNotAllowedException();
             }
-
-
+        } catch(\Exception $e){
+            $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => $e->getMessage());
         }
-
 
     }
 

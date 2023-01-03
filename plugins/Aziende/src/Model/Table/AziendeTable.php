@@ -88,7 +88,9 @@ class AziendeTable extends AppTable
         }
         */
 
-        $data['pa_codice'] = strtoupper($data['pa_codice']);
+        if (isset($data['pa_codice'])) {
+          $data['pa_codice'] = strtoupper($data['pa_codice']);
+        }
 
         $entity = $this->patchEntity($entity, $data);
 
@@ -99,7 +101,7 @@ class AziendeTable extends AppTable
           }
         }
         //$entity->cleanDirty(['created','modified']);
-        if($entity->isDirty()){
+        if($entity->isDirty() || $entity->isNew()){
             return $this->save($entity);
         }
         return $entity;

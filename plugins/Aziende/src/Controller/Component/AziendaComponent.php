@@ -292,7 +292,11 @@ class AziendaComponent extends Component
         $sediId = array();
 
         unset($azienda['contatti'], $azienda['sedi'], $azienda['logo_to_save']);
-        $azienda['gruppi'] = json_decode($azienda['gruppi']);
+
+        if (isset($azienda['gruppi'])) {
+            $azienda['gruppi'] = json_decode($azienda['gruppi']);
+        }
+        
 
         if(!empty($azienda['logo'])){
             unset($azienda['logo']);
@@ -315,9 +319,9 @@ class AziendaComponent extends Component
                     }
                 }
             }
-
-            $sedi = json_decode($json['sedi'], true);
-            if (!empty($sedi)) {
+            
+            if (isset($json['sedi'])) {
+                $sedi = json_decode($json['sedi'], true);
                 foreach ($sedi as $sede) {
 
                     $sede['id_azienda'] = $azienda->id;
@@ -349,7 +353,7 @@ class AziendaComponent extends Component
 
             }
 
-            if($this->request->session()->read('Auth.User.role') != 'companee_admin'){
+            if($this->request->session()->read('Auth.User.role') != 'companee_admin' && isset($json['contatti'])){
                 foreach (json_decode($json['contatti'], true) as $contatto) {
                     $contatto['id_azienda'] = $azienda->id;
                     $contatto['id_sede'] = ( !empty($sediId[$contatto['id_sede']]) ? $sediId[$contatto['id_sede']] : 0 );
