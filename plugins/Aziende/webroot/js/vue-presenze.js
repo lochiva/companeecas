@@ -3,7 +3,7 @@ var app = new Vue({
     data: {
 		sede_id: '',
         role: role,
-        today: new Date(),
+        now: new Date(),
         date: new Date(),
         guests: [],
         file: null,
@@ -36,13 +36,19 @@ var app = new Vue({
 
     computed: {
         saveDisabled() {
-            return this.role == 'ente_contabile' || (this.role == 'ente_ospiti' && moment(this.date).format('YYYY-MM-DD') != moment(this.today).format('YYYY-MM-DD'));
+            var date = moment(this.date).format('YYYY-MM-DD');
+            var yesterday = moment(this.now).subtract(1, 'days').format('YYYY-MM-DD');
+            var nowTime = moment(this.now).format('HH:mm');
+            return this.role == 'ente_contabile' || (
+                    this.role == 'ente_ospiti' && 
+                    (date < yesterday || date == yesterday && nowTime > '12:00')
+                );
         },
         noNextSedeMessage() {
             return this.next_sede ? '' : "Questa è l'ultima struttura";
         },
         saveDisabledPastDaysMessage() {
-            return this.saveDisabled ? 'Le presenze vanno comunicate il giorno stesso. Variazioni rispetto alle presenze anche solo del giorno prima vanno richieste.' : '';
+            return this.saveDisabled ? 'Le presenze vanno comunicate il giorno stesso ed al più tardi entro le ore 12 del giorno successivo. Variazioni rispetto alle presenze nei giorni passati vanno richieste.' : '';
         }
     },
       
@@ -61,13 +67,27 @@ var app = new Vue({
     methods: {
 
         changedDate() {
-            if (this.date > this.today) {
-                this.$refs.inputDate.selectDate({timestamp: this.today.getTime()});
+            if (this.date > this.now) {
+                this.$refs.inputDate.selectDate({timestamp: this.now.getTime()});
             } else {
+                this.updateTime();
                 this.loadGuests();
                 this.loadFiles();
             }
             this.fileUploaded.date = moment(this.date).format('YYYY-MM-DD');
+        },
+
+        updateTime() {
+            axios.get(pathServer + 'ws/getCurrentTime')
+            .then(res => {  
+                if (res.data.response == 'OK') { 
+                    this.now = new Date(res.data.data);
+                } else {
+                    alert(res.data.msg);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
         },
 
         loadGuests () {

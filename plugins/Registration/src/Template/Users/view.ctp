@@ -5,10 +5,12 @@ use Cake\Core\Configure;
 $registrationType = Configure::read('dbconfig.registration.REGISTRATION_TYPE');
 ?>
 
+<?= $this->Html->css('Registration.style'); ?>
 <?= $this->Html->css('Registration.password'); ?>
 <?= $this->Html->script('Registration.password', ['block']); ?>
 
 <script type="text/javascript">
+  var js_time = moment().format('HH:mm');
 function validateImage(){
 
 	if($('#fileInputImage').get(0).files.length > 0){
@@ -64,6 +66,28 @@ function readURL(input) {
         marginLeft: -Math.round(scaleX * selection.x1),
         marginTop: -Math.round(scaleY * selection.y1)
       });
+  }
+
+  function getCurrentTime()
+  {
+    $.ajax({
+      url : pathServer + "ws/getCurrentTime",
+      type: "GET",
+      dataType: "json",
+      success : function (res, stato) {
+        if(res.response == 'OK'){
+          moment.locale('it');
+          var time = moment(res.data).format('HH:mm');
+          var date = moment(res.data).format('LL');
+          $('.time-message-time').html(time);
+          $('.time-message-date').html(date);
+        } else {
+          alert(res.msg);
+        }
+      },
+      error: function(data){
+      }
+    });
   }
 
 $(document).ready(function(){
@@ -137,6 +161,15 @@ $(document).ready(function(){
       }
    });
 
+  getCurrentTime();
+
+  setInterval(function(){
+    var current_time = moment().format('HH:mm');
+    if (current_time != js_time) {
+      js_time = current_time;
+      getCurrentTime();
+    }
+  }, 1000) 
 });
 </script>
 
@@ -144,7 +177,8 @@ $(document).ready(function(){
 
 
     <h1>
-      <?= __('Profilo utente') ?>
+      <span class="profile-title"><?= __('Profilo utente') ?></span>
+      <span class="time-message">Sono le <span class="time-message-time"></span> del <span class="time-message-date"></span></span>
     </h1>
     <ol class="breadcrumb">
         <li><a><i class="fa fa-user"></i> Profilo</a></li>

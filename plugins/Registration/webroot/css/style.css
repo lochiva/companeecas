@@ -18,3 +18,12 @@ div.recovery-password-sended .msg2,
 div.auth-email-sended .msg2{
 	color:grey;
 }
+
+.profile-title {
+	float: left;
+}
+
+.time-message {
+	display: block;
+    text-align: center;
+}

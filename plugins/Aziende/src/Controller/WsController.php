@@ -2881,69 +2881,83 @@ class WsController extends AppController
         $data = $this->request->data;
         $guests = json_decode($data['guests']);
 
-        if (!empty($guests)) {
-            $presenze = TableRegistry::get('Aziende.Presenze');
-            $error = false;
-            foreach ($guests as $guest) {
-                $presenza = $presenze->newEntity();
-                $presenzaData = [
-                    'guest_id' => $guest->id,
-                    'date' => $data['date'],
-                    'sede_id' => $data['sede'],
-                    'presente' => filter_var($guest->presente, FILTER_VALIDATE_BOOLEAN),
-                    'note' => $guest->note
-                ];
-                $presenze->patchEntity($presenza, $presenzaData);
-                if ($presenze->save($presenza)) {
-                    $guest->not_saved = 0;
-                } else {
-                    $error = true;
-                }
+        $user = $this->request->session()->read('Auth.User');
 
-                //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
-                $warningPresenze = 0;
-                $dangerPresenze = 0;
-                if (!$guest->suspended) {
-                    $lastPresenzaDate = '';
-                    $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest->id, $data['date']);
-                    if (!empty($lastPresenza)) {
-                        $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
-                    } elseif (!empty($guest->check_in_date)) {
-                        $lastPresenzaDate = substr($guest->check_in_date, 0, 10);
+        if (
+            $data['date'] < date('Y-m-d', strtotime('+1 day')) && //data non nel futuro
+            (
+                $user['role'] != 'ente_ospiti' || // ruolo admin
+                $data['date'] == date('Y-m-d') || // data oggi
+                $data['date'] == date('Y-m-d', strtotime('-1 day')) && date('H:i') < '12:01' // data ieri ma oggi prima delle 12:01
+            )
+        ) {
+            if (!empty($guests)) {
+                $presenze = TableRegistry::get('Aziende.Presenze');
+                $error = false;
+                foreach ($guests as $guest) {
+                    $presenza = $presenze->newEntity();
+                    $presenzaData = [
+                        'guest_id' => $guest->id,
+                        'date' => $data['date'],
+                        'sede_id' => $data['sede'],
+                        'presente' => filter_var($guest->presente, FILTER_VALIDATE_BOOLEAN),
+                        'note' => $guest->note
+                    ];
+                    $presenze->patchEntity($presenza, $presenzaData);
+                    if ($presenze->save($presenza)) {
+                        $guest->not_saved = 0;
+                    } else {
+                        $error = true;
                     }
-                    if (!empty($lastPresenzaDate)) {
-                        $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
-                        if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
-                            $warningPresenze = 1;
-                        } elseif ($lastPresenzaDate < $threeDaysBefore) {
-                            $dangerPresenze = 1;
+
+                    //Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+                    $warningPresenze = 0;
+                    $dangerPresenze = 0;
+                    if (!$guest->suspended) {
+                        $lastPresenzaDate = '';
+                        $lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest->id, $data['date']);
+                        if (!empty($lastPresenza)) {
+                            $lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+                        } elseif (!empty($guest->check_in_date)) {
+                            $lastPresenzaDate = substr($guest->check_in_date, 0, 10);
+                        }
+                        if (!empty($lastPresenzaDate)) {
+                            $threeDaysBefore = date('Y-m-d', strtotime($data['date'].' -3 days'));
+                            if ($lastPresenzaDate < $data['date'] && $lastPresenzaDate >= $threeDaysBefore) {
+                                $warningPresenze = 1;
+                            } elseif ($lastPresenzaDate < $threeDaysBefore) {
+                                $dangerPresenze = 1;
+                            }
                         }
                     }
+                    $guest->warning_presenze = $warningPresenze;
+                    $guest->danger_presenze = $dangerPresenze;
                 }
-                $guest->warning_presenze = $warningPresenze;
-                $guest->danger_presenze = $dangerPresenze;
-            }
 
-            if ($error) {
+                if ($error) {
+                    $this->_result['response'] = "KO";
+                    $this->_result['msg'] = "Errore nel salvataggio delle presenze.";
+                }else{ 
+                    $presenzeTable = TableRegistry::get('Aziende.Presenze');
+                    //totale presenze ospiti per il giorno
+                    $presenzeForDay = $presenzeTable->getPresenzeSedeForDay($data['sede'], $data['date']);
+                    $countPresenzeDay = count($presenzeForDay);
+                    //totale presenze ospiti per il mese
+                    $month = substr($data['date'], 0, 7);
+                    $presenzeForMonth = $presenzeTable->getPresenzeSedeForMonth($data['sede'], $month);
+                    $countPresenzeMonth = count($presenzeForMonth);
+
+                    $this->_result['response'] = "OK";
+                    $this->_result['data'] = ['guests' => $guests, 'count_presenze_day' => $countPresenzeDay, 'count_presenze_month' => $countPresenzeMonth];
+                    $this->_result['msg'] = "Presenze salvate con successo.";
+                }
+            } else {
                 $this->_result['response'] = "KO";
-                $this->_result['msg'] = "Errore nel salvataggio delle presenze.";
-            }else{ 
-                $presenzeTable = TableRegistry::get('Aziende.Presenze');
-                //totale presenze ospiti per il giorno
-                $presenzeForDay = $presenzeTable->getPresenzeSedeForDay($data['sede'], $data['date']);
-                $countPresenzeDay = count($presenzeForDay);
-                //totale presenze ospiti per il mese
-                $month = substr($data['date'], 0, 7);
-                $presenzeForMonth = $presenzeTable->getPresenzeSedeForMonth($data['sede'], $month);
-                $countPresenzeMonth = count($presenzeForMonth);
-
-                $this->_result['response'] = "OK";
-                $this->_result['data'] = ['guests' => $guests, 'count_presenze_day' => $countPresenzeDay, 'count_presenze_month' => $countPresenzeMonth];
-                $this->_result['msg'] = "Presenze salvate con successo.";
+                $this->_result['msg'] = "Errore nel salvataggio delle presenze: non ci sono ospiti da salvare.";
             }
         } else {
             $this->_result['response'] = "KO";
-                $this->_result['msg'] = "Errore nel salvataggio delle presenze: non ci sono ospiti da slavare.";
+            $this->_result['msg'] = "Errore nel salvataggio delle presenze: il salvataggio è disabilitato.";
         }
     }
 
