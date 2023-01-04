@@ -122,20 +122,9 @@ class StatementsController extends AppController
                 $this->user['role'] == 'ente_contabile' && $azienda['id'] == $statement->agreement->azienda_id
             ){
 
-                $sedi = TableRegistry::get('Aziende.AgreementsToSedi')->find('all')
-                    ->contain(['Sedi'])
-                    ->where(['agreement_id' => $statement->agreement->id, 'Sedi.deleted' => 0])
-                    ->extract('sede_id')
-                    ->toList();
-                
-                if (count($sedi)) {
-                    $presenzeQuery = TableRegistry::get('Aziende.Presenze')->countPresenze($statement, $company);
-                    $presenze = $presenzeQuery['presenze'];
-                    $minors = $presenzeQuery['minori'];
-                } else {
-                    $presenze = 0;
-                    $minors = 0;
-                }
+                $presenzeQuery = TableRegistry::get('Aziende.Presenze')->countPresenze($statement);
+                $presenze = $presenzeQuery['presenze'];
+                $minors = $presenzeQuery['minori'];
 
                 $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
                     'keyField' => 'id',
