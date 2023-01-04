@@ -150,7 +150,7 @@ $(document).ready(function () {
             if (lastStatus.status.id == 1) {
               if (role === 'ente_contabile') {
                 $('.action-status').each(function(index, element) {
-                  $(element).attr('data-id', res.data.id);
+                  $(element).data('id', res.data.id);
                   $(element).prop('disabled', false);
                 });
 
@@ -171,7 +171,7 @@ $(document).ready(function () {
                 $('#statusNote').prop('disabled', true);
 
                 $('.action-status').each(function(index, element) {
-                  $(element).attr('data-id', res.data.id);
+                  $(element).data('id', res.data.id);
                   $(element).prop('disabled', true);
                 });
 
@@ -195,7 +195,7 @@ $(document).ready(function () {
             } else if (lastStatus.status.id == 3) {
               if(role === 'ente_contabile') {
                 $('.action-status').each(function(index, element) {
-                  $(element).attr('data-id', res.data.id);
+                  $(element).data('id', res.data.id);
                   $(element).prop('disabled', false);
                 });
                 
@@ -208,7 +208,7 @@ $(document).ready(function () {
 
               } else {
                 $('.action-status').each(function(index, element) {
-                  $(element).attr('data-id', res.data.id);
+                  $(element).data('id', res.data.id);
                   $(element).prop('disabled', true);
                 });
 
@@ -235,14 +235,14 @@ $(document).ready(function () {
 
               if (role === 'ente_contabile') {
                 $('.action-status').each(function(index, element) {
-                  $(element).attr('data-id', res.data.id);
+                  $(element).data('id', res.data.id);
                   $(element).prop('disabled', true);
                 });
 
                 $('#statusNote').prop('disabled', true);
               } else {
                 $('.action-status').each(function(index, element) {
-                  $(element).attr('data-id', res.data.id);
+                  $(element).data('id', res.data.id);
                   $(element).prop('disabled', false);
                 });
 
@@ -269,8 +269,14 @@ $(document).ready(function () {
             let rent = parseFloat(res.data.guest_daily_price) * parseFloat(res.data.presenze);
             $('#presenzeRent').html(rent.toFixed(2));
 
-            // File fattura obbligatorio solo per la capofila
+            // Campi obbligatori solo per la capofila
             $('#main-form input[name="file"]').prop('required', res.data.is_default);
+            $('#main-form input[name="file_compliance"]').prop('required', res.data.is_default);
+            $('#main-form input[name="companies[0][billing_reference]"]').prop('required', res.data.is_default);
+            $('#main-form input[name="companies[0][billing_net_amount]"]').prop('required', res.data.is_default);
+            $('#main-form input[name="companies[0][billing_vat_amount]"').prop('required', res.data.is_default);
+            $('#main-form input[name="companies[0][billing_date]"]').prop('required', res.data.is_default);
+            
           } else {
             alert(res.msg);
           }

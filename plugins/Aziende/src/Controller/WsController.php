@@ -4455,33 +4455,52 @@ class WsController extends AppController
     }
 
     public function checkStatusStatementCompany($id) {
-        $table = TableRegistry::get('Aziende.StatementCompany');
-        $msg = "";
-        
-        if(isset($id)) {
-            $entity = $table->get($id);
+        $this->request->allowMethod('get');
 
-            $missingFile = false;
-            $missingCompliance = false;
-            if (empty($entity->uploaded_path)) {
-                $msg .= "Manca il file della fattura\n";
-                $missingFile = true;
-            }
-            if (empty($entity->compliance)) {
-                $msg .= "Manca il file della dichiarazione\n";
-                $missingCompliance = true;
-            }
+        if ($this->request->is('ajax') && $this->request->is('json')) {
 
-            if ($missingFile || $missingCompliance) {
+            try {
+                $table = TableRegistry::get('Aziende.StatementCompany');
+                $msg = "";
+                
+                if(isset($id)) {
+                    $entity = $table->get($id, ['contain' => ['AgreementsCompanies']]);
+
+                    if($entity->company->isDefault) {
+                        $missingFile = false;
+                        $missingCompliance = false;
+                        if (empty($entity->uploaded_path)) {
+                            $msg .= "Manca il file della fattura\n";
+                            $missingFile = true;
+                        }
+                        if (empty($entity->compliance)) {
+                            $msg .= "Manca il file della dichiarazione\n";
+                            $missingCompliance = true;
+                        }
+            
+                        if ($missingFile || $missingCompliance) {
+                            $this->_result['response'] = 'KO';
+                            $this->_result['data'] = -1;
+                            $this->_result['msg'] = "Impossibile salvare il rendiconto\n" . $msg;
+                        } else {
+                            $this->_result['response'] = 'OK';
+                            $this->_result['data'] = 1;
+                            $this->_result['msg'] = "È possibile procedere.";
+                        }
+
+                    } else {
+                        $this->_result['response'] = 'OK';
+                        $this->_result['data'] = 1;
+                        $this->_result['msg'] = "È possibile procedere.";
+                    }
+                }
+            } catch (\Exception $e) {
                 $this->_result['response'] = 'KO';
                 $this->_result['data'] = -1;
-                $this->_result['msg'] = "Impossibile salvare il rendiconto\n" . $msg;
-            } else {
-                $this->_result['response'] = 'OK';
-                $this->_result['data'] = 1;
-                $this->_result['msg'] = "";
+                $this->_result['msg'] = $e->getMessage();
             }
-
+        } else {
+            throw new \Cake\Http\Exception\MethodNotAllowedException;
         }
     }
 
