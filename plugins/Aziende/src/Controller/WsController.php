@@ -1140,7 +1140,7 @@ class WsController extends AppController
             
                     // //Se ci sono sedi con operatività = chiusa controllo che non abbiano ospiti
                     $validOperativita = true;
-                    if (isset($data['sedi'])) {
+                    if (!empty($data['sedi'])) {
                         $sedi = json_decode($data['sedi'], true);
                         foreach ($sedi as $sede) {
                             if (!empty($sede['id']) && empty($sede['operativita']) && $this->Sedi->checkSedeHasGuests($sede['id'])) {

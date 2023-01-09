@@ -320,7 +320,7 @@ class AziendaComponent extends Component
                 }
             }
             
-            if (isset($json['sedi'])) {
+            if (!empty($json['sedi'])) {
                 $sedi = json_decode($json['sedi'], true);
                 foreach ($sedi as $sede) {
 
