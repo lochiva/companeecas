@@ -6,6 +6,7 @@ use Cake\ORM\Entity;
 /**
  * Presenza Entity
  *
+ * @property int $id
  * @property int $guest_id
  * @property \Cake\I18n\Date $date
  * @property int $sede_id

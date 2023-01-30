@@ -2894,8 +2894,13 @@ class WsController extends AppController
             if (!empty($guests)) {
                 $presenze = TableRegistry::get('Aziende.Presenze');
                 $error = false;
+
                 foreach ($guests as $guest) {
-                    $presenza = $presenze->newEntity();
+                    if (!empty($guest->id_presenza)) {
+                        $presenza = $presenze->get($guest->id_presenza);
+                    } else {
+                        $presenza = $presenze->newEntity();
+                    }
                     $presenzaData = [
                         'guest_id' => $guest->id,
                         'date' => $data['date'],

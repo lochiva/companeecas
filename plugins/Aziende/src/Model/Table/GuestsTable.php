@@ -380,7 +380,7 @@ class GuestsTable extends AppTable
     {
         $guests = $this->find()
             ->select($this)
-            ->select(['presente' => 'p.presente', 'note' => 'p.note', 'country_birth_name' => 'l.des_luo'])
+            ->select(['id_presenza' => 'p.id', 'presente' => 'p.presente', 'note' => 'p.note', 'country_birth_name' => 'l.des_luo'])
             ->where([
                 'Guests.sede_id' => $sedeId, 
                 'Guests.check_in_date <=' => $date,
