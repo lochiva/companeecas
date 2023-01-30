@@ -3210,7 +3210,7 @@ class WsController extends AppController
                 }
 
                 $res['history_exit_request_status'] = 1;
-                $res['history_exit_type_id'] = $exitType['name'];
+                $res['history_exit_type_id'] = $exitType['id'];
                 $res['history_exit_type_name'] = $exitType['name'];
                 $res['history_file'] = $filePath;
                 $res['history_note'] = $data['note'];
@@ -3322,7 +3322,7 @@ class WsController extends AppController
                 }
 
                 $res['history_exit_request_status'] = 2;
-                $res['history_exit_type_id'] = $exitType['name'];
+                $res['history_exit_type_id'] = $exitType['id'];
                 $res['history_exit_type_name'] = $exitType['name'];
                 $res['history_file'] = $filePath;
                 $res['history_note'] = $data['note'];
