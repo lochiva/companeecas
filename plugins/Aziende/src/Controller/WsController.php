@@ -2910,6 +2910,7 @@ class WsController extends AppController
                     ];
                     $presenze->patchEntity($presenza, $presenzaData);
                     if ($presenze->save($presenza)) {
+                        $guest->id_presenza = $presenza->id;
                         $guest->not_saved = 0;
                     } else {
                         $error = true;
