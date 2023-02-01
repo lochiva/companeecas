@@ -8,6 +8,7 @@ use Cake\Validation\Validator;
 use Cake\ORM\TableRegistry;
 use Cake\Database\Expression\QueryExpression;
 use Cake\I18n\Date;
+use App\Model\Table\AppTable;
 
 /**
  * Presenze Model
@@ -26,7 +27,7 @@ use Cake\I18n\Date;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class PresenzeTable extends Table
+class PresenzeTable extends AppTable
 {
     /**
      * Initialize method
@@ -39,8 +40,8 @@ class PresenzeTable extends Table
         parent::initialize($config);
 
         $this->setTable('presenze');
-        $this->setDisplayField('guest_id');
-        $this->setPrimaryKey(['guest_id', 'date']);
+        $this->setDisplayField('id');
+        $this->setPrimaryKey(['id']);
 
         $this->addBehavior('Timestamp');
 
@@ -87,6 +88,11 @@ class PresenzeTable extends Table
     {
         $rules->add($rules->existsIn(['guest_id'], 'Guests'));
         $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
+
+        $rules->add($rules->isUnique(
+            ['guest_id', 'date'],
+            'Questo ospite è gia stato segnato per questa data.'
+        ));
 
         return $rules;
     }

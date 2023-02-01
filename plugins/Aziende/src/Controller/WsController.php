@@ -2894,8 +2894,13 @@ class WsController extends AppController
             if (!empty($guests)) {
                 $presenze = TableRegistry::get('Aziende.Presenze');
                 $error = false;
+
                 foreach ($guests as $guest) {
-                    $presenza = $presenze->newEntity();
+                    if (!empty($guest->id_presenza)) {
+                        $presenza = $presenze->get($guest->id_presenza);
+                    } else {
+                        $presenza = $presenze->newEntity();
+                    }
                     $presenzaData = [
                         'guest_id' => $guest->id,
                         'date' => $data['date'],
@@ -3210,7 +3215,7 @@ class WsController extends AppController
                 }
 
                 $res['history_exit_request_status'] = 1;
-                $res['history_exit_type_id'] = $exitType['name'];
+                $res['history_exit_type_id'] = $exitType['id'];
                 $res['history_exit_type_name'] = $exitType['name'];
                 $res['history_file'] = $filePath;
                 $res['history_note'] = $data['note'];
@@ -3322,7 +3327,7 @@ class WsController extends AppController
                 }
 
                 $res['history_exit_request_status'] = 2;
-                $res['history_exit_type_id'] = $exitType['name'];
+                $res['history_exit_type_id'] = $exitType['id'];
                 $res['history_exit_type_name'] = $exitType['name'];
                 $res['history_file'] = $filePath;
                 $res['history_note'] = $data['note'];

@@ -18,7 +18,8 @@ return [
 			'surveys_chapters' => 'un capitolo del questionario', 'surveys_to_structures' => 'una relazione tra questionario e sede',
 			'surveys_chapters_contents' => 'un testo standard per questionari', 'reports' => 'una segnalazione','surveys_answer_data'=>'un dato' ,
 			'reports_victims' => 'l\'anagrafica di una vittima', 'reports_witnesses' => 'l\'anagrafica di un testimone',
-			'guests' => 'un ospite','statement_company'=>'azienda ATI','presenze_upload'=>'il caricamento del file delle presenze'
+			'guests' => 'un ospite','statement_company'=>'azienda ATI','presenze' => 'la presenza di un ospite',
+			'presenze_upload'=>'il caricamento del file delle presenze'
 		],
 		'excludeEntity' => [
 			'calendar_events_frozen' ,'users_to_groups','groups', 'guests_notifications'
