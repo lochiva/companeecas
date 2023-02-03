@@ -12,7 +12,7 @@
 					<p class="exit-trasnfer-warning">NOTA: Non usare questo strumento per trasferire un ospite ad un altro ente. Il trasferimento viene avviato da Prefettura.</p>
 				</div>
 				<form class="form-horizontal" id="formGuestTransfer">
-					<div v-if="role == 'admin'" class="form-group"> 
+					<div v-if="role == 'admin' || role == 'area_iv'" class="form-group"> 
 						<div class="col-sm-12" :class="{'has-error': transferProcedureData.azienda.hasError}">
 							<label class="required" for="transferAzienda">Ente</label>
 							<v-select class="fomr-control" id="transferAzienda" :clearable="false" :options="transferAziende" 
