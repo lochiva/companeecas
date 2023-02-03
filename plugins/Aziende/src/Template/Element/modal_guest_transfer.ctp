@@ -8,7 +8,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div v-if="role != 'admin'">
+				<div v-if="role != 'admin' && role != 'area_iv'">
 					<p class="exit-trasnfer-warning">NOTA: Non usare questo strumento per trasferire un ospite ad un altro ente. Il trasferimento viene avviato da Prefettura.</p>
 				</div>
 				<form class="form-horizontal" id="formGuestTransfer">
