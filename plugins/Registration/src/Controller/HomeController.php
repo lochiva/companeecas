@@ -45,10 +45,10 @@ class HomeController extends AppController
           return $this->redirect('/');
         }
         $this->viewBuilder()->layout('login');
-        $this->set('enabledRegistration',Configure::read('dbconfig.registration.REGISTRATION_FRONTEND') );
-		$this->set('enabledPasswordRecovery',Configure::read('dbconfig.registration.PASSWORD_RECOVERY_FRONTEND') );
-		$this->set('enabledGoogleLogin', Configure::read('dbconfig.registration.GOOGLE_OAUTH_ENABLE'));
-		$this->set('enabledVerifyData', Configure::read('dbconfig.gdpr.ENABLE_BTN_VERIFY_DATA'));
+        $this->set('enabledRegistration',Configure::read('dbconfig.registration.REGISTRATION_FRONTEND')  ?? 0 );
+		$this->set('enabledPasswordRecovery',Configure::read('dbconfig.registration.PASSWORD_RECOVERY_FRONTEND') ?? 0  );
+		$this->set('enabledGoogleLogin', Configure::read('dbconfig.registration.GOOGLE_OAUTH_ENABLE') ?? 0);
+		$this->set('enabledVerifyData', Configure::read('dbconfig.gdpr.ENABLE_BTN_VERIFY_DATA') ?? 0);
         if ($this->request->is('post')) {
             $user = $this->Auth->identify();
             if ($user) {
@@ -57,7 +57,7 @@ class HomeController extends AppController
 					if($this->request->data['remember_me']){ 
 						$this->RememberMe->rememberData($user['email']);
 					}
-                    if(Configure::read('dbconfig.registration.LOG_ACCESS')){
+                    if(Configure::read('dbconfig.registration.LOG_ACCESS') ?? 0 ){
                         $this->_accessLog('login');
                     }
                     //return $this->redirect($this->Auth->redirectUrl());

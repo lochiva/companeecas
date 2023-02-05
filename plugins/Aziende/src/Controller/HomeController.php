@@ -190,8 +190,6 @@ class HomeController extends AppController
             $this->set('purposesPassive',$purposesPassive);
             $this->set('paymentConditions',$paymentConditions);
             $this->set('issuers',$issuers);
-            $this->set('lista_metodi', $metodi['lista_conti']);
-            $this->set('lista_iva', $listaIva['lista_iva']);
             $this->set('statusList',$statusList);
             $this->set('aziendeList',$aziendeList);
             $this->set('interviews', $interviews);

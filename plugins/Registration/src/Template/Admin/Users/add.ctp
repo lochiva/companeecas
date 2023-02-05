@@ -2,8 +2,9 @@
 use Cake\Routing\Router;
 use Cake\Core\Configure;
 
-$registrationType = Configure::read('dbconfig.registration.REGISTRATION_TYPE');
-$connectionTimetask = Configure::read('dbconfig.calendar.TIMETASK_CONNECTION');
+$registrationType = Configure::read('dbconfig.registration.REGISTRATION_TYPE') ?? 0 ;
+$connectionTimetask = Configure::read('dbconfig.calendar.TIMETASK_CONNECTION') ?? 0 ;
+
 ?>
 <?= $this->Html->css('Registration.password'); ?>
 <?= $this->Html->script('Registration.password', ['block']); ?>
@@ -35,7 +36,7 @@ $connectionTimetask = Configure::read('dbconfig.calendar.TIMETASK_CONNECTION');
         <?= $this->Form->input('level',['type' => 'number', 'value' => 0]) ?>
         <?= $this->Form->input('auth_email', ['type' => 'checkbox', 'checked' => 'checked', 'label' => ['text' => "Autenticato"]]) ?>
         <?php if($connectionTimetask == '1'){ ?>
-        <?php //echo $this->Form->input('timetask_token', ['label' => ['text' => "Token Timetask"]]); ?>
+        <?php echo $this->Form->input('timetask_token', ['label' => ['text' => "Token Timetask"]]); ?>
         <?php } ?>
         <?php
 
