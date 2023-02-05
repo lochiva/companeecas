@@ -321,7 +321,7 @@ class AziendaComponent extends Component
             }
             
             if (!empty($json['sedi'])) {
-                $sedi = json_decode($json['sedi'], true);
+                $sedi = json_decode($json['sedi'], true) ?? [];
                 foreach ($sedi as $sede) {
 
                     $sede['id_azienda'] = $azienda->id;
