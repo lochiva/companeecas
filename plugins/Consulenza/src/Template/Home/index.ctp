@@ -1,1 +1,0 @@
-Sono la index del plugin Consulenza
