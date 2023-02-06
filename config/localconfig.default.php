@@ -4,7 +4,6 @@ return [
      * my configuration
      */
     'localconfig' => [
-        'ApplicationName'   =>  'Application Default',
         'AdminControllers' => [
             //"Groups" => ['label' => 'Gruppi' , 'icon' => 'glyphicon glyphicon-briefcase'],
         ],
