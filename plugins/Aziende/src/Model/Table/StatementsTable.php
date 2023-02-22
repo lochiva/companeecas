@@ -71,4 +71,9 @@ class StatementsTable extends AppTable
         return $validator;
     }
 
+    public function getStatementsByAgreement($agreementId)
+    {
+        return $this->find()->where(['agreement_id' => $agreementId])->order(['period_start_date' => 'ASC'])->toArray();
+    }
+
 }

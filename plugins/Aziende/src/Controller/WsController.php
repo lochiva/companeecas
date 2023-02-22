@@ -61,9 +61,7 @@ class WsController extends AppController
                 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 'readmissionProcedure', 'getEducationalQualifications', 
                 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 
                 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
-                'downloadFileCosts',
-                'downloadZipStatements',
-                'getPresenzeCount'
+                'downloadFileCosts', 'downloadZipStatements', 'getPresenzeCount', 'getStatementsByAgreementId'
                 
             ],
             'ragioneria' => [
@@ -87,7 +85,7 @@ class WsController extends AppController
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
                 'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount'
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getStatementsByAgreementId'
             ],
             'ente_contabile' => [
                 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
@@ -2776,12 +2774,21 @@ class WsController extends AppController
 
                 if ($agreement['approved'] == 0) {
 
-                    if ($agreements->softDelete($agreement)) {
-                        $this->_result['response'] = "OK";
-                        $this->_result['msg'] = "Convenzione cancellata con successo.";
+                    $statements = TableRegistry::get('Aziende.Statements')->getStatementsByAgreement($data['id']);
+                    
+                    if (empty($statements)) {
+
+                        if ($agreements->softDelete($agreement)) {
+                            $this->_result['response'] = "OK";
+                            $this->_result['msg'] = "Convenzione cancellata con successo.";
+                        } else {
+                            $this->_result['response'] = "KO";
+                            $this->_result['msg'] = "Errore nella cancellazione della convenzione.";
+                        }
+
                     } else {
                         $this->_result['response'] = "KO";
-                        $this->_result['msg'] = "Errore nella cancellazione della convenzione.";
+                        $this->_result['msg'] = "Errore nella cancellazione della convenzione: la convenzione è usata nei rendiconti.";
                     }
                 }else{ 
                     $this->_result['response'] = "KO";
@@ -4829,6 +4836,29 @@ class WsController extends AppController
         } else {
             $this->_result['response'] = "KO";
             $this->_result['msg'] = 'Id mancante, impossibile recuperare i dati della fatturazione';
+        }
+    }
+
+    public function getStatementsByAgreementId($id = 0)
+    {
+        if (!empty($id)) {
+            $res = [];
+            $statements = TableRegistry::get('Aziende.Statements')->getStatementsByAgreement($id);
+            if (!empty($statements)) {
+                foreach ($statements as $s) {
+                    $res[] = [
+                        'label' => $s->period_label,
+                        'start' => $s->period_start_date->format('d/m/Y'),
+                        'end' => $s->period_end_date->format('d/m/Y')
+                    ];
+                }
+            }
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $res;
+            $this->_result['msg'] = "Controllo dei rendiconti avvenuto con successo.";
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = "Errore nel controllo dei rendiconti: dati mancanti.";
         }
     }
 
