@@ -437,74 +437,85 @@ class GuestComponent extends Component
 
 		// Se stato diverso da "In uscita" non eseguo nessuna operazione sull'ospite
 		if ($guest->status_id == 2) {
-			$sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-			//aggiornamento storico
-			$guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
-			$history = $guestsHistory->newEntity();
-	
-			$lastHistory = $guestsHistory->getLastGuestHistoryByStatus($guest->id, 2);
-			$exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
+			$checkoutDate = new Time(substr($data['check_out_date'], 0, 33));
 
-			$historyData['guest_id'] = $guest->id;
-			$historyData['azienda_id'] = $sede->id_azienda;
-			$historyData['sede_id'] = $guest->sede_id;
-			$historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
-			$historyData['operation_date'] = $today->format('Y-m-d');
-			$historyData['guest_status_id'] = 3;
-			$historyData['exit_type_id'] = $lastHistory->exit_type_id;
-			$historyData['file'] = $lastHistory->file;
-			$historyData['note'] = $lastHistory->note;
-	
-			$guestsHistory->patchEntity($history, $historyData);
+			//Presenza future
+			$guestPresenza = TableRegistry::get('Aziende.Presenze')->getGuestPresenzeByDate($guest->id, $checkoutDate);
 
-			if ($guestsHistory->save($history)) {
-				//aggiornamento stato ospite e data di check-out
-				$guests = TableRegistry::get('Aziende.Guests');
+			if (!$guestPresenza) {
 
-				//aggiornamento stato ospite e data di check-out
-				$guest->status_id = 3;
-				$guest->check_out_date = new Time(substr($data['check_out_date'], 0, 33));
+				$sede = TableRegistry::get('Aziende.Sedi')->get($guest->sede_id);
 
-				if ($guests->save($guest)) {
-					$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
-					if ($azienda->id_tipo == 1) {
-						$getType = 'CONFIRM_EXIT_GUEST';
-						$saveType = 'EXITED_GUEST';
-					} else if ($azienda->id_tipo == 2) {
-						$getType = 'CONFIRM_EXIT_GUEST_UKRAINE';
-						$saveType = 'EXITED_GUEST_UKRAINE';
+				//aggiornamento storico
+				$guestsHistory = TableRegistry::get('Aziende.GuestsHistories');
+				$history = $guestsHistory->newEntity();
+		
+				$lastHistory = $guestsHistory->getLastGuestHistoryByStatus($guest->id, 2);
+				$exitType = TableRegistry::get('Aziende.GuestsExitTypes')->get($lastHistory->exit_type_id); 
+
+				$historyData['guest_id'] = $guest->id;
+				$historyData['azienda_id'] = $sede->id_azienda;
+				$historyData['sede_id'] = $guest->sede_id;
+				$historyData['operator_id'] = $this->request->session()->read('Auth.User.id');
+				$historyData['operation_date'] = $today->format('Y-m-d');
+				$historyData['guest_status_id'] = 3;
+				$historyData['exit_type_id'] = $lastHistory->exit_type_id;
+				$historyData['file'] = $lastHistory->file;
+				$historyData['note'] = $lastHistory->note;
+		
+				$guestsHistory->patchEntity($history, $historyData);
+
+				if ($guestsHistory->save($history)) {
+					//aggiornamento stato ospite e data di check-out
+					$guests = TableRegistry::get('Aziende.Guests');
+
+					//aggiornamento stato ospite e data di check-out
+					$guest->status_id = 3;
+					$guest->check_out_date = $checkoutDate;
+
+					if ($guests->save($guest)) {
+						$azienda = TableRegistry::get('Aziende.Aziende')->get($sede->id_azienda);
+						if ($azienda->id_tipo == 1) {
+							$getType = 'CONFIRM_EXIT_GUEST';
+							$saveType = 'EXITED_GUEST';
+						} else if ($azienda->id_tipo == 2) {
+							$getType = 'CONFIRM_EXIT_GUEST_UKRAINE';
+							$saveType = 'EXITED_GUEST_UKRAINE';
+						}
+
+						$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
+						$guestsNotificationsTypes = TableRegistry::get('Aziende.GuestsNotificationsTypes');
+
+						//notifica di conferma uscita segnata come gestita
+						$confirmNotificationType = $guestsNotificationsTypes->find()->where(['name' => $getType])->first();
+						$confirmNotification = $guestsNotifications->find()->where(['type_id' => $confirmNotificationType->id, 'guest_id' => $guest->id])->first();
+						if ($confirmNotification) {
+							$confirmNotification->done = 1;
+							$guestsNotifications->save($confirmNotification);
+						}
+
+						//creazione notifica uscita ospite
+						$exitedNotification = $guestsNotifications->newEntity();
+						$exitedNotificationType = $guestsNotificationsTypes->find()->where(['name' => $saveType])->first();
+						$notificationData = [
+							'type_id' => $exitedNotificationType->id,
+							'azienda_id' => $sede->id_azienda,
+							'sede_id' => $sede->id,
+							'guest_id' => $guest->id,
+							'user_maker_id' => $this->request->session()->read('Auth.User.id')
+						];
+						$guestsNotifications->patchEntity($exitedNotification, $notificationData);
+						$guestsNotifications->save($exitedNotification);
+					} else {
+						$error = "Errore nell'aggiornamento dello stato dell'ospite.";
 					}
-
-					$guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
-					$guestsNotificationsTypes = TableRegistry::get('Aziende.GuestsNotificationsTypes');
-
-					//notifica di conferma uscita segnata come gestita
-					$confirmNotificationType = $guestsNotificationsTypes->find()->where(['name' => $getType])->first();
-					$confirmNotification = $guestsNotifications->find()->where(['type_id' => $confirmNotificationType->id, 'guest_id' => $guest->id])->first();
-					if ($confirmNotification) {
-						$confirmNotification->done = 1;
-						$guestsNotifications->save($confirmNotification);
-					}
-
-					//creazione notifica uscita ospite
-					$exitedNotification = $guestsNotifications->newEntity();
-					$exitedNotificationType = $guestsNotificationsTypes->find()->where(['name' => $saveType])->first();
-					$notificationData = [
-						'type_id' => $exitedNotificationType->id,
-						'azienda_id' => $sede->id_azienda,
-						'sede_id' => $sede->id,
-						'guest_id' => $guest->id,
-						'user_maker_id' => $this->request->session()->read('Auth.User.id')
-					];
-					$guestsNotifications->patchEntity($exitedNotification, $notificationData);
-					$guestsNotifications->save($exitedNotification);
 				} else {
-					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+					$error = "Errore nell'aggiornamento dello storico dell'ospite.";
 				}
 			} else {
-				$error = "Errore nell'aggiornamento dello storico dell'ospite.";
-			}  
+				$error = "L'ospite è segnato come presente in giorni successivi alla data di check-out. Non è possibile confermare la procedura di uscita.";
+			}
 		}
 
 		return $error;
