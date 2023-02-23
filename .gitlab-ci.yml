@@ -26,10 +26,19 @@ before_script:
   ##
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
+
   ##
   ## Specify old keys for bastion
   ##
   - echo -e "Host bastion.lochiva.net" > ~/.ssh/config
+  - echo -e "\tUser lochiva" >> ~/.ssh/config
+  - echo -e "\tPubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
+  - echo -e "\tHostkeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+
+  ##
+  ## Specify old keys for dalia
+  ##
+  - echo -e "Host dalia.lochiva.net" > ~/.ssh/config
   - echo -e "\tUser lochiva" >> ~/.ssh/config
   - echo -e "\tPubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
   - echo -e "\tHostkeyAlgorithms +ssh-rsa" >> ~/.ssh/config
