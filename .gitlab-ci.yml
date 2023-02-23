@@ -40,7 +40,7 @@ before_script:
   ## more than one server to connect to.
   ##
   - ssh-keyscan bastion.lochiva.net >> ~/.ssh/known_hosts
-  - ssh-keyscan -T 240 dalia.lochiva.net >> ~/.ssh/known_hosts
+  - ssh-keyscan -v dalia.lochiva.net >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
 
 deploy-qa:
