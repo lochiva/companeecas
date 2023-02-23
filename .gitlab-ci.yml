@@ -1,0 +1,66 @@
+image: ubuntu
+
+before_script:
+  ##
+  ## Install ssh-agent if not already installed, it is required by Docker.
+  ## (change apt-get to yum if you use an RPM-based image)
+  ##
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+
+  ##
+  ## Run ssh-agent (inside the build environment)
+  ##
+  - eval $(ssh-agent -s)
+
+  ##
+  ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  ## We're using tr to fix line endings which makes ed25519 keys work
+  ## without extra base64 encoding.
+  ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+  ##
+  - echo "$SSH_PRIVATE_KEY"
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+  ##
+  ## Create the SSH directory and give it the right permissions
+  ##
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  ##
+  ## Specify old keys for bastion
+  ##
+  - echo -e "Host bastion.lochiva.net" > ~/.ssh/config
+  - echo -e "\tUser lochiva" >> ~/.ssh/config
+  - echo -e "\tPubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
+  - echo -e "\tHostkeyAlgorithms +ssh-rsa" >> ~/.ssh/config
+   
+  ##
+  ## Use ssh-keyscan to scan the keys of your private server. Replace gitlab.com
+  ## with your own domain name. You can copy and repeat that command if you have
+  ## more than one server to connect to.
+  ##
+  - ssh-keyscan bastion.lochiva.net >> ~/.ssh/known_hosts
+  - ssh-keyscan dalia.lochiva.net >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+
+deploy-qa:
+  script:
+  # try to connect to GitLab.com
+  #- ssh -v lochiva@bastion.lochiva.net "touch /home/lochiva/gitlabtest"
+  #  - ssh  -o "ProxyJump lochiva@bastion.lochiva.net" lochiva@docker1.lochiva.net "touch /home/lochiva/gitlab"
+  - ssh -o "ProxyJump lochiva@bastion.lochiva.net" lochiva@dalia.lochiva.net "/home/WWW/qa.ires-applicativocas.companee.it/deploy.sh qa"
+  only:
+  - qa
+ 
+deploy-test:
+  script:
+  - ssh -o "ProxyJump lochiva@bastion.lochiva.net" lochiva@dalia.lochiva.net "/home/WWW/test.ires-applicativocas.companee.it/deploy.sh develop"
+  only:
+  - develop
+
+deploy-master:
+  script:
+  - echo "disabled"
+  only:
+  - master
+ 
