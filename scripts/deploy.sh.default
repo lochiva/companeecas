@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ $EUID -eq 0 ];
+then 
+    echo "Eseguire questo script come lochiva, non come root!"
+    exit
+fi
+
+cd "$(dirname "$0")"
+cd src/
+
+if [ ! -z $1 ];
+then
+    repo=$1
+else
+    repo="develop"
+fi
+
+if [ "$repo" != "develop" ] && [ "$repo" != "qa" ];
+then
+    echo "I nomi di branch consentiti sono develop e qa, $repo passato."
+    eit
+fi
+
+if [ "$repo" = "develop" ];
+then
+    prefix="test"
+fi
+
+if [ "$repo" = "qa" ];
+then
+    prefix="qa"
+fi
+
+echo "Faccio il checkout di $repo e quindi faccio pull."
+
+git checkout $repo
+git pull
+
+echo "Pulisco la cache."
+
+sudo rm -Rf tmp/cache/
+
+echo "Aggiorno le dipendenze del progetto."
+
+docker exec -it "$prefix"_ires_applicativocas composer install -n
+
+echo "Aggiorno il DB eseguendo le migrazioni."
+
+docker exec -it "$prefix"_ires_applicativocas bin/cake migrations migrate --no-lock
