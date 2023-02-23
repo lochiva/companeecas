@@ -34,14 +34,6 @@ before_script:
   - echo -e "\tUser lochiva" >> ~/.ssh/config
   - echo -e "\tPubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
   - echo -e "\tHostkeyAlgorithms +ssh-rsa" >> ~/.ssh/config
-
-  ##
-  ## Specify old keys for dalia
-  ##
-  - echo -e "Host dalia.lochiva.net" > ~/.ssh/config
-  - echo -e "\tUser lochiva" >> ~/.ssh/config
-  - echo -e "\tPubkeyAcceptedAlgorithms +ssh-rsa" >> ~/.ssh/config
-  - echo -e "\tHostkeyAlgorithms +ssh-rsa" >> ~/.ssh/config
    
   ##
   ## Use ssh-keyscan to scan the keys of your private server. Replace gitlab.com
