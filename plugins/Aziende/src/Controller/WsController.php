@@ -61,9 +61,7 @@ class WsController extends AppController
                 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 'readmissionProcedure', 'getEducationalQualifications', 
                 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 
                 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
-                'downloadFileCosts',
-                'downloadZipStatements',
-                'getPresenzeCount'
+                'downloadFileCosts', 'getGuestPresenzeAfterDate', 'downloadZipStatements', 'getPresenzeCount'
                 
             ],
             'ragioneria' => [
@@ -87,7 +85,7 @@ class WsController extends AppController
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
                 'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount'
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getGuestPresenzeAfterDate'
             ],
             'ente_contabile' => [
                 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
@@ -4829,6 +4827,63 @@ class WsController extends AppController
         } else {
             $this->_result['response'] = "KO";
             $this->_result['msg'] = 'Id mancante, impossibile recuperare i dati della fatturazione';
+        }
+    }
+
+    public function getGuestPresenzeAfterDate()
+    {
+        $data = $this->request->query;
+        if (!empty($data['guest_id']) && !empty($data['date'])) {
+            $res = [];
+
+            $guestsTable = TableRegistry::get('Aziende.Guests');
+            $presenzeTable = TableRegistry::get('Aziende.Presenze');
+
+            $data['date'] = (new Time(substr($data['date'], 0, 33)))->format('Y-m-d');
+
+            $guest = $guestsTable->get($data['guest_id']);
+            $presenze = $presenzeTable->getGuestPresenzeByDate($data['guest_id'], $data['date']);
+
+            if (!empty($presenze)) {
+                $p = [];
+                foreach ($presenze as $presenza) {
+                    $p[] = $presenza->date->format('d/m/Y');
+                }
+                $res[] = [
+                    'guest' => $guest->name . ' ' . $guest->surname,
+                    'presenze' => $p
+                ];
+            }
+
+            if ($data['family'] == 1) {
+                //recupero ospiti della stessa famiglia
+                $guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+                $guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->first();
+                if($guestHasFamily){
+                    $familyId = $guestHasFamily['family_id'];
+                    $family = $guestsFamilies->getGuestsByFamily($familyId, $guest->sede_id, $guest->id);
+                }
+                foreach ($family as $fg) {
+                    $presenze = $presenzeTable->getGuestPresenzeByDate($fg->id, $data['date']);
+                    if (!empty($presenze)) {
+                        $p = [];
+                        foreach ($presenze as $presenza) {
+                            $p[] = $presenza->date->format('d/m/Y');
+                        }
+                        $res[] = [
+                            'guest' => $fg->name . ' ' . $fg->surname,
+                            'presenze' => $p
+                        ];
+                    }
+                }
+            }
+
+            $this->_result['response'] = "OK";
+            $this->_result['data'] = $res;
+            $this->_result['msg'] = 'Controllo delle presenze avvenuto con successo.';
+        } else {
+            $this->_result['response'] = "KO";
+            $this->_result['msg'] = 'Errore nel controllo delle presenze: dati mancanti';
         }
     }
 
