@@ -61,8 +61,7 @@ class WsController extends AppController
                 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 'readmissionProcedure', 'getEducationalQualifications', 
                 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 
                 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
-                'downloadFileCosts', 'getGuestPresenzeAfterDate', 'downloadZipStatements', 'getPresenzeCount'
-                'downloadFileCosts', 'downloadZipStatements', 'getPresenzeCount', 'getStatementsByAgreementId'
+                'downloadFileCosts', 'downloadZipStatements', 'getPresenzeCount', 'getGuestPresenzeAfterDate', 'getStatementsByAgreementId'
                 
             ],
             'ragioneria' => [
@@ -86,8 +85,9 @@ class WsController extends AppController
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
                 'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getStatementsByAgreementId'
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getGuestPresenzeAfterDate'
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getGuestPresenzeAfterDate',
+                'getStatementsByAgreementId'
+                
             ],
             'ente_contabile' => [
                 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
@@ -4861,6 +4861,9 @@ class WsController extends AppController
         } else {
             $this->_result['response'] = "KO";
             $this->_result['msg'] = "Errore nel controllo dei rendiconti: dati mancanti.";
+        }
+    }
+
     public function getGuestPresenzeAfterDate()
     {
         $data = $this->request->query;
