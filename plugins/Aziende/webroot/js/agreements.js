@@ -374,15 +374,35 @@ $(document).ready(function(){
             if(confirm('Si è sicuri di voler cancellare la convenzione?')){
                 var id = $('#agreementId').val();
                 $.ajax({
-                    url : pathServer + "aziende/Ws/deleteAgreement",
-                    type: "POST",
+                    url : pathServer + "aziende/Ws/getStatementsByAgreementId/" + id,
+                    type: "GET",
                     dataType: "json",
-                    data: {id: id}
                 }).done(function (res) {
-                    if(res.response == "OK"){
-                        $('#table-agreements').trigger('update');
-                        $('#modalAgreement').modal('hide');
-                    }else{
+                    if (res.response == "OK") {
+                        if (res.data.length > 0) {
+                            var errorMsg = "Non è possibile cancellare la convenzione perchè è usata nei rendiconti:";
+                            res.data.forEach((statement) => {
+                                errorMsg += "\n" + statement.label + " (dal " + statement.start + " al " + statement.end + ")";
+                            });
+                            alert(errorMsg);
+                        } else {
+                            $.ajax({
+                                url : pathServer + "aziende/Ws/deleteAgreement",
+                                type: "POST",
+                                dataType: "json",
+                                data: {id: id}
+                            }).done(function (res) {
+                                if(res.response == "OK"){
+                                    $('#table-agreements').trigger('update');
+                                    $('#modalAgreement').modal('hide');
+                                }else{
+                                    alert(res.msg);
+                                }
+                            }).fail(function(richiesta, stato, errori) {
+                                alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+                            });
+                        }
+                    } else {
                         alert(res.msg);
                     }
                 }).fail(function(richiesta, stato, errori) {
