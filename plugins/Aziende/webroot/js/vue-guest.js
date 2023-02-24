@@ -1188,37 +1188,75 @@ var app = new Vue({
         },
 
         confirmExitGuest: function(confirmExitFamily) {
-            let params = new URLSearchParams();
-            params.append('guest_id', this.guestData.id.value);
-            Object.keys(this.confirmExitProcedureData).forEach((prop) => {
-                params.append(prop, this.confirmExitProcedureData[prop].value);
-            });
-            params.append('confirm_exit_family', confirmExitFamily);
-
-            axios.post(pathServer + 'aziende/ws/confirmExit', params)
+            axios.get(pathServer + 'aziende/ws/getGuestPresenzeAfterDate', {
+                params: {
+                    guest_id: this.guestData.id.value,
+                    date: this.confirmExitProcedureData.check_out_date.value,
+                    family: confirmExitFamily
+                }
+            })
             .then(res => {
                 if (res.data.response == 'OK') {
-                    alert(res.data.msg);
-                    this.guestStatus = res.data.data.history_status;
-                    this.exitData.type = res.data.data.history_exit_type;
-                    this.exitData.date = res.data.data.check_out_date;
-                    this.exitData.file = res.data.data.history_file;
-                    this.exitData.note = res.data.data.history_note;
-
-                    if(confirmExitFamily){
-                        this.guestFamily.forEach((guest) => {
-                            guest.status_id = res.data.data.family_status[guest.id];
+                    if (res.data.data.length > 0) {
+                        if (confirmExitFamily) {
+                            var errorMsg = "Errore nella conferma di uscita. I seguenti ospiti hanno delle presenze segnate per giorni successivi alla data di check-out impostata:";
+                            res.data.data.forEach((guest) => {
+                                errorMsg += "\n" + guest.guest;
+                                var presenze = [];
+                                guest.presenze.forEach((presenza) => {
+                                    presenze.push(presenza); 
+                                });
+                                errorMsg += " (" + presenze.join(', ') + ")";
+                            });
+                        } else {
+                            var errorMsg = "Errore nella conferma di uscita. L'ospite ha delle presenze segnate per giorni successivi alla data di check-out impostata:\n";
+                            var presenze = [];
+                            res.data.data[0].presenze.forEach((presenza) => {
+                                presenze.push(presenza); 
+                            });
+                            errorMsg += presenze.join(', ');
+                        }
+                        alert(errorMsg);
+                    } else {
+                        let params = new URLSearchParams();
+                        params.append('guest_id', this.guestData.id.value);
+                        Object.keys(this.confirmExitProcedureData).forEach((prop) => {
+                            params.append(prop, this.confirmExitProcedureData[prop].value);
                         });
-                        this.loadedFamily = JSON.stringify(this.guestFamily);
+                        params.append('confirm_exit_family', confirmExitFamily);
+            
+                        axios.post(pathServer + 'aziende/ws/confirmExit', params)
+                        .then(res => {
+                            if (res.data.response == 'OK') {
+                                alert(res.data.msg);
+                                this.guestStatus = res.data.data.history_status;
+                                this.exitData.type = res.data.data.history_exit_type;
+                                this.exitData.date = res.data.data.check_out_date;
+                                this.exitData.file = res.data.data.history_file;
+                                this.exitData.note = res.data.data.history_note;
+            
+                                if(confirmExitFamily){
+                                    this.guestFamily.forEach((guest) => {
+                                        guest.status_id = res.data.data.family_status[guest.id];
+                                    });
+                                    this.loadedFamily = JSON.stringify(this.guestFamily);
+                                }
+            
+                                this.loadGuestHistory();
+            
+                                let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
+                                $(modalConfirmGuestExit).modal('hide');
+            
+                                //Aggiorna conteggio notifiche
+                                this.updateNotificationsCount();
+                            } else {
+                                alert(res.data.msg);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
                     }
-
-                    this.loadGuestHistory();
-
-                    let modalConfirmGuestExit = this.$refs.modalConfirmGuestExit;
-                    $(modalConfirmGuestExit).modal('hide');
-
-                    //Aggiorna conteggio notifiche
-                    this.updateNotificationsCount();
                 } else {
                     alert(res.data.msg);
                 }
