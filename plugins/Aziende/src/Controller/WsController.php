@@ -61,7 +61,7 @@ class WsController extends AppController
                 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 'readmissionProcedure', 'getEducationalQualifications', 
                 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 
                 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
-                'downloadFileCosts', 'downloadZipStatements', 'getPresenzeCount', 'getGuestPresenzeAfterDate', 'getStatementsByAgreementId'
+                'downloadFileCosts', 'downloadZipStatements', 'getPresenzeCount', 'getStatementsByAgreementId', 'getGuestPresenzeAfterDate'
                 
             ],
             'ragioneria' => [
@@ -85,9 +85,8 @@ class WsController extends AppController
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 
                 'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles', 
-                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getGuestPresenzeAfterDate',
-                'getStatementsByAgreementId'
-                
+                'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getStatementsByAgreementId',
+                'getGuestPresenzeAfterDate'
             ],
             'ente_contabile' => [
                 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende',
