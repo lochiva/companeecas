@@ -14,7 +14,7 @@ class InsertToConfigurations3 extends AbstractMigration
     {
         $rows = [
             [
-                'plugin' => 'aziende',
+                'plugin' => 'generico',
                 'key_conf' => 'ENABLED_PROVINCES',
                 'label' => 'Province abilitate per le strutture',
                 'tooltip' => 'Elenco delle sigle delle province abilitate per le strutture, separate da virgola',
