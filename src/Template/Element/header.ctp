@@ -35,8 +35,8 @@ $roleLabels = [
 
 	<a href="<?= Router::url('/');?>" class="logo">
     	<!-- LOGO -->
-      <?= $this->Html->Image('/img/logo_xs.png',['class'=>'logo-mini text-center']) ?>	
-			<?= $this->Html->Image('/img/logo_header.png',['class'=>'logo-lg'])?>
+      <?= $this->Html->Image('/img/local/logo_xs.png',['class'=>'logo-mini text-center']) ?>	
+			<?= $this->Html->Image('/img/local/logo_header.png',['class'=>'logo-lg'])?>
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top" role="navigation">

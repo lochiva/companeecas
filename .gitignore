@@ -46,3 +46,5 @@ plugins/Aziende/webroot/images
 /.htaccess
 
 scripts/deploy.sh
+
+webroot/img/local

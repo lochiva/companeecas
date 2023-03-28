@@ -30,7 +30,7 @@ $user = $this->request->session()->read('Auth.User');
 					$user['role'] == 'ragioneria' || 
 					(($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') && $this->Utils->isValidEnte($user['id']))
 				) { ?>
-					<?= $this->Html->Image('/img/logo_homepage.png',['class'=>'logo_centro']) ?>
+					<?= $this->Html->Image('/img/local/logo_homepage.png',['class'=>'logo_centro']) ?>
 					<h2>Benvenuta/o!</h2>
 					<br />
 					<p>Ti diamo il benvenuto su Companee.
