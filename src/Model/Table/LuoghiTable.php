@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 
 class LuoghiTable extends Table
@@ -103,6 +104,23 @@ class LuoghiTable extends Table
         $res = $this->find()
             ->select(['id' => 'c_luo','text' => 'des_luo'])
             ->where(['in_luo' => '3', 'enabled' => 1])
+            ->toArray();
+
+        return $res;
+    }
+
+    public function getEnabledProvinces()
+    {
+        $where = ['in_luo' => '3', 'enabled' => 1];
+        
+        $enabledProvinces = array_filter(array_map('trim', explode(',', Configure::read('dbconfig.generico.ENABLED_PROVINCES'))));
+        if (!empty($enabledProvinces)) {
+            $where['s_prv IN'] = $enabledProvinces;
+        }
+     
+        $res = $this->find()
+            ->select(['id' => 'c_luo','text' => 'des_luo'])
+            ->where($where)
             ->toArray();
 
         return $res;
