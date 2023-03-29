@@ -109,11 +109,11 @@ class LuoghiTable extends Table
         return $res;
     }
 
-    public function getProvinceStrutture()
+    public function getEnabledProvinces()
     {
         $where = ['in_luo' => '3', 'enabled' => 1];
         
-        $enabledProvinces = array_filter(array_map('trim', explode(',', Configure::read('dbconfig.aziende.ENABLED_PROVINCES'))));
+        $enabledProvinces = array_filter(array_map('trim', explode(',', Configure::read('dbconfig.generico.ENABLED_PROVINCES'))));
         if (!empty($enabledProvinces)) {
             $where['s_prv IN'] = $enabledProvinces;
         }

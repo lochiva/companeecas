@@ -66,7 +66,7 @@ class SediController extends AppController
         $sediTipiMinistero = $this->Sedi->getSediTipiMinistero();
         $sediTipiCapitolato = $this->Sedi->getSediTipiCapitolato();
         
-        $province = TableRegistry::get('Luoghi')->getProvinceStrutture();
+        $province = TableRegistry::get('Luoghi')->getEnabledProvinces();
 
         $tipologieCentro = TableRegistry::get('Aziende.SediTipologieCentro')->getList();
         $tipologieOspiti = TableRegistry::get('Aziende.SediTipologieOspiti')->getList();
