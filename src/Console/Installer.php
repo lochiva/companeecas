@@ -168,14 +168,28 @@ class Installer
             'webroot/backgrounds',
             'webroot/files',
             'webroot/img/user',
-
+            'webroot/img/local',
         ];
 
         foreach ($paths as $path) {
-            $path = $dir . '/' . $path;
-            if (!file_exists($path)) {
-                mkdir($path);
-                $io->write('Created `' . $path . '` directory');
+
+            $fullpath = $dir . '/' . $path;
+            if (!file_exists($fullpath)) {
+                mkdir($fullpath);
+                $io->write('Created `' . $fullpath . '` directory');
+
+                if ($path == 'webroot/img/local') {
+                    $logosDirectory = $dir . '/webroot/img';
+                    copy($logosDirectory . '/logo_centro.png', $fullpath . '/logo_centro.png');
+                    copy($logosDirectory . '/logo_cover.png', $fullpath . '/logo_cover.png');
+                    copy($logosDirectory . '/logo_header.png', $fullpath . '/logo_header.png');
+                    copy($logosDirectory . '/logo_homepage.png', $fullpath . '/logo_homepage.png');
+                    copy($logosDirectory . '/logo_rete_header.png', $fullpath . '/logo_rete_header.png');
+                    copy($logosDirectory . '/logo_rete.png', $fullpath . '/logo_rete.png');
+                    copy($logosDirectory . '/logo_xs.png', $fullpath . '/logo_xs.png');
+                    copy($logosDirectory . '/logo.png', $fullpath . '/logo.png');
+                    $io->write('Application logos copied to `' . $fullpath . '` directory');
+                }
             }
         }
     }
@@ -230,8 +244,7 @@ class Installer
         $changePerms($dir . '/webroot/backgrounds', $worldWritable, $io);
         $changePerms($dir . '/webroot/files', $worldWritable, $io);
         $changePerms($dir . '/webroot/img/user/', $worldWritable, $io);
-        
-        
+        $changePerms($dir . '/webroot/img/local/', $worldWritable, $io);
     }
 
     /**
