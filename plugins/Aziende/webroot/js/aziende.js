@@ -390,7 +390,7 @@ $(document).on('click','.delete',function(e){
 
 	e.preventDefault();
 
-	if(confirm('Si è sicuri di voler eliminare l\'azienda ' + $(this).attr('data-denominazione') + '?')){
+	if(confirm("Si è sicuri di voler eliminare l'ente " + $(this).attr('data-denominazione') + "? L'operazione è irreversibile e verranno cancellate anche tutte le strutture e i relativi ospiti per cui le informazioni non saranno più disponibili neanche nei report storici. La cancellazione di un ente è da evitare ed usare solo nel caso l'ente sia stato creato per errore. Vuoi procedere comunque?")){
 		deleteAzienda($(this).attr('data-id'));
 	}
 
@@ -605,7 +605,7 @@ $(document).on('click','.delete-contatto',function(e){
 $(document).on('click','.delete-sede',function(e){	
 	e.preventDefault();
 	
-	if(confirm('Si è sicuri di voler eliminare la struttura?')){
+	if(confirm("Si è sicuri di voler eliminare la struttura? L'operazione è irreversibile e verranno cancellati anche tutti gli ospiti per cui le informazioni non saranno più disponibili neanche nei report storici. La cancellazione di una struttura è da evitare ed usare solo nel caso la struttura sia stata creata per errore. Vuoi procedere comunque?")){
 		deleteSede($(this).attr('data-id'));
 	}
 });
