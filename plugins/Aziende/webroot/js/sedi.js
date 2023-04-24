@@ -207,7 +207,7 @@ $(document).on('click','.delete',function(e){
 
 	e.preventDefault();
 
-	if(confirm('Si è sicuri di voler eliminare la struttura?')){
+	if(confirm("Si è sicuri di voler eliminare la struttura? L'operazione è irreversibile e verranno cancellati anche tutti gli ospiti per cui le informazioni non saranno più disponibili neanche nei report storici. La cancellazione di una struttura è da evitare ed usare solo nel caso la struttura sia stata creata per errore. Vuoi procedere comunque?")){
 		deleteSede($(this).attr('data-id'));
 	}
 

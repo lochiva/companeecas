@@ -5,6 +5,7 @@ use Aziende\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Cake\Core\Configure;
 
 /**
  * Reports Controller
@@ -104,7 +105,9 @@ class ReportsController extends AppController
 
 		$spreadsheet->setActiveSheetIndex(0);
 
-        $filename = str_replace('-', '.', $date)." TORINO";
+		$label = Configure::read('dbconfig.generico.REPORT_LABEL');
+
+        $filename = str_replace('-', '.', $date)." ".$label;
 
 		setcookie('downloadStarted', '1', false, '/');
 
