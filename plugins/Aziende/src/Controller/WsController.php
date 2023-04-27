@@ -281,10 +281,14 @@ class WsController extends AppController
         
                     if($azienda->logo){
                         $path = ROOT.DS.Configure::read('dbconfig.aziende.LOGO_PATH').$azienda->logo;
-                        $type = pathinfo($path, PATHINFO_EXTENSION);
-                        $dataImg = file_get_contents($path);
-                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($dataImg);
-                        $azienda->logo = $base64;
+                        if (file_exists($path)) {
+                            $type = pathinfo($path, PATHINFO_EXTENSION);
+                            $dataImg = file_get_contents($path);
+                            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($dataImg);
+                            $azienda->logo = $base64;
+                        } else {
+                            $azienda->logo = '';
+                        }
                     }
         
                     $data['azienda'] = $azienda;
