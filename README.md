@@ -47,7 +47,7 @@ delle option. Indirizzo pull request https://github.com/select2/select2/pull/453
 ## aggiornamento del progetto
 #aggiornare il codice dal repo con
 git pull
-#aggiornare il codice con compoere
+#aggiornare il codice con composer
 composer install
 #eseguire le migrazioni
 bin/cake migrations:migrate --no-lock
