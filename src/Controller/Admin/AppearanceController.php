@@ -1,20 +1,18 @@
 <?php
+/**
+ * Companee :    Appearance (https://www.companee.it)
+ * Copyright (c) lochiva , (http://www.lochiva.it)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link      http://cakephp.org CakePHP(tm) Project
+ * @since     0.2.9
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 namespace App\Controller\Admin;
-################################################################################
-#
-# Companee :   Appearance (https://www.companee.it)
-# Copyright (c) lochiva , (http://www.lochiva.it)
-#
-# Licensed under The GPL  License
-# For full copyright and license information, please see the LICENSE.txt
-# Redistributions of files must retain the above copyright notice.
-#
-# @copyright     Copyright (c) LOCHIVA , (https://www.lochiva.com)
-# @link          https://www.companee.it Companee project
-# @since         1.2.0
-# @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
-#
-################################################################################
 
 
 use App\Controller\AppController;
