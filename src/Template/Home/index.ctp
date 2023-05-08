@@ -2,6 +2,7 @@
 use Cake\Routing\Router;
 use Cake\Core\Configure;
 
+
 $user = $this->request->session()->read('Auth.User');
 ?>
 <?php //echo $this->Html->script('home'); ?>
