@@ -1,6 +1,6 @@
 <?php
 /**
-* Component is a plugin for manage attachment
+* Aziende is a plugin for manage attachment
 *
 * Companee :    Statements Notifications (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)

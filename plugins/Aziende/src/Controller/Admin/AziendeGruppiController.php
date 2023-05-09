@@ -9,11 +9,12 @@
 * For full copyright and license information, please see the LICENSE.txt
 * Redistributions of files must retain the above copyright notice.
 *
-* @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
-* @link          https://www.ires.piemonte.it/ 
+* @copyright     Copyright (c) LOCHIVA , (https://www.lochiva.com)
+* @link          https://www.companee.it Companee project
 * @since         1.2.0
 * @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
 */
+
 namespace Aziende\Controller\Admin;
 
 use Aziende\Controller\Admin\AppController;

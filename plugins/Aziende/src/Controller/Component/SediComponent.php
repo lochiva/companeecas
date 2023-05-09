@@ -1,6 +1,6 @@
 <?php
 /**
-* Component is a plugin for manage attachment
+* Aziende is a plugin for manage attachment
 *
 * Companee :    Sedi (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
