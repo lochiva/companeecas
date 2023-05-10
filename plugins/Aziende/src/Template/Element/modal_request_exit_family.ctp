@@ -2,7 +2,7 @@
 /**
 * Aziende is a plugin for manage attachment
 *
-* Companee :    modal request exit family  (https://www.companee.it)
+* Companee :    Modal Request Exit Family  (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
 * 
 * Licensed under The GPL  License

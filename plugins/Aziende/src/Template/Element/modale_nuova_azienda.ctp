@@ -2,7 +2,7 @@
 /**
 * Aziende is a plugin for manage attachment
 *
-* Companee :    modale nuova azienda  (https://www.companee.it)
+* Companee :    Modale Nuova Azienda  (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
 * 
 * Licensed under The GPL  License

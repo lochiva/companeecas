@@ -2,7 +2,7 @@
 /**
 * Aziende is a plugin for manage attachment
 *
-* Companee :    box search guest  (https://www.companee.it)
+* Companee :    Box Search Guest  (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
 * 
 * Licensed under The GPL  License

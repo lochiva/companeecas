@@ -2,7 +2,7 @@
 /**
 * Aziende is a plugin for manage attachment
 *
-* Companee :    presenze  (https://www.companee.it)
+* Companee :    Presenze  (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
 * 
 * Licensed under The GPL  License

@@ -2,7 +2,7 @@
 /**
 * Aziende is a plugin for manage attachment
 *
-* Companee :    include  (https://www.companee.it)
+* Companee :    Include  (https://www.companee.it)
 * Copyright (c) lochiva , (http://www.lochiva.it)
 *
 * Licensed under The GPL  License

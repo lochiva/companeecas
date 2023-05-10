@@ -2,7 +2,7 @@
 /**
 * Aziende is a plugin for manage attachment
 *
-* Companee :    modale nuova azienda OLD  (https://www.companee.it)
+* Companee :    Modale Nuova Azienda OLD  (https://www.companee.it)
 * Copyright (c) lochiva , (http://www.lochiva.it)
 *
 * Licensed under The GPL  License
