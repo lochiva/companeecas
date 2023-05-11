@@ -1,24 +1,6 @@
-# CakePHP Application Skeleton
 
-[![Build Status](https://api.travis-ci.org/cakephp/app.png)](https://travis-ci.org/cakephp/app)
-[![License](https://poser.pugx.org/cakephp/app/license.svg)](https://packagist.org/packages/cakephp/app)
 
-A skeleton for creating applications with [CakePHP](http://cakephp.org) 3.0.
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
-
-## Installation
-
-1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
-
-If Composer is installed globally, run
-```bash
-composer create-project --prefer-dist cakephp/app [app_name]
-```
-
-You should now be able to visit the path to where you installed the app and see
-the setup traffic lights.
 
 ## Configuration
 
@@ -43,6 +25,17 @@ Bisogna svuotare la cache di cake perchè i nuovi file di traduzione vengano car
 ## Select2 è stato modificato
 Select 2  è stato modificato da una pull request per la presenza di un bug sui disabled
 delle option. Indirizzo pull request https://github.com/select2/select2/pull/4537 
+
+##installazione del progetto
+## clonare il progetto dal repo
+## eseguire composer install
+## seguire le istruzioni
+## configurare config/app.php per la connessione al DB e l'invio delle email
+# caricare il file dbScheme.sql nel DB configurato
+# eseguire le migrazioni con 
+#bin/cake migrations:migrate --no-lock
+## accedere con l'utente admin Admin.2023! e cambiare la password
+# fine installazione
 
 ## aggiornamento del progetto
 #aggiornare il codice dal repo con
