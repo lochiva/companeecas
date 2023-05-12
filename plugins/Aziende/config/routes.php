@@ -1,6 +1,6 @@
 <?php
 /**
-* Attachment manager is a plugin for manage attachment
+* Aziende is a plugin for manage attachment
 *
 * Companee :    Routes  (https://www.companee.it)
 * Copyright (c) lochiva , (http://www.lochiva.it)
