@@ -1,6 +1,6 @@
 <?php
 /** 
-* Companee :  timeline_widget   (https://www.companee.it)
+* Companee :  Timeline widget   (https://www.companee.it)
 * Copyright (c) lochiva , (http://www.lochiva.it)
 *
 * Licensed under The GPL  License

@@ -2,7 +2,7 @@
 /**
 * Surveys is a plugin for manage attachment
 *
-* Companee :    Surveys Component (https://www.companee.it)
+* Companee :    Surveys (https://www.companee.it)
 * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
 * 
 * Licensed under The GPL  License

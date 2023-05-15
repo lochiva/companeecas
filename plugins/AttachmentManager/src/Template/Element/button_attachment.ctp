@@ -2,7 +2,7 @@
 /**
 * Attachment manager is a plugin for manage attachment
 *
-* Companee :    Attachment   (https://www.companee.it)
+* Companee :    Button Attachment   (https://www.companee.it)
 * Copyright (c) lochiva , (http://www.lochiva.it)
 *
 * Licensed under The GPL  License
