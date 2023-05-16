@@ -4669,7 +4669,7 @@ class WsController extends AppController
 
                 } else {
                     setcookie('downloadStarted', '1', false, '/');
-                    $this->Flash->error('Impossibiletrtr creare il file ZIP. Non ci sono file da inserire.');
+                    $this->Flash->error('Impossibile creare il file ZIP. Non ci sono file da inserire.');
                     $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
                     return $this->response;
                 }
