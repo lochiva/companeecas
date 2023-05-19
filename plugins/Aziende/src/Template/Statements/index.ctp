@@ -12,7 +12,7 @@ echo $this->Html->script( 'Aziende.statements.js' );
 <section class="content-header">
     <h1>
         <?=__c('Rendiconti')?>
-        <small>Gestione <?=__c('rendicontinti')?></small>
+        <small>Gestione <?=__c('rendiconti enti')?></small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
