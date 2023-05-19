@@ -4552,19 +4552,16 @@ class WsController extends AppController
             $firme = TableRegistry::get('Aziende.PresenzeUpload')->find('all')
                 ->select(['id', 'sede_id', 'date', 'file', 'filepath', 'deleted'])
                 ->select(['code_centro' => 'Sedi.code_centro'])
-                ->leftJoinWith('Sedi');
+                ->leftJoinWith('Sedi')
+                ->where(['PresenzeUpload.sede_id IN' => $agrToSe])
+                ->where(['PresenzeUpload.date'])
 
-            if (!empty($agrToSe)) {
-                $firme->where(['PresenzeUpload.sede_id IN' => $agrToSe]);
-            }
-
-            $firme->where(['PresenzeUpload.date'])
+      
                 ->where(function (QueryExpression $exp, Query $q) use ($statement) {
                     return $exp->between('PresenzeUpload.date', $statement->period_start_date, $statement->period_end_date);
                 })
                 ->groupBy('code_centro')
                 ->toArray();
-
             //Eliminazione vecchio archivio se presente
             if (file_exists($archivePath)) {
                 unlink($archivePath);
