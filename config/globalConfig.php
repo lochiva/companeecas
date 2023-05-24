@@ -14,8 +14,7 @@ return [
 			'surveys_chapters' => 'un capitolo del questionario', 'surveys_to_structures' => 'una relazione tra questionario e sede',
 			'surveys_chapters_contents' => 'un testo standard per questionari', 'reports' => 'una segnalazione','surveys_answer_data'=>'un dato' ,
 			'guests' => 'un ospite','statement_company'=>'azienda ATI','presenze' => 'la presenza di un ospite',
-			'presenze_upload'=>'il caricamento del file delle presenze','agreements'=>'convenzioni','agreements_companies'=>'aziende',
-			'statements_status_history'=>'storico',
+			'presenze_upload'=>'il caricamento del file delle presenze','costs'=>'costi','statements_notifications'=>'notifica'
 		],
 		'excludeEntity' => [
 			'users_to_groups','groups', 'guests_notifications'

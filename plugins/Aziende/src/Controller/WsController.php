@@ -1,4 +1,19 @@
 <?php
+/**
+* Aziende is a plugin for manage attachment
+*
+* Companee :    Ws (https://www.companee.it)
+* Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+* 
+* Licensed under The GPL  License
+* For full copyright and license information, please see the LICENSE.txt
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+* @link          https://www.ires.piemonte.it/ 
+* @since         1.2.0
+* @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
+*/
 namespace Aziende\Controller;
 
 use Cake\Routing\Router;
@@ -4552,19 +4567,16 @@ class WsController extends AppController
             $firme = TableRegistry::get('Aziende.PresenzeUpload')->find('all')
                 ->select(['id', 'sede_id', 'date', 'file', 'filepath', 'deleted'])
                 ->select(['code_centro' => 'Sedi.code_centro'])
-                ->leftJoinWith('Sedi');
+                ->leftJoinWith('Sedi')
+                ->where(['PresenzeUpload.sede_id IN' => $agrToSe])
+                ->where(['PresenzeUpload.date'])
 
-            if (!empty($agrToSe)) {
-                $firme->where(['PresenzeUpload.sede_id IN' => $agrToSe]);
-            }
-
-            $firme->where(['PresenzeUpload.date'])
+      
                 ->where(function (QueryExpression $exp, Query $q) use ($statement) {
                     return $exp->between('PresenzeUpload.date', $statement->period_start_date, $statement->period_end_date);
                 })
                 ->groupBy('code_centro')
                 ->toArray();
-
             //Eliminazione vecchio archivio se presente
             if (file_exists($archivePath)) {
                 unlink($archivePath);
