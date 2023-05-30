@@ -317,11 +317,11 @@ function loadInputModale(idSede){
 	    dataType: "json",
 	    success : function (data,stato) {
 
-	        if(data.response == "OK"){
+	        if(data.response === "OK"){
 
 	        	$('[name="id"]').val(idSede);
             $('[name="id_azienda"]').val(idAzienda);
-            if (role == 'admin') {
+            if (role === 'admin' || role === 'area_iv' || role === 'ragioneria') {
                 $('#inputApproved').prop('checked', data.data.approved);
             }
             $('[name="code_centro"]').val(data.data.code_centro);
