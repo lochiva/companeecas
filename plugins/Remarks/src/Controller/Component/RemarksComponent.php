@@ -157,9 +157,9 @@ class RemarksComponent extends Component
 		$opt['alt'] = 'User image';
 
 		if(file_exists(WWW_ROOT.'img/user/'.$userId.'.jpg')){ 
-			return '<img src="'.Router::url("/webroot/img/user/".$userId.".jpg").'" alt="'.$opt['alt'].'" class="'.$opt['class'].'" />';
+			return '<img src="'.Router::url("/img/user/".$userId.".jpg").'" alt="'.$opt['alt'].'" class="'.$opt['class'].'" />';
 		}else{
-			return '<img src="'.Router::url("/webroot/img/user.png").'" alt="'.$opt['alt'].'" class="'.$opt['class'].'" />';
+			return '<img src="'.Router::url("/img/user.png").'" alt="'.$opt['alt'].'" class="'.$opt['class'].'" />';
 		}
 	}
 

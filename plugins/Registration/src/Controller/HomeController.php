@@ -94,7 +94,7 @@ class HomeController extends AppController
 			$random = rand(0, count($backgrounds)-1);
 			$background = Router::url('/').$backgrounds[$random]->path.$backgrounds[$random]->name;
 		}else{
-			$background = Router::url('/').'webroot/img/bg-login.jpg';
+			$background = Router::url('/').'img/bg-login.jpg';
 		}
 
 		$this->set('background', $background);
