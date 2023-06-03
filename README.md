@@ -74,3 +74,6 @@ composer install
 bin/cake migrations:migrate --no-lock  
 
  ```  
+
+## License
+Il software è licenziato GNU General Public License v3.0 come descritto nel file LICENSE.txt
