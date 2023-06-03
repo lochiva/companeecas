@@ -1,8 +1,5 @@
 
-## Configuration
 
-Read and edit `config/app.php` and setup the 'Datasources' and any other
-configuration relevant for your application.
 
 ## Se si intende aggiungere del codice 
 ### Bake template e controller Admin per i plugin
@@ -47,8 +44,8 @@ accedere con l'utente admin Admin.2023! e cambiare la password
 si può inserire in crontab 
 ``` 
 5 4 * * * find /DIR--DI-INSTALLAZIONE/FILES/statements/*.zip -mtime +1  -exec rm {} \;  
-sostituendo DIR--DI-INSTALLAZIONE con il percorso del file system in cui è installato il sofware  
 ``` 
+sostituendo DIR--DI-INSTALLAZIONE con il percorso del file system in cui è installato il sofware  
 ### per cancellare i dati vecchi dalle tabelle action_log e access_log
 si può usare questo codice da inserire in un file sh ed eseguirlo via cron: 
  ```  
@@ -63,9 +60,17 @@ echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " | 
 ``` 
 
 ## scaricare gli aggiornamenti per mantenere il software aggiornato
-### aggiornare il codice dal repo con
+>Si può usare uno script da eseguire al bisogno
+
+ ```  
+
+#aggiornare il codice dal repo con
 git pull  
-### aggiornare il codice con composer
+
+#aggiornare il codice con composer
 composer install  
-### eseguire le migrazioni
+
+#eseguire le migrazioni
 bin/cake migrations:migrate --no-lock  
+
+ ```  
