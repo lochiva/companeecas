@@ -31,13 +31,13 @@ composer 1
 mysql o mariaDB impostando sql_mode= ''  
 
 ## installazione del progetto
- clonare il progetto dal repo  
- eseguire composer install  
- seguire le istruzioni  
- configurare config/app.php per la connessione al DB e l'invio delle email  
- caricare il file dbScheme.sql nel DB configurato  
- eseguire le migrazioni con  
- bin/cake migrations:migrate --no-lock  
+ * clonare il progetto dal repo  
+ * eseguire composer install  
+ * seguire le istruzioni  
+ * configurare config/app.php per la connessione al DB e l'invio delle email  
+ * caricare il file dbScheme.sql nel DB configurato  
+ * eseguire le migrazioni con  
+ * bin/cake migrations:migrate --no-lock  
 
 ## primo accesso
 accedere con l'utente admin Admin.2023! e cambiare la password  
@@ -45,21 +45,22 @@ accedere con l'utente admin Admin.2023! e cambiare la password
 ## inserire gli script di manutenzione
 ### per cancellare i file temporanei vecchi degli zip dei consuntivi
 si può inserire in crontab 
-
+``` 
 5 4 * * * find /DIR--DI-INSTALLAZIONE/FILES/statements/*.zip -mtime +1  -exec rm {} \;  
 sostituendo DIR--DI-INSTALLAZIONE con il percorso del file system in cui è installato il sofware  
-
+``` 
 ### per cancellare i dati vecchi dalle tabelle action_log e access_log
 si può usare questo codice da inserire in un file sh ed eseguirlo via cron: 
-  
+ ```  
 #!/bin/bash  
-US="DBUSER"  
+UU="DBUSER"  
 PP="DBPASS"  
 DB="DBNAME"  
 
-#cancello  i vecchi log
-echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${US} -p${PP} ${DB}  
-echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${US} -p${PP} ${DB}  
+#cancello  i vecchi log  
+echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${UU} -p${PP} ${DB}  
+echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${UU} -p${PP} ${DB}  
+``` 
 
 ## scaricare gli aggiornamenti per mantenere il software aggiornato
 ### aggiornare il codice dal repo con
