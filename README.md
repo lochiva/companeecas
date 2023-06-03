@@ -4,8 +4,8 @@
 Read and edit `config/app.php` and setup the 'Datasources' and any other
 configuration relevant for your application.
 
-## se si intende aggiungere del codice 
-## Bake template e controller Admin per i plugin
+## Se si intende aggiungere del codice 
+### Bake template e controller Admin per i plugin
 bake del controller se il model è gia presente, in quel caso commentare le relazioni,
 per evitare che siano presenti nell'edit  
 $ bin/cake bake controller Nome_model --plugin nome_plugin --prefix admin  
@@ -13,7 +13,7 @@ bake del template
 $ bin/cake bake template Nome_model --plugin nome_plugin --prefix admin  
 Dopo aggiungere il nuovo controller nel config/localconfig.php nell'array del controller del
 pluginUsed, con nome del controller come chiave.  
-## se si intende usare il sistema delle traduzione
+### se si intende usare il sistema delle traduzione
 Estrazione del pot file per le traduzioni  
 $ bin/cake i18n extract --plugin nome_plugin  
 
@@ -25,7 +25,7 @@ Bisogna svuotare la cache di cake perchè i nuovi file di traduzione vengano car
 Select 2  è stato modificato da una pull request per la presenza di un bug sui disabled
 delle option. Indirizzo pull request https://github.com/select2/select2/pull/4537 
 
-## caratteristiche del server: 
+##  caratteristiche del server: 
 php 7.4  
 composer 1  
 mysql o mariaDB impostando sql_mode= ''  
@@ -42,15 +42,14 @@ mysql o mariaDB impostando sql_mode= ''
 ## primo accesso
 accedere con l'utente admin Admin.2023! e cambiare la password  
 
-
 ## inserire gli script di manutenzione
-### per cancellare i file temporaneti vecchi degli zip dei consuntivi,
-inserire in crontab 
+### per cancellare i file temporanei vecchi degli zip dei consuntivi
+si può inserire in crontab 
 
 5 4 * * * find /DIR--DI-INSTALLAZIONE/FILES/statements/*.zip -mtime +1  -exec rm {} \;  
 sostituendo DIR--DI-INSTALLAZIONE con il percorso del file system in cui è installato il sofware  
 
-### cancellare i dati vecchi dalle tabelle action_log e access_log
+### per cancellare i dati vecchi dalle tabelle action_log e access_log
 si può usare questo codice da inserire in un file sh ed eseguirlo via cron: 
   
 #!/bin/bash  
@@ -58,13 +57,11 @@ UU="DBUSER"
 PP="DBPASS"  
 DB="DBNAME"  
 
-
-
-### cancello  i vecchi log
+#cancello  i vecchi log
 echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u $UU -p${PP} $DB  
 echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u $UU -p${PP} $DB  
 
-## scaricare gli aggiornamenti
+## scaricare gli aggiornamenti per mantenere il software aggiornato
 ### aggiornare il codice dal repo con
 git pull  
 ### aggiornare il codice con composer
