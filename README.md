@@ -58,8 +58,8 @@ PP="DBPASS"
 DB="DBNAME"  
 
 #cancello  i vecchi log
-echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u $UU -p${PP} $DB  
-echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u $UU -p${PP} $DB  
+echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${UU} -p${PP} ${DB}  
+echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${UU} -p${PP} ${DB}  
 
 ## scaricare gli aggiornamenti per mantenere il software aggiornato
 ### aggiornare il codice dal repo con
