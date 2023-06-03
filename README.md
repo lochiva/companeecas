@@ -53,13 +53,13 @@ sostituendo DIR--DI-INSTALLAZIONE con il percorso del file system in cui è inst
 si può usare questo codice da inserire in un file sh ed eseguirlo via cron: 
   
 #!/bin/bash  
-UU="DBUSER"  
+US="DBUSER"  
 PP="DBPASS"  
 DB="DBNAME"  
 
 #cancello  i vecchi log
-echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${UU} -p${PP} ${DB}  
-echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${UU} -p${PP} ${DB}  
+echo " delete FROM  access_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${US} -p${PP} ${DB}  
+echo " delete FROM  action_log WHERE  created < (NOW() - INTERVAL 3 MONTH ) " |  mysql -u ${US} -p${PP} ${DB}  
 
 ## scaricare gli aggiornamenti per mantenere il software aggiornato
 ### aggiornare il codice dal repo con
