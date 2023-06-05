@@ -71,7 +71,7 @@ git pull
 composer install  
 
 #eseguire le migrazioni
-bin/cake migrations:migrate --no-lock  
+bin/cake migrations migrate --no-lock  
 
  ```  
 
