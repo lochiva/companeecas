@@ -58,18 +58,19 @@ class AppearanceController extends AppController
         //Salvataggio immagine nella cartella webroot/backgrounds
         $background = $this->request->data['background_image'];
 
-        $path = 'backgrounds'.DS;
+        $filepath = 'webroot'.DS.'backgrounds'.DS;
+        $displaypath = 'backgrounds'.DS;
         $name = $background['name'];
 
-        if(!is_dir(ROOT.DS.$path) && !mkdir(ROOT.DS.$path, 0755, true)){
-            $result['msg'] = "Errore durante il salvataggio del file. ROOT.DS.$path ";
+        if(!is_dir(ROOT.DS.$filepath) && !mkdir(ROOT.DS.$filepath, 0755, true)){
+            $result['msg'] = "Errore durante il salvataggio del file. ROOT.DS.$filepath ";
         }else{
 
-            if(file_exists(ROOT.DS.$path.$name)){
-                $result['msg'] = "Esiste gia un\'immagine di sfondo con questo nome.";
+            if(file_exists(ROOT.DS.$filepath.$name)){
+                $result['msg'] = "Esiste gia un'immagine di sfondo con questo nome.";
             }else{
 
-                if(!move_uploaded_file($background['tmp_name'], ROOT.DS.$path.DS.$name) ){
+                if(!move_uploaded_file($background['tmp_name'], ROOT.DS.$filepath.DS.$name) ){
                     $result['msg'] = "Errore durante il salvataggio del file.";
                 }else{
 
@@ -79,7 +80,7 @@ class AppearanceController extends AppController
                     $entity = $backgrounds->newEntity();
 
                     $entity->name = $name;
-                    $entity->path = $path;
+                    $entity->path = $displaypath;
                     
                     if(!$backgrounds->save($entity)){
                         $result['msg'] = "Errore durante la creazione del record nel database.";
@@ -110,8 +111,8 @@ class AppearanceController extends AppController
 
             $background = $backgrounds->get($backgroundId);
 
-            $path = ROOT.DS.'backgrounds'.DS;
-            $pathDeleted = ROOT.DS.'backgrounds'.DS.'deleted'.DS;
+            $path = ROOT.DS.'webroot'.DS.'backgrounds'.DS;
+            $pathDeleted = ROOT.DS.'webroot'.DS.'backgrounds'.DS.'deleted'.DS;
             $name = $background->name;
             $nameDeleted = $background->name;
 
