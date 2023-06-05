@@ -58,7 +58,7 @@ class AppearanceController extends AppController
         //Salvataggio immagine nella cartella webroot/backgrounds
         $background = $this->request->data['background_image'];
 
-        $path = 'webroot'.DS.'backgrounds'.DS;
+        $path = 'backgrounds'.DS;
         $name = $background['name'];
 
         if(!is_dir(ROOT.DS.$path) && !mkdir(ROOT.DS.$path, 0755, true)){
@@ -110,8 +110,8 @@ class AppearanceController extends AppController
 
             $background = $backgrounds->get($backgroundId);
 
-            $path = ROOT.DS.'webroot'.DS.'backgrounds'.DS;
-            $pathDeleted = ROOT.DS.'webroot'.DS.'backgrounds'.DS.'deleted'.DS;
+            $path = ROOT.DS.'backgrounds'.DS;
+            $pathDeleted = ROOT.DS.'backgrounds'.DS.'deleted'.DS;
             $name = $background->name;
             $nameDeleted = $background->name;
 
