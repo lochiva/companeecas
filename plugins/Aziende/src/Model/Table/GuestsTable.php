@@ -206,8 +206,17 @@ class GuestsTable extends AppTable
         $rules->add($rules->existsIn(['country_birth'], 'Countries'));
         $rules->add($rules->existsIn(['status_id'], 'GuestsStatuses'));
         $rules->add($rules->existsIn(['exit_request_status_id'], 'GuestsExitRequestStatuses'));
-        $rules->add($rules->existsIn(['original_guest_id'], 'OriginalGuests'));
         $rules->add($rules->existsIn(['educational_qualification_id'], 'EducationalQualifications'));
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['original_guest_id'])) {
+                    $originalGuest = $this->triggerBeforeFind(false)->find()->where(['id' => $entity['original_guest_id']])->first();
+                    return !empty($originalGuest);
+                }
+                return true;
+            },
+            ['errorField' => 'original_guest_id', 'message' => 'Questo valore non esiste']
+        );
 
         return $rules;
     }

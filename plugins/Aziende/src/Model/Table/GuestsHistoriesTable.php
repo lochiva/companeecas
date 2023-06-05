@@ -20,6 +20,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Table\AppTable;
+use Cake\ORM\TableRegistry;
 
 /**
  * GuestsHistories Model
@@ -45,7 +47,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class GuestsHistoriesTable extends Table
+class GuestsHistoriesTable extends AppTable
 {
     /**
      * Initialize method
@@ -151,16 +153,106 @@ class GuestsHistoriesTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['guest_id'], 'Guests'));
-        $rules->add($rules->existsIn(['azienda_id'], 'Aziende'));
-        $rules->add($rules->existsIn(['sede_id'], 'Sedi'));
-        $rules->add($rules->existsIn(['operator_id'], 'Users'));
-        $rules->add($rules->existsIn(['guest_status_id'], 'GuestsStatuses'));
-        $rules->add($rules->existsIn(['guest_exit_request_status_id'], 'GuestsExitRequestStatuses'));
-        $rules->add($rules->existsIn(['exit_type_id'], 'ExitTypes'));
-        $rules->add($rules->existsIn(['cloned_guest_id'], 'ClonedGuests'));
-        $rules->add($rules->existsIn(['destination_id'], 'Destinations'));
-        $rules->add($rules->existsIn(['provenance_id'], 'Provenances'));
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['guest_id'])) {
+                    $guest = TableRegistry::get('Aziende.Guests')->triggerBeforeFind(false)->find()->where(['id' => $entity['guest_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'guest_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['azienda_id'])) {
+                    $guest = TableRegistry::get('Aziende.Aziende')->triggerBeforeFind(false)->find()->where(['id' => $entity['azienda_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'azienda_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['sede_id'])) {
+                    $guest = TableRegistry::get('Aziende.Sedi')->triggerBeforeFind(false)->find()->where(['id' => $entity['sede_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'sede_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['operator_id'])) {
+                    $guest = TableRegistry::get('Users')->triggerBeforeFind(false)->find()->where(['id' => $entity['operator_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'operator_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['guest_status_id'])) {
+                    $guest = TableRegistry::get('Aziende.GuestsStatuses')->triggerBeforeFind(false)->find()->where(['id' => $entity['guest_status_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'guest_status_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['guest_exit_request_status_id'])) {
+                    $guest = TableRegistry::get('Aziende.GuestsStatuses')->triggerBeforeFind(false)->find()->where(['id' => $entity['guest_exit_request_status_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'guest_exit_request_status_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['exit_type_id'])) {
+                    $guest = TableRegistry::get('Aziende.GuestsExitTypes')->triggerBeforeFind(false)->find()->where(['id' => $entity['exit_type_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'exit_type_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['cloned_guest_id'])) {
+                    $guest = TableRegistry::get('Aziende.Guests')->triggerBeforeFind(false)->find()->where(['id' => $entity['cloned_guest_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'cloned_guest_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['destination_id'])) {
+                    $guest = TableRegistry::get('Aziende.Sedi')->triggerBeforeFind(false)->find()->where(['id' => $entity['destination_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'destination_id', 'message' => 'Questo valore non esiste']
+        );
+        $rules->add(
+            function ($entity, $options) {
+                if (!empty($entity['provenance_id'])) {
+                    $guest = TableRegistry::get('Aziende.Sedi')->triggerBeforeFind(false)->find()->where(['id' => $entity['provenance_id']])->first();
+                    return !empty($guest);
+                }
+                return true;
+            },
+            ['errorField' => 'provenance_id', 'message' => 'Questo valore non esiste']
+        );
 
         return $rules;
     }
