@@ -20,6 +20,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Table\AppTable;
 
 /**
  * GuestsStatuses Model
@@ -35,7 +36,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class GuestsStatusesTable extends Table
+class GuestsStatusesTable extends AppTable
 {
     /**
      * Initialize method
