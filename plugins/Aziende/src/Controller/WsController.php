@@ -4562,21 +4562,25 @@ class WsController extends AppController
             $archivePath = $statementsFilesPath.$folderPath.$archiveName;
 
             // Firme
-            $agrToSe = new Collection($statement->agreement->agreements_to_sedi);
-            $agrToSe = $agrToSe->extract('sede_id')->toList();
-            $firme = TableRegistry::get('Aziende.PresenzeUpload')->find('all')
+            if (!empty($statement->agreement->agreements_to_sedi)) {
+                $agrToSe = new Collection($statement->agreement->agreements_to_sedi);
+                $agrToSe = $agrToSe->extract('sede_id')->toList();
+    
+                $firme = TableRegistry::get('Aziende.PresenzeUpload')->find('all')
                 ->select(['id', 'sede_id', 'date', 'file', 'filepath', 'deleted'])
                 ->select(['code_centro' => 'Sedi.code_centro'])
                 ->leftJoinWith('Sedi')
                 ->where(['PresenzeUpload.sede_id IN' => $agrToSe])
                 ->where(['PresenzeUpload.date'])
-
-      
                 ->where(function (QueryExpression $exp, Query $q) use ($statement) {
                     return $exp->between('PresenzeUpload.date', $statement->period_start_date, $statement->period_end_date);
                 })
                 ->groupBy('code_centro')
                 ->toArray();
+            } else {
+                $firme = [];
+            }
+
             //Eliminazione vecchio archivio se presente
             if (file_exists($archivePath)) {
                 unlink($archivePath);
