@@ -988,4 +988,56 @@ class GuestComponent extends Component
 		return $data;
 	}
 
+	public function getGuestsDataForPresenze($sedeId, $date)
+	{
+		$guests = TableRegistry::get('Aziende.Guests')->getGuestsForPresenze($sedeId, $date);
+
+		foreach ($guests as $index => $guest) {
+			if ($guest['presente'] === null) {
+				$guest['not_saved'] = 1;
+			} else {
+				$guest['not_saved'] = 0;
+			}
+			$guest['presente'] = filter_var($guest['presente'], FILTER_VALIDATE_BOOLEAN);
+
+			//Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+			$warningPresenze = 0;
+			$dangerPresenze = 0;
+			if (!$guest['suspended']) {
+				$lastPresenzaDate = '';
+				$lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $date);
+				if (!empty($lastPresenza)) {
+					$lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+				} elseif (!empty($guest['check_in_date'])) {
+					$lastPresenzaDate = $guest['check_in_date']->format('Y-m-d');
+				}
+				if (!empty($lastPresenzaDate)) {
+					$threeDaysBefore = date('Y-m-d', strtotime($date.' -3 days'));
+					if ($lastPresenzaDate < $date && $lastPresenzaDate >= $threeDaysBefore) {
+						$warningPresenze = 1;
+					} elseif ($lastPresenzaDate < $threeDaysBefore) {
+						$dangerPresenze = 1;
+					}
+				}
+			}
+
+			$guest['warning_presenze'] = $warningPresenze;
+			$guest['danger_presenze'] = $dangerPresenze;
+
+			$guest['check_in_date'] = $guest['check_in_date'] ? $guest['check_in_date']->format('d/m/Y') : '';
+			$guest['birthdate'] = $guest['birthdate']->format('d/m/Y');
+		}
+
+		$presenzeTable = TableRegistry::get('Aziende.Presenze');
+		//totale presenze ospiti per il giorno
+		$presenzeForDay = $presenzeTable->getPresenzeSedeForDay($sedeId, $date);
+		$countPresenzeDay = count($presenzeForDay);
+		//totale presenze ospiti per il mese
+		$month = substr($date, 0, 7);
+		$presenzeForMonth = $presenzeTable->getPresenzeSedeForMonth($sedeId, $month);
+		$countPresenzeMonth = count($presenzeForMonth);
+
+		return ['guests' => $guests, 'count_presenze_day' => $countPresenzeDay, 'count_presenze_month' => $countPresenzeMonth];
+	}
+
 }
