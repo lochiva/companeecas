@@ -2925,7 +2925,7 @@ class WsController extends AppController
                     }
                 } else {
                     $this->_result['response'] = "KO";
-                    $this->_result['msg'] = "Errore nel salvataggio delle presenze: dati non validi. Si prega di ricaricare la pagina e riprovare.";
+                    $this->_result['msg'] = "[1932] Errore nel salvataggio delle presenze: dati non validi. Si prega di ricaricare la pagina e riprovare.";
                 }
             } else {
                 $this->_result['response'] = "KO";
