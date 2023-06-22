@@ -91,6 +91,7 @@ var app = new Vue({
         },
 
         loadGuests () {
+            this.guests = [];
 			var formatted_date = moment(this.date).format('YYYY-MM-DD');
             axios.get(pathServer + 'aziende/ws/getGuestsForPresenze?sede='+this.sede_id+'&date='+formatted_date)
                 .then(res => {  
@@ -138,7 +139,17 @@ var app = new Vue({
 
 			params.append('sede', this.sede_id);
 			params.append('date', moment(this.date).format('YYYY-MM-DD'));
-            params.append('guests', JSON.stringify(this.guests));
+
+            let guestsData = [];
+            this.guests.forEach((guest) => {
+                guestsData.push({
+                    guest_id: guest.id,
+                    presenza_id: guest.id_presenza,
+                    presente: guest.presente,
+                    note: guest.note
+                })
+            });
+            params.append('guests', JSON.stringify(guestsData));
 
             axios.post(pathServer + 'aziende/ws/saveGuestsPresenze', params)
                 .then(res => {
