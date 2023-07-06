@@ -254,6 +254,8 @@ class GuestsTable extends AppTable
 
     public function beforeSave($event, $entity, $options)
     {
+        $this->triggerBeforeFind(true);
+
         // Se presente controllo unicità CUI e ID Vestanet (se non minore)
         if (!empty($entity->cui) || !empty($entity->vestanet_id)) {
             // Controllo CUI
