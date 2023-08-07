@@ -40,6 +40,29 @@
 							<button type="button" class="btn btn-primary" @click="downloadExitDocument(exitData.file)"><i class="fa fa-download"></i> Scarica documento</button>
 						</div>
 					</div>
+
+					<div class="form-group"> 
+						<div class="col-sm-12">
+							<label>Documenti</label><br>
+							<span v-if="!decreti" style="display:inline-block;" data-toggle="tooltip" data-placement="top" v-bind:title="exitData.type.modello_decreto < 1 ? 'Questa tipologia di uscita non prevede la generazione di un decreto' : '' ">
+								<button  type="button" class="btn btn-primary exit-survey" @click="createInterview('decreto')" v-bind:disabled="exitData.type.modello_decreto < 1">
+									Genera decreto
+								</button>
+							</span>
+							<a v-else type="button" class="btn btn-primary" v-bind:href="decreti_url" target="_blank" data-toggle="tooltip" data-placement="top" title="Visualizzare, compilare e scaricare il decreto">
+								Visualizza decreto
+							</a>
+							<div v-if="!notifiche" style="display:inline-block;" data-toggle="tooltip" data-placement="top" v-bind:title="exitData.type.modello_notifica < 1 ? 'Questa tipologia di uscita non prevede la generazione di una notifica' : '' ">
+								<button type="button" class="btn btn-primary exit-survey" @click="createInterview('notifica')" v-bind:disabled="exitData.type.modello_notifica < 1">
+									Genera notifica
+								</button>
+							</div>
+							<a v-else type="button" class="btn btn-primary" v-bind:href="notifiche_url" target="_blank" data-toggle="tooltip" data-placement="top" title="Visualizzare, compilare e scaricare la notifica">
+								Visualizza notifica
+							</a>
+						</div>
+					</div>
+
 				</form>
 			</div>
 			<div class="modal-footer">
