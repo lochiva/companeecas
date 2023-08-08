@@ -4077,13 +4077,27 @@ class WsController extends AppController
 
                     $button.= '</div>';
                     ########### buttons END
+
+                    $date = '';
+
+                    if(isset($value->approved_date) && $value->status->id == 2) {
+                        $date = $value->approved_date->format('d/m/Y');
+                    } else {
+                        if(!empty($value->history)) {
+                                // Ordiniamo qui 
+                                $collection = new Collection($value->history);
+                                $collection = $collection->sortBy('created', SORT_DESC);
+                                $first = $collection->first();
+                                $date = $first->created->format('d/m/Y');
+                        }
+                    }
                     
                     $out['rows'][] = array(
                         $value->company->name,
                         isset($value->company->agreement) ? $value->company->agreement->cig : "",
                         $value->statement->period_label,
                         $value->status->name,
-                        isset($value->approved_date) && $value->status->id == 2 ? $value->approved_date->format('d/m/Y') : '',
+                        $date,
                         $button
 
                     );

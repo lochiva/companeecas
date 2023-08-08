@@ -76,7 +76,7 @@ class StatementCompanyComponent extends Component
             4 => ['val' => 'StatementCompany.approved_date' , 'type' => 'date']
         ];
 
-        $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements']];
+        $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements'], 'History'];
         $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path'];
         $opt['conditions']['Statements.deleted'] = false;
 
