@@ -4080,16 +4080,12 @@ class WsController extends AppController
 
                     $date = '';
 
-                    if(isset($value->approved_date) && $value->status->id == 2) {
-                        $date = $value->approved_date->format('d/m/Y');
-                    } else {
-                        if(!empty($value->history)) {
-                                // Ordiniamo qui 
-                                $collection = new Collection($value->history);
-                                $collection = $collection->sortBy('created', SORT_DESC);
-                                $first = $collection->first();
-                                $date = $first->created->format('d/m/Y');
-                        }
+                    if(!empty($value->history)) {
+                            // Ordiniamo qui 
+                            $collection = new Collection($value->history);
+                            $collection = $collection->sortBy('created', SORT_DESC);
+                            $first = $collection->first();
+                            $date = $first->created->format('d/m/Y');
                     }
                     
                     $out['rows'][] = array(
