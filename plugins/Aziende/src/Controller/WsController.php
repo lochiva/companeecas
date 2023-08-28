@@ -2260,6 +2260,8 @@ class WsController extends AppController
                     $guest['history_exit_type_modello_decreto'] = $exitType['modello_decreto'];
                     $guest['history_exit_type_modello_notifica'] = $exitType['modello_notifica'];
 
+                    $guest['history_exit_type_required_request'] = $exitType['required_request'];
+
                     $sig = TableRegistry::get('Surveys.SurveysInterviewsGuests');
 
                     $decreti = $sig->find()

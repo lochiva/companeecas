@@ -41,7 +41,7 @@
 						</div>
 					</div>
 
-					<div class="form-group"> 
+					<div class="form-group" v-if="!exitData.type.required_request"> 
 						<div class="col-sm-12">
 							<label>Documenti</label><br>
 							<span v-if="!decreti" style="display:inline-block;" data-toggle="tooltip" data-placement="top" v-bind:title="exitData.type.modello_decreto < 1 ? 'Questa tipologia di uscita non prevede la generazione di un decreto' : '' ">

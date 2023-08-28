@@ -442,6 +442,10 @@ var app = new Vue({
                             this.exitData.type.name = res.data.data.history_exit_type_name;
                             this.exitData.type.modello_decreto = res.data.data.history_exit_type_modello_decreto;
                             this.exitData.type.modello_decreto = res.data.data.history_exit_type_modello_notifica;
+                            this.exitData.type.required_request = res.data.data.history_exit_type_required_request;
+
+                            this.decreti = res.data.data.decreti;
+                            this.notifiche = res.data.data.notifiche;
                         }
                         if (this.guestStatus == 4 || this.guestStatus == 5 || this.guestStatus == 6) {
                             this.transferData.destination = res.data.data.history_destination;
