@@ -405,46 +405,49 @@ class SurveysComponent extends Component
 
 			foreach($guest['family'] as $fam) {
 
-				$values['soggetto_e_familiari'] .= "<br>";
+				if($guest['id'] !== $fam->guest['id']) {
+					$values['soggetto_e_familiari'] .= "<br>";
 
-				if(!empty($fam->guest['surname'])) {
-					$values['soggetto_e_familiari'] .= $fam->guest['surname'] . " ";
-				} else {
-					$values['soggetto_e_familiari'] .= "/ ";
+					if(!empty($fam->guest['surname'])) {
+						$values['soggetto_e_familiari'] .= $fam->guest['surname'] . " ";
+					} else {
+						$values['soggetto_e_familiari'] .= "/ ";
+					}
+			
+					if(!empty($fam->guest['name'])) {
+						$values['soggetto_e_familiari'] .= $fam->guest['name'] . " ";
+					} else {
+						$values['soggetto_e_familiari'] .= "/ ";
+					}
+			
+					if(!empty($fam->guest['birthdate'])) {
+						$bDay = $fam->guest['birthdate']->format('d/m/Y');
+						$values['soggetto_e_familiari'] .= "nato/a il $bDay ";
+					} else {
+						$values['soggetto_e_familiari'] .= "nato/a il / ";
+					}
+			
+					if(!empty($fam->guest['country_birth'])) {
+						$country = $fam->guest->country['des_luo'];
+						$values['soggetto_e_familiari'] .= "in $country, ";
+					} else {
+						$values['soggetto_e_familiari'] .= "in /, ";
+					}
+			
+					if(!empty($fam->guest['vestanet_id'])) {
+						$values['soggetto_e_familiari'] .= "Vestanet " . $fam->guest['vestanet_id'] . ", ";
+					} else {
+						$values['soggetto_e_familiari'] .= "Vestanet /, ";
+					}
+			
+					if(!empty($fam->guest['cui'])) {
+						$values['soggetto_e_familiari'] .= "CUI " . $fam->guest['cui'];
+					} else {
+						$values['soggetto_e_familiari'] .= "CUI / ";
+					}
+					$values['soggetto_e_familiari'] .= "<br>";
+					
 				}
-		
-				if(!empty($fam->guest['name'])) {
-					$values['soggetto_e_familiari'] .= $fam->guest['name'] . " ";
-				} else {
-					$values['soggetto_e_familiari'] .= "/ ";
-				}
-		
-				if(!empty($fam->guest['birthdate'])) {
-					$bDay = $fam->guest['birthdate']->format('d/m/Y');
-					$values['soggetto_e_familiari'] .= "nato/a il $bDay ";
-				} else {
-					$values['soggetto_e_familiari'] .= "nato/a il / ";
-				}
-		
-				if(!empty($fam->guest['country_birth'])) {
-					$country = $fam->guest->country['des_luo'];
-					$values['soggetto_e_familiari'] .= "in $country, ";
-				} else {
-					$values['soggetto_e_familiari'] .= "in /, ";
-				}
-		
-				if(!empty($fam->guest['vestanet_id'])) {
-					$values['soggetto_e_familiari'] .= "Vestanet " . $fam->guest['vestanet_id'] . ", ";
-				} else {
-					$values['soggetto_e_familiari'] .= "Vestanet /, ";
-				}
-		
-				if(!empty($fam->guest['cui'])) {
-					$values['soggetto_e_familiari'] .= "CUI " . $fam->guest['cui'];
-				} else {
-					$values['soggetto_e_familiari'] .= "CUI / ";
-				}
-				$values['soggetto_e_familiari'] .= "<br>";
 
 			}
 
