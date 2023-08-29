@@ -314,9 +314,27 @@ class GuestComponent extends Component
 					$guestsNotifications->save($notification);
 				} else {
 					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+					$this->log($error, 'error');
+					$errorMsg = '';
+					foreach($guest->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($guest), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+				$this->log($error, 'error');
+				$errorMsg = '';
+				foreach($history->errors() as $field => $errors){ 
+					foreach($errors as $rule => $msg){ 
+						$errorMsg .= ' '.$msg;
+					}
+				}
+				$this->log(json_encode($history), 'error');
+				$this->log($errorMsg, 'error');
 			}
 		}
 
@@ -357,9 +375,27 @@ class GuestComponent extends Component
 
 				if (!$guests->save($guest)) {
 					$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+					$this->log($error, 'error');
+					$errorMsg = '';
+					foreach($guest->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($guest), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+				$this->log($error, 'error');
+				$errorMsg = '';
+				foreach($history->errors() as $field => $errors){ 
+					foreach($errors as $rule => $msg){ 
+						$errorMsg .= ' '.$msg;
+					}
+				}
+				$this->log(json_encode($history), 'error');
+				$this->log($errorMsg, 'error');
 			}
 		}
 
@@ -434,9 +470,27 @@ class GuestComponent extends Component
 						$guestsNotifications->save($notification);
 					} else {
 						$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+						$this->log($error, 'error');
+						$errorMsg = '';
+						foreach($guest->errors() as $field => $errors){ 
+							foreach($errors as $rule => $msg){ 
+								$errorMsg .= ' '.$msg;
+							}
+						}
+						$this->log(json_encode($guest), 'error');
+						$this->log($errorMsg, 'error');
 					}
 				} else {
 					$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+					$this->log($error, 'error');
+					$errorMsg = '';
+					foreach($history->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($history), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$error = "L'ospite è segnato come presente nella giornata di oggi. Non è possibile avviare la procedura di uscita.";
@@ -524,9 +578,27 @@ class GuestComponent extends Component
 						$guestsNotifications->save($exitedNotification);
 					} else {
 						$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+						$this->log($error, 'error');
+						$errorMsg = '';
+						foreach($guest->errors() as $field => $errors){ 
+							foreach($errors as $rule => $msg){ 
+								$errorMsg .= ' '.$msg;
+							}
+						}
+						$this->log(json_encode($guest), 'error');
+						$this->log($errorMsg, 'error');
 					}
 				} else {
 					$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+					$this->log($error, 'error');
+					$errorMsg = '';
+					foreach($history->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($history), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$error = "L'ospite è segnato come presente in giorni successivi alla data di check-out. Non è possibile confermare la procedura di uscita.";
@@ -673,15 +745,51 @@ class GuestComponent extends Component
 								}
 							} else {
 								$error = "Errore nell'aggiornamento dello storico dell'ospite clonato per la struttura di destinazione.";
+								$this->log($error, 'error');
+								$errorMsg = '';
+								foreach($historyClonedGuest->errors() as $field => $errors){ 
+									foreach($errors as $rule => $msg){ 
+										$errorMsg .= ' '.$msg;
+									}
+								}
+								$this->log(json_encode($historyClonedGuest), 'error');
+								$this->log($errorMsg, 'error');
 							}
 						} else {
 							$error = "Errore nella clonazione dell'ospite nella struttura di destinazione.";
+							$this->log($error, 'error');
+							$errorMsg = '';
+							foreach($clonedGuest->errors() as $field => $errors){ 
+								foreach($errors as $rule => $msg){ 
+									$errorMsg .= ' '.$msg;
+								}
+							}
+							$this->log(json_encode($clonedGuest), 'error');
+							$this->log($errorMsg, 'error');
 						}
 					} else {
 						$error = "Errore nell'aggiornamento dello stato dell'ospite.";
+						$this->log($error, 'error');
+						$errorMsg = '';
+						foreach($guest->errors() as $field => $errors){ 
+							foreach($errors as $rule => $msg){ 
+								$errorMsg .= ' '.$msg;
+							}
+						}
+						$this->log(json_encode($guest), 'error');
+						$this->log($errorMsg, 'error');
 					}
 				} else {
 					$error = "Errore nell'aggiornamento dello storico dell'ospite.";
+					$this->log($error, 'error');
+					$errorMsg = '';
+					foreach($history->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($history), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$error = "L'ospite è segnato come presente nel giorno ".$checkOutDate->format('d/m/Y')." o nelle giornate successive. Non è possibile avviare la procedura di trasferimento.";
@@ -769,15 +877,51 @@ class GuestComponent extends Component
 								$guestsNotifications->save($notification);
 							} else {
 								$error =  "Errore nell'aggiornamento dello stato dell'ospite originale.";
+								$this->log($error, 'error');
+								$errorMsg = '';
+								foreach($originalGuest->errors() as $field => $errors){ 
+									foreach($errors as $rule => $msg){ 
+										$errorMsg .= ' '.$msg;
+									}
+								}
+								$this->log(json_encode($originalGuest), 'error');
+								$this->log($errorMsg, 'error');
 							}
 						} else {
 							$error =  "Errore nell'aggiornamento dello storico dell'ospite originale.";
+							$this->log($error, 'error');
+							$errorMsg = '';
+							foreach($originalHistory->errors() as $field => $errors){ 
+								foreach($errors as $rule => $msg){ 
+									$errorMsg .= ' '.$msg;
+								}
+							}
+							$this->log(json_encode($originalHistory), 'error');
+							$this->log($errorMsg, 'error');
 						}
 					}else{
 						$error =  "Errore nell'aggiornamento dello stato dell'ospite.";
+						$this->log($error, 'error');
+						$errorMsg = '';
+						foreach($guest->errors() as $field => $errors){ 
+							foreach($errors as $rule => $msg){ 
+								$errorMsg .= ' '.$msg;
+							}
+						}
+						$this->log(json_encode($guest), 'error');
+						$this->log($errorMsg, 'error');
 					}	
 				} else {
 					$error =  "Errore nell'aggiornamento dello storico dell'ospite.";
+					$this->log($error, 'error');
+					$errorMsg = '';
+					foreach($history->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($history), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$error =  "Errore: la data di check-in deve essere maggiore o uguale alla data di check-out dalla struttura precedente.";
@@ -857,6 +1001,15 @@ class GuestComponent extends Component
 					$res['id'] = $clonedGuest->id;
 				} else {
 					$res['error'] = "Errore nella clonazione dell'ospite nella struttura di destinazione.";
+					$this->log($res['error'], 'error');
+					$errorMsg = '';
+					foreach($clonedGuest->errors() as $field => $errors){ 
+						foreach($errors as $rule => $msg){ 
+							$errorMsg .= ' '.$msg;
+						}
+					}
+					$this->log(json_encode($clonedGuest), 'error');
+					$this->log($errorMsg, 'error');
 				}
 			} else {
 				$res['error'] = "L'ospite risulta già riammesso. Non è possibile avviare nuovamente la procedura di riammissione.";
@@ -986,6 +1139,58 @@ class GuestComponent extends Component
 		];
 
 		return $data;
+	}
+
+	public function getGuestsDataForPresenze($sedeId, $date)
+	{
+		$guests = TableRegistry::get('Aziende.Guests')->getGuestsForPresenze($sedeId, $date);
+
+		foreach ($guests as $index => $guest) {
+			if ($guest['presente'] === null) {
+				$guest['not_saved'] = 1;
+			} else {
+				$guest['not_saved'] = 0;
+			}
+			$guest['presente'] = filter_var($guest['presente'], FILTER_VALIDATE_BOOLEAN);
+
+			//Colore riga in base alle presenze (se ospite in stato "in struttura" e non sospeso)
+			$warningPresenze = 0;
+			$dangerPresenze = 0;
+			if (!$guest['suspended']) {
+				$lastPresenzaDate = '';
+				$lastPresenza = TableRegistry::get('Aziende.Presenze')->getGuestLastPresenzaByDate($guest['id'], $date);
+				if (!empty($lastPresenza)) {
+					$lastPresenzaDate = $lastPresenza['date']->format('Y-m-d');
+				} elseif (!empty($guest['check_in_date'])) {
+					$lastPresenzaDate = $guest['check_in_date']->format('Y-m-d');
+				}
+				if (!empty($lastPresenzaDate)) {
+					$threeDaysBefore = date('Y-m-d', strtotime($date.' -3 days'));
+					if ($lastPresenzaDate < $date && $lastPresenzaDate >= $threeDaysBefore) {
+						$warningPresenze = 1;
+					} elseif ($lastPresenzaDate < $threeDaysBefore) {
+						$dangerPresenze = 1;
+					}
+				}
+			}
+
+			$guest['warning_presenze'] = $warningPresenze;
+			$guest['danger_presenze'] = $dangerPresenze;
+
+			$guest['check_in_date'] = $guest['check_in_date'] ? $guest['check_in_date']->format('d/m/Y') : '';
+			$guest['birthdate'] = $guest['birthdate']->format('d/m/Y');
+		}
+
+		$presenzeTable = TableRegistry::get('Aziende.Presenze');
+		//totale presenze ospiti per il giorno
+		$presenzeForDay = $presenzeTable->getPresenzeSedeForDay($sedeId, $date);
+		$countPresenzeDay = count($presenzeForDay);
+		//totale presenze ospiti per il mese
+		$month = substr($date, 0, 7);
+		$presenzeForMonth = $presenzeTable->getPresenzeSedeForMonth($sedeId, $month);
+		$countPresenzeMonth = count($presenzeForMonth);
+
+		return ['guests' => $guests, 'count_presenze_day' => $countPresenzeDay, 'count_presenze_month' => $countPresenzeMonth];
 	}
 
 }
