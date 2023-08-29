@@ -311,6 +311,9 @@ var app = new Vue({
             if (this.notifiche) {
                 return pathServer + 'surveys/surveys/answers?interview=' + this.notifiche.interview_id;
             }
+        },
+        underAge() {
+            return this.guestData.minor.value && !this.guestData.minor_alone.value;
         }
     },
 
