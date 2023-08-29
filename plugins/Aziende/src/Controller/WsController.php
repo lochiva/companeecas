@@ -3423,6 +3423,7 @@ class WsController extends AppController
                 $res['history_note'] = $data['note'];
                 $res['modello_decreto'] = $exitType['modello_decreto'];
                 $res['modello_notifica'] = $exitType['modello_notifica'];
+                $res['required_request'] = $exitType['required_request'];
             } else {
                 $errorMsg = "Errore nel salvataggio del documento di uscita.";
                 $responseStatus = 'KO';

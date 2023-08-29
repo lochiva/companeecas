@@ -1114,6 +1114,7 @@ var app = new Vue({
                     this.exitData.type.name = res.data.data.history_exit_type;
                     this.exitData.type.modello_decreto = res.data.data.modello_decreto;
                     this.exitData.type.modello_notifica = res.data.data.modello_notifica;
+                    this.exitData.type.required_request = res.data.data.required_request;
                     this.exitData.date = res.data.data.check_out_date;
                     this.exitData.file = res.data.data.history_file;
                     this.exitData.note = res.data.data.history_note;
