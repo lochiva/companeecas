@@ -2260,6 +2260,8 @@ class WsController extends AppController
                     $guest['history_exit_type_modello_decreto'] = $exitType['modello_decreto'];
                     $guest['history_exit_type_modello_notifica'] = $exitType['modello_notifica'];
 
+                    $guest['history_exit_type_required_request'] = $exitType['required_request'];
+
                     $sig = TableRegistry::get('Surveys.SurveysInterviewsGuests');
 
                     $decreti = $sig->find()
@@ -3419,6 +3421,9 @@ class WsController extends AppController
                 $res['check_out_date'] = $today->format('d/m/Y');
                 $res['history_file'] = $filePath;
                 $res['history_note'] = $data['note'];
+                $res['modello_decreto'] = $exitType['modello_decreto'];
+                $res['modello_notifica'] = $exitType['modello_notifica'];
+                $res['required_request'] = $exitType['required_request'];
             } else {
                 $errorMsg = "Errore nel salvataggio del documento di uscita.";
                 $responseStatus = 'KO';

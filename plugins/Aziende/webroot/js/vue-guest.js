@@ -197,7 +197,12 @@ var app = new Vue({
             }
         },
         exitData: {
-            type: '',
+            type: {
+                id: '',
+                name: '',
+                modello_decreto: '',
+                modello_notifica: ''
+            },
             date: '',
             file: '',
             note: '',
@@ -434,10 +439,16 @@ var app = new Vue({
                             this.authorizeRequestExitData.note = res.data.data.history_note;
                         }
                         if (this.guestStatus == 2 || this.guestStatus == 3) {
-                            this.exitData.type = res.data.data.history_exit_type_name;
                             this.exitData.date = res.data.data.check_out_date;
                             this.exitData.file = res.data.data.history_file;
                             this.exitData.note = res.data.data.history_note;
+                            this.exitData.type.name = res.data.data.history_exit_type_name;
+                            this.exitData.type.modello_decreto = res.data.data.history_exit_type_modello_decreto;
+                            this.exitData.type.modello_decreto = res.data.data.history_exit_type_modello_notifica;
+                            this.exitData.type.required_request = res.data.data.history_exit_type_required_request;
+
+                            this.decreti = res.data.data.decreti;
+                            this.notifiche = res.data.data.notifiche;
                         }
                         if (this.guestStatus == 4 || this.guestStatus == 5 || this.guestStatus == 6) {
                             this.transferData.destination = res.data.data.history_destination;
@@ -1103,7 +1114,10 @@ var app = new Vue({
                     alert(res.data.msg);
                     this.guestStatus = res.data.data.history_status;
                     this.guestExitRequestStatus = null;
-                    this.exitData.type = res.data.data.history_exit_type;
+                    this.exitData.type.name = res.data.data.history_exit_type;
+                    this.exitData.type.modello_decreto = res.data.data.modello_decreto;
+                    this.exitData.type.modello_notifica = res.data.data.modello_notifica;
+                    this.exitData.type.required_request = res.data.data.required_request;
                     this.exitData.date = res.data.data.check_out_date;
                     this.exitData.file = res.data.data.history_file;
                     this.exitData.note = res.data.data.history_note;
@@ -1791,10 +1805,18 @@ var app = new Vue({
             let params = new URLSearchParams();
             params.append('guest_id', this.guestData.id.value);
 
-            if (type.indexOf('decreto') === 0) {
-                params.append('survey_id', this.requestExitData.type.modello_decreto);
-            } else if (type.indexOf('notifica') === 0) {
-                params.append('survey_id', this.requestExitData.type.modello_notifica);
+            if(this.guestStatus == 1 && this.guestExitRequestStatus == 1) {
+                if (type.indexOf('decreto') === 0) {
+                    params.append('survey_id', this.requestExitData.type.modello_decreto);
+                } else if (type.indexOf('notifica') === 0) {
+                    params.append('survey_id', this.requestExitData.type.modello_notifica);
+                }
+            } else if (this.guestStatus == 2 || this.guestStatus == 3) {
+                if (type.indexOf('decreto') === 0) {
+                    params.append('survey_id', this.exitData.type.modello_decreto);
+                } else if (type.indexOf('notifica') === 0) {
+                    params.append('survey_id', this.exitData.type.modello_notifica);
+                }
             }
 
             axios.post(pathServer + 'surveys/ws/create_interview', params)
@@ -1805,7 +1827,6 @@ var app = new Vue({
                     } else if (type.indexOf('notifica') === 0) {
                         this.notifiche = res.data.data;
                     }
-                    console.log(res.data.data);
                 } else {
                     alert(res.data.msg);
                 }

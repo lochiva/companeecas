@@ -71,14 +71,14 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
         </div>
         <div v-if="guestStatus == 2" class="message-exiting alert">
-            L'ospite è in stato "In uscita" con motivazione {{exitData.type}}.
+            L'ospite è in stato "In uscita" con motivazione {{exitData.type.name}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
             <div v-if="role == 'admin' || role == 'area_iv'" class="exit-buttons">
                 <button type="button" class="btn btn-danger" @click="openConfirmExitModal()">Conferma uscita</button>
             </div>
         </div>
         <div v-if="guestStatus == 3" class="message-exited alert">
-            L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type}}.
+            L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type.name}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
             <button v-if="this.exitData.file" class="btn btn-primary download-exit-file" @click="downloadExitDocument(exitData.file)"><i class="fa fa-download"></i> Scarica documento</button>
         </div>
