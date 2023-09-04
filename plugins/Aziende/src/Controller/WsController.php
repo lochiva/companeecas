@@ -4097,7 +4097,7 @@ class WsController extends AppController
                         $value->company->name,
                         isset($value->company->agreement) ? $value->company->agreement->cig : "",
                         $value->statement->period_label,
-                        $value->status->name,
+                        isset($value->status) ? $value->status->name : "",
                         $date,
                         $button
 

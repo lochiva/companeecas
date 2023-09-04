@@ -401,7 +401,7 @@ class SurveysComponent extends Component
 		}
 
 		if(!empty($guest['family'])) {
-			$values['soggetto_e_familiari'] .= "<br>unitamente ai componenti del nucleo famigliare che seguono<br>";
+			$values['soggetto_e_familiari'] .= "<br>unitamente ai componenti del nucleo famigliare che seguono: ";
 
 			foreach($guest['family'] as $fam) {
 
@@ -445,14 +445,11 @@ class SurveysComponent extends Component
 					} else {
 						$values['soggetto_e_familiari'] .= "CUI / ";
 					}
-					$values['soggetto_e_familiari'] .= "<br>";
 					
 				}
 
 			}
 
-		} else {
-			$values['soggetto_e_familiari'] .= ".<br>";
 		}
 
 		if ($guest->sedi->police_station_id > 0) {
