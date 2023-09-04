@@ -237,7 +237,7 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" class="box-footer">
 
                         <!-- Start Trasferimento -->
-                        <span v-if="underAge" disabled type="button" class="btn btn-violet pull-right btn-transfer" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">Trasferimento</span>
+                        <span v-if="!canExit" disabled type="button" class="btn btn-violet pull-right btn-transfer" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">Trasferimento</span>
                         <button v-else :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
                         <!-- End Trasferimento -->
 
@@ -248,14 +248,14 @@ $role = $this->request->session()->read('Auth.User.role');
                         </template>
                         <template v-else>
                             <template v-if="role == 'admin' || role == 'area_iv' || (role == 'ente_ospiti' && Object.keys(exitTypes).length)">
-                                <span v-if="underAge" disabled type="button" class="btn btn-danger pull-right btn-exit" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">Uscita</span>
+                                <span v-if="!canExit" disabled type="button" class="btn btn-danger pull-right btn-exit" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">Uscita</span>
                                 <button v-else :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
                             </template>
                         </template>
                         <!-- End Uscita -->
 
                         <!-- Start RICHIESTA uscita -->
-                        <span v-if="underAge" disabled type="button" class="btn btn-olive pull-right btn-exit-request" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">
+                        <span v-if="!canExit" disabled type="button" class="btn btn-olive pull-right btn-exit-request" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">
                             Richiesta uscita
                         </span>
                         <button v-else :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-olive pull-right btn-exit-request" @click="openRequestExitModal()">

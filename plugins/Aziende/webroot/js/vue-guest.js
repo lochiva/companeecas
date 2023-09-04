@@ -272,7 +272,8 @@ var app = new Vue({
         loadedData: '',
         loadedFamily: '',
         decreti: false,
-        notifiche: false
+        notifiche: false,
+        canExit: false
     },
 
     components: {
@@ -316,9 +317,6 @@ var app = new Vue({
             if (this.notifiche) {
                 return pathServer + 'surveys/surveys/answers?interview=' + this.notifiche.interview_id;
             }
-        },
-        underAge() {
-            return this.guestData.minor.value && !this.guestData.minor_alone.value;
         }
     },
 
@@ -470,6 +468,8 @@ var app = new Vue({
 
                         this.loadGuestHistory();
 
+                        this.canExit = !res.data.data.minor || res.data.data.minor_alone;
+
                     } else {
                         alert(res.data.msg);
                     }
@@ -574,6 +574,7 @@ var app = new Vue({
                 .then(res => {
                     if (res.data.response == 'OK') {
                         this.loadedData = JSON.stringify(this.guestData);
+                        this.canExit = !this.guestData.minor_alone.value || this.guestData.minor_alone.value;
                         if(exit){
                             window.location = pathServer + 'aziende/guests/index/'+this.guestData.sede_id.value;
                         }else{ 
