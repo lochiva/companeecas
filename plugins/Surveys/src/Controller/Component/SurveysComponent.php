@@ -281,7 +281,21 @@ class SurveysComponent extends Component
 
 	public function getValuePlaceholders($interview)
 	{
-		$guest = TableRegistry::get('Aziende.Guests')->get($interview->guest->guest_id, ['contain' => ['Sedi' => ['Aziende' => ['SedeLegale' => ['Comuni', 'Province']], 'Comuni', 'Province'], 'Countries']]);
+		$guest = TableRegistry::get('Aziende.Guests')->get($interview->guest->guest_id, ['contain' => ['FamilyGuests', 'Sedi' => ['Aziende' => ['SedeLegale' => ['Comuni', 'Province']], 'Comuni', 'Province'], 'Countries']]);
+
+		//recupero ospiti della stessa famiglia
+		$guestsFamilies = TableRegistry::get('Aziende.GuestsFamilies');
+		$guestHasFamily = $guestsFamilies->find()->where(['guest_id' => $guest->id])->contain(['Guests' => ['Countries']])->first();
+
+		$guest['family_id'] = '';
+		$guest['family'] = [];
+
+		if($guestHasFamily){
+			$familyId = $guestHasFamily['family_id'];
+			$guest['family_id'] = $familyId;
+			$guest['family'] = $guestsFamilies->find()->where(['family_id' => $familyId])->contain(['Guests' => ['Countries']])->all();
+		}
+
 		//echo "<pre>"; print_r($guest); die();
 
 		$ente_indirizzo = '/';
@@ -321,13 +335,6 @@ class SurveysComponent extends Component
 
 
 		$values = [
-			'ospite_nome' => empty($guest['name']) ? '/' : $guest['name'],
-			'ospite_cognome' => empty($guest['surname']) ? '/' : $guest['surname'],
-			'ospite_data_nascita' => empty($guest['birthdate']) ? '/' : $guest['birthdate']->format('d/m/Y'),
-			'ospite_luogo_nascita' => empty($guest['country_birth']) ? '/' : $guest->country['des_luo'],
-			'ospite_vestanet' => empty($guest['vestanet_id']) ? '/' : $guest['vestanet_id'],
-			'ospite_cui' => empty($guest['cui']) ? '/' : $guest['cui'],
-
 			'ente_denominazione' => empty($guest->sedi->azienda['denominazione']) ? '/' : $guest->sedi->azienda['denominazione'],
 			'ente_responsabile' => empty($guest->sedi['referente']) ? '/' : $guest->sedi['referente'],
 
@@ -341,6 +348,109 @@ class SurveysComponent extends Component
 			'struttura_provincia' => $provincia,
 			'struttura_email' => empty($guest->sedi['email']) ? '/' : $guest->sedi['email']
 		];
+
+		$values['soggetto_e_familiari'] = '';
+
+		if(!empty($guest['surname'])) {
+			$values['ospite_cognome'] = $guest['surname'];
+			$values['soggetto_e_familiari'] .= "$guest[surname] ";
+		} else {
+			$values['ospite_cognome'] = "/";
+			$values['soggetto_e_familiari'] .= "/ ";
+		}
+
+		if(!empty($guest['name'])) {
+			$values['ospite_nome'] = $guest['name'];
+			$values['soggetto_e_familiari'] .= "$guest[name] ";
+		} else {
+			$values['ospite_nome'] = "/";
+			$values['soggetto_e_familiari'] .= "/ ";
+		}
+
+		if(!empty($guest['birthdate'])) {
+			$bDay = $guest['birthdate']->format('d/m/Y');
+			$values['ospite_data_nascita'] = $bDay;
+			$values['soggetto_e_familiari'] .= "nato/a il $bDay ";
+		} else {
+			$values['ospite_data_nascita'] = "/";
+			$values['soggetto_e_familiari'] .= "nato/a il / ";
+		}
+
+		if(!empty($guest['country_birth'])) {
+			$country = $guest->country['des_luo'];
+			$values['ospite_luogo_nascita'] = $country;
+			$values['soggetto_e_familiari'] .= "in $country, ";
+		} else {
+			$values['ospite_luogo_nascita'] = "in /, ";
+		}
+
+		if(!empty($guest['vestanet_id'])) {
+			$values['ospite_vestanet'] = $guest['vestanet_id'];
+			$values['soggetto_e_familiari'] .= "Vestanet $guest[vestanet_id], ";
+		} else {
+			$values['ospite_vestanet'] = "/";
+			$values['soggetto_e_familiari'] .= "Vestanet /, ";
+		}
+
+		if(!empty($guest['cui'])) {
+			$values['ospite_cui'] = $guest['cui'];
+			$values['soggetto_e_familiari'] .= "CUI $guest[cui]";
+		} else {
+			$values['ospite_cui'] = "/";
+			$values['soggetto_e_familiari'] .= "CUI / ";
+		}
+
+		if(!empty($guest['family'])) {
+			$values['soggetto_e_familiari'] .= "<br>unitamente ai componenti del nucleo famigliare che seguono: ";
+
+			foreach($guest['family'] as $fam) {
+
+				if($guest['id'] !== $fam->guest['id']) {
+					$values['soggetto_e_familiari'] .= "<br>";
+
+					if(!empty($fam->guest['surname'])) {
+						$values['soggetto_e_familiari'] .= $fam->guest['surname'] . " ";
+					} else {
+						$values['soggetto_e_familiari'] .= "/ ";
+					}
+			
+					if(!empty($fam->guest['name'])) {
+						$values['soggetto_e_familiari'] .= $fam->guest['name'] . " ";
+					} else {
+						$values['soggetto_e_familiari'] .= "/ ";
+					}
+			
+					if(!empty($fam->guest['birthdate'])) {
+						$bDay = $fam->guest['birthdate']->format('d/m/Y');
+						$values['soggetto_e_familiari'] .= "nato/a il $bDay ";
+					} else {
+						$values['soggetto_e_familiari'] .= "nato/a il / ";
+					}
+			
+					if(!empty($fam->guest['country_birth'])) {
+						$country = $fam->guest->country['des_luo'];
+						$values['soggetto_e_familiari'] .= "in $country, ";
+					} else {
+						$values['soggetto_e_familiari'] .= "in /, ";
+					}
+			
+					if(!empty($fam->guest['vestanet_id'])) {
+						$values['soggetto_e_familiari'] .= "Vestanet " . $fam->guest['vestanet_id'] . ", ";
+					} else {
+						$values['soggetto_e_familiari'] .= "Vestanet /, ";
+					}
+			
+					if(!empty($fam->guest['cui'])) {
+						$values['soggetto_e_familiari'] .= "CUI " . $fam->guest['cui'];
+					} else {
+						$values['soggetto_e_familiari'] .= "CUI / ";
+					}
+					
+				}
+
+			}
+
+		}
 
 		if ($guest->sedi->police_station_id > 0) {
 			$station = $guest = TableRegistry::get('Aziende.PoliceStations')->get($guest->sedi->police_station_id, ['contain' => ['PoliceStationTypes']]);

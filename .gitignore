@@ -48,3 +48,5 @@ plugins/Aziende/webroot/images
 scripts/deploy.sh
 
 webroot/img/local
+
+_scripts/.env

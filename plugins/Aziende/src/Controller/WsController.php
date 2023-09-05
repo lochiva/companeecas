@@ -2260,6 +2260,8 @@ class WsController extends AppController
                     $guest['history_exit_type_modello_decreto'] = $exitType['modello_decreto'];
                     $guest['history_exit_type_modello_notifica'] = $exitType['modello_notifica'];
 
+                    $guest['history_exit_type_required_request'] = $exitType['required_request'];
+
                     $sig = TableRegistry::get('Surveys.SurveysInterviewsGuests');
 
                     $decreti = $sig->find()
@@ -3419,6 +3421,9 @@ class WsController extends AppController
                 $res['check_out_date'] = $today->format('d/m/Y');
                 $res['history_file'] = $filePath;
                 $res['history_note'] = $data['note'];
+                $res['modello_decreto'] = $exitType['modello_decreto'];
+                $res['modello_notifica'] = $exitType['modello_notifica'];
+                $res['required_request'] = $exitType['required_request'];
             } else {
                 $errorMsg = "Errore nel salvataggio del documento di uscita.";
                 $responseStatus = 'KO';
@@ -4077,13 +4082,23 @@ class WsController extends AppController
 
                     $button.= '</div>';
                     ########### buttons END
+
+                    $date = '';
+
+                    if(!empty($value->history)) {
+                            // Ordiniamo qui 
+                            $collection = new Collection($value->history);
+                            $collection = $collection->sortBy('created', SORT_DESC);
+                            $first = $collection->first();
+                            $date = $first->created->format('d/m/Y');
+                    }
                     
                     $out['rows'][] = array(
                         $value->company->name,
                         isset($value->company->agreement) ? $value->company->agreement->cig : "",
                         $value->statement->period_label,
-                        $value->status->name,
-                        isset($value->approved_date) && $value->status->id == 2 ? $value->approved_date->format('d/m/Y') : '',
+                        isset($value->status) ? $value->status->name : "",
+                        $date,
                         $button
 
                     );

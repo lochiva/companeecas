@@ -1,19 +1,20 @@
 <?php
+
 /**
-* Aziende is a plugin for manage attachment
-*
-* Companee :    Guest  (https://www.companee.it)
-* Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
-* 
-* Licensed under The GPL  License
-* For full copyright and license information, please see the LICENSE.txt
-* Redistributions of files must retain the above copyright notice.
-*
-* @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
-* @link          https://www.ires.piemonte.it/ 
-* @since         1.2.0
-* @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
-*/
+ * Aziende is a plugin for manage attachment
+ *
+ * Companee :    Guest  (https://www.companee.it)
+ * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+ * 
+ * Licensed under The GPL  License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+ * @link          https://www.ires.piemonte.it/ 
+ * @since         1.2.0
+ * @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
+ */
 
 use Cake\Routing\Router;
 
@@ -33,17 +34,17 @@ $role = $this->request->session()->read('Auth.User.role');
 
     <section class="content-header">
         <h1>
-            <?=__c('Ente '.$azienda['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['provincia']['s_prv'].')')?>
-            <small v-if="guestData.id.value"><?=__c('Modifica ospite')?></small>
-            <small v-else><?=__c('Nuovo ospite')?></small>
+            <?= __c('Ente ' . $azienda['denominazione'] . ' - ' . $sede['indirizzo'] . ' ' . $sede['num_civico'] . ', ' . $sede['comune']['des_luo'] . ' (' . $sede['provincia']['s_prv'] . ')') ?>
+            <small v-if="guestData.id.value"><?= __c('Modifica ospite') ?></small>
+            <small v-else><?= __c('Nuovo ospite') ?></small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="<?= Router::url('/'); ?>"><i class="fa fa-home"></i> Home</a></li>
             <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
-            <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
+                <li><a href="<?= Router::url('/aziende/home'); ?>">Enti</a></li>
             <?php } ?>
-            <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
-            <li><a href="<?=Router::url('/aziende/guests/index/'.$sede['id']);?>">Ospiti</a></li>
+            <li><a href="<?= Router::url('/aziende/sedi/index/' . $azienda['id']); ?>">Strutture</a></li>
+            <li><a href="<?= Router::url('/aziende/guests/index/' . $sede['id']); ?>">Ospiti</a></li>
             <li v-if="guestData.id.value" class="active">Modifica ospite</li>
             <li v-else class="active">Nuovo ospite</li>
         </ol>
@@ -70,14 +71,14 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
         </div>
         <div v-if="guestStatus == 2" class="message-exiting alert">
-            L'ospite è in stato "In uscita" con motivazione {{exitData.type}}.
+            L'ospite è in stato "In uscita" con motivazione {{exitData.type.name}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
             <div v-if="role == 'admin' || role == 'area_iv'" class="exit-buttons">
                 <button type="button" class="btn btn-danger" @click="openConfirmExitModal()">Conferma uscita</button>
             </div>
         </div>
         <div v-if="guestStatus == 3" class="message-exited alert">
-            L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type}}.
+            L'ospite è stato dimesso in data {{exitData.date}} con motivazione {{exitData.type.name}}.
             <div><b>Note uscita:</b> {{exitData.note}}</div>
             <button v-if="this.exitData.file" class="btn btn-primary download-exit-file" @click="downloadExitDocument(exitData.file)"><i class="fa fa-download"></i> Scarica documento</button>
         </div>
@@ -95,7 +96,7 @@ $role = $this->request->session()->read('Auth.User.role');
         <div v-if="guestStatus == 6" class="message-transferred alert">
             L'ospite è stato trasferito nella struttura {{transferData.destination}} in data {{transferData.date}}.
             <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
-                <a :href="'<?=Router::url('/aziende/guests/guest');?>?sede='+transferData.destination_id+'&guest='+transferData.cloned_guest" class="view-transferred-guest">
+                <a :href="'<?= Router::url('/aziende/guests/guest'); ?>?sede='+transferData.destination_id+'&guest='+transferData.cloned_guest" class="view-transferred-guest">
                     <b>Visualizza ospite</b> <i class="fa fa-arrow-right"></i>
                 </a>
             <?php } ?>
@@ -110,16 +111,14 @@ $role = $this->request->session()->read('Auth.User.role');
                     <div class="box-header with-border">
                         <i class="fa fa-list-alt"></i>
                         <h3 class="box-title">Dati ospite {{guestData.cui.value}}</h3>
-                        <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
+                        <a href="<?= $this->request->env('HTTP_REFERER'); ?>" class="pull-right"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
                     <div class="box-body">
                         <form class="form-horizontal" id="formGuest">
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.check_in_date.hasError}">
                                     <label :class="{'required': guestData.check_in_date.required}" for="guestCheckInDate"><?= __('Check-in') ?></label>
-                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" 
-                                        :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control"
-                                        typeable="true" id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control" typeable="true" id="guestCheckInDate" v-model="guestData.check_in_date.value"></datepicker>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -167,10 +166,9 @@ $role = $this->request->session()->read('Auth.User.role');
                                     </div>
                                 </div>
                                 -->
-                                <div v-show="guestData.minor.value"  class="col-md-2 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
+                                <div v-show="guestData.minor.value" class="col-md-2 div-input-check" :class="{'has-error': guestData.minor_alone.hasError}">
                                     <label :class="{'required': guestData.minor_alone.required}" for="guestMinorAlone"><?= __('Si dichiara minore solo') ?></label>
-                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" 
-                                        @click="changeMinorAlone()" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="minor_alone" id="guestMinorAlone" v-model="guestData.minor_alone.value" @click="changeMinorAlone()" />
                                 </div>
                                 <div v-show="guestData.minor.value" class="col-md-7" :class="{'has-error': guestData.minor_note.hasError}">
                                     <label :class="{'required': guestData.minor_note.required}" for="minor_note"><?= __('Note minore') ?></label>
@@ -180,14 +178,11 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.birthdate.hasError}">
                                     <label :class="{'required': guestData.birthdate.required}" for="guestBirthdate"><?= __('Data di nascita') ?></label>
-                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy"
-                                        :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control" 
-                                        typeable="true" @input="" id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
+                                    <datepicker :disabled="guestData.id.value != '' && guestStatus != 1" :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="!(guestData.id.value != '' && guestStatus != 1)" :monday-first="true" input-class="form-control" typeable="true" @input="" id="guestBirthdate" v-model="guestData.birthdate.value"></datepicker>
                                 </div>
                                 <div class="col-md-4" :class="{'has-error': guestData.country_birth.hasError}">
                                     <label :class="{'required': guestData.country_birth.required}" for="guestCountryBirth"><?= __('Nazionalità') ?></label>
-                                    <v-select :disabled="guestData.id.value != '' && guestStatus != 1" name="country_birth" id="guestCountryBirth" :options="countries" v-model="guestData.country_birth.value"
-                                        @search="searchCountry" placeholder="Seleziona una nazione" :filterable="false">
+                                    <v-select :disabled="guestData.id.value != '' && guestStatus != 1" name="country_birth" id="guestCountryBirth" :options="countries" v-model="guestData.country_birth.value" @search="searchCountry" placeholder="Seleziona una nazione" :filterable="false">
                                         <template #no-options="{ search, searching }">
                                             <template v-if="searching">
                                                 Nessuna nazione trovata per <em>{{ search }}</em>.
@@ -208,22 +203,19 @@ $role = $this->request->session()->read('Auth.User.role');
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.educational_qualification.hasError}">
                                     <label :class="{'required': guestData.educational_qualification.required}" for="guestEducationalQualification"><?= __('Titolo di studio') ?></label>
-                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification" id="guestEducationalQualification" 
-                                        v-model="guestData.educational_qualification.value" @change="updateEducationalQualificationChildren()">
+                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification" id="guestEducationalQualification" v-model="guestData.educational_qualification.value" @change="updateEducationalQualificationChildren()">
                                         <option v-for="qualification in educationalQualifications" :value="qualification">{{ qualification.name }}</option>
                                     </select>
                                 </div>
                                 <div v-show="educationalQualificationChildren.length > 0" class="col-md-4" :class="{'has-error': guestData.educational_qualification_child.hasError}">
                                     <label :class="{'required': guestData.educational_qualification_child.required}" for="guestEducationalQualificationChild"><?= __('Dettaglio titolo di studio') ?></label>
-                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification_child" id="guestEducationalQualificationChild" 
-                                        v-model="guestData.educational_qualification_child.value">
+                                    <select :disabled="guestData.id.value != '' && guestStatus != 1" class="form-control" name="educational_qualification_child" id="guestEducationalQualificationChild" v-model="guestData.educational_qualification_child.value">
                                         <option v-for="qualification in educationalQualificationChildren" :value="qualification">{{ qualification.name }}</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.electronic_residence_permit.hasError}">
                                     <label :class="{'required': guestData.electronic_residence_permit.required}" for="guestElectronicResidencePermit"><?= __('Con permesso di soggiorno elettronico') ?></label>
-                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="electronic_residence_permit" id="guestElectronicResidencePermit" v-model="guestData.electronic_residence_permit.value" 
-                                        data-toggle="tooltip" data-position="top" title="Indicare unicamente se il soggetto ha il permesso di soggiorno elettronico, una delle determinanti della cessazione dell'accoglienza" />
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="checkbox" class="input-check" name="electronic_residence_permit" id="guestElectronicResidencePermit" v-model="guestData.electronic_residence_permit.value" data-toggle="tooltip" data-position="top" title="Indicare unicamente se il soggetto ha il permesso di soggiorno elettronico, una delle determinanti della cessazione dell'accoglienza" />
                                 </div>
                             </div>
                             <div v-if="ente_type == 1" class="form-group">
@@ -233,8 +225,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                 </div>
                                 <div v-show="guestData.draft_expiration.value" class="col-md-4" :class="{'has-error': guestData.draft_expiration.hasError}">
                                     <label :class="{'required': guestData.draft_expiration.required}" for="guestDraftExpiration"><?= __('Scadenza stato bozza') ?></label>
-                                    <datepicker disabled :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" 
-                                        id="guestDraftExpiration" v-model="guestData.draft_expiration.value"></datepicker>
+                                    <datepicker disabled :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" id="guestDraftExpiration" v-model="guestData.draft_expiration.value"></datepicker>
                                 </div>
                                 <div class="col-md-4 div-input-check" :class="{'has-error': guestData.suspended.hasError}">
                                     <label :class="{'required': guestData.suspended.required}" for="guestSuspended"><?= __('Sospeso') ?></label>
@@ -244,17 +235,34 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" class="box-footer">
-                        <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
-                        <span v-if="guestStatus == 1 && guestExitRequestStatus == 2">
+
+                        <!-- Start Trasferimento -->
+                        <span v-if="!canExit" disabled type="button" class="btn btn-violet pull-right btn-transfer" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">Trasferimento</span>
+                        <button v-else :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-violet pull-right btn-transfer" @click="openTransferModal()">Trasferimento</button>
+                        <!-- End Trasferimento -->
+
+                        <!-- Start Uscita -->
+                        <template v-if="guestStatus == 1 && guestExitRequestStatus == 2">
                             <button v-if="role == 'admin' || role == 'area_iv' || authorizeRequestExitData.type.id in exitTypes" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
-                            <span v-else title="Questa motivazione di uscita non è avviabile da ente">
-                                <button disabled type="button" class="btn btn-danger pull-right btn-exit">Uscita</button>
-                            </span>
+                            <span v-else disabled type="button" class="btn btn-danger pull-right btn-exit" data-toggle="tooltip" data-position="top" title="Questa motivazione di uscita non è avviabile da ente">Uscita</span>
+                        </template>
+                        <template v-else>
+                            <template v-if="role == 'admin' || role == 'area_iv' || (role == 'ente_ospiti' && Object.keys(exitTypes).length)">
+                                <span v-if="!canExit" disabled type="button" class="btn btn-danger pull-right btn-exit" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">Uscita</span>
+                                <button v-else :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
+                            </template>
+                        </template>
+                        <!-- End Uscita -->
+
+                        <!-- Start RICHIESTA uscita -->
+                        <span v-if="!canExit" disabled type="button" class="btn btn-olive pull-right btn-exit-request" data-toggle="tooltip" data-position="top" title="Il trasferimento e l'uscita di un minore viene fatto operando su un adulto del gruppo famigliare">
+                            Richiesta uscita
                         </span>
-                        <span v-else>
-                            <button v-if="role == 'admin' || role == 'area_iv' || (role == 'ente_ospiti' && Object.keys(exitTypes).length)" :disabled="guestData.id.value == '' || guestStatus != 1  || guestExitRequestStatus == 1" type="button" class="btn btn-danger pull-right btn-exit" @click="openExitModal()">Uscita</button>
-                        </span>
-                        <button :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-olive pull-right btn-exit-request" @click="openRequestExitModal()">Richiesta uscita</button>
+                        <button v-else :disabled="guestData.id.value == '' || guestStatus != 1 || guestExitRequestStatus != null" type="button" class="btn btn-olive pull-right btn-exit-request" @click="openRequestExitModal()">
+                            Richiesta uscita
+                        </button>
+                        <!-- End RICHIESTA uscita -->
+
                         <button v-if="role == 'admin' || role == 'area_iv'" :disabled="guestData.id.value == '' || guestStatus != 3 || existsInFuture" type="button" class="btn btn-success pull-right" @click="openReadmissionModal()" :title="guestStatus == 3 && existsInFuture ? 'L\'ospite è gia stato riammesso' : ''">Riammissione</button>
                     </div>
                 </div>
@@ -268,11 +276,10 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div id="box-guests-diary" class="box box-diary">
                     <div class="box-header with-border">
                         <i class="fa fa-users"></i>
-                        <h3 class="box-title"><?=__c('Componenti il nucleo familiare')?></h3> 
+                        <h3 class="box-title"><?= __c('Componenti il nucleo familiare') ?></h3>
                         <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" role="button" class="btn btn-primary pull-right" :disabled="((guestStatus != '' && guestStatus != 1) || !familyId || guestData.minor.value || countFamilyAdults == 1)" :title="removeFamilyButtonMessage" @click="removeGuestFromFamily()"><i class="fa fa-unlink"></i></button>
                         <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" role="button" class="btn btn-default pull-right search-guest-btn" :disabled="(guestStatus != '' && guestStatus != 1) || guestExitRequestStatus != null" title="Cerca ospite" @click="showHideSearchGuestSelect"><i class="fa fa-search"></i></button>
-                        <v-select v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" 
-                            @search="searchGuests" @input="addSearchedGuest" placeholder="Seleziona un ospite">
+                        <v-select v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" hidden class="pull-right search-guest-select" id="searchGuestSelect" :options="guestsForSearch" :value="searchedGuest" @search="searchGuests" @input="addSearchedGuest" placeholder="Seleziona un ospite">
                             <template slot="no-options">Nessun ospite trovato.</template>
                         </v-select>
                     </div>
@@ -283,13 +290,10 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <td><span v-if="guest.cui">{{guest.cui}} - </span>{{guest.name}} {{guest.surname}}<span v-if="guest.status_id == 3 || guest.status_id == 6" class="exit-icon"><i class="fa fa-sign-out"></i></span></td>
                                     <td width="130px;">
                                         <div class="button-group">
-                                            <a v-if="(role == 'admin' || role == 'area_iv' || role == 'ragioneria') && guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede='.$sede['id'].'&guest=')?>'+guest.id" target="_blank" role="button" 
-                                                class="btn btn-xs btn-warning" title="Modifica ospite">
+                                            <a v-if="(role == 'admin' || role == 'area_iv' || role == 'ragioneria') && guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede=' . $sede['id'] . '&guest=') ?>'+guest.id" target="_blank" role="button" class="btn btn-xs btn-warning" title="Modifica ospite">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
-                                            <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" :disabled="guest.status_id != 1 || guestStatus != 1 || guest.minor == 1 || countFamilyAdults == 1" role="button" class="btn btn-xs btn-primary" 
-                                                :title="guest.status_id == 1 && guestStatus == 1 && guest.minor == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: l\'ospite è un minore' : (guest.status_id == 1 && guestStatus == 1 && countFamilyAdults == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: unico adulto presente nel nucleo familiare' : 'Rimuovi ospite dal nucleo familiare')" 
-                                                @click="removeGuestFromFamily(index)">
+                                            <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" :disabled="guest.status_id != 1 || guestStatus != 1 || guest.minor == 1 || countFamilyAdults == 1" role="button" class="btn btn-xs btn-primary" :title="guest.status_id == 1 && guestStatus == 1 && guest.minor == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: l\'ospite è un minore' : (guest.status_id == 1 && guestStatus == 1 && countFamilyAdults == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: unico adulto presente nel nucleo familiare' : 'Rimuovi ospite dal nucleo familiare')" @click="removeGuestFromFamily(index)">
                                                 <i class="fa fa-unlink"></i>
                                             </button>
                                         </div>
@@ -309,7 +313,7 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div id="box-guests-history" class="box">
                     <div class="box-header with-border">
                         <i class="fa fa-history"></i>
-                        <h3 class="box-title"><?=__c('Storico')?></h3>
+                        <h3 class="box-title"><?= __c('Storico') ?></h3>
                         <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse"><i class="fa fa-minus"></i></button>
                     </div>
                     <div class="box-body">
@@ -341,8 +345,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <td>{{ history.note }}</td>
                                     <td>{{ history.operator }}</td>
                                     <td class="text-center">
-                                        <button v-if="history.file && (history.guest_status_id == 3 || history.guest_exit_request_status_id != null)" type="button" class="btn btn-primary btn-xs" 
-                                            @click="downloadExitDocument(history.file)">
+                                        <button v-if="history.file && (history.guest_status_id == 3 || history.guest_exit_request_status_id != null)" type="button" class="btn btn-primary btn-xs" @click="downloadExitDocument(history.file)">
                                             <i class="fa fa-download"></i>
                                         </button>
                                     </td>
@@ -364,7 +367,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </md-speed-dial-target>
 
         <md-speed-dial-content>
-            <a :href="'<?=Router::url('/aziende/guests/index/');?>'+guestData.sede_id.value">
+            <a :href="'<?= Router::url('/aziende/guests/index/'); ?>'+guestData.sede_id.value">
                 <md-button class="md-fab fab-default" title="Annulla">
                     <md-icon>arrow_back</md-icon>
                 </md-button>
