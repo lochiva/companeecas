@@ -41,7 +41,7 @@ echo $this->Html->script( 'Aziende.statements.js' );
             <div id="box-statements" class="box box-info">
                 <div class="box-header with-border">
                   <i class="fa fa-list-ul"></i>
-                  <h3 class="box-title"><?=__c('Elenco degli rendiconti')?></h3>
+                  <h3 class="box-title"><?=__c('Elenco dei rendiconti')?></h3>
                   <?php if ($role == 'ente_contabile') { ?>
                     <a id="box-general-action" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#modalStatement" data-backdrop="false" data-keyboard="false" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                   <?php } ?>
