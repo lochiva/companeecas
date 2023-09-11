@@ -84,6 +84,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     $badgeClass = 'btn-warning';
                                     break;
                                 case 4:
+                                case 5:
                                     $badgeClass = 'btn-info';
                                     break;  
                                 default:
@@ -145,9 +146,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     <div class="input-group">
                         <input id="statusNote" name="notes" class="form-control" placeholder="Inserisci un commento..." <?= $statusDisabled ?>>
                         <div class="input-group-btn statement-status-actions">
-                        <?php if ($user['role'] == 'ente_contabile') { ?>
+                        <?php if ($user['role'] == 'ente_contabile') : ?>
                             <button id="send" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="btn btn-success action-status" <?= $statusDisabled ?>>Invia per approvazione</button>
-                        <?php } elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') { ?>
+                        <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
                             <button class="btn btn-success action-status" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" <?= $statusDisabled ?>>Approva</button>
                             <button class="btn btn-success dropdown-toggle action-status-dropdown" data-toggle="dropdown" <?= $statusDisabled ?>><span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu">
@@ -161,8 +162,21 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                         Richiesta integrazione
                                     </a>
                                 </li>
+                                <?php if ($lastStatus->status->id === 4) :?>
+                                    <li>
+                                        <a href="#" id="deny" data-id="<?= $statement->companies[0]->id ?>" data-status-id="5" class="dropdown-item action-status" <?= $statusDisabled ?>>
+                                            In verifica
+                                        </a>
+                                    </li>
+                                <?php elseif($lastStatus->status->id === 5) :?>
+                                    <li>
+                                        <a href="#" id="deny" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="dropdown-item action-status" <?= $statusDisabled ?>>
+                                            In approvazione
+                                        </a>
+                                    </li>
+                                <?php endif ?>
                             </ul>
-                        <?php } ?>
+                        <?php endif ?>
                         </div>
                     </div>
                 </div>
