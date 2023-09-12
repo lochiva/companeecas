@@ -73,12 +73,27 @@ class StatementCompanyComponent extends Component
             1 => ['val' => 'Agreements.cig', 'type' => 'text'],
             2 => ['val' => 'Statements.period_label', 'type' => 'text'],
             3 => ['val' => 'Status.name' , 'type' => 'text'],
-            4 => ['val' => 'StatementCompany.approved_date' , 'type' => 'date']
+            4 => ['val' => 'history.created' , 'type' => 'date']
         ];
 
-        $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements'], 'History'];
-        $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path'];
+        $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements']];
+        $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path', 'history.created'];
         $opt['conditions']['Statements.deleted'] = false;
+
+        $opt['join'] = [
+            [
+                'table' => 'statements_status_history',
+                'alias' => 'history',
+                'type' => 'LEFT',
+                'conditions' => ['StatementCompany.id = history.statement_company_id AND history.created =
+                    (
+                        SELECT MAX(h2.created)
+                        FROM statements_status_history AS h2
+                        WHERE h2.statement_company_id=StatementCompany.id
+                    )
+                ']
+            ]
+        ];
 
         $toRet['res'] = $table->queryForTableSorter($columns,$opt,$pass);
         $toRet['tot'] = $table->queryForTableSorter($columns,$opt,$pass,true);
@@ -128,6 +143,22 @@ class StatementCompanyComponent extends Component
         $entity = $history->patchEntity($entity, $data);
 
         return $history->save($entity);
+    }
+
+    public function checkStatus($userRole, $newStatus, $oldStatus) {
+        $updateAllowed = false;
+        if($userRole === 'ente_contabile') {
+            if(($oldStatus == 1 || $oldStatus == 3) && $newStatus == 4) {
+                $updateAllowed = true;
+            }
+        } else if($userRole === 'ragioneria') {
+            if(($oldStatus == 4 || $oldStatus == 5) && in_array($newStatus, [2, 3, 4, 5])) {
+                $updateAllowed = true;
+            }
+        } else if( $userRole === 'admin') {
+            $updateAllowed = true;
+        }
+        return $updateAllowed;
     }
 }
 

@@ -4057,55 +4057,45 @@ class WsController extends AppController
 
         $out['total_rows'] = $res['tot'];
 
-        if(!empty($res['res'])){
-            $resRes = new Collection($res['res']);
-            $resRes = $resRes->groupBy('statement.id')->toArray();
-            // echo "<pre>";
-            // print_r($resRes);
-            // die();
+        if (!empty($res['res'])) {
+            //echo "<pre>";
+            //print_r($res['res']);
+            //die();
 
-            foreach ($resRes as $key => $statement) {
 
-                    foreach ($statement as $value) {
-                                        ########### buttons START
-                    $button = '';
 
-                    $button.= '<div class="btn-group">';
+            foreach ($res['res'] as $value) {
+                ########### buttons START
+                $button = '';
 
-                    $button.= '<a class="btn btn-xs btn-default view-statement" href="'. Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) .'" >
+                $button .= '<div class="btn-group">';
+
+                $button .= '<a class="btn btn-xs btn-default view-statement" href="' . Router::url(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'view', $value->statement->id, $value->id]) . '" >
                     <i data-toggle="tooltip" title="Visualizza" class="fa fa-eye"></i>
                     </a>';
 
-                    $button.= '<a class="btn btn-xs btn-default download-statement" href="#" data-statement="'.$value->statement->id.'">
+                $button .= '<a class="btn btn-xs btn-default download-statement" href="#" data-statement="' . $value->statement->id . '">
                     <i data-toggle="tooltip" title="Scarica" class="fa fa-download"></i>
                     </a>';
 
-                    $button.= '</div>';
-                    ########### buttons END
+                $button .= '</div>';
+                ########### buttons END
 
-                    $date = '';
+                $date = '';
 
-                    if(!empty($value->history)) {
-                            // Ordiniamo qui 
-                            $collection = new Collection($value->history);
-                            $collection = $collection->sortBy('created', SORT_DESC);
-                            $first = $collection->first();
-                            $date = $first->created->format('d/m/Y');
-                    }
-                    
-                    $out['rows'][] = array(
-                        $value->company->name,
-                        isset($value->company->agreement) ? $value->company->agreement->cig : "",
-                        $value->statement->period_label,
-                        isset($value->status) ? $value->status->name : "",
-                        $date,
-                        $button
 
-                    );
 
-                }
-                $this->_result = $out;
+                $out['rows'][] = array(
+                    $value->company->name,
+                    isset($value->company->agreement) ? $value->company->agreement->cig : "",
+                    $value->statement->period_label,
+                    isset($value->status) ? $value->status->name : "",
+                    $value->history['created'],
+                    $button
+                );
             }
+                $this->_result = $out;
+            
         }else{
             $this->_result = array();
         }
