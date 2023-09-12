@@ -117,6 +117,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 $badgeClass = 'btn-warning';
                                 break;
                             case 4:
+                            case 5:
                                 $badgeClass = 'btn-info';
                                 break;  
                             default:
@@ -136,7 +137,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                 <?php 
                     $statusDisabled = '';
                     if (
-                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4)) ||
+                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
                         (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
                     ) {
                         $statusDisabled = 'disabled';

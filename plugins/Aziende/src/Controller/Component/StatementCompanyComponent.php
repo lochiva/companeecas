@@ -144,6 +144,22 @@ class StatementCompanyComponent extends Component
 
         return $history->save($entity);
     }
+
+    public function checkStatus($userRole, $newStatus, $oldStatus) {
+        $updateAllowed = false;
+        if($userRole === 'ente_contabile') {
+            if(($oldStatus == 1 || $oldStatus == 3) && $newStatus == 4) {
+                $updateAllowed = true;
+            }
+        } else if($userRole === 'ragioneria') {
+            if(($oldStatus == 4 || $oldStatus == 5) && in_array($newStatus, [2, 3, 4, 5])) {
+                $updateAllowed = true;
+            }
+        } else if( $userRole === 'admin') {
+            $updateAllowed = true;
+        }
+        return $updateAllowed;
+    }
 }
 
 
