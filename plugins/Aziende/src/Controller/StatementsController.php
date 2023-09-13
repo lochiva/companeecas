@@ -141,6 +141,33 @@ class StatementsController extends AppController
                 $presenze = $presenzeQuery['presenze'];
                 $minors = $presenzeQuery['minori'];
 
+                $families = $presenzeQuery['families'];
+
+                $pocketMoney = [
+                    'heads' => 0,
+                    'total' => 0,
+                    'factor' => 2.5
+                ];
+
+                if($families) {
+                    foreach ($families as $day) {
+                        foreach ($day as $family_id => $count) {
+                            if(empty($family_id)) {
+                                $pocketMoney['total'] += $count * $pocketMoney['factor'];
+                                $pocketMoney['heads'] += $count;
+                            } else {
+                                if($count <= 3) {
+                                    $pocketMoney['total'] += $count * $pocketMoney['factor'];
+                                    $pocketMoney['heads'] += $count;
+                                } else {
+                                    $pocketMoney['total'] += 3 * $pocketMoney['factor'];
+                                    $pocketMoney['heads'] += 3;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
                     'keyField' => 'id',
                     'valueField' => 'company.name'
@@ -172,7 +199,7 @@ class StatementsController extends AppController
                 $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
                 $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
 
-                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati', 'presenze', 'minors'));
+                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati', 'presenze', 'minors', 'pocketMoney'));
                 $this->set('_serialize', ['statement']);
             }else{
                 $this->Flash->error('Accesso negato. Non sei autorizzato.');
