@@ -297,6 +297,14 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         </p>
                         <p>
                             <span class="label-like">
+                                <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'> Pocket money maturato considerando le presenze per le strutture collegate alla convenzione. Il sistema calcola un massimo di tre presenze per gruppo familiare per giornata.</div>">
+                                    <i class="fa fa-info"></i>
+                                </span> TOT pocket money maturati</span> <?=$pocketMoney['heads']?>
+                            <span class="label-like">per</span> &euro;<?=$pocketMoney['factor']?>
+                            <span class="label-like">pari a</span> &euro;<?=$pocketMoney['total']?>
+                        </p>
+                        <p>
+                            <span class="label-like">
                                 <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'>Numero di bambini con età minore di 30 mesi alla data di fine periodo</div>">
                                     <i class="fa fa-info"></i>
                                 </span>
@@ -310,12 +318,6 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 <?php endif ?>
                             </span>
                         </p>
-                        <p>
-                            <span class="label-like">TOT pocket money maturati</span> <?=$pocketMoney['heads']?>
-                            <span class="label-like">per</span> &euro;<?=$pocketMoney['factor']?>
-                            <span class="label-like">pari a</span> &euro;<?=$pocketMoney['total']?>
-                        </p>
-                        
                     </div>
                 </div>
 
