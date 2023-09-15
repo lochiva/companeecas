@@ -24,6 +24,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Database\Expression\QueryExpression;
 use Cake\I18n\Date;
 use App\Model\Table\AppTable;
+use Cake\Collection\Collection;
 
 /**
  * Presenze Model
@@ -69,6 +70,12 @@ class PresenzeTable extends AppTable
             'foreignKey' => 'sede_id',
             'joinType' => 'INNER',
             'className' => 'Aziende.Sedi'
+        ]);
+        $this->belongsTo('Families', [
+            'foreignKey' => 'guest_id',
+            'bindingKey' => 'guest_id',
+            'joinType' => 'LEFT',
+            'className' => 'Aziende.GuestsFamilies'
         ]);
     }
 
@@ -219,15 +226,39 @@ class PresenzeTable extends AppTable
             $presenze = $presenzeQuery->count();
 
             $dateLimit = new Date($statement->period_end_date);
-            $minors = $presenzeQuery
+            $minori = $presenzeQuery
                 ->select(['Presenze.guest_id'])
                 ->distinct(['Presenze.guest_id'])
                 ->where(['Guests.birthdate >=' => $dateLimit->modify('-30 months')])
                 ->count();
+
+            // Famiglie
+            $familyQuery = TableRegistry::get('Aziende.Presenze')->find('all')
+            ->contain(['Families'])
+            ->where(['Presenze.sede_id IN' => $sedi, 'Presenze.presente' => true])
+            ->where(function (QueryExpression $exp, Query $q) use ($statement) {
+                return $exp->between('Presenze.date', $statement->period_start_date, $statement->period_end_date);
+            })
+            ->all()
+            ->groupBy(function ($presenze) {
+                return $presenze->date->format('Y-m-d');
+            });
+
+            $familyQuery = $familyQuery
+                ->map(function ($value, $key) {
+                $collection = new Collection($value);
+                $collection = $collection->groupBy('family.family_id')->map(function ($value2, $qkey2) {
+                    return count($value2);
+                });
+                //->count();
+                return $collection->toArray();
+            });
+            $families = $familyQuery->toArray();
         } else {
             $presenze = 0;
-            $minors = 0;
+            $minori = 0;
+            $families = false;
         }
-        return ['presenze' => $presenze, 'minori' => $minors, 'guest_daily_price' => $guest_daily_price];
+        return compact('presenze', 'minori', 'guest_daily_price', 'families');
     }
 }

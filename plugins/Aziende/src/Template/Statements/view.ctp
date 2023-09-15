@@ -310,6 +310,11 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 <?php endif ?>
                             </span>
                         </p>
+                        <p>
+                            <span class="label-like">TOT pocket money maturati</span> <?=$pocketMoney['heads']?>
+                            <span class="label-like">per</span> &euro;<?=$pocketMoney['factor']?>
+                            <span class="label-like">pari a</span> &euro;<?=$pocketMoney['total']?>
+                        </p>
                         
                     </div>
                 </div>
