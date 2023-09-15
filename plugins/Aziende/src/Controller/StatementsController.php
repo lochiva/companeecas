@@ -141,6 +141,33 @@ class StatementsController extends AppController
                 $presenze = $presenzeQuery['presenze'];
                 $minors = $presenzeQuery['minori'];
 
+                $families = $presenzeQuery['families'];
+
+                $pocketMoney = [
+                    'heads' => 0,
+                    'total' => 0,
+                    'factor' => 2.5
+                ];
+
+                if($families) {
+                    foreach ($families as $day) {
+                        foreach ($day as $family_id => $count) {
+                            if(empty($family_id)) {
+                                $pocketMoney['total'] += $count * $pocketMoney['factor'];
+                                $pocketMoney['heads'] += $count;
+                            } else {
+                                if($count <= 3) {
+                                    $pocketMoney['total'] += $count * $pocketMoney['factor'];
+                                    $pocketMoney['heads'] += $count;
+                                } else {
+                                    $pocketMoney['total'] += 3 * $pocketMoney['factor'];
+                                    $pocketMoney['heads'] += 3;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 $companies = TableRegistry::get('Aziende.StatementCompany')->find('list', [
                     'keyField' => 'id',
                     'valueField' => 'company.name'
@@ -172,7 +199,7 @@ class StatementsController extends AppController
                 $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
                 $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
 
-                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati', 'presenze', 'minors'));
+                $this->set(compact('statement', 'companies', 'periods', 'company', 'ati', 'presenze', 'minors', 'pocketMoney'));
                 $this->set('_serialize', ['statement']);
             }else{
                 $this->Flash->error('Accesso negato. Non sei autorizzato.');
@@ -336,47 +363,64 @@ class StatementsController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
-    public function updateStatusStatementCompany($id) {
-        $this->request->allowMethod(['post']);
-        $table = TableRegistry::get('Aziende.StatementCompany');
-        
-        if(isset($id)) {
-            $data = $this->request->data;
+    public function updateStatusStatementCompany($id)
+    {
+        try {
+            $this->request->allowMethod(['post']);
 
-            $associated = [];
+            $table = TableRegistry::get('Aziende.StatementCompany');
 
-            $entity = $table->get($id);
+            if (isset($id)) {
+                $userRole = $this->user['role'];
 
-            $entity->status_id = $data['status'];
+                $data = $this->request->data;
 
-            // Approvato
-            if ($data['status'] == 2) {
-                $entity->approved_date = date('Y-m-d');
+                $newStatus = $data['status'];
+
+                $associated = [];
+
+                $entity = $table->get($id);
+
+                $oldStatus = $entity->status_id;
+
+                if($this->StatementCompany->checkStatus($userRole, $newStatus, $oldStatus)) {
+                    $entity->status_id = $newStatus;
+
+                    // Approvato
+                    if ($newStatus == 2) {
+                        $entity->approved_date = date('Y-m-d');
+                    }
+    
+                    if ($newStatus == 4) {
+                        // Se si richiede l'approvazione salva la notifica
+                        $tableN = TableRegistry::get('Aziende.StatementsNotifications');
+                        $entityN = $tableN->newEntity();
+                        $entityN->statement_id = $entity->statement_id;
+                        $entityN->user_maker_id = $this->user['id'];
+                        $entity->notifications = [$entityN];
+                        $associated = ['StatementsNotifications'];
+                    }
+                    //echo "<pre>"; print_r($entity);die();
+    
+                    $ret = $table->save($entity, ['checkRules' => true, 'associated' => $associated]);
+                    
+    
+                    if ($ret) {
+                        //Salvataggio stato nello storico
+                        $this->StatementCompany->saveStatusHistory($id, $newStatus, isset($data['notes']) ? $data['notes'] : '');
+                        $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
+                    } else {
+                        $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
+                    }
+
+                } else {
+                    $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto. Non è possibile impostare il rendiconto sullo stato selezionato.'));
+                }
             }
-
-            if ($data['status'] == 4) {
-                // Se si richiede l'approvazione salva la notifica
-                $tableN = TableRegistry::get('Aziende.StatementsNotifications');
-                $entityN = $tableN->newEntity();
-                $entityN->statement_id = $entity->statement_id;
-                $entityN->user_maker_id = $this->user['id'];
-                $entity->notifications = [$entityN];
-                $associated = ['associated' => ['StatementsNotifications']];
-            }
-            //echo "<pre>"; print_r($entity);die();
-            $ret = $table->save($entity, $associated);
-
-            if ($ret) {
-                //Salvataggio stato nello storico
-                $this->StatementCompany->saveStatusHistory($id, $data['status'], isset($data['notes']) ? $data['notes'] : '');
-                $this->Flash->success(__('Il rendiconto è stato aggiornato.'));
-                return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
-
-            } else {
-                $this->Flash->error(__('Si è verificato un errore durante il salvataggio del rendiconto.'));
-                return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
-            }
-
+            return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
+        } catch (\Exception $e) {
+            $this->Flash->error(__($e->getmessage()));
+            return $this->redirect(['action' => 'view', $entity->statement_id, $id]);
         }
     }
 }

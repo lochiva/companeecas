@@ -673,6 +673,11 @@ function changeStatus (id, status) {
       case 4:
         msg += "Si desidera inviare il rendiconto in approvazione?";
         break;
+
+      // In verifica
+      case 5:
+        msg += "Si desidera inviare il rendiconto in verifica?";
+        break;
     }
 
     if (confirm(msg)) {
@@ -709,6 +714,7 @@ function renderHistory(history) {
       badgeClass = 'btn-warning';
       break;
     case 4:
+    case 5:
       badgeClass = 'btn-info';
       break;  
     default:
@@ -742,6 +748,7 @@ function renderHistory(history) {
         badgeClass = 'btn-warning';
           break;
       case 4:
+      case 5:
         badgeClass = 'btn-info';
           break;  
       default:

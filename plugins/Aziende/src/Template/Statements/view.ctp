@@ -84,6 +84,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     $badgeClass = 'btn-warning';
                                     break;
                                 case 4:
+                                case 5:
                                     $badgeClass = 'btn-info';
                                     break;  
                                 default:
@@ -116,6 +117,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 $badgeClass = 'btn-warning';
                                 break;
                             case 4:
+                            case 5:
                                 $badgeClass = 'btn-info';
                                 break;  
                             default:
@@ -135,7 +137,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                 <?php 
                     $statusDisabled = '';
                     if (
-                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4)) ||
+                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
                         (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
                     ) {
                         $statusDisabled = 'disabled';
@@ -145,9 +147,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     <div class="input-group">
                         <input id="statusNote" name="notes" class="form-control" placeholder="Inserisci un commento..." <?= $statusDisabled ?>>
                         <div class="input-group-btn statement-status-actions">
-                        <?php if ($user['role'] == 'ente_contabile') { ?>
+                        <?php if ($user['role'] == 'ente_contabile') : ?>
                             <button id="send" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="btn btn-success action-status" <?= $statusDisabled ?>>Invia per approvazione</button>
-                        <?php } elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') { ?>
+                        <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
                             <button class="btn btn-success action-status" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" <?= $statusDisabled ?>>Approva</button>
                             <button class="btn btn-success dropdown-toggle action-status-dropdown" data-toggle="dropdown" <?= $statusDisabled ?>><span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu">
@@ -161,8 +163,21 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                         Richiesta integrazione
                                     </a>
                                 </li>
+                                <?php if ($lastStatus->status->id === 4) :?>
+                                    <li>
+                                        <a href="#" id="deny" data-id="<?= $statement->companies[0]->id ?>" data-status-id="5" class="dropdown-item action-status" <?= $statusDisabled ?>>
+                                            In verifica
+                                        </a>
+                                    </li>
+                                <?php elseif($lastStatus->status->id === 5) :?>
+                                    <li>
+                                        <a href="#" id="deny" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="dropdown-item action-status" <?= $statusDisabled ?>>
+                                            In approvazione
+                                        </a>
+                                    </li>
+                                <?php endif ?>
                             </ul>
-                        <?php } ?>
+                        <?php endif ?>
                         </div>
                     </div>
                 </div>
@@ -282,6 +297,14 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         </p>
                         <p>
                             <span class="label-like">
+                                <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'> Pocket money maturato considerando le presenze per le strutture collegate alla convenzione. Il sistema calcola un massimo di tre presenze per gruppo familiare per giornata.</div>">
+                                    <i class="fa fa-info"></i>
+                                </span> TOT pocket money maturati</span> <?=$pocketMoney['heads']?>
+                            <span class="label-like">per</span> &euro;<?=$pocketMoney['factor']?>
+                            <span class="label-like">pari a</span> &euro;<?=$pocketMoney['total']?>
+                        </p>
+                        <p>
+                            <span class="label-like">
                                 <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'>Numero di bambini con età minore di 30 mesi alla data di fine periodo</div>">
                                     <i class="fa fa-info"></i>
                                 </span>
@@ -295,7 +318,6 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 <?php endif ?>
                             </span>
                         </p>
-                        
                     </div>
                 </div>
 
