@@ -442,7 +442,7 @@ var app = new Vue({
                             this.exitData.note = res.data.data.history_note;
                             this.exitData.type.name = res.data.data.history_exit_type_name;
                             this.exitData.type.modello_decreto = res.data.data.history_exit_type_modello_decreto;
-                            this.exitData.type.modello_decreto = res.data.data.history_exit_type_modello_notifica;
+                            this.exitData.type.modello_notifica = res.data.data.history_exit_type_modello_notifica;
                             this.exitData.type.required_request = res.data.data.history_exit_type_required_request;
 
                             this.decreti = res.data.data.decreti;
