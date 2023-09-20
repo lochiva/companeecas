@@ -4100,7 +4100,7 @@ class WsController extends AppController
                             $class = "bg-red";
                         } else {
                             $interval = $today->diffInDays($value->due_date);
-                            if ($interval >= 7) {
+                            if ($interval > 7) {
                                 $class = "bg-green";
         
                             } else {
