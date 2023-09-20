@@ -144,6 +144,16 @@ $(document).ready(function () {
             //Storico stato rendiconto
             renderHistory(res.data.history);
 
+            if(role === 'admin' || role === 'ragioneria') {
+              if(!!res.data.due_date) {
+                var dateObj = new Date(res.data.due_date);
+                var dueDate = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`;
+                $("#due-date").html(`Da approvare entro il ${dueDate}`);
+              } else {
+                $("#due-date").html('');
+              }
+            }
+
             var lastStatus = res.data.history[res.data.history.length - 1];
 
             // In corso
@@ -725,13 +735,6 @@ function renderHistory(history) {
     var createdLastStatus = lastStatus.created.split('T');
     var lastStatusDate = createdLastStatus[0].split('-').reverse().join('/');
     htmlLastStatusLabel += ' <span class="statement-status-date">approvato il ' + lastStatusDate + '</span>';
-  }
-
-  if (lastStatus.status.id == 4 && (role == 'admin' || role == 'ragioneria')) {
-    var createdObj = new Date(lastStatus.created);
-    createdObj.setMonth(createdObj.getMonth() + 1);
-    var dueDate = [createdObj.getDate(), (createdObj.getMonth() < 9 ? '0'+(createdObj.getMonth()+1) : createdObj.getMonth()+1), createdObj.getFullYear()].join('/');
-    htmlLastStatusLabel += ' <span class="statement-status-date">da approvare entro il ' + dueDate + '</span>';
   }
 
   var htmlStatusHistory = '';

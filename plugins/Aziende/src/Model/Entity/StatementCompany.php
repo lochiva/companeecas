@@ -67,6 +67,7 @@ class StatementCompany extends Entity
         'status' => true,
         'compliance' => true,
         'compliance_filename' => true,
-        'notifications' => true
+        'notifications' => true,
+        'due_date' => true
     ];
 }

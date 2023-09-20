@@ -1056,7 +1056,7 @@ var app = new Vue({
 
         updateExitRequirements: function() {
             if (this.exitProcedureData.exit_type_id.value && this.exitTypes[this.exitProcedureData.exit_type_id.value].required_file) {
-                this.exitProcedureData.file.required = false;
+                this.exitProcedureData.file.required = true;
             } else {
                 this.exitProcedureData.file.hasError = false;
                 this.exitProcedureData.file.required = false;

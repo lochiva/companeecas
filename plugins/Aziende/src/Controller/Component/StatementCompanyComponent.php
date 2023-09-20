@@ -73,11 +73,15 @@ class StatementCompanyComponent extends Component
             1 => ['val' => 'Agreements.cig', 'type' => 'text'],
             2 => ['val' => 'Statements.period_label', 'type' => 'text'],
             3 => ['val' => 'Status.name' , 'type' => 'text'],
-            4 => ['val' => 'history.created' , 'type' => 'date']
+            4 => ['val' => 'history.created' , 'type' => 'date'],
         ];
 
+        if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
+            $columns[5] = ['val' => 'StatementCompany.due_date' , 'type' => 'date'];
+        }
+
         $opt['contain'] = ['Status', 'Statements' => ['Periods'], 'AgreementsCompanies' => ['Agreements']];
-        $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path', 'history.created'];
+        $opt['fields'] = ['StatementCompany.id', 'StatementCompany.approved_date', 'AgreementsCompanies.name', 'Agreements.cig', 'Statements.period_label', 'Status.name', 'Status.id', 'Statements.period_id', 'Statements.id', 'StatementCompany.uploaded_path', 'history.created', 'StatementCompany.due_date'];
         $opt['conditions']['Statements.deleted'] = false;
 
         $opt['join'] = [
