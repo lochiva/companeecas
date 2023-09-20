@@ -397,7 +397,7 @@ class StatementsController extends AppController
                         $associated = ['StatementsNotifications'];
 
                         $due_date = new Date();
-                        $due_date->addDay(7);
+                        $due_date->addMonth(1);
                         $entity->due_date = $due_date->format('Y-m-d');
                     } else {
                         // Approvato
