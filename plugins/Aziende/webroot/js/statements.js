@@ -27,10 +27,7 @@ $(function(){
 				},
 			},
         },
-        headers: { 
-			4: { filter: false }, 
-			5: {  sorter:false}
-		}
+
     }).tablesorterPager({
 
           // **********************************

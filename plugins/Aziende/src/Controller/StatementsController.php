@@ -386,11 +386,7 @@ class StatementsController extends AppController
                 if($this->StatementCompany->checkStatus($userRole, $newStatus, $oldStatus)) {
                     $entity->status_id = $newStatus;
 
-                    // Approvato
-                    if ($newStatus == 2) {
-                        $entity->approved_date = date('Y-m-d');
-                    }
-    
+                    // in approvazione
                     if ($newStatus == 4) {
                         // Se si richiede l'approvazione salva la notifica
                         $tableN = TableRegistry::get('Aziende.StatementsNotifications');
@@ -399,6 +395,16 @@ class StatementsController extends AppController
                         $entityN->user_maker_id = $this->user['id'];
                         $entity->notifications = [$entityN];
                         $associated = ['StatementsNotifications'];
+
+                        $due_date = new Date();
+                        $due_date->addMonth(1);
+                        $entity->due_date = $due_date->format('Y-m-d');
+                    } else {
+                        // Approvato
+                        if ($newStatus == 2) {
+                            $entity->approved_date = date('Y-m-d');
+                        }
+                        $entity->due_date = null;
                     }
                     //echo "<pre>"; print_r($entity);die();
     

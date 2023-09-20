@@ -4050,6 +4050,7 @@ class WsController extends AppController
     }
 
     public function getStatementCompanies() {
+        $user = $this->request->session()->read('Auth.User');
 
         $pass['query'] = $this->request->query;
 
@@ -4083,16 +4084,40 @@ class WsController extends AppController
 
                 $date = '';
 
-
-
-                $out['rows'][] = array(
+                $rowsOut = array(
                     $value->company->name,
                     isset($value->company->agreement) ? $value->company->agreement->cig : "",
                     $value->statement->period_label,
                     isset($value->status) ? $value->status->name : "",
                     $value->history['created'],
-                    $button
                 );
+
+                if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
+                    if ($value->due_date) {
+                        $value->due_date ? $value->due_date->format('d/m/Y') : '';
+                        $today = new Date();
+                        if($today > $value->due_date) {
+                            $class = "bg-red";
+                        } else {
+                            $interval = $today->diffInDays($value->due_date);
+                            if ($interval > 7) {
+                                $class = "bg-green";
+        
+                            } else {
+                                $class = "bg-orange";
+                            }
+                        }
+
+                        $span = "<span class='badge $class'>$value->due_date</span>";
+
+                    } else {
+                        $span = '';
+                    }
+                    array_push($rowsOut, $span);
+                }
+
+                array_push($rowsOut, $button);
+                $out['rows'][] = $rowsOut;
             }
                 $this->_result = $out;
             

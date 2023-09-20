@@ -92,16 +92,18 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             } 
                         ?>
                         <span data-status-id="<?= $lastStatus->status->id ?>" class="badge <?= $badgeClass ?> badge-statement-status"><?= $lastStatus->status->name ?></span>
+                        </span>
                         <?php if ($lastStatus->status->id == 2) { ?>
                             <span class="statement-status-date">approvato il <?= $lastStatus->created->format('d/m/Y') ?></span>
                         <?php } ?>
                         <?php if ($lastStatus->status->id == 4 && ($user['role'] == 'admin' || $user['role'] == 'ragioneria')) {
-                            $dueDate = clone $lastStatus->created;
-                            $dueDate->modify('+1 month');
                         ?>
-                            <span class="statement-status-date">da approvare entro il <?= $dueDate->format('d/m/Y') ?></span>
+                            <span class="statement-status-date" id="due-date">
+                                <?php if ($statement->companies[0]->due_date) : ?>
+                                Da approvare entro il <?= $statement->companies[0]->due_date->format('d-m-Y') ?>
+                                <?php endif ?>
+                            </span>
                         <?php } ?>
-                    </span>
                 </div>
                 <div class="box-body chat statement-status-body">
                 <?php foreach ($statement->companies[0]->history as $history) { ?>

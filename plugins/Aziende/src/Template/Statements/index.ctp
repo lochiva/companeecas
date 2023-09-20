@@ -74,8 +74,9 @@ echo $this->Html->script( 'Aziende.statements.js' );
                                     <th width="10%">CIG</th>
                                     <th width="10%">Periodo</th>
                                     <th width="10%">Stato</th>
-                                    <th width="20%">Data stato corrente</th>
-                                    <th width="7%" class="filters-reset"></th>
+                                    <th width="20%" class="filter-false">Data stato corrente</th>
+                                    <?php if ($role == 'admin' || $role == 'ragioneria') :?><th width="10%">Data di scadenza</th> <?php endif?>
+                                    <th width="7%" class="filters-reset filter-false sorter-false"></th>
 
                                 </tr>
                             </thead>
