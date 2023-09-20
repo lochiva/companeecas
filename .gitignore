@@ -50,3 +50,5 @@ scripts/deploy.sh
 webroot/img/local
 
 _scripts/.env
+
+FILES
