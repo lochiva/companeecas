@@ -33,6 +33,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\NotFoundException;
 use Aziende\Error\ErrorCodes;
 use Clegginabox\PDFMerger\PDFMerger;
+use Cake\Log\Log;
 
 /**
  * Aziende Controller
@@ -4502,7 +4503,7 @@ class WsController extends AppController
     */
     public function downloadZipStatements($statement_id = null)
     {
-
+        Log::info('[downloadZipStatements] START', 'statements');
         set_time_limit(0);
         ini_set('memory_limit', -1);
 
@@ -4558,9 +4559,10 @@ class WsController extends AppController
 
                 if (!empty($statement->companies)) {
                     foreach ($statement->companies as $company) {
-                        if (!empty($company->uploaded_path)) {
+                         if (!empty($company->uploaded_path)) {
                             if (file_exists($statementsFilesPath . $company->uploaded_path)) {
                                 $files[$statementsFilesPath . $company->uploaded_path][] = $company->company->name . DS . $company->filename;
+                                Log::info("[downloadZipStatements] Aggiungo il file " . $company->company->name . DS . $company->filename . " nella cartella " . $statementsFilesPath . $company->uploaded_path, 'statements'); 
                             } else {
                                 $this->Flash->error('File fattura mancante per l\'ente ' . $company->company->name);
                                 $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4570,6 +4572,7 @@ class WsController extends AppController
                         if (!empty($company->compliance)) {
                             if (file_exists($statementsFilesPath . $company->compliance)) {
                                 $files[$statementsFilesPath . $company->compliance][] = $company->company->name . DS . $company->compliance_filename;
+                                Log::info("[downloadZipStatements] Aggiungo il file " . $company->company->name . DS . $company->compliance_filename . " nella cartella " . $statementsFilesPath . $company->compliance, 'statements'); 
                             } else {
                                 $this->Flash->error('File dichiarazione mancante per l\'ente ' . $company->company->name);
                                 $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4591,6 +4594,7 @@ class WsController extends AppController
                                 if (!empty($cost->attachment)) {
                                     if (file_exists($costsFilesPath . $cost->attachment)) {
                                         $files[$costsFilesPath . $cost->attachment][] = $company->company->name . DS . $category->name . DS . $cost->filename;
+                                        Log::info("[downloadZipStatements] Aggiungo il file " . $company->company->name . DS . $category->name . DS . $cost->filename . " nella cartella " . $costsFilesPath . $cost->attachment, 'statements'); 
                                     } else {
                                         $this->Flash->error('Allegato mancante per la spesa ' . $cost->description . ' del ' . $cost->date);
                                         $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
@@ -4621,14 +4625,21 @@ class WsController extends AppController
                                             unlink($tempFile);
 
                                             $pdf->addPDF($signaturesPath . $firma->filepath);
+
+                                            Log::info("[downloadZipStatements] Eseguo il merge del file " . $signaturesPath . $firma->filepath, 'statements'); 
                                         } catch (\Exception $e) {
                                             $files[$signaturesPath . $firma->filepath][] = $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file;
+
+                                            Log::error("[downloadZipStatements] Merge fallito di " . $signaturesPath . $firma->filepath, 'statements'); 
+
+                                            Log::info("[downloadZipStatements] Merge fallito - Aggiungo il file " . $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file . " nella cartella " . $signaturesPath . $firma->filepath, 'statements'); 
                                         }
                                     }
 
                                     $pdf->merge('file', "$tempSignatureDir/$fileName");
                                 }
                                 $files["$tempSignatureDir/$fileName"][] = $company->company->name . DS . 'fogli_firme' . DS . $key  . DS . $fileName;
+                                Log::info("[downloadZipStatements] Merge fallito - Aggiungo il file PDF accorpato " . $company->company->name . DS . 'fogli_firme' . DS . $key  . DS . $fileName . " nella cartella $tempSignatureDir/$fileName", 'statements');
                             }
                         }
                     }
@@ -4655,29 +4666,34 @@ class WsController extends AppController
                             'name' => $archiveName
                         ));
                         setcookie('downloadStarted', '1', false, '/');
+                        Log::info('[downloadZipStatements] END', 'statements');
                         return $this->response;
                     } catch (NotFoundException $e) {
                         setcookie('downloadStarted', '1', false, '/');
                         $this->Flash->error('Impossibile creare il file ZIP');
                         $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+                        Log::error('[downloadZipStatements] END - Error: ' . $e->getMessage(), 'statements');
                         return $this->response;
                     }
                 } else {
                     setcookie('downloadStarted', '1', false, '/');
                     $this->Flash->error('Impossibile creare il file ZIP. Non ci sono file da inserire.');
                     $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+                    Log::info('[downloadZipStatements] END', 'statements');
                     return $this->response;
                 }
             } else {
                 setcookie('downloadStarted', '1', false, '/');
                 $this->Flash->error('Errore nello scaricamento dello ZIP: errore nella creazione dell\'archivio ZIP.');
                 $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+                Log::info('[downloadZipStatements] END', 'statements');
                 return $this->response;
             }
         } else {
             setcookie('downloadStarted', '1', false, '/');
             $this->Flash->error('Errore nello scaricamento dello ZIP: dati mancanti.');
             $this->redirect(['plugin' => 'Aziende', 'controller' => 'Statements', 'action' => 'index']);
+            Log::info('[downloadZipStatements] END', 'statements');
             return $this->response;
         }
     }
