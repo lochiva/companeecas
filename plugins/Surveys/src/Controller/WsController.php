@@ -46,25 +46,32 @@ class WsController extends AppController
         $this->viewBuilder()->template('default');
         $this->_result = array('response' => 'KO', 'data' => -1, 'msg' => "Errore");
 	}
-	
-	public function isAuthorized($user = null)
-    {
-		if($user['role'] == 'admin'){
-			return true;
-		}
 
-		if($user['role'] == 'user'){
-			$userActions = ['getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey',
-				'getActiveComponentsByInterview', 'getActiveComponentsByQuotation'
+	public function isAuthorized($user = null)
+	{
+		if ($user['role'] == 'admin') {
+			return true;
+		} else {
+			$authorizedActions = [
+				'user' => [
+					'getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey',
+					'getActiveComponentsByInterview', 'getActiveComponentsByQuotation'
+				],
+				'area_iv' => ['createInterview', 'getInterview', 'saveInterview']
 			];
-			if (in_array($this->request->getParam('action'), $userActions)) {
+
+			if (
+				!empty($user['role']) &&
+				!empty($authorizedActions[$user['role']]) &&
+				in_array($this->request->getParam('action'), $authorizedActions[$user['role']])
+			) {
 				return true;
 			}
-		}
 
-        // Default deny
-        return false;
-    }
+			// Default deny
+			return false;
+		}
+	}
 
 	public function beforeRender(Event $event) 
 	{
