@@ -4082,14 +4082,20 @@ class WsController extends AppController
                 $button .= '</div>';
                 ########### buttons END
 
-                $date = '';
+                if($value->history['created']) {
+                    $date = new Date($value->history['created']);
+                    $date = $date->format('d/m/Y');
+                } else {
+                    $date = $value->history['created'];
+                }
+                
 
                 $rowsOut = array(
                     $value->company->name,
                     isset($value->company->agreement) ? $value->company->agreement->cig : "",
                     $value->statement->period_label,
                     isset($value->status) ? $value->status->name : "",
-                    $value->history['created'],
+                    $date,
                 );
 
                 if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
