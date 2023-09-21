@@ -4561,7 +4561,7 @@ class WsController extends AppController
                     ->where(function (QueryExpression $exp, Query $q) use ($statement) {
                         return $exp->between('PresenzeUpload.date', $statement->period_start_date, $statement->period_end_date);
                     })
-                    ->limit('300')
+                    ->order('PresenzeUpload.date')
                     ->groupBy('code_centro')
                     ->toArray();
             } else {
