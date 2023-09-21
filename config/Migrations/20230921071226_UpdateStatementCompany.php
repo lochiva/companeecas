@@ -2,7 +2,7 @@
 
 use Migrations\AbstractMigration;
 
-class InsertStatus2 extends AbstractMigration
+class UpdateStatementCompany extends AbstractMigration
 {
     /**
      * Change Method.
