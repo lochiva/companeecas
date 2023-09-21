@@ -219,6 +219,13 @@ Log::config('google', [
     'file' => 'google_api.log'
 ]);
 
+// Logs per gli statements
+Log::config('statements', [
+    'className' => 'File',
+    'path' => LOGS,
+    'file' => 'statements.log'
+]);
+
 Plugin::load('WyriHaximus/TwigView', [
     'bootstrap' => true,
 ]);
