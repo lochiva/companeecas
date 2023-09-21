@@ -4529,6 +4529,7 @@ class WsController extends AppController
     {
 
         set_time_limit(0);
+        ini_set('memory_limit', -1);
 
         // path dei file di costo
         $costsFilesPath = ROOT . DS . Configure::read('dbconfig.aziende.COSTS_UPLOAD_PATH');
