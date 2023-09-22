@@ -396,9 +396,12 @@ class StatementsController extends AppController
                         $entity->notifications = [$entityN];
                         $associated = ['StatementsNotifications'];
 
-                        $due_date = new Date();
-                        $due_date->addMonth(1);
-                        $entity->due_date = $due_date->format('Y-m-d');
+                        if($oldStatus === 1 || $oldStatus === 3) {
+                            $due_date = new Date();
+                            $due_date->addMonth(1);
+                            $entity->due_date = $due_date->format('Y-m-d');
+                        }
+
                     } else {
                         // Approvato
                         if ($newStatus == 2) {
