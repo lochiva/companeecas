@@ -387,7 +387,7 @@ class StatementsController extends AppController
                     $entity->status_id = $newStatus;
 
                     // in approvazione
-                    if ($newStatus == 4 ||$newStatus == 5) {
+                    if ($newStatus == 4) {
                         // Se si richiede l'approvazione salva la notifica
                         $tableN = TableRegistry::get('Aziende.StatementsNotifications');
                         $entityN = $tableN->newEntity();
@@ -404,7 +404,9 @@ class StatementsController extends AppController
                         if ($newStatus == 2) {
                             $entity->approved_date = date('Y-m-d');
                         }
-                        $entity->due_date = null;
+                        if($newStatus !== 5) {
+                            $entity->due_date = null;
+                        }
                     }
                     //echo "<pre>"; print_r($entity);die();
     
