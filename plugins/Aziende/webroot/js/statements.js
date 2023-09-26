@@ -181,7 +181,18 @@ $(document).on('click','.download-statement',function(e){
   $('#template-spinner').show();
   document.cookie = 'downloadStarted=0;path=/';
 
-  window.location = pathServer + 'aziende/ws/downloadZipStatements/' + $(this).data('statement');
+  window.location = pathServer + 'aziende/ws/downloadZipStatements/' + $(this).data('statement') + '/statement';
+
+  checkCookieForLoader('downloadStarted', '1');
+});
+
+$(document).on('click','.download-signatures',function(e){
+	e.preventDefault();
+
+  $('#template-spinner').show();
+  document.cookie = 'downloadStarted=0;path=/';
+
+  window.location = pathServer + 'aziende/ws/downloadZipStatements/' + $(this).data('statement') + '/signatures';
 
   checkCookieForLoader('downloadStarted', '1');
 });

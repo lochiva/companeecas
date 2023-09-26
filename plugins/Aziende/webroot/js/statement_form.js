@@ -574,7 +574,7 @@ function displayCosts(cats, statement) {
           `</td><td>`;
 
           if (cats[cat]["costs"][cost]["attachment"]) {
-            toAppend +=         '<a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cats[cat]["costs"][cost]["id"] + '">Scarica</a>';
+            toAppend +=         '<a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cats[cat]["costs"][cost]["id"] + '" target="_blank">Apri</a>';
           }
 
           toAppend += `</td>`;
@@ -820,7 +820,7 @@ function modifyCost(cost_id) {
           if (prop.indexOf('attachment') === 0) {
             if (res.data[prop].length > 1) {
               $('#add-cost input[name=file]').hide();
-              let fileString =  '<span id="cost-file"><a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cost_id + '">'+res.data.filename+'</a>';
+              let fileString =  '<span id="cost-file"><a href="' + pathServer + 'aziende/ws/downloadFileCosts/' + cost_id + '" target="_blank">'+res.data.filename+'</a>';
               fileString += `<a class="btn btn-xs btn-default" id="remove-file"> <i data-toggle="tooltip" class="fa fa-trash" data-original-title="Elimina file"></i> </a></span>`;
               $('#add-cost input[name=file]').before(fileString);
               $('#remove-file').click(()=>removeFile());
