@@ -96,11 +96,11 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <?php if ($lastStatus->status->id == 2) { ?>
                             <span class="statement-status-date">approvato il <?= $lastStatus->created->format('d/m/Y') ?></span>
                         <?php } ?>
-                        <?php if ($lastStatus->status->id == 4 && ($user['role'] == 'admin' || $user['role'] == 'ragioneria')) {
+                        <?php if (($lastStatus->status->id == 4 || $lastStatus->status->id == 5) && (($user['role'] == 'admin' || $user['role'] == 'ragioneria'))) {
                         ?>
                             <span class="statement-status-date" id="due-date">
                                 <?php if ($statement->companies[0]->due_date) : ?>
-                                Da approvare entro il <?= $statement->companies[0]->due_date->format('d-m-Y') ?>
+                                Da approvare entro il <?= $statement->companies[0]->due_date->format('d/m/Y') ?>
                                 <?php endif ?>
                             </span>
                         <?php } ?>

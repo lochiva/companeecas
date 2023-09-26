@@ -70,13 +70,13 @@ echo $this->Html->script( 'Aziende.statements.js' );
                         <table id="table-statements" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th width="20%">Ente</th>
-                                    <th width="10%">CIG</th>
-                                    <th width="10%">Periodo</th>
-                                    <th width="10%">Stato</th>
-                                    <th width="20%" class="filter-false">Data stato corrente</th>
-                                    <?php if ($role == 'admin' || $role == 'ragioneria') :?><th width="10%">Data di scadenza</th> <?php endif?>
-                                    <th width="7%" class="filters-reset filter-false sorter-false"></th>
+                                    <th>Ente</th>
+                                    <th>CIG</th>
+                                    <th>Periodo</th>
+                                    <th>Stato</th>
+                                    <th class="filter-false">Data stato corrente</th>
+                                    <?php if ($role == 'admin' || $role == 'ragioneria') :?><th>Data di scadenza</th> <?php endif?>
+                                    <th width="10%" class="filters-reset sorter-false"></th>
 
                                 </tr>
                             </thead>

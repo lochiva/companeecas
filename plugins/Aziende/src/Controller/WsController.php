@@ -4084,14 +4084,20 @@ class WsController extends AppController
                 $button .= '</div>';
                 ########### buttons END
 
-                $date = '';
+                if($value->history['created']) {
+                    $date = new Date($value->history['created']);
+                    $date = $date->format('d/m/Y');
+                } else {
+                    $date = $value->history['created'];
+                }
+                
 
                 $rowsOut = array(
                     $value->company->name,
                     isset($value->company->agreement) ? $value->company->agreement->cig : "",
                     $value->statement->period_label,
                     isset($value->status) ? $value->status->name : "",
-                    $value->history['created'],
+                    $date,
                 );
 
                 if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
@@ -4639,6 +4645,8 @@ class WsController extends AppController
                             foreach ($firme as $key => $sede) {
                                 $pdf = new PDFMerger;
                                 $fileName = "$key.pdf";
+
+                                $mergeCounter = 0;
                                 foreach ($sede as $firma) {
                                     $d = new Date($firma->date);
                                     if (file_exists($signaturesPath . $firma->filepath)) {
@@ -4651,20 +4659,30 @@ class WsController extends AppController
 
                                             $pdf->addPDF($signaturesPath . $firma->filepath);
 
+                                            $mergeCounter++;
+
                                             Log::info("[downloadZipStatements] Eseguo il merge del file " . $signaturesPath . $firma->filepath, 'statements'); 
                                         } catch (\Exception $e) {
                                             $files[$signaturesPath . $firma->filepath][] = $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file;
 
                                             Log::error("[downloadZipStatements] Merge fallito di " . $signaturesPath . $firma->filepath, 'statements'); 
 
-                                            Log::info("[downloadZipStatements] Merge fallito - Aggiungo il file " . $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file . " nella cartella " . $signaturesPath . $firma->filepath, 'statements'); 
+                                            Log::info("[downloadZipStatements] Aggiungo il file " . $company->company->name . DS . 'fogli_firme' . DS . $key . DS . $firma->date->format('Y-m-d') . '_' . $firma->file . " nella cartella " . $signaturesPath . $firma->filepath, 'statements'); 
                                         }
                                     }
 
-                                    $pdf->merge('file', "$tempSignatureDir/$fileName");
+                                    if($mergeCounter > 0) {
+                                        $pdf->merge('file', "$tempSignatureDir/$fileName");
+                                    }
+                                    
                                 }
-                                $files["$tempSignatureDir/$fileName"][] = $company->company->name . DS . 'fogli_firme' . DS . $key  . DS . $fileName;
-                                Log::info("[downloadZipStatements] Merge fallito - Aggiungo il file PDF accorpato " . $company->company->name . DS . 'fogli_firme' . DS . $key  . DS . $fileName . " nella cartella $tempSignatureDir/$fileName", 'statements');
+                                if (file_exists("$tempSignatureDir/$fileName")) {
+                                    $files["$tempSignatureDir/$fileName"][] = $company->company->name . DS . 'fogli_firme' . DS . $key  . DS . $fileName;
+                                    Log::info("[downloadZipStatements] Aggiungo il file PDF accorpato " . $company->company->name . DS . 'fogli_firme' . DS . $key  . DS . $fileName . " nella cartella $tempSignatureDir/$fileName", 'statements');
+
+                                } else {
+                                    Log::warning("[downloadZipStatements] Non è stato generato alcun pdf accorpato", 'statements'); 
+                                }
                             }
                         }
                     }

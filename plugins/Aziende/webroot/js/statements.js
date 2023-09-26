@@ -23,7 +23,10 @@ $(function(){
 			},
 			filter_formatter: {
 				'.filters-reset': function ($cell, indx) {
-					return $cell.html('<button type="button" class="btn btn-default btn-block btn-reset-filters-statements"><i class="fa fa-eraser"></i></button>');
+          var $btn = $('<button type="button" class="btn btn-default btn-block btn-reset-filters-statements"><i class="fa fa-eraser"></i></button>').appendTo($cell);
+          $cell.removeClass('tablesorter-filter');
+          return $btn;
+
 				},
 			},
         },
