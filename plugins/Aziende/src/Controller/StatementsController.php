@@ -74,7 +74,7 @@ class StatementsController extends AppController
             ],
             'ragioneria' => [
                 'index', 'view', 'updateStatusStatementCompany'
-            ]
+            ],
         ];
 
         if (
