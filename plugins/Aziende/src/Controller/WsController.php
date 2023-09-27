@@ -215,7 +215,7 @@ class WsController extends AppController
                 }*/
                 if($user['role'] != 'questura'){ 
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
-                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro<span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
                 }
                 if ($azienda->id_tipo == 1) {
@@ -424,8 +424,11 @@ class WsController extends AppController
 
                     $button = "";
                     $button.= '<div class="btn-group">';
+                    if($user['role'] != 'questura'){
                     $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
+                    }
                     $button.= '<a class="btn btn-xs btn-default guests" data-toggle="tooltip" title="Ospiti" href="' . Router::url('/aziende/guests/index/' . $sede->id) . '"><i class="fa fa-users"></i></a>';
+                    if($user['role'] != 'questura'){
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
@@ -433,6 +436,7 @@ class WsController extends AppController
                         $button.= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
                     }
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
+                    }
                     if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') {
                         $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
                     }
