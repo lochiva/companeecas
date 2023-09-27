@@ -388,7 +388,7 @@ class AziendaComponent extends Component
     {
         if (!empty($user) && !empty($idAzienda)) {
 
-            if($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria'){
+            if($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria'  || $user['role'] == 'questura'){
                 return true;
             }
 
