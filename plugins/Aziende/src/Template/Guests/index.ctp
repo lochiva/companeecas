@@ -64,7 +64,7 @@ $role = $this->request->session()->read('Auth.User.role');
                   <i class="fa fa-list-alt"></i>
                   <h3 class="box-title"><?=__c('Lista ospiti per la struttura '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['provincia']['s_prv'].') dell\'ente '.$azienda['denominazione'])?></h3>
                   <span hidden class="warning-out-of-spots">Posti esauriti</span>
-                  <?php if ($azienda['id_tipo'] == 1) { ?>
+                  <?php if ($azienda['id_tipo'] == 1 && $role != 'questura') { ?>
                     <a href="<?=Router::url('/aziende/sedi/presenze?sede='.$sede['id']);?>" id="sediPresenze" class="btn btn-primary btn-xs pull-right" style="margin-left:10px"><i class="fa fa-calendar"></i> Presenze</a>
                   <?php } ?>
                   <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
