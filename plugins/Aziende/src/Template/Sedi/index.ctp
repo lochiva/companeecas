@@ -52,9 +52,11 @@ $user = $this->request->session()->read('Auth.User');
                   <i class="fa fa-list-ul"></i>
                   <h3 class="box-title">Elenco delle strutture</h3>
                   <div id="box-general-action"  class=" pull-right">
-                    <?php if ($azienda->id_tipo == 1) { ?>
+                    <?php if ($azienda->id_tipo == 1) { 
+                        if($user['role'] != 'questura'){?>
+                        
                         <a class="btn btn-primary btn-xs pull-right" href="<?= Router::url('/aziende/agreements/index/' . $azienda->id)?>" style="margin-left: 10px;"><i class="fa fa-file-text-o"></i> Convenzioni</a>
-                    <?php } ?>
+                    <?php } }?>
                     <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') { ?>
                     <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalSede" data-backdrop="false" data-keyboard="false" onclick="clearModale()" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                     <?php } ?>

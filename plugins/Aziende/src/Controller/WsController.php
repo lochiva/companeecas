@@ -220,7 +220,7 @@ class WsController extends AppController
                 }
                 if ($azienda->id_tipo == 1) {
                     if($user['role'] != 'questura'){ 
-                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni!!!!!!</a></li>';
                 }
                 if($user['role'] != 'questura'){ 
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
