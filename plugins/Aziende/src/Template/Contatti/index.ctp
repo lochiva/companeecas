@@ -37,7 +37,7 @@ $user = $this->request->session()->read('Auth.User');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ro_area_iv' || $user['role'] == 'ragioneria') { ?>
+        <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } else { ?>
             <li><a href="<?=Router::url('/aziende/sedi/index/').$idAzienda;?>">Strutture</a></li>
@@ -54,7 +54,7 @@ $user = $this->request->session()->read('Auth.User');
                   <i class="fa fa-list-ul"></i>
                   <h3 class="box-title">Elenco dei Contatti</h3>
                   <div id="box-general-action"  class=" pull-right">
-                    <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ro_area_iv' ||  $user['role'] == 'ente_ospiti' || $user['role'] == 'questura') { ?>
+                    <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti' || $user['role'] == 'questura') { ?>
                         <a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#myModalContatto" data-backdrop="false" data-keyboard="false" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                     <?php } ?>
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>

@@ -20,12 +20,10 @@ $user = $this->request->session()->read('Auth.User');
 $roleLabels = [
   'admin' => 'Admin',
   'area_iv' => 'Area IV',
-  'ro_area_iv' => 'Ro_Area IV',
   'ragioneria' => 'Ragioneria',
   'questura' => 'Questura',
   'ente_ospiti' => 'Ente ospiti',
   'ente_contabile' => 'Ente contabile'
-
 ];
 ?>
 <script>
@@ -86,7 +84,7 @@ $roleLabels = [
         -->
 
         <?php 
-        if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ro_area_iv') {
+        if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
           echo $this->element('Aziende.guests_notify'); 
         }
         ?>
