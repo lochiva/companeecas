@@ -38,7 +38,7 @@ class OffersController extends AppController
       $pass['query'] = $this->request->query; 
       $offers = $this->Offers->getOffersTable($pass, $idAzienda);
       $out = array('rows'=>[], 'total_rows'=>$offers['tot'] );
-
+      
       foreach ($offers['res'] as $key => $offer) {
 
           $button = "";

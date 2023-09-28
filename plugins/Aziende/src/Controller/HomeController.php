@@ -70,7 +70,21 @@ class HomeController extends AppController
             } else {
                 return false;
             }
-        } else {
+        }
+        else if ( $user['role'] == 'questura') {
+            $authorizedActions = [
+              'index'
+            ];
+         if (in_array($this->request->getParam('action'), $authorizedActions)) {
+            return true;
+            
+         }
+         else {
+            return false;
+         }
+        }
+        
+        else {
             return false;
         } 
     }

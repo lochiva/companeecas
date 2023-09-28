@@ -41,6 +41,7 @@ class SediController extends AppController
             $user['role'] == 'admin' || 
             $user['role'] == 'area_iv' || 
             $user['role'] == 'ragioneria' || 
+            $user['role'] == 'questura' || 
             $user['role'] == 'ente_ospiti' ||
             $user['role'] == 'ente_contabile'
         ){
@@ -102,7 +103,7 @@ class SediController extends AppController
         $user = $this->request->session()->read('Auth.User');
         $sede = TableRegistry::get('Aziende.Sedi')->get($this->request->query['sede'], ['contain' => ['Comuni', 'Province']]);
 
-        if(!$this->Azienda->verifyUser($user, $sede['id_azienda'])){
+        if(!$this->Azienda->verifyUser($user, $sede['id_azienda'] && $user['role'] != 'questura')){
             $this->Flash->error('Accesso negato. Non sei autorizzato.');
             $this->redirect('/');
             return null;

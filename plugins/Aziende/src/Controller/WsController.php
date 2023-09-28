@@ -115,6 +115,18 @@ class WsController extends AppController
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'saveStatement', 'getCosts', 'getStatementCompany', 
                 'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements', 'getCost', 'getPresenzeCount'
+            ],
+            'questura' => [
+                'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva', 
+                'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry', 
+                'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 
+                'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 
+                'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
+                'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 
+                'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
+                
             ]
         ];
 
@@ -174,13 +186,21 @@ class WsController extends AppController
 
         if(!empty($res['res'])){
 
-            foreach ($res['res'] as $key => $azienda) {
+            foreach ($res['res'] as $key => $azienda ) {
+                
+                
 
-                $button = "";
+                $button = ""; 
+                 
                 $button.= '<div class="btn-group">';
+                if($user['role'] != 'questura'){ 
                 $button.= '<a class="btn btn-xs btn-default view" data-toggle="tooltip" title="Visualizza" href="' . Router::url('/aziende/home/info/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" ><i class="fa fa-eye"></i></a>';
+                }
+                if($user['role'] != 'questura'){ 
                 $button.= '<a class="btn btn-xs btn-default edit" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" data-toggle="modal" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
+                }
                 $button.= '<a class="btn btn-xs btn-default sedi" data-toggle="tooltip" title="Strutture" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i></a>';
+               
                 /*$ficGtwUid = Configure::read('dbconfig.ficgtw.API_UID');
                 if ($ficGtwUid != "") { // Il pulsante di fatture in cloud lo mostro solo se effettivamente è configurato, altrimenti non serve...
                     if($azienda->id_cliente_fattureincloud != 0 || $azienda->id_fornitore_fattureincloud != 0){
@@ -195,17 +215,23 @@ class WsController extends AppController
                         }
                     }
                 }*/
-                
+                if($user['role'] != 'questura'){ 
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
-                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
+                $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro<span class="caret"></span></a>';
                 $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
-                if ($azienda->id_tipo == 1) {
-                    $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
                 }
+                if ($azienda->id_tipo == 1) {
+                    if($user['role'] != 'questura'){ 
+                $button.= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
+                }
+                if($user['role'] != 'questura'){ 
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
+                }
                 if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
                     $button.= '<li><a class="delete" data-id="'.$azienda->id.'" data-denominazione="'.$azienda->denominazione.'" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 }
+                }
+                
                 $button.= '</ul>';
                 $button.= '</div>';
                 $button.= '</div>';
@@ -400,8 +426,11 @@ class WsController extends AppController
 
                     $button = "";
                     $button.= '<div class="btn-group">';
+                    if($user['role'] != 'questura'){
                     $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
+                    }
                     $button.= '<a class="btn btn-xs btn-default guests" data-toggle="tooltip" title="Ospiti" href="' . Router::url('/aziende/guests/index/' . $sede->id) . '"><i class="fa fa-users"></i></a>';
+                    if($user['role'] != 'questura'){
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
@@ -409,6 +438,7 @@ class WsController extends AppController
                         $button.= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
                     }
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
+                    }
                     if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') {
                         $button.= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
                     }
@@ -1857,7 +1887,12 @@ class WsController extends AppController
 
                 $buttons = "";
 				$buttons .= '<div class="button-group" style="min-width:50px;">';
-                $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
+                if($user['role'] != 'questura'){ 
+                    $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
+                    } else if(
+                        $user['role'] = 'questura'){
+                        $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-info" data-toggle="tooltip" title="Visualizza ospite"><i class="fa fa-eye"></i></a>';
+                        }
                 if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
                     $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="'.$guest['id'].'" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>'; 
                 } elseif ($user['role'] == 'ente_ospiti') {

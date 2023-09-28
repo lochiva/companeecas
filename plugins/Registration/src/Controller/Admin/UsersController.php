@@ -54,7 +54,7 @@ class UsersController extends AppController
         $users = $this->Users->find()
             ->where([
                 'OR' => [
-                    ['role IN' => ['area_iv', 'ragioneria', 'ente_ospiti', 'ente_contabile']],
+                    ['role IN' => ['area_iv', 'ragioneria', 'ente_ospiti', 'questura', 'ente_contabile']],
                     'AND' => [
                         'role' => 'admin',
                         'level <=' => $level
