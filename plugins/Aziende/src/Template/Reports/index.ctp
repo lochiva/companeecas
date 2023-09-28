@@ -33,7 +33,7 @@ use Cake\Routing\Router;
 
 <?= $this->Flash->render() ?>
 
-<?php if ($role == 'admin' || $role == 'area_iv' ||  ($role == 'ente_ospiti' && $azienda['id_tipo'] == 1)) { ?>
+<?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ro_area_iv' ||  ($role == 'ente_ospiti' && $azienda['id_tipo'] == 1)) { ?>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -44,7 +44,7 @@ use Cake\Routing\Router;
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-reports box-body">
-                    <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                    <?php if ($role == 'admin' || $role == 'area_iv'|| $role == 'ro_area_iv') { ?>
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="control-label" for="dateReportGuestsCas">Data</label>
@@ -100,7 +100,7 @@ use Cake\Routing\Router;
 </section>
 <?php } ?>
 
-<?php if ($role == 'admin' || $role == 'area_iv' || ($role == 'ente_ospiti' && $azienda['id_tipo'] == 2)) { ?>
+<?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ro_area_iv' || ($role == 'ente_ospiti' && $azienda['id_tipo'] == 2)) { ?>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -111,7 +111,7 @@ use Cake\Routing\Router;
                     <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-reports box-body">
-                    <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                    <?php if ($role == 'admin' || $role == 'area_iv'|| $role == 'area_iv') { ?>
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="control-label" for="dateReportGuestsEmergenzaUcraina">Data</label>

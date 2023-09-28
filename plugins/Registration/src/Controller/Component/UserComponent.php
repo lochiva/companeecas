@@ -57,7 +57,7 @@ class UserComponent extends Component
 		$users = $usersTable->find()
 			->where([
 				'OR' => [
-					['role IN' => ['area_iv', 'ragioneria', 'questura', 'ente_ospiti', 'ente_contabile']],
+					['role IN' => ['area_iv','ro_area_iv', 'ragioneria', 'questura', 'ente_ospiti', 'ente_contabile']],
 					'AND' => [
 						'role' => 'admin',
 						'level <=' => $level

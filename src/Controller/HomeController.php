@@ -36,6 +36,7 @@ class HomeController extends AppController
           isset($user['role']) && (
             $user['role'] == 'admin' || 
             $user['role'] == 'area_iv' || 
+            $user['role'] == 'ro_area_iv' ||
             $user['role'] == 'ragioneria' || 
             $user['role'] == 'questura' ||
             $user['role'] == 'ente_ospiti' ||

@@ -45,8 +45,17 @@ class SurveysController extends AppController
                 'documentPdf',
                 'answers'
             ],
+            'ro_area_iv' => [
+                'chapterPreview',
+                'chapters',
+                'documentPreview',
+                'documentPdf',
+                'answers'
+            ],
+            
             'ragioneria' => [],
             'ente_ospiti' => [],
+            'questura' => [],
             'ente_contabile' => []
         ];
 

@@ -41,6 +41,7 @@ $user = $this->request->session()->read('Auth.User');
 				<?php if (
 					$user['role'] == 'admin' || 
 					$user['role'] == 'area_iv' || 
+					$user['role'] == 'ro_area_iv' ||
 					$user['role'] == 'ragioneria' || 
 					$user['role'] == 'questura' ||
 					(($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') && $this->Utils->isValidEnte($user['id']))
@@ -69,7 +70,7 @@ $user = $this->request->session()->read('Auth.User');
 		<?= $this->element('Aziende.box_search_guest'); ?>
 	<?php } ?>
 
-	<?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv') { ?>
+	<?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'area_iv') { ?>
 		<!-- Notifiche -->
 		<?= $this->element('Aziende.box_notifications', ['notificationsCount' => $notificationsCount, 'notifications' => $notifications, 'enteType' => 1]); ?>
 

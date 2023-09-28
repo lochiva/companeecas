@@ -125,6 +125,19 @@ class WsController extends AppController
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
                 
+            ],
+            'ro_area_iv' => [
+                'getAziende','loadAzienda', 'getSedi', 'loadSede', 'getContatti','loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'saveAziendaJson','verifyDatiPiva', 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests',
+                'saveGuest', 'getSediForSearchGuest', 'getGuest', 'searchCountry', 'searchGuest', 'removeGuestFromFamily', 
+                'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 'saveAllGuestsNotificationsDone',
+                'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory',
+                'getExitTypes', 'getRequestExitTypes', 'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault',
+                'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi', 'requestExitProcedure',
+                'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer', 'readmissionProcedure', 'getEducationalQualifications', 
+                'autocompleteGuests','getFiles','saveFiles', 'saveSingleCompany', 'checkRendiconti', 
+                'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 'downloadFileStatements', 
+                'downloadFileCosts','getPresenzeCount', 'getStatementsByAgreementId', 'getGuestPresenzeAfterDate'
+                
             ]
         ];
 
