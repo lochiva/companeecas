@@ -58,6 +58,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="text-center" v-else>
+                    Nessun pagamento trovato.
+                </div>
             </div>
         </div>
     </div>
