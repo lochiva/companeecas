@@ -41,7 +41,12 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div class="box-header with-border">
                   <i class="fa fa-list-alt"></i>
                   <h3 class="box-title"><?=__c('Lista modelli')?></h3>
-                  <a href="<?=Router::url('/surveys/surveys/add');?>" id="box-general-action" class="btn btn-info btn-xs pull-right" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
+                  <?php if ($user['role'] === 'admin') : ?>
+                    <a href="<?=Router::url('/surveys/surveys/add');?>" id="box-general-action" class="btn btn-info btn-xs pull-right" style="margin-left:10px">
+                        <i class="fa fa-plus"></i> 
+                        Nuovo
+                    </a>
+                  <?php endif ?>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                 </div>
                 <div class="box-table-surveys box-body">

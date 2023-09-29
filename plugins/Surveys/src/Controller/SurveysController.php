@@ -43,7 +43,9 @@ class SurveysController extends AppController
                 'chapters',
                 'documentPreview',
                 'documentPdf',
-                'answers'
+                'answers',
+                'index',
+                'edit'
             ],
             'ragioneria' => [],
             'ente_ospiti' => [],
@@ -66,6 +68,8 @@ class SurveysController extends AppController
     {
         parent::initialize();
 		$this->loadComponent('Surveys.Surveys');
+        $this->user = $this->request->session()->read('Auth.User');
+        $this->set('user', $this->user);
     }
 
     /**
