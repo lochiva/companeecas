@@ -74,6 +74,11 @@ class SurveysInterviewsTable extends AppTable
             ->setProperty('guest')
             ->setForeignKey('interview_id')
             ->setDependent(true);
+
+        $this->hasOne('SurveysInterviewsPayments', ['className' => 'Aziende.SurveysInterviewsPayments'])
+            ->setProperty('payment')
+            ->setForeignKey('interview_id')
+            ->setDependent(true);
     }
 
     /**
