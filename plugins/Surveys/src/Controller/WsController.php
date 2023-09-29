@@ -57,7 +57,9 @@ class WsController extends AppController
 					'getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey',
 					'getActiveComponentsByInterview', 'getActiveComponentsByQuotation'
 				],
-				'area_iv' => ['createInterview', 'getInterview', 'saveInterview']
+				'area_iv' => ['createInterview', 'getInterview', 'saveInterview'],
+				'ragioneria' => ['createInterviews', 'getSurveysForPayments'],
+				'ente_contabile' => ['getSurveysForPayments']
 			];
 
 			if (
@@ -1167,5 +1169,78 @@ class WsController extends AppController
 			$this->_result['response'] = "KO";
 			$this->_result['msg'] = $message;
 		}
+	}
+
+	public function createInterviews() {
+		try {
+			$this->request->allowMethod(['post']);
+			$documents = [];
+			$data = $this->request->data;
+
+			$survey = TableRegistry::get('Surveys.Surveys')->get($data['doc_type'], ['contain' => 'SurveysChapters']);
+			$interviewsTable = TableRegistry::get('Surveys.SurveysInterviews');
+
+			$user = $this->request->session()->read('Auth.User');
+
+			foreach($data['documents'] as $doc) {
+				$int['id_survey']= $survey->id;
+				$int['id_user'] = $user['id'];
+				$int['title'] = $survey->title;
+				$int['subtitle'] = $survey->subtitle;
+				$int['description'] = $survey->description;
+				$int['version'] = $survey->version;
+				$int['status'] = 1;
+				$int['payment'] = ['payment_id' => $doc];
+		
+				for ($i = 0; $i < count($survey->chapters); $i++) {
+					$int['answers'][$i] = [
+						'chapter' => $survey->chapters[$i]->chapter,
+						'chapter_data' => $survey->chapters[$i]->chapter_data,
+						'color' => $survey->chapters[$i]->color,
+						'group_id' => $survey->chapters[$i]->group_id,
+					];
+				}
+
+				$entity = $interviewsTable->newEntity($int, ['associated' => ['SurveysInterviewsPayments', 'SurveysAnswers']]);
+				
+
+				if($interviewsTable->save($entity)){
+					array_push($documents, $entity->payment);
+				}
+			}
+
+			if(!empty($documents)) {
+				$this->_result['response'] = "OK";
+				$this->_result['data'] = compact('documents');
+
+			} else {
+				$this->_result['response'] = "KO";
+				$this->_result['msg'] = "Non è stato possibile generare i documenti richiesti.";
+
+			}
+
+
+		} catch(\Exception $e) {
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = $e->getMessage();
+
+		}
+
+	}
+
+	public function getSurveysForPayments() {
+		try {
+			$this->request->allowMethod(['get']);
+			$document_types = TableRegistry::get('Aziende.SurveysPayments')->find()->contain(['Surveys'])->all();
+			$this->_result['response'] = "OK";
+			$this->_result['data'] = compact('document_types');
+			$this->_result['msg'] = "Modelli recuperati correttamente.";
+
+		} catch(\Exception $e) {
+			$this->_result['response'] = "KO";
+			$this->_result['msg'] = $e->getMessage();
+
+		}
+		
 	}
 }

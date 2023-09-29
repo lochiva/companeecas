@@ -63,6 +63,7 @@ class SurveysInterview extends Entity
         'created' => true,
         'modified' => true,
         'guest' => true,
-        'answers' => true
+        'answers' => true,
+        'payment' => true
     ];
 }
