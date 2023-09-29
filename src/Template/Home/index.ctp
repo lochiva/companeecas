@@ -42,6 +42,7 @@ $user = $this->request->session()->read('Auth.User');
 					$user['role'] == 'admin' || 
 					$user['role'] == 'area_iv' || 
 					$user['role'] == 'ragioneria' || 
+					$user['role'] == 'questura' ||
 					(($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile') && $this->Utils->isValidEnte($user['id']))
 				) { ?>
 					<?= $this->Html->Image('/img/local/logo_homepage.png',['class'=>'logo_centro']) ?>
@@ -61,6 +62,7 @@ $user = $this->request->session()->read('Auth.User');
 		$user['role'] == 'admin' || 
 		$user['role'] == 'area_iv' || 
 		$user['role'] == 'ragioneria' || 
+		$user['role'] == 'questura' ||
 		(($user['role'] == 'ente_ospiti' || $user['role'] == 'ente_contabile' ) && $this->Utils->isValidEnte($user['id'])) 
 	) { ?>
 		<!-- Ricerca ospite -->

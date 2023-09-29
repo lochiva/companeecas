@@ -49,7 +49,7 @@ use Cake\Routing\Router;
         <div class="col-md-12" id="divCheckPasswordMatch"></div>
         <?php 
             echo $this->Form->input('role', [
-                'options' => [ 'admin' => 'Admin' , 'area_iv' => 'Area IV', 'ragioneria' => 'Ragioneria', 'ente_ospiti' => 'Ente ospiti', 'ente_contabile' => 'Ente contabile']
+                'options' => [ 'admin' => 'Admin' , 'area_iv' => 'Area IV', 'ragioneria' => 'Ragioneria', 'questura' => 'Questura', 'ente_ospiti' => 'Ente ospiti', 'ente_contabile' => 'Ente contabile']
             ]);
             echo $this->Form->input('level',['type' => 'number']);
             echo $this->Form->input('auth_email', ['type' => 'checkbox', 'label' => ['text' => "Autenticato"]]);
