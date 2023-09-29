@@ -198,6 +198,7 @@ class StatementsController extends AppController
                 $periods = TableRegistry::get('Aziende.Periods')->find('list')->where(['visible' => true])->toArray();
                 $statement->period_start_date = $statement->period_start_date->format('Y-m-d');
                 $statement->period_end_date = $statement->period_end_date->format('Y-m-d');
+                
 
                 $this->set(compact('statement', 'companies', 'periods', 'company', 'ati', 'presenze', 'minors', 'pocketMoney'));
                 $this->set('_serialize', ['statement']);

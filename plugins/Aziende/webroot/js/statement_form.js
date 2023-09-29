@@ -1,6 +1,5 @@
 $(document).ready(function () {
   $('select.select-company').on("change", function () {
-
     $('form#add-cost')[0].reset();
     $('form#add-cost input[required], form#add-costt select[required]').each(function() {
       $(this).parent().removeClass('has-error');
@@ -109,12 +108,15 @@ $(document).ready(function () {
       })
         .done(function (res) {
           if (res.response == "OK") {
+            company = id;
             $('input[name="companies[0][id]"]').val(res.data.id);
             $('input[name="companies[0][company_id]"]').val(res.data.company_id);
             $('input[name="companies[0][billing_reference]"]').val(
               res.data.billing_reference
             );
+            billing_reference = res.data.billing_reference;
             $('input[name="companies[0][billing_date]"]').val(res.data.billing_date);
+            billing_date = moment(res.data.billing_date).format('DD/MM/YYYY');
             $('input[name="companies[0][billing_net_amount]"]').val(
               res.data.billing_net_amount
             );
@@ -295,6 +297,8 @@ $(document).ready(function () {
           alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
         });
 
+        $(this).trigger('loadPayments', [id]);
+
       // Costi
       $.ajax({
         url: pathServer + "aziende/ws/getCosts/" + false + "/" + id,
@@ -429,6 +433,7 @@ $(document).ready(function () {
     }
 
   } else {
+    $(this).trigger('loadPayments', [company]);
     $.ajax({
       url: pathServer + "aziende/ws/getCosts/" + false + "/" + company,
       type: "GET",
