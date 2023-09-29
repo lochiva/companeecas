@@ -192,13 +192,6 @@ class WsController extends AppController
                 
                 
 
-<<<<<<< HEAD
-                $button = "";
-                $button .= '<div class="btn-group">';
-                $button .= '<a class="btn btn-xs btn-default view" data-toggle="tooltip" title="Visualizza" href="' . Router::url('/aziende/home/info/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" ><i class="fa fa-eye"></i></a>';
-                $button .= '<a class="btn btn-xs btn-default edit" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" data-toggle="modal" data-target="#myModalAzienda" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa  fa-pencil"></i></a>';
-                $button .= '<a class="btn btn-xs btn-default sedi" data-toggle="tooltip" title="Strutture" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i></a>';
-=======
                 $button = ""; 
                  
                 $button.= '<div class="btn-group">';
@@ -210,7 +203,6 @@ class WsController extends AppController
                 }
                 $button.= '<a class="btn btn-xs btn-default sedi" data-toggle="tooltip" title="Strutture" href="' . Router::url('/aziende/sedi/index/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i class="fa fa-home"></i></a>';
                
->>>>>>> feature/questura
                 /*$ficGtwUid = Configure::read('dbconfig.ficgtw.API_UID');
                 if ($ficGtwUid != "") { // Il pulsante di fatture in cloud lo mostro solo se effettivamente è configurato, altrimenti non serve...
                     if($azienda->id_cliente_fattureincloud != 0 || $azienda->id_fornitore_fattureincloud != 0){
@@ -225,16 +217,6 @@ class WsController extends AppController
                         }
                     }
                 }*/
-<<<<<<< HEAD
-
-                $button .= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
-                $button .= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
-                $button .= '<ul style="width:100px !important;" class="dropdown-menu">';
-                if ($azienda->id_tipo == 1) {
-                    $button .= '<li><a class="contatti" href="' . Router::url('/aziende/agreements/index/' . $azienda->id) . '"><i style="margin-right: 8px;" class="fa fa-file-text-o"></i> Convenzioni</a></li>';
-                }
-                $button .= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
-=======
                 if($user['role'] != 'questura'){ 
 				$button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                 $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro<span class="caret"></span></a>';
@@ -247,21 +229,14 @@ class WsController extends AppController
                 if($user['role'] != 'questura'){ 
                 $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/azienda/' . $azienda->id) . '" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '"><i style="margin-right: 8px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                 }
->>>>>>> feature/questura
                 if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
                     $button .= '<li><a class="delete" data-id="' . $azienda->id . '" data-denominazione="' . $azienda->denominazione . '" href="#"><i style="margin-right: 10px; margin-left: 2px;" class="fa fa-trash"></i> Elimina</a></li>';
                 }
-<<<<<<< HEAD
-                $button .= '</ul>';
-                $button .= '</div>';
-                $button .= '</div>';
-=======
                 }
                 
                 $button.= '</ul>';
                 $button.= '</div>';
                 $button.= '</div>';
->>>>>>> feature/questura
 
                 $countGuestsAzienda = $this->Azienda->countGuestsForAzienda($azienda->id);
                 if ($azienda->id_tipo == 1) {
@@ -446,14 +421,6 @@ class WsController extends AppController
                 foreach ($sedi as $key => $sede) {
 
                     $button = "";
-<<<<<<< HEAD
-                    $button .= '<div class="btn-group">';
-                    $button .= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
-                    $button .= '<a class="btn btn-xs btn-default guests" data-toggle="tooltip" title="Ospiti" href="' . Router::url('/aziende/guests/index/' . $sede->id) . '"><i class="fa fa-users"></i></a>';
-                    $button .= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
-                    $button .= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
-                    $button .= '<ul style="width:100px !important;" class="dropdown-menu">';
-=======
                     $button.= '<div class="btn-group">';
                     if($user['role'] != 'questura'){
                     $button.= '<a class="btn btn-xs btn-default edit" href="#" data-id="' . $sede->id . '" data-toggle="modal" data-target="#myModalSede" data-backdrop="static" data-keyboard="false"><i data-toggle="tooltip" title="Modifica" href="#" class="fa fa-pencil"></i></a>';
@@ -463,16 +430,11 @@ class WsController extends AppController
                     $button.= '<div class="btn-group navbar-right" data-toggle="tooltip" title="Vedi tutte le opzioni">';
                     $button.= '<a class="btn btn-xs btn-default dropdown-toggle dropdown-tableSorter" data-toggle="dropdown">Altro <span class="caret"></span></a>';
                     $button.= '<ul style="width:100px !important;" class="dropdown-menu">';
->>>>>>> feature/questura
                     if ($azienda->id_tipo == 1) {
                         $button .= '<li><a class="presenze" href="' . Router::url('/aziende/sedi/presenze?sede=' . $sede->id) . '"><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-calendar"></i> Presenze</a></li>';
                     }
-<<<<<<< HEAD
-                    $button .= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
-=======
                     $button.= '<li><a class="contatti" href="' . Router::url('/aziende/contatti/index/sede/' . $sede->id) . '" data-id="' . $sede->id . '" ><i style="margin-right: 5px;margin-left: -3px;" class="fa fa-address-book-o"></i> Contatti</a></li>';
                     }
->>>>>>> feature/questura
                     if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ente_ospiti') {
                         $button .= '<li><a class="delete" href="#" data-id="' . $sede->id . '"><i style="margin-right: 7px; margin-left: -2px;" class="fa fa-trash"></i> Elimina</a></li>';
                     }
