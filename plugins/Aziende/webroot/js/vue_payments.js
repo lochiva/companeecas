@@ -16,9 +16,13 @@ var app = new Vue({
       payment: {
         statement_company_id: null,
         net_amount: null,
-        oa_number: null,
-        os_number: null,
-        os_date: null,
+        oa_number_net: null,
+        os_number_net: null,
+        os_date_net: null,
+        vat_amount: null,
+        oa_number_vat: null,
+        os_number_vat: null,
+        os_date_vat: null,
         billing_reference: null,
         billing_date: null,
         protocol: null,
@@ -27,7 +31,7 @@ var app = new Vue({
       },
       paymentForm: {
         net_amount: {
-          label: "Importo",
+          label: "Importo (netto)",
           type: "number",
           step: 0.03,
           min: 0.01,
@@ -43,35 +47,83 @@ var app = new Vue({
           },
         },
 
-        oa_number: {
-          label: "N° OA",
+        vat_amount: {
+          label: "Importo (IVA)",
+          type: "number",
+          step: 0.03,
+          min: 0.01,
+          required: true,
+          valid: true,
+          errors: "",
+          rule: () => {
+            if (this.payment.vat_amount < 0) {
+              let err = `Il campo ${this.paymentForm.vat_amount.label} deve essere maggiore di 0.`;
+              this.paymentFormErrors.push(err);
+              this.paymentForm.vet_amount.valid = false;
+            }
+          },
+        },
+
+        oa_number_net: {
+          label: "N° OA (netto)",
           type: "text",
           max: "16",
           required: true,
           valid: true,
           rule: () => {
-            this.max("oa_number", 16);
+            this.max("oa_number_net", 16);
           },
         },
 
-        os_number: {
-          label: "N° OS",
+        os_number_net: {
+          label: "N° OS (Netto)",
           type: "text",
           max: "16",
           required: true,
           valid: true,
           rule: () => {
-            this.max("os_number", 16);
+            this.max("os_number_net", 16);
           },
         },
 
-        os_date: {
-          label: "Data OS",
+        os_date_net: {
+          label: "Data OS (netto)",
           type: "date",
           required: true,
           valid: true,
           rule: () => {
-            this.validDate("os_date");
+            this.validDate("os_date_net");
+          },
+        },
+        oa_number_vat: {
+          label: "N° OA (IVA)",
+          type: "text",
+          max: "16",
+          required: true,
+          valid: true,
+          rule: () => {
+            this.max("oa_number_vat", 16);
+          },
+        },
+
+        os_number_vat: {
+          label: "N° OS (IVA)",
+          type: "text",
+          max: "16",
+          required: true,
+          valid: true,
+          rule: () => {
+            this.max("os_number_vat", 16);
+          },
+        },
+
+        os_date_vat: {
+          label: "Data OS (IVA)",
+          type: "date",
+          required: true,
+          valid: true,
+          rule: () => {
+            this.validDate("os_date_vat");
           },
         },
 
@@ -100,7 +152,7 @@ var app = new Vue({
           label: "Protocollo",
           type: "text",
           max: "16",
-          required: true,
+          required: false,
           valid: true,
           rule: () => {
             this.max("protocol", 16);
@@ -169,6 +221,7 @@ var app = new Vue({
     openModal(id) {
       this.modalClass = "in";
       this.modalStyle.display = "block";
+      $('body').addClass('modal-open');
       this.payment.statement_company_id = this.statement_company_id;
       this.payment.cig = cig;
       this.payment.billing_reference = billing_reference;
@@ -183,6 +236,7 @@ var app = new Vue({
       }
     },
     closeModal() {
+      $('body').removeClass('modal-open');
       this.modalClass = "";
       this.modalStyle.display = "none";
       Object.keys(this.payment).forEach((val) => (this.payment[val] = null));
@@ -264,7 +318,6 @@ var app = new Vue({
     generateDocs() {
       var formData = new FormData();
       formData.append("doc_type", this.docType);
-      // formData.append('documents', JSON.stringify(this.documents));
       this.documents.forEach((val, index) =>
         formData.append(`documents[${index}]`, val)
       );

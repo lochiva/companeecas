@@ -203,7 +203,7 @@ class PaymentsController extends AppController
     {
         try {
             $this->request->allowMethod(['get']);
-            $payments = $this->Payments->find()->where(['statement_company_id' => $statement_company_id])->contain(['Documents']);
+            $payments = $this->Payments->find()->where(['statement_company_id' => $statement_company_id])->contain(['Documents'])->orderAsc('created');
             $this->_result['data'] = compact('payments');
             $this->_result['response'] = 'OK';
             $this->_result['msg'] = 'Pagamenti recuperrati correttamente';

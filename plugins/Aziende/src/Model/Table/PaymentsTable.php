@@ -81,21 +81,43 @@ class PaymentsTable extends Table
             ->notEmptyString('net_amount');
 
         $validator
-            ->scalar('oa_number')
-            ->maxLength('oa_number', 16)
-            ->requirePresence('oa_number', 'create')
-            ->notEmptyString('oa_number');
+            ->scalar('oa_number_net')
+            ->maxLength('oa_number_net', 16)
+            ->requirePresence('oa_number_net', 'create')
+            ->notEmptyString('oa_number_net');
 
         $validator
-            ->scalar('os_number')
-            ->maxLength('os_number', 16)
-            ->requirePresence('os_number', 'create')
-            ->notEmptyString('os_number');
+            ->scalar('os_number_net')
+            ->maxLength('os_number_net', 16)
+            ->requirePresence('os_number_net', 'create')
+            ->notEmptyString('os_number_net');
 
         $validator
-            ->date('os_date')
-            ->requirePresence('os_date', 'create')
-            ->notEmptyDate('os_date');
+            ->date('os_date_net')
+            ->requirePresence('os_date_net', 'create')
+            ->notEmptyDate('os_date_net');
+
+            $validator
+            ->decimal('nat_amount')
+            ->requirePresence('nat_amount', 'create',)
+            ->notEmptyString('nat_amount');
+
+        $validator
+            ->scalar('oa_number_nat')
+            ->maxLength('oa_number_nat', 16)
+            ->requirePresence('oa_number_nat', 'create')
+            ->notEmptyString('oa_number_nat');
+
+        $validator
+            ->scalar('os_number_nat')
+            ->maxLength('os_number_nat', 16)
+            ->requirePresence('os_number_nat', 'create')
+            ->notEmptyString('os_number_nat');
+
+        $validator
+            ->date('os_date_nat')
+            ->requirePresence('os_date_nat', 'create')
+            ->notEmptyDate('os_date_nat');
 
         $validator
             ->scalar('billing_reference')
@@ -139,6 +161,8 @@ class PaymentsTable extends Table
     {
         $rules->add($rules->existsIn(['statement_company_id'], 'StatementCompanies'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->isUnique(['oa_number_net', 'os_number_net']));
+        $rules->add($rules->isUnique(['oa_number_vat', 'os_number_vat']));
 
         return $rules;
     }

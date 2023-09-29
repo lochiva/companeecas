@@ -25,29 +25,35 @@
                 <div class="table-responsive" v-if="payments.length">
                     <table class=table>
                         <thead>
-                            <th>Importo</th>
-                            <th>N° O.A.</th>
-                            <th>N° O.S.</th>
-                            <th>Data O.S.</th>
-                            <th>N° fattura</th>
-                            <th>Data fattura</th>
-                            <th>N° protocollo</th>
                             <th>CIG</th>
+                            <th>N° O.A. (netto)</th>
+                            <th>N° O.S. (netto)</th>
+                            <th>Data O.S. (netto)</th>
+                            <th>Importo (netto)</th>
+                            <th>N° O.A. (IVA)</th>
+                            <th>N° O.S. (IVA)</th>
+                            <th>Importo (IVA)</th>
+                            <th>Protocollo</th>
                             <th>Note di commento</th>
-                            <th>Lettera</th>
+                            <th>Azioni</th>
                         </thead>
                         <tbody>
 
                             <tr v-for="payment in payments">
-                                <td>€ {{payment.net_amount}}</td>
-                                <td>{{payment.oa_number}}</td>
-                                <td>{{payment.os_number}}</td>
-                                <td>{{payment.os_date}}</td>
-                                <td>{{payment.billing_reference}}</td>
-                                <td>{{payment.billing_date}}</td>
-                                <td>{{payment.protocol}}</td>
                                 <td>{{payment.cig}}</td>
-                                <td>{{payment.notes}}</td>
+                                <td>{{payment.oa_number_net}}</td>
+                                <td>{{payment.os_number_net}}</td>
+                                <td>{{payment.os_date_net}}</td>
+                                <td>{{payment.net_amount}}</td>
+                                <td>{{payment.oa_number_vat}}</td>
+                                <td>{{payment.os_number_vat}}</td>
+                                <td>{{payment.vat_amount}}</td>
+                                <td>{{payment.protocol}}</td>
+                                <td>
+                                    <span class="badge btn-info" data-toggle="tooltip" data-placement="top" :title="payment.notes">
+                                        <i class="fa fa-info"></i>
+                                    </span>
+                                </td>
                                 <td v-if=payment?.documents?.length>
                                     <a id="box-general-action" class="btn btn-info btn-xs" v-on:click="downloadDocuments(payment.documents)" disabled> Scarica ({{payment.documents.length}})</a>
                                 </td>
@@ -76,47 +82,86 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <div class="row">
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.net_amount.valid}">
-                                    <label class="control-label">{{paymentForm.net_amount.label}}</label>
-                                    <input :type="paymentForm.net_amount.type" class="form-control" name="net_amount" v-model="payment.net_amount" :step="paymentForm.net_amount.step" :min="paymentForm.net_amount.min" :required="paymentForm.net_amount.required">
+                            <fieldset>
+                                <legend>Dati fattura / nota di credito</legend>
+                                <div class="row">
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.cig.valid}">
+                                        <label class="control-label">{{paymentForm.cig.label}}</label>
+                                        <input :type="paymentForm.cig.type" v-model="payment.cig" class="form-control" name="cig" :required="paymentForm.cig.required">
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.oa_number.valid}">
-                                    <label class="control-label">{{paymentForm.oa_number.label}}</label>
-                                    <input :type="paymentForm.oa_number.type" v-model="payment.oa_number" class="form-control" name="oa_number" :required="paymentForm.oa_number.required">
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.os_number.valid}">
-                                    <label class="control-label">{{paymentForm.os_number.label}}</label>
-                                    <input :type="paymentForm.os_number.type" v-model="payment.os_number" class="form-control" name="os_number" :required="paymentForm.os_number.required">
+                                <div class="row">
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.billing_reference.valid}">
+                                        <label class="control-label">{{paymentForm.billing_reference.label}}</label>
+                                        <input :type="paymentForm.billing_reference.type" v-model="payment.billing_reference" class="form-control" name="billing_reference" :required="paymentForm.billing_reference.required">
+                                    </div>
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.billing_date.valid}">
+                                        <label class="control-label">{{paymentForm.billing_date.label}}</label>
+                                        <input :type="paymentForm.billing_date.type" v-model="payment.billing_date" class="form-control" name="billing_date" :required="paymentForm.billing_date.required">
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.os_date.valid}">
-                                    <label class="control-label">{{paymentForm.os_date.label}}</label>
-                                    <input :type="paymentForm.os_date.type" v-model="payment.os_date" class="form-control" name="os_date" :required="paymentForm.os_date.required">
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.billing_reference.valid}">
-                                    <label class="control-label">{{paymentForm.billing_reference.label}}</label>
-                                    <input :type="paymentForm.billing_reference.type" v-model="payment.billing_reference" class="form-control" name="billing_reference" :required="paymentForm.billing_reference.required">
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Netto</legend>
+                                <div class="row">
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.oa_number_net.valid}">
+                                        <label class="control-label">{{paymentForm.oa_number_net.label}}</label>
+                                        <input :type="paymentForm.oa_number_net.type" v-model="payment.oa_number_net" class="form-control" name="oa_number_net" :required="paymentForm.oa_number_net.required">
+                                    </div>
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.os_number_net.valid}">
+                                        <label class="control-label">{{paymentForm.os_number_net.label}}</label>
+                                        <input :type="paymentForm.os_number_net.type" v-model="payment.os_number_net" class="form-control" name="os_number_net" :required="paymentForm.os_number_net.required">
+                                    </div>
                                 </div>
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.billing_date.valid}">
-                                    <label class="control-label">{{paymentForm.billing_date.label}}</label>
-                                    <input :type="paymentForm.billing_date.type" v-model="payment.billing_date" class="form-control" name="billing_date" :required="paymentForm.billing_date.required">
+
+                                <div class="row">
+
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.os_date_net.valid}">
+                                        <label class="control-label">{{paymentForm.os_date_net.label}}</label>
+                                        <input :type="paymentForm.os_date_net.type" v-model="payment.os_date_net" class="form-control" name="os_date_net" :required="paymentForm.os_date_net.required">
+                                    </div>
+
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.net_amount.valid}">
+                                        <label class="control-label">{{paymentForm.net_amount.label}}</label>
+                                        <input :type="paymentForm.net_amount.type" class="form-control" name="net_amount" v-model="payment.net_amount" :step="paymentForm.net_amount.step" :min="paymentForm.net_amount.min" :required="paymentForm.net_amount.required">
+                                    </div>
                                 </div>
-                            </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>IVA</legend>
+                                <div class="row">
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.oa_number_vat.valid}">
+                                        <label class="control-label">{{paymentForm.oa_number_vat.label}}</label>
+                                        <input :type="paymentForm.oa_number_vat.type" v-model="payment.oa_number_vat" class="form-control" name="oa_number_vat" :required="paymentForm.oa_number_vat.required">
+                                    </div>
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.os_number_vat.valid}">
+                                        <label class="control-label">{{paymentForm.os_number_vat.label}}</label>
+                                        <input :type="paymentForm.os_number_vat.type" v-model="payment.os_number_vat" class="form-control" name="os_number_vat" :required="paymentForm.os_number_vat.required">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.os_date_vat.valid}">
+                                        <label class="control-label">{{paymentForm.os_date_vat.label}}</label>
+                                        <input :type="paymentForm.os_date_vat.type" v-model="payment.os_date_vat" class="form-control" name="os_date_vat" :required="paymentForm.os_date_vat.required">
+                                    </div>
+
+                                    <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.vat_amount.valid}">
+                                        <label class="control-label">{{paymentForm.vat_amount.label}}</label>
+                                        <input :type="paymentForm.vat_amount.type" class="form-control" name="vat_amount" v-model="payment.vat_amount" :step="paymentForm.vat_amount.step" :min="paymentForm.vat_amount.min" :required="paymentForm.vat_amount.required">
+                                    </div>
+                                </div>
+                            </fieldset>
 
                             <div class="row">
                                 <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.protocol.valid}">
                                     <label class="control-label">{{paymentForm.protocol.label}}</label>
                                     <input :type="paymentForm.protocol.type" v-model="payment.protocol" class="form-control" name="protocol" :required="paymentForm.protocol.required">
-                                </div>
-                                <div class="form-group col-sm-6" :class="{'has-error': !paymentForm.cig.valid}">
-                                    <label class="control-label">{{paymentForm.cig.label}}</label>
-                                    <input :type="paymentForm.cig.type" v-model="payment.cig" class="form-control" name="cig" :required="paymentForm.cig.required">
                                 </div>
                             </div>
 
