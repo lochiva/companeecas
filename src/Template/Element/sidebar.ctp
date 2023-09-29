@@ -316,7 +316,7 @@ $menu = [
     'plugin' => ['Surveys'],
     'controller' => ['Surveys'],
     'action' => ['index'],
-    'levels' => ['admin'],
+    'levels' => ['admin', 'area_iv'],
     'url' => Router::url(['plugin' => 'Surveys', 'controller' => 'Surveys', 'action' => 'index']),
     'target' => '',
     'icon-class' => 'fa fa-list-alt',
