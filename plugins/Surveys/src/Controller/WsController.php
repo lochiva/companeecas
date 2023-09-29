@@ -57,7 +57,7 @@ class WsController extends AppController
 					'getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey',
 					'getActiveComponentsByInterview', 'getActiveComponentsByQuotation'
 				],
-				'area_iv' => ['createInterview', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey'],
+				'area_iv' => ['createInterview', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey', 'saveSurvey', 'getSurvey', 'getSurveys', 'getSurveyStatuses', 'getStandardTexts'],
 				'ragioneria' => ['createInterviews', 'getSurveysForPayments'],
 				'ente_contabile' => ['getSurveysForPayments']
 			];
