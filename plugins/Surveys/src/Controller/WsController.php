@@ -57,7 +57,7 @@ class WsController extends AppController
 					'getSurvey', 'getInterviews', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey',
 					'getActiveComponentsByInterview', 'getActiveComponentsByQuotation'
 				],
-				'area_iv' => ['createInterview', 'getInterview', 'saveInterview']
+				'area_iv' => ['createInterview', 'getInterview', 'saveInterview', 'getInterviewForNewSurvey']
 			];
 
 			if (
