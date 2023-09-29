@@ -1854,10 +1854,6 @@ class WsController extends AppController
             foreach ($res['res'] as $key => $guest) {
 
                 $buttons = "";
-<<<<<<< HEAD
-                $buttons .= '<div class="button-group" style="min-width:50px;">';
-                $buttons .= '<a href="' . Router::url('/aziende/guests/guest?sede=' . $sedeId . '&guest=' . $guest['id']) . '" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>';
-=======
 				$buttons .= '<div class="button-group" style="min-width:50px;">';
                 if($user['role'] != 'questura'){ 
                     $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Modifica ospite"><i class="fa fa-pencil"></i></a>'; 
@@ -1865,7 +1861,6 @@ class WsController extends AppController
                         $user['role'] = 'questura'){
                         $buttons .= '<a href="'.Router::url('/aziende/guests/guest?sede='.$sedeId.'&guest='.$guest['id']).'" class="btn btn-xs btn-info" data-toggle="tooltip" title="Visualizza ospite"><i class="fa fa-eye"></i></a>';
                         }
->>>>>>> feature/questura
                 if ($user['role'] == 'admin' || $user['role'] == 'area_iv') {
                     $buttons .= '<a href="#" role="button" class="btn btn-xs btn-danger delete-guest" data-id="' . $guest['id'] . '" data-toggle="tooltip" title="Elimina ospite"><i class="fa fa-trash"></i></a>';
                 } elseif ($user['role'] == 'ente_ospiti') {
