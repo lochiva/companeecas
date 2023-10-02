@@ -489,3 +489,9 @@ div.message.error .close-error-message {
     font-size: 18px;
     font-weight: 600;
 }
+.login-footer{
+    font-size: 35px;
+    text-align: center;
+    font-weight: 300;
+    background-color: #FFF;
+}
