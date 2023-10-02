@@ -21,7 +21,8 @@ div.box-table-invoice.box-body #box-general-action a{
 #myModalOrder label.required::after,
 #myModalFatturaPassiva label.required::after,
 #myModalFatturaAttiva label.required::after,
-#modalAgreement label.required::after{
+#modalAgreement label.required::after,
+#modal-payment label.required::after{
     content: " *";
     color:red;
 }
@@ -466,4 +467,15 @@ a.contact-login:hover{
 	background-color: #FFFFFF;
 	margin: 0px !important;
 	padding-bottom: 15px;
+}
+/* Transizioni */
+.fadeVue-enter-active .modal-content,
+.fadeVue-leave-active .modal-content{
+  transition: all .4s;
+}
+
+.fadeVue-enter .modal-content,
+.fadeVue-leave-to .modal-content {
+  opacity: 0;
+  transform: translate(0,-25%);
 }

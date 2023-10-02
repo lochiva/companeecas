@@ -444,7 +444,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
             </div>
 
             
-            <?= $user['role'] === "admin" || $user['role'] === "ragioneria" || $user['role'] === "ente_contabile"  ? $this->element('Aziende.payments_vue') : ''; ?>
+            <?= $user['role'] === "admin" || $user['role'] === "ragioneria" || $user['role'] === "ente_contabile" || $user['role'] === "area_iv"  ? $this->element('Aziende.payments_vue') : ''; ?>
 
         </div>
 </section>

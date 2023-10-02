@@ -24,7 +24,7 @@ class PaymentsController extends AppController
         parent::initialize();
 
         $this->ajax = false;
-        $this->ajaxActions = ['getPaymentsbyStatementCompany', 'add'];
+        $this->ajaxActions = ['getPaymentsbyStatementCompany', 'add', 'view', 'edit', 'delete'];
 
         $this->user = $this->request->session()->read('Auth.User');
         $this->set('user', $this->user);
@@ -41,6 +41,9 @@ class PaymentsController extends AppController
 
         $authorizedActions = [
             'ente_contabile' => [
+                'index', 'view', 'getPaymentsbyStatementCompany'
+            ],
+            'area_iv' => [
                 'index', 'view', 'getPaymentsbyStatementCompany'
             ],
         ];
@@ -107,12 +110,15 @@ class PaymentsController extends AppController
      */
     public function view($id = null)
     {
-        $payment = $this->Payments->get($id, [
-            'contain' => ['StatementCompanies', 'Users']
-        ]);
-
-        $this->set('payment', $payment);
-        $this->set('_serialize', ['payment']);
+        try {
+            $this->request->allowMethod(['get']);
+            $payment = $this->Payments->get($id);
+            $this->_result['data'] = compact('payment');
+            $this->_result['response'] = 'OK';
+        } catch (\Exception $e) {
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = "Non è stato possibile recuperare i dettagli relativi al pagamento. " . $e->getMessage();
+        }
     }
 
 
@@ -153,23 +159,25 @@ class PaymentsController extends AppController
      */
     public function edit($id = null)
     {
-        $payment = $this->Payments->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $payment = $this->Payments->patchEntity($payment, $this->request->data);
-            if ($this->Payments->save($payment)) {
-                $this->Flash->success(__('The payment has been saved.'));
+        try {
+            $this->request->allowMethod(['patch', 'post', 'put']);
+            $data = $this->request->input('json_decode', 'as_array');
+            $payment = $this->Payments->get($id);
+            $payment = $this->Payments->patchEntity($payment, $data);
 
-                return $this->redirect(['action' => 'index']);
+            if ($this->Payments->save($payment)) {
+                $this->_result['data'] = compact('payment');
+                $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'Pagamento salvato correttamente';
             } else {
-                $this->Flash->error(__('The payment could not be saved. Please, try again.'));
+                $this->_result['response'] = 'KO';
+                $this->_result['msg'] = 'Non è stato possibile salvare il pagamento. ' . json_encode($payment->getErrors());
             }
+
+        } catch (\Exception $e) {
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = "Non è stato possibile salvare il pagamento. " . $e->getMessage();
         }
-        $statementCompanies = $this->Payments->StatementCompanies->find('list', ['limit' => 200]);
-        $users = $this->Payments->Users->find('list', ['limit' => 200]);
-        $this->set(compact('payment', 'statementCompanies', 'users'));
-        $this->set('_serialize', ['payment']);
     }
 
 
@@ -188,6 +196,7 @@ class PaymentsController extends AppController
             $payment->deleted = new Date();
             if ($this->Payments->save($payment)) {
                 $this->_result['response'] = 'OK';
+                $this->_result['msg'] = 'Pagamento eliminato.';
             } else {
                 $this->_result['response'] = 'KO';
                 $this->_result['msg'] = 'Non è stato possibile cancellare il pagamento';
