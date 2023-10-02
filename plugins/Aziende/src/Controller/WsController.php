@@ -91,7 +91,7 @@ class WsController extends AppController
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles',
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories',
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications','getStatementsByAgreementId','saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
             'ente_ospiti' => [
                 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda',
