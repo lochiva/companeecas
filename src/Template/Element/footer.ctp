@@ -13,4 +13,4 @@
 * @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
 */
 ?>
-<strong>Powered by <a href="https://www.alex.it/">Alex.it</a>.</strong> v1.4.1
+<strong>Powered by <a href="https://www.alex.it/">Alex.it</a>.</strong> v1.4.2
