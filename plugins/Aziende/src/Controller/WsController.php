@@ -87,12 +87,12 @@ class WsController extends AppController
                 'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva',
                 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry',
                 'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone',
-                'saveAllGuestsNotificationsDone', 'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes',
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'saveAgreement', 'deleteAgreement','getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes',
                 'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault',
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles',
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories',
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications','getStatementsByAgreementId','saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
             'ente_ospiti' => [
                 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda',

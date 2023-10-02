@@ -199,11 +199,11 @@ $role = $this->request->session()->read('Auth.User.role');
             </div>
 
             <div class="modal-footer">
-                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti' || $role == 'ragioneria') { ?>
                     <button type="button" class="btn btn-danger pull-left" id="deleteAgreement">Cancella</button>
                 <?php } ?>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti') { ?>
+                <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_ospiti' || $role == 'ragioneria') { ?>
                     <button type="button" class="btn btn-primary" id="saveAgreement" >Salva</button>
                 <?php } ?>
             </div>
