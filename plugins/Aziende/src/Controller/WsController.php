@@ -82,8 +82,7 @@ class WsController extends AppController
                 
             ],
             'ragioneria' => [
-<<<<<<< HEAD
-=======
+
                 'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva',
                 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry',
                 'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone',
@@ -119,7 +118,6 @@ class WsController extends AppController
                 'downloadZipStatements', 'getCost', 'getPresenzeCount'
             ],
             'questura' => [
->>>>>>> feature/ragioneria
                 'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva', 
                 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry', 
                 'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 
