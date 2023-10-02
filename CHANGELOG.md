@@ -1,7 +1,11 @@
 
+## Version 1.4.3 (2023-10-02)
+_____
+### Features
+ - ruolo ragioneria puù creare e modificare convenzioni
+ - nuovo footer con loghi progetto
 
-
-## 1.4.2 (2023-09-29)
+## Version 1.4.2 (2023-09-29)
 _____
 ### Features
  - modelli: utente con ruolo areaIV è autorizzato a modificare modelli
@@ -11,7 +15,7 @@ _____
 
 _____
 
-## 1.4.1 (2023-09-25)
+## Version 1.4.1 (2023-09-25)
 ### Features
  - rendiconti, la generazione del file zip collega i fogli firma per sede a meno che siano in un formato non gestibile
  - rendiconti, data approvazione trasformata in data stato corrente
