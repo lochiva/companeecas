@@ -15,22 +15,20 @@
 - ruolo area IV può creare e modificare modelli di documenti
 - riscritto algoritmo destinatario "stazioni carabinieri"
 - modelli risolta errata posizione firma in salto pagina di una sola riga
--   
+   
 ## [v1.4.3] 2023-10-02
-_____
 ### Features
- - ruolo ragioneria puù creare e modificare convenzioni
+ - ruolo ragioneria può creare e modificare convenzioni
  - nuovo footer con loghi progetto
 
 ## [v1.4.2] 2023-09-29
-_____
 ### Features
  - modelli: utente con ruolo areaIV è autorizzato a modificare modelli
  - nuovo ruolo questura con permesso in lettura su ospiti
  - rendiconti: modificato link costo ora apre il file allegato invece di scaricarlo
  - rendiconti: separato generazione zip firme da zip documenti contabili
 
-_____
+
 
 ## Version 1.4.1 2023-09-25
 ### Features
