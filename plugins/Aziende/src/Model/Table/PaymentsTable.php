@@ -79,6 +79,11 @@ class PaymentsTable extends Table
             ->decimal('net_amount')
             ->requirePresence('net_amount', 'create',)
             ->notEmptyString('net_amount');
+        
+        $validator
+            ->decimal('billing_net_amount')
+            ->requirePresence('billing_net_amount', 'create',)
+            ->notEmptyString('billing_net_amount');
 
         $validator
             ->scalar('oa_number_net')
@@ -97,27 +102,32 @@ class PaymentsTable extends Table
             ->requirePresence('os_date_net', 'create')
             ->notEmptyDate('os_date_net');
 
-            $validator
-            ->decimal('nat_amount')
-            ->requirePresence('nat_amount', 'create',)
-            ->notEmptyString('nat_amount');
+        $validator
+            ->decimal('vat_amount')
+            ->requirePresence('vat_amount', 'create',)
+            ->notEmptyString('vat_amount');
 
         $validator
-            ->scalar('oa_number_nat')
-            ->maxLength('oa_number_nat', 16)
-            ->requirePresence('oa_number_nat', 'create')
-            ->notEmptyString('oa_number_nat');
+            ->decimal('billing_vat_amount')
+            ->requirePresence('billing_vat_amount', 'create',)
+            ->notEmptyString('billing_vat_amount');
 
         $validator
-            ->scalar('os_number_nat')
-            ->maxLength('os_number_nat', 16)
-            ->requirePresence('os_number_nat', 'create')
-            ->notEmptyString('os_number_nat');
+            ->scalar('oa_number_vat')
+            ->maxLength('oa_number_vat', 16)
+            ->requirePresence('oa_number_vat', 'create')
+            ->notEmptyString('oa_number_vat');
 
         $validator
-            ->date('os_date_nat')
-            ->requirePresence('os_date_nat', 'create')
-            ->notEmptyDate('os_date_nat');
+            ->scalar('os_number_vat')
+            ->maxLength('os_number_vat', 16)
+            ->requirePresence('os_number_vat', 'create')
+            ->notEmptyString('os_number_vat');
+
+        $validator
+            ->date('os_date_vat')
+            ->requirePresence('os_date_vat', 'create')
+            ->notEmptyDate('os_date_vat');
 
         $validator
             ->scalar('billing_reference')

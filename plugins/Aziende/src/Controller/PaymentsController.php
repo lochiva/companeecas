@@ -132,7 +132,7 @@ class PaymentsController extends AppController
         try {
             $this->request->allowMethod(['post']);
             $payment = $this->Payments->newEntity();
-            $data = $this->request->data;
+            $data = $this->request->input('json_decode', 'as_array');
             $data['user_id'] = $this->user['id'];
             $payment = $this->Payments->patchEntity($payment, $data);
             if ($this->Payments->save($payment)) {

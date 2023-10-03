@@ -106,7 +106,7 @@
                                 <div class="input" :class="{'has-error': !paymentForm.cig.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.cig.attrs.required}" :for="paymentForm.cig.attrs.id">{{paymentForm.cig.label}}</label>
                                     <div class="col-sm-4">
-                                        <input v-model="payment.cig" class="form-control" v-bind="paymentForm.cig.attrs">
+                                        <input v-model.trim="payment.cig" class="form-control" v-bind="paymentForm.cig.attrs">
                                     </div>
                                 </div>
                             </div>
@@ -115,11 +115,22 @@
                             <div class="form-group">
                                 <div class="input" :class="{'has-error': !paymentForm.billing_reference.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.billing_reference.attrs.required}" :for="paymentForm.billing_reference.attrs.id">{{paymentForm.billing_reference.label}}</label>
-                                    <div class="col-sm-4"><input v-model="payment.billing_reference" class="form-control" v-bind="paymentForm.billing_reference.attrs"></div>
+                                    <div class="col-sm-4"><input v-model.trim="payment.billing_reference" class="form-control" v-bind="paymentForm.billing_reference.attrs"></div>
                                 </div>
                                 <div class="input" :class="{'has-error': !paymentForm.billing_date.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.billing_date.attrs.required}" :for="paymentForm.billing_date.attrs.id">{{paymentForm.billing_date.label}}</label>
                                     <div class="col-sm-4"><input v-model="payment.billing_date" class="form-control" v-bind="paymentForm.billing_date.attrs"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input" :class="{'has-error': !paymentForm.billing_net_amount.valid}">
+                                    <label class="control-label col-sm-2" :class="{'required': paymentForm.billing_net_amount.attrs.required}" :for="paymentForm.billing_net_amount.attrs.id">{{paymentForm.billing_net_amount.label}}</label>
+                                    <div class="col-sm-4"><input v-model.number="payment.billing_net_amount" class="form-control" v-bind="paymentForm.billing_net_amount.attrs"></div>
+                                </div>
+                                <div class="input" :class="{'has-error': !paymentForm.billing_vat_amount.valid}">
+                                    <label class="control-label col-sm-2" :class="{'required': paymentForm.billing_vat_amount.attrs.required}" :for="paymentForm.billing_vat_amount.attrs.id">{{paymentForm.billing_vat_amount.label}}</label>
+                                    <div class="col-sm-4"><input v-model.number="payment.billing_vat_amount" class="form-control" v-bind="paymentForm.billing_vat_amount.attrs"></div>
                                 </div>
                             </div>
 
@@ -131,13 +142,13 @@
                                 <div class="input" :class="{'has-error': !paymentForm.oa_number_net.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.oa_number_net.attrs.required}" :for="paymentForm.oa_number_net.attrs.id">{{paymentForm.oa_number_net.label}}</label>
                                     <div class="col-sm-4">
-                                        <input v-model="payment.oa_number_net" class="form-control" v-bind="paymentForm.oa_number_net.attrs">
+                                        <input v-model.trim="payment.oa_number_net" class="form-control" v-bind="paymentForm.oa_number_net.attrs">
                                     </div>
                                 </div>
                                 <div class="input" :class="{'has-error': !paymentForm.os_number_net.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.os_number_net.attrs.required}" :for="paymentForm.os_number_net.attrs.id">{{paymentForm.os_number_net.label}}</label>
                                     <div class="col-sm-4">
-                                        <input v-model="payment.os_number_net" class="form-control" v-bind="paymentForm.os_number_net.attrs">
+                                        <input v-model.trim="payment.os_number_net" class="form-control" v-bind="paymentForm.os_number_net.attrs">
                                     </div>
                                 </div>
                             </div>
@@ -153,7 +164,7 @@
                                 <div class="input" :class="{'has-error': !paymentForm.net_amount.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.net_amount.attrs.required}" :for="paymentForm.net_amount.attrs.id">{{paymentForm.net_amount.label}}</label>
                                     <div class="col-sm-4">
-                                        <input v-bind="paymentForm.net_amount.attrs" class="form-control" name="net_amount" v-model="payment.net_amount">
+                                        <input v-bind="paymentForm.net_amount.attrs" class="form-control" name="net_amount" v-model.number="payment.net_amount">
                                     </div>
                                 </div>
                             </div>
@@ -165,13 +176,13 @@
                                 <div class="input" :class="{'has-error': !paymentForm.oa_number_vat.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.oa_number_vat.attrs.required}" :for="paymentForm.oa_number_vat.attrs.id">{{paymentForm.oa_number_vat.label}}</label>
                                     <div class="col-sm-4">
-                                        <input v-model="payment.oa_number_vat" class="form-control" v-bind="paymentForm.oa_number_vat.attrs">
+                                        <input v-model.trim="payment.oa_number_vat" class="form-control" v-bind="paymentForm.oa_number_vat.attrs">
                                     </div>
                                 </div>
                                 <div class="input" :class="{'has-error': !paymentForm.os_number_vat.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.os_number_vat.attrs.required}" :for="paymentForm.os_number_vat.attrs.id">{{paymentForm.os_number_vat.label}}</label>
                                     <div class="col-sm-4">
-                                        <input v-model="payment.os_number_vat" class="form-control" v-bind="paymentForm.os_number_vat.attrs">
+                                        <input v-model.trim="payment.os_number_vat" class="form-control" v-bind="paymentForm.os_number_vat.attrs">
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +199,7 @@
                                 <div class="input" :class="{'has-error': !paymentForm.vat_amount.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.vat_amount.attrs.required}" :for="paymentForm.vat_amount.attrs.id">{{paymentForm.vat_amount.label}}</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" v-model="payment.vat_amount" v-bind="paymentForm.vat_amount.attrs">
+                                        <input class="form-control" v-model.number="payment.vat_amount" v-bind="paymentForm.vat_amount.attrs">
                                     </div>
                                 </div>
                             </div>
@@ -200,7 +211,7 @@
                                 <div class="input" :class="{'has-error': !paymentForm.protocol.valid}">
                                     <label class="control-label col-sm-2" :class="{'required': paymentForm.protocol.attrs.required}" :for="paymentForm.protocol.attrs.id">{{paymentForm.protocol.label}}</label>
                                     <div class="col-sm-4">
-                                        <input :type="paymentForm.protocol.type" v-model="payment.protocol" class="form-control" name="protocol" v-bind="paymentForm.protocol.attrs">
+                                        <input :type="paymentForm.protocol.type" v-model.trim="payment.protocol" class="form-control" name="protocol" v-bind="paymentForm.protocol.attrs">
                                     </div>
                                 </div>
                             </div>
@@ -209,7 +220,7 @@
                                 <div class="input" :class="{'has-error': !paymentForm.notes.valid}">
                                     <label class="control-label col-sm-2" :for="paymentForm.notes.attrs.id" :class="{'required': paymentForm.notes.attrs.required}">{{paymentForm.notes.label}}</label>
                                     <div class="col-sm-10">
-                                        <textarea v-model="payment.notes" class="form-control" name="notes" v-bind="paymentForm.notes.attrs" style="resize: none;"></textarea>
+                                        <textarea v-model.trim="payment.notes" class="form-control" name="notes" v-bind="paymentForm.notes.attrs" style="resize: none;"></textarea>
                                     </div>
                                 </div>
                             </div>
