@@ -120,9 +120,11 @@ $(document).ready(function () {
             $('input[name="companies[0][billing_net_amount]"]').val(
               res.data.billing_net_amount
             );
+            billing_net_amount = res.data.billing_net_amount;
             $('input[name="companies[0][billing_vat_amount]"]').val(
               res.data.billing_vat_amount
             );
+            billing_vat_amount = res.data.billing_vat_amount;
 
             if (res.data.uploaded_path.length) {
               $("#file_upload").removeClass("hidden");

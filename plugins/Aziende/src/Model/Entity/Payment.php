@@ -40,10 +40,12 @@ class Payment extends Entity
     protected $_accessible = [
         'statement_company_id' => true,
         'net_amount' => true,
+        'billing_net_amount' => true,
         'oa_number_net' => true,
         'os_number_net' => true,
         'os_date_net' => true,
         'vat_amount' => true,
+        'billing_vat_amount' => true,
         'oa_number_vat' => true,
         'os_number_vat' => true,
         'os_date_vat' => true,

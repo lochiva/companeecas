@@ -32,6 +32,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
     var cig = "<?= $statement->agreement->cig ?>";
     var billing_date = "<?=$statement->companies[0]->billing_date;?>";
     var billing_reference = "<?=$statement->companies[0]->billing_reference;?>";
+    var billing_net_amount = "<?=$statement->companies[0]->billing_net_amount;?>";
+    var billing_vat_amount = "<?=$statement->companies[0]->billing_vat_amount;?>";
 
 </script>
 <section class="content-header">

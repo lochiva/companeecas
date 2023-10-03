@@ -3,7 +3,6 @@ var app = new Vue({
   created: function () {
     $(document).on("loadPayments", function (event, triggeredId) {
       app.loadPayments(triggeredId);
-      console.log(event);
       app.role = role;
     });
   },
@@ -41,20 +40,16 @@ var app = new Vue({
             name: "net_amount",
             id: "net_amount",
           },
-          label: "Importo (netto)",
+          label: "Importo",
           valid: true,
           errors: "",
           rule: () => {
-            if (this.payment.net_amount < 0) {
-              let err = `Il campo ${this.paymentForm.net_amount.label} deve essere maggiore di 0.`;
-              this.paymentFormErrors.push(err);
-              this.paymentForm.net_amount.valid = false;
-            }
+            this.greater("net_amount", 0);
           },
         },
 
         vat_amount: {
-          label: "Importo (IVA)",
+          label: "Importo",
           attrs: {
             type: "number",
             step: 0.03,
@@ -66,16 +61,46 @@ var app = new Vue({
           valid: true,
           errors: "",
           rule: () => {
-            if (this.payment.vat_amount < 0) {
-              let err = `Il campo ${this.paymentForm.vat_amount.label} deve essere maggiore di 0.`;
-              this.paymentFormErrors.push(err);
-              this.paymentForm.vet_amount.valid = false;
-            }
+            this.greater("vat_amount", 0);
+          },
+        },
+
+        billing_net_amount: {
+          attrs: {
+            type: "number",
+            step: 0.03,
+            min: 0.01,
+            required: true,
+            name: "billing_net_amount",
+            id: "billing_net_amount",
+          },
+          label: "Importo (netto)",
+          valid: true,
+          errors: "",
+          rule: () => {
+            this.greater("billing_net_amount", 0);
+          },
+        },
+
+        billing_vat_amount: {
+          label: "Importo (IVA)",
+          attrs: {
+            type: "number",
+            step: 0.03,
+            min: 0.01,
+            required: true,
+            name: "billing_vat_amount",
+            id: "billing_vat_amount",
+          },
+          valid: true,
+          errors: "",
+          rule: () => {
+            this.greater("billing_vat_amount", 0);
           },
         },
 
         oa_number_net: {
-          label: "N° OA (netto)",
+          label: "N° OA",
           attrs: {
             type: "text",
             max: "16",
@@ -90,7 +115,7 @@ var app = new Vue({
         },
 
         os_number_net: {
-          label: "N° OS (Netto)",
+          label: "N° OS",
           attrs: {
             type: "text",
             max: "16",
@@ -105,7 +130,7 @@ var app = new Vue({
         },
 
         os_date_net: {
-          label: "Data OS (netto)",
+          label: "Data OS",
           attrs: {
             type: "date",
             required: true,
@@ -118,7 +143,7 @@ var app = new Vue({
           },
         },
         oa_number_vat: {
-          label: "N° OA (IVA)",
+          label: "N° OA",
           attrs: {
             type: "text",
             max: "16",
@@ -133,7 +158,7 @@ var app = new Vue({
         },
 
         os_number_vat: {
-          label: "N° OS (IVA)",
+          label: "N° OS",
           attrs: {
             type: "text",
             max: "16",
@@ -148,7 +173,7 @@ var app = new Vue({
         },
 
         os_date_vat: {
-          label: "Data OS (IVA)",
+          label: "Data OS",
           attrs: {
             type: "date",
             required: true,
@@ -314,6 +339,8 @@ var app = new Vue({
         this.payment.statement_company_id = this.statement_company_id;
         this.payment.cig = cig;
         this.payment.billing_reference = billing_reference;
+        this.payment.billing_net_amount = billing_net_amount;
+        this.payment.billing_vat_amount = billing_vat_amount;
 
         this.payment.billing_date =
           billing_date === "Invalid date" ? null : billing_date;
@@ -328,12 +355,12 @@ var app = new Vue({
     },
     openModal() {
       this.modal = true;
-      let bd = document.querySelector('body');
+      let bd = document.querySelector("body");
       bd.classList.add("modal-open");
       bd.style.paddingRight = "15px";
     },
     closeModal() {
-      let bd = document.querySelector('body');
+      let bd = document.querySelector("body");
       bd.classList.remove("modal-open");
       bd.style.paddingRight = "";
       this.modal = false;
@@ -383,7 +410,7 @@ var app = new Vue({
       })
         .then((res) => {
           if (res.data.response == "OK") {
-            if (this.payments?.length) {
+            if(this.payment.id) {
               this.payments = this.payments.map((val) => {
                 if (val.id === res.data.data.payment.id) {
                   val = res.data.data.payment;
@@ -393,7 +420,6 @@ var app = new Vue({
             } else {
               this.payments.push(res.data.data.payment);
             }
-
             this.closeModal();
           } else {
             alert(`Si è verificato un errore. ${res.data.msg}`);
@@ -427,6 +453,15 @@ var app = new Vue({
       if (this.payment[key]?.length > length) {
         this.paymentFormErrors.push(
           `Il campo ${this.paymentForm[key].label} può contenere massimo 16 caratteri.`
+        );
+        this.paymentForm[key].valid = false;
+      }
+    },
+
+    greater(key, number) {
+      if (this.payment[key]?.length < number) {
+        this.paymentFormErrors.push(
+          `Il campo ${this.paymentForm[key].label} deve essere maggiore di ${number}.`
         );
         this.paymentForm[key].valid = false;
       }
