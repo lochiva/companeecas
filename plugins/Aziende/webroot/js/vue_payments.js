@@ -391,7 +391,7 @@ var app = new Vue({
     },
 
     submitPayment() {
-      let url = `${pathServer}/aziende/payments`;
+      let url = `${pathServer}aziende/payments`;
       if (this.payment.id) {
         url += `/edit/${this.payment.id}`;
         var method = "patch";
