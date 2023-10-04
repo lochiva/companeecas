@@ -435,7 +435,7 @@ var app = new Vue({
       if (check) {
         axios({
           method: "delete",
-          url: `${pathServer}/aziende/payments/delete/${id}`,
+          url: `${pathServer}aziende/payments/delete/${id}`,
         })
           .then((res) => {
             if (res.data.response == "OK") {
