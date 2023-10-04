@@ -79,23 +79,55 @@ class PaymentsTable extends Table
             ->decimal('net_amount')
             ->requirePresence('net_amount', 'create',)
             ->notEmptyString('net_amount');
+        
+        $validator
+            ->decimal('billing_net_amount')
+            ->requirePresence('billing_net_amount', 'create',)
+            ->notEmptyString('billing_net_amount');
 
         $validator
-            ->scalar('oa_number')
-            ->maxLength('oa_number', 16)
-            ->requirePresence('oa_number', 'create')
-            ->notEmptyString('oa_number');
+            ->scalar('oa_number_net')
+            ->maxLength('oa_number_net', 16)
+            ->requirePresence('oa_number_net', 'create')
+            ->notEmptyString('oa_number_net');
 
         $validator
-            ->scalar('os_number')
-            ->maxLength('os_number', 16)
-            ->requirePresence('os_number', 'create')
-            ->notEmptyString('os_number');
+            ->scalar('os_number_net')
+            ->maxLength('os_number_net', 16)
+            ->requirePresence('os_number_net', 'create')
+            ->notEmptyString('os_number_net');
 
         $validator
-            ->date('os_date')
-            ->requirePresence('os_date', 'create')
-            ->notEmptyDate('os_date');
+            ->date('os_date_net')
+            ->requirePresence('os_date_net', 'create')
+            ->notEmptyDate('os_date_net');
+
+        $validator
+            ->decimal('vat_amount')
+            ->requirePresence('vat_amount', 'create',)
+            ->notEmptyString('vat_amount');
+
+        $validator
+            ->decimal('billing_vat_amount')
+            ->requirePresence('billing_vat_amount', 'create',)
+            ->notEmptyString('billing_vat_amount');
+
+        $validator
+            ->scalar('oa_number_vat')
+            ->maxLength('oa_number_vat', 16)
+            ->requirePresence('oa_number_vat', 'create')
+            ->notEmptyString('oa_number_vat');
+
+        $validator
+            ->scalar('os_number_vat')
+            ->maxLength('os_number_vat', 16)
+            ->requirePresence('os_number_vat', 'create')
+            ->notEmptyString('os_number_vat');
+
+        $validator
+            ->date('os_date_vat')
+            ->requirePresence('os_date_vat', 'create')
+            ->notEmptyDate('os_date_vat');
 
         $validator
             ->scalar('billing_reference')
@@ -139,6 +171,8 @@ class PaymentsTable extends Table
     {
         $rules->add($rules->existsIn(['statement_company_id'], 'StatementCompanies'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->isUnique(['oa_number_net', 'os_number_net']));
+        $rules->add($rules->isUnique(['oa_number_vat', 'os_number_vat']));
 
         return $rules;
     }
