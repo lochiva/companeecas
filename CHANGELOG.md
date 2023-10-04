@@ -1,17 +1,36 @@
 
+# Release Notes
 
+## [Unreleased]
 
-## 1.4.2 (2023-09-29)
-_____
+- nuovo procedimento di avvio di revoca
+- esportazione file giuridico
+- sospensine e revoca pocket money per ospite
+- nuova pagina di elenco pocket money revocati o sospesi
+- nuova pagina di elenco tutti i pagamenti
+- notifiche a enti ospiti e contabile
+- situazione giuridica e generazione report
+- rendiconti: generare lettere di pagamento
+- rendiconti: inserire pagamenti
+- ruolo area IV può creare e modificare modelli di documenti
+- riscritto algoritmo destinatario "stazioni carabinieri"
+- modelli risolta errata posizione firma in salto pagina di una sola riga
+   
+## [v1.4.3] 2023-10-02
+### Features
+ - ruolo ragioneria può creare e modificare convenzioni
+ - nuovo footer con loghi progetto
+
+## [v1.4.2] 2023-09-29
 ### Features
  - modelli: utente con ruolo areaIV è autorizzato a modificare modelli
  - nuovo ruolo questura con permesso in lettura su ospiti
  - rendiconti: modificato link costo ora apre il file allegato invece di scaricarlo
  - rendiconti: separato generazione zip firme da zip documenti contabili
 
-_____
 
-## 1.4.1 (2023-09-25)
+
+## Version 1.4.1 2023-09-25
 ### Features
  - rendiconti, la generazione del file zip collega i fogli firma per sede a meno che siano in un formato non gestibile
  - rendiconti, data approvazione trasformata in data stato corrente
@@ -22,3 +41,9 @@ _____
  - modelli, nuovo tag {{ospiti_e_familiari}}
 
 _____
+
+### Added
+### Changed
+### Fixed
+### Removed
+
