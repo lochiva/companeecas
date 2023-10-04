@@ -28,8 +28,8 @@ body.login-page{
 <div class="login-box users form">
 <?= $this->Flash->render('auth') ?>
 <?= $this->Form->create() ?>
-  <div class="login-logo" >
-    <!-- <a href="<?= Router::url('/') ?>"><?=$this->Html->Image('/img/local/logo_cover.png', [ 'width'=>"360", 'alt'=>'logo'] );?></a> -->
+  <div class="login-logo" style="margin-top:200px" >
+    <!-- aggiunto margine e rimossa img logo <a href="<?= Router::url('/') ?>"><?=$this->Html->Image('/img/local/logo_cover.png', [ 'width'=>"360", 'alt'=>'logo'] );?></a> -->
   </div><!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg">Accedi per iniziare la sessione</p>
