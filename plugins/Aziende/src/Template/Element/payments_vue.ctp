@@ -46,11 +46,11 @@
                                     <td>{{payment.cig}}</td>
                                     <td>{{payment.oa_number_net}}</td>
                                     <td>{{payment.os_number_net}}</td>
-                                    <td>{{payment.os_date_net}}</td>
-                                    <td>{{payment.net_amount}}</td>
+                                    <td>{{formatDate(payment.os_date_net)}}</td>
+                                    <td>{{formatNumber(payment.net_amount)}}</td>
                                     <td>{{payment.oa_number_vat}}</td>
                                     <td>{{payment.os_number_vat}}</td>
-                                    <td>{{payment.vat_amount}}</td>
+                                    <td>{{formatNumber(payment.vat_amount)}}</td>
                                     <td>{{payment.protocol}}</td>
                                     <td>
                                         <span class="badge btn-info" data-toggle="tooltip" data-placement="top" :title="payment.notes">

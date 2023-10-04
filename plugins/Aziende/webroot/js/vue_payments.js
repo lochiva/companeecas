@@ -283,18 +283,7 @@ var app = new Vue({
         )
         .then((res) => {
           if (res.data.response == "OK") {
-            this.payments = res.data.data.payments.map((payment) => {
-              payment.billing_date = moment(payment.billing_date).format(
-                "DD/MM/YYYY"
-              );
-              payment.os_date_net = moment(payment.os_date_net).format(
-                "DD/MM/YYYY"
-              );
-              payment.os_date_vat = moment(payment.os_date_vat).format(
-                "DD/MM/YYYY"
-              );
-              return payment;
-            });
+            this.payments = res.data.data.payments;
           } else {
             alert(`Si è verificato un errore. ${res.data.msg}`);
           }
@@ -514,6 +503,15 @@ var app = new Vue({
         })
         .catch((error) => alert(`Si è verificato un errore. ${error}`));
     },
+
+    formatDate(rawDate) {
+      return moment(rawDate).format(
+        "DD/MM/YYYY"
+      )
+    },
+    formatNumber(nr) {
+      return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(nr);
+    }
   },
 
   computed: {

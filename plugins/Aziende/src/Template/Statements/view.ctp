@@ -299,9 +299,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </span>
                                 <span id="totPresenze"><?= $presenze ?></span>
                                 <span class="label-like">per canone</span>
-                                <span id="daily_price">&euro;<?= number_format($statement->agreement->guest_daily_price, 2, '.', '') ?></span>
-                                <span class="label-like">pari a</span> &euro;
-                                <span id="presenzeRent"><?= number_format($presenze * $statement->agreement->guest_daily_price, 2, '.', '') ?></span>
+                                <span id="daily_price"><?= number_format($statement->agreement->guest_daily_price, 2, ',', '.') ?> &euro;</span>
+                                <span class="label-like">pari a</span>
+                                <span id="presenzeRent"><?= number_format($presenze * $statement->agreement->guest_daily_price, 2, ',', '.') ?> &euro;</span>
 
 
                             </p>
@@ -310,8 +310,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'> Pocket money maturato considerando le presenze per le strutture collegate alla convenzione. Il sistema calcola un massimo di tre presenze per gruppo familiare per giornata.</div>">
                                         <i class="fa fa-info"></i>
                                     </span> TOT pocket money maturati</span> <?= $pocketMoney['heads'] ?>
-                                <span class="label-like">per</span> &euro;<?= $pocketMoney['factor'] ?>
-                                <span class="label-like">pari a</span> &euro;<?= $pocketMoney['total'] ?>
+                                <span class="label-like">per </span><?= $pocketMoney['factor'] ?> &euro;
+                                <span class="label-like">pari a </span><?= $pocketMoney['total'] ?> &euro;
                             </p>
                             <p>
                                 <span class="label-like">
