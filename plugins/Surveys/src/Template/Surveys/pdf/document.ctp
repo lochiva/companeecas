@@ -23,6 +23,10 @@
 		*  {
 			font-family: "Times" !important;
 		}
+		table,tr,td{
+		    page-break-before: avoid;
+			page-break-inside: avoid;
+				}
 	</style>
 </head>
 <body>
