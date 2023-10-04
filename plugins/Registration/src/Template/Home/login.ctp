@@ -72,5 +72,5 @@ body.login-page{
 <?= $this->Form->end() ?>
 </div><!-- /.login-box -->
 <div class="login-footer" >
-  <img src="<?=Router::url('/img/loghi.png');?>" />
+  <img src="<?=Router::url('/img/stringa_loghi_.jpg');?>" />
 </div><!-- /.login-footer -->
