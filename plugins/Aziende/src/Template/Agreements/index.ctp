@@ -49,7 +49,7 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div class="box-header with-border">
                   <i class="fa fa-list-alt"></i>
                   <h3 class="box-title"><?=__c('Lista convenzioni')?></h3>
-                  <?php if ($role == 'admin' || $role == 'area_iv') { ?>
+                  <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ente_contabile') { ?>
                     <a id="newAgreement" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#modalAgreement" data-backdrop="false" data-keyboard="false" style="margin-left:10px" data-denominazione="<?=$azienda['denominazione']?>"><i class="fa fa-plus"></i> Nuovo</a>
                   <?php } ?>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
