@@ -30,7 +30,7 @@ class StatementsNotificationsController extends AppController
 
     public function isAuthorized($user)
     {
-        if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
+        if($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') {
             return true;
         }
         return false;

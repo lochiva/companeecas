@@ -146,7 +146,7 @@ $(document).ready(function () {
             //Storico stato rendiconto
             renderHistory(res.data.history);
 
-            if(role === 'admin' || role === 'ragioneria') {
+            if(role === 'admin' || role === 'ragioneria' || role === 'ragioneria_adm') {
               if(!!res.data.due_date) {
                 var dateObj = new Date(res.data.due_date);
                 var dueDate = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`;

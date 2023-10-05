@@ -5,7 +5,7 @@
         <div class="box-header with-border">
             <i class="fa fa-euro"></i>
             <h3 class="box-title"><?= __c('Pagamenti') ?></h3>
-            <a id="box-general-action" class="btn btn-info btn-xs pull-right" style="margin-left:10px" v-on:click="openModal(false)" :disabled="role !== 'admin' && role !== 'ragioneria'"><i class="fa fa-plus"></i> Nuovo</a>
+            <a id="box-general-action" class="btn btn-info btn-xs pull-right" style="margin-left:10px" v-on:click="openModal(false)" :disabled="role !== 'admin' && role !== 'ragioneria' && 'ragioneria_adm"><i class="fa fa-plus"></i> Nuovo</a>
         </div>
 
         <div class="box-body">

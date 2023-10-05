@@ -48,7 +48,7 @@ class HomeController extends AppController
     public function isAuthorized($user)
     {
         if(
-            $user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria') {
+            $user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') {
             return true;
 
         } else if ($user['role'] == 'ente_ospiti') {

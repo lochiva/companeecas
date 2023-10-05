@@ -103,7 +103,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <?php if ($lastStatus->status->id == 2) { ?>
                             <span class="statement-status-date">approvato il <?= $lastStatus->created->format('d/m/Y') ?></span>
                         <?php } ?>
-                        <?php if (($lastStatus->status->id == 4 || $lastStatus->status->id == 5) && (($user['role'] == 'admin' || $user['role'] == 'ragioneria'))) {
+                        <?php if (($lastStatus->status->id == 4 || $lastStatus->status->id == 5) && (($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm'))) {
                         ?>
                             <span class="statement-status-date" id="due-date">
                                 <?php if ($statement->companies[0]->due_date) : ?>
@@ -147,7 +147,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     $statusDisabled = '';
                     if (
                         ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
-                        (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
+                        (($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') && in_array($lastStatus->status->id, [1, 3]))
                     ) {
                         $statusDisabled = 'disabled';
                     }
@@ -158,7 +158,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                             <div class="input-group-btn statement-status-actions">
                                 <?php if ($user['role'] == 'ente_contabile') : ?>
                                     <button id="send" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="btn btn-success action-status" <?= $statusDisabled ?>>Invia per approvazione</button>
-                                <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
+                                <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') : ?>
                                     <button class="btn btn-success action-status" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" <?= $statusDisabled ?>>Approva</button>
                                     <button class="btn btn-success dropdown-toggle action-status-dropdown" data-toggle="dropdown" <?= $statusDisabled ?>><span class="caret"></span></button>
                                     <ul class="dropdown-menu" role="menu">
@@ -444,7 +444,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
             </div>
 
             
-            <?= $user['role'] === "admin" || $user['role'] === "ragioneria" || $user['role'] === "ente_contabile"  ? $this->element('Aziende.payments_vue') : ''; ?>
+            <?= $user['role'] === "admin" || $user['role'] === "ragioneria" || $user['role'] === "ragioneria_adm" || $user['role'] === "ente_contabile"  ? $this->element('Aziende.payments_vue') : ''; ?>
 
         </div>
 </section>

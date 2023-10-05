@@ -94,6 +94,18 @@ class WsController extends AppController
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
+            'ragioneria_adm' => [
+                'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva',
+                'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry',
+                'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone',
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes',
+                'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault',
+                'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles',
+                'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories',
+                'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
+            ],
+
             'ente_ospiti' => [
                 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda',
                 'autocompleteAziende', 'sendAnagrafica', 'sendEditAnagrafica', 'verifyDatiPiva', 'sendNoticeCompaneeAdminEdit', 'convertProvincia',
@@ -4102,7 +4114,7 @@ class WsController extends AppController
                     $date,
                 );
 
-                if ($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
+                if ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') {
                     if ($value->due_date) {
                         $value->due_date ? $value->due_date->format('d/m/Y') : '';
                         $today = new Date();

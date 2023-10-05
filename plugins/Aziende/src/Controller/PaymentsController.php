@@ -34,7 +34,8 @@ class PaymentsController extends AppController
     {
         if (
             $user['role'] == 'admin' ||
-            $user['role'] == 'ragioneria'
+            $user['role'] == 'ragioneria' ||
+            $user['role'] == 'ragioneria_adm'
         ) {
             return true;
         }

@@ -75,7 +75,7 @@ echo $this->Html->script( 'Aziende.statements.js' );
                                     <th>Periodo</th>
                                     <th>Stato</th>
                                     <th class="filter-false">Data stato corrente</th>
-                                    <?php if ($role == 'admin' || $role == 'ragioneria') :?><th>Data di scadenza</th> <?php endif?>
+                                    <?php if ($role == 'admin' || $role == 'ragioneria' || $role == 'ragioneria_adm') :?><th>Data di scadenza</th> <?php endif?>
                                     <th width="10%" class="filters-reset sorter-false"></th>
 
                                 </tr>
