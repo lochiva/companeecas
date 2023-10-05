@@ -10,16 +10,23 @@
 - nuova pagina di elenco tutti i pagamenti
 - notifiche a enti ospiti e contabile
 - situazione giuridica e generazione report
+- situazione giuridica in anagrafica ospite
+- nuovo campo id_provivsorio in anagrafica ospite (#21717)
 - rendiconti: generare lettere di pagamento
-- rendiconti: inserire pagamenti
-- ruolo area IV può creare e modificare modelli di documenti
-- riscritto algoritmo destinatario "stazioni carabinieri"
-- modelli risolta errata posizione firma in salto pagina di una sola riga
+- linkato changelog alla versione nel footer (#21668) 
+- riscritto algoritmo destinatario "stazioni carabinieri"  (#)
+- nuovo ruolo ragioneria_adm abilitato ad inserimento pagamenti (#21718)
    
-## [v1.4.3] 2023-10-02
+## [v1.4.3] 2023-10-05
 ### Features
- - ruolo ragioneria può creare e modificare convenzioni
- - nuovo footer con loghi progetto
+ - ruolo ente_contabile può creare e modificare convenzioni
+ - nuovo footer con loghi progetto  (#21686)
+ - rendiconti: inserire pagamenti
+ - ruolo area IV può creare e modificare modelli di documenti (#21665)
+
+### Fixed
+- modelli risolta errata posizione firma in salto pagina di una sola riga
+
 
 ## [v1.4.2] 2023-09-29
 ### Features
