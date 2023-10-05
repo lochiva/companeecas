@@ -13,6 +13,6 @@
 * @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
 */
 ?>
-<strong>Powered by <a href="https://www.alex.it/">Alex.it</a>.</strong> <a href="javascript:void(0);" id="version-changelog" data-toggle="modal" data-target="#changelogModal">v1.4.2</a>
+<strong>Powered by <a href="https://www.alex.it/">Alex.it</a>.</strong> <a href="javascript:void(0);" id="version-changelog" data-toggle="modal" data-target="#changelogModal">v1.4.3</a>
 
 <?= $this->element('changelog_modal'); ?>
