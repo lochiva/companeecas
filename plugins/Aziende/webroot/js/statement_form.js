@@ -118,7 +118,7 @@ $(document).ready(function () {
             $('input[name="companies[0][billing_date]"]').val(
               res.data.billing_date
             );
-            billing_date = moment(res.data.billing_date).format("DD/MM/YYYY");
+            billing_date = res.data.billing_date;
             $('input[name="companies[0][billing_net_amount]"]').val(
               res.data.billing_net_amount
             );
