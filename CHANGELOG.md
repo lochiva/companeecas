@@ -37,7 +37,7 @@
 
 
 
-## Version 1.4.1 2023-09-25
+## [v1.4.2] 2023-09-25
 ### Features
  - rendiconti, la generazione del file zip collega i fogli firma per sede a meno che siano in un formato non gestibile
  - rendiconti, data approvazione trasformata in data stato corrente

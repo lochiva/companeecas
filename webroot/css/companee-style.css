@@ -495,3 +495,19 @@ div.message.error .close-error-message {
     font-weight: 300;
     background-color: #FFF;
 }
+
+#version-changelog,
+#version-changelog:hover,
+#version-changelog:active,
+#version-changelog:visited {
+    color: #000;
+    text-decoration: none;
+}
+
+#version-changelog:hover {
+    font-weight: 700;
+}
+
+#changelogModal .modal-footer {
+    border-top: none;
+}

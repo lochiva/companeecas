@@ -124,6 +124,17 @@ class AppController extends Controller
 
             }
         });     
+
+        ##########################################################################
+        // Recupero dati changelog
+        if (file_exists(ROOT . DS . 'CHANGELOG.md')) {
+            $md = file_get_contents(ROOT . DS . 'CHANGELOG.md');
+            $parsedown = new \Parsedown();
+            $html = $parsedown->text($md);
+            $this->set('changelog', $html);
+        } else {
+            $this->set('changelog', 'Nessun dato disponibile.');
+        }
     }
 
     /**
