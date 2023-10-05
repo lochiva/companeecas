@@ -38,7 +38,7 @@ $role = $this->request->session()->read('Auth.User.role');
                             <input type="hidden" name="azienda_id" id="aziendaId" value="<?=$azienda['id']?>">
                             <input type="hidden" id="approved">
 
-                            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
+                            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria' || $role == 'ragioneria_adm') { ?>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" for="inputApproved">Approvato</label>
                                     <div class="col-sm-8">

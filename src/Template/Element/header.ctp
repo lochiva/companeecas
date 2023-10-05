@@ -21,6 +21,7 @@ $roleLabels = [
   'admin' => 'Admin',
   'area_iv' => 'Area IV',
   'ragioneria' => 'Ragioneria',
+  'ragioneria_adm' => 'Ragioneria_adm',
   'questura' => 'Questura',
   'ente_ospiti' => 'Ente ospiti',
   'ente_contabile' => 'Ente contabile'

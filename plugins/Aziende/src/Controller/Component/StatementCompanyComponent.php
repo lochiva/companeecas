@@ -76,7 +76,7 @@ class StatementCompanyComponent extends Component
             4 => ['val' => 'history.created' , 'type' => 'date'],
         ];
 
-        if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
+        if($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] = 'ragioneria_adm') {
             $columns[5] = ['val' => 'StatementCompany.due_date' , 'type' => 'date'];
         }
 
@@ -155,7 +155,7 @@ class StatementCompanyComponent extends Component
             if(($oldStatus == 1 || $oldStatus == 3) && $newStatus == 4) {
                 $updateAllowed = true;
             }
-        } else if($userRole === 'ragioneria') {
+        } else if($userRole === 'ragioneria' || $userRole === 'ragioneria_adm') {
             if(($oldStatus == 4 || $oldStatus == 5) && in_array($newStatus, [2, 3, 4, 5])) {
                 $updateAllowed = true;
             }

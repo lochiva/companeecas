@@ -454,7 +454,7 @@ $(document).on('click', '.edit-agreement', function(){
                     if(res.response == "OK"){
                         $('#agreementId').val(res.data.id);
                         $('#formAgreement #approved').val(Number(res.data.approved));
-                        if (role === 'admin' || role === 'area_iv' || role === 'ragioneria') {
+                        if (role === 'admin' || role === 'area_iv' || role === 'ragioneria' || role === 'ragioneria_adm') {
                             $('#inputApproved').prop('checked', res.data.approved);
                         }
                         $('#inputProceduraAffidamento').val(res.data.procedure_id);

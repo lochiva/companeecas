@@ -75,6 +75,9 @@ class StatementsController extends AppController
             'ragioneria' => [
                 'index', 'view', 'updateStatusStatementCompany'
             ],
+            'ragioneria_adm' => [
+                'index', 'view', 'updateStatusStatementCompany'
+            ]
         ];
 
         if (
@@ -134,6 +137,7 @@ class StatementsController extends AppController
                 $this->user['role'] == 'admin' ||
                 $this->user['role'] == 'area_iv' ||
                 $this->user['role'] == 'ragioneria' ||
+                $this->user['role'] == 'ragioneria_adm'||
                 $this->user['role'] == 'ente_contabile' && $azienda['id'] == $statement->agreement->azienda_id
             ){
 

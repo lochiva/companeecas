@@ -40,7 +40,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </h1>
         <ol class="breadcrumb">
             <li><a href="<?= Router::url('/'); ?>"><i class="fa fa-home"></i> Home</a></li>
-            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
+            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria' || $role == 'ragioneria_adm') { ?>
                 <li><a href="<?= Router::url('/aziende/home'); ?>">Enti</a></li>
             <?php } ?>
             <li><a href="<?= Router::url('/aziende/sedi/index/' . $azienda['id']); ?>">Strutture</a></li>
@@ -95,7 +95,7 @@ $role = $this->request->session()->read('Auth.User.role');
         </div>
         <div v-if="guestStatus == 6" class="message-transferred alert">
             L'ospite è stato trasferito nella struttura {{transferData.destination}} in data {{transferData.date}}.
-            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
+            <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria' || $role == 'ragioneria_adm') { ?>
                 <a :href="'<?= Router::url('/aziende/guests/guest'); ?>?sede='+transferData.destination_id+'&guest='+transferData.cloned_guest" class="view-transferred-guest">
                     <b>Visualizza ospite</b> <i class="fa fa-arrow-right"></i>
                 </a>
@@ -290,7 +290,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <td><span v-if="guest.cui">{{guest.cui}} - </span>{{guest.name}} {{guest.surname}}<span v-if="guest.status_id == 3 || guest.status_id == 6" class="exit-icon"><i class="fa fa-sign-out"></i></span></td>
                                     <td width="130px;">
                                         <div class="button-group">
-                                            <a v-if="(role == 'admin' || role == 'area_iv' || role == 'ragioneria') && guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede=' . $sede['id'] . '&guest=') ?>'+guest.id" target="_blank" role="button" class="btn btn-xs btn-warning" title="Modifica ospite">
+                                            <a v-if="(role == 'admin' || role == 'area_iv' || role == 'ragioneria' || role == 'ragioneria_adm') && guest.id" :href="'<?= Router::url('/aziende/guests/guest?sede=' . $sede['id'] . '&guest=') ?>'+guest.id" target="_blank" role="button" class="btn btn-xs btn-warning" title="Modifica ospite">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
                                             <button v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" :disabled="guest.status_id != 1 || guestStatus != 1 || guest.minor == 1 || countFamilyAdults == 1" role="button" class="btn btn-xs btn-primary" :title="guest.status_id == 1 && guestStatus == 1 && guest.minor == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: l\'ospite è un minore' : (guest.status_id == 1 && guestStatus == 1 && countFamilyAdults == 1 ? 'Rimozione ospite dal nucleo familiare disabilitata: unico adulto presente nel nucleo familiare' : 'Rimuovi ospite dal nucleo familiare')" @click="removeGuestFromFamily(index)">

@@ -321,7 +321,7 @@ function loadInputModale(idSede){
 
 	        	$('[name="id"]').val(idSede);
             $('[name="id_azienda"]').val(idAzienda);
-            if (role === 'admin' || role === 'area_iv' || role === 'ragioneria') {
+            if (role === 'admin' || role === 'area_iv' || role === 'ragioneria' || role === 'ragioneria_adm') {
                 $('#inputApproved').prop('checked', data.data.approved);
             }
             $('[name="code_centro"]').val(data.data.code_centro);
