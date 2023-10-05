@@ -18,7 +18,8 @@
         "friendsofcake/cakepdf": "^3.5",
         "phpoffice/phpspreadsheet": "^1.12",
         "dompdf/dompdf": "^1.0",
-        "clegginabox/pdf-merger": "dev-master"
+        "clegginabox/pdf-merger": "dev-master",
+        "erusev/parsedown": "^1.7"
     },
     "require-dev": {
         "psy/psysh": "@stable",

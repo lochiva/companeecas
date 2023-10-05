@@ -144,7 +144,7 @@ class PaymentsTable extends Table
             ->scalar('protocol')
             ->maxLength('protocol', 16)
             ->requirePresence('protocol', 'create')
-            ->notEmptyString('protocol');
+            ->allowEmptyString('protocol');
 
         $validator
             ->scalar('cig')
