@@ -116,7 +116,7 @@ class WsController extends AppController
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles',
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'saveStatement', 'getCosts', 'getStatementCompany',
                 'autocompleteCategories', 'saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
-                'downloadZipStatements', 'getCost', 'getPresenzeCount','saveAllStatementsNotificationsDone'
+                'downloadZipStatements', 'getCost', 'getPresenzeCount','saveAllStatementsNotificationsDone', 'getStatementsByAgreementId'
             ],
             'questura' => [
                 'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva', 
