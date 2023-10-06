@@ -130,6 +130,10 @@ $role = $this->request->session()->read('Auth.User.role');
                                     <label :class="{'required': guestData.vestanet_id.required}" for="guestVestanetId"><?= __('ID Vestanet') ?></label>
                                     <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" maxlength="10" class="form-control" name="vestanet_id" id="guestVestanetId" v-model="guestData.vestanet_id.value" @change="setDraft()" />
                                 </div>
+                                <div class="col-md-4" :class="{'has-error': guestData.temporary_id.hasError}">
+                                    <label :class="{'required': guestData.temporary_id.required}" for="guestTemporaryId"><?= __('ID temporaneo') ?></label>
+                                    <input :disabled="guestData.id.value != '' && guestStatus != 1" type="text" minlength="20" maxlength="20" class="form-control" name="temporary_id" id="guestTemporaryId" v-model="guestData.temporary_id.value" @change="setDraft()" />
+                                </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-4" :class="{'has-error': guestData.name.hasError}">
