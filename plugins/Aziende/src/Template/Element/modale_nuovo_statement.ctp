@@ -1,20 +1,19 @@
 <?php
-
 /**
- * Aziende is a plugin for manage attachment
- *
- * Companee :    Modale Nuovo Statement  (https://www.companee.it)
- * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
- * 
- * Licensed under The GPL  License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
- * @link          https://www.ires.piemonte.it/ 
- * @since         1.2.0
- * @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
- */
+* Aziende is a plugin for manage attachment
+*
+* Companee :    Modale Nuovo Statement  (https://www.companee.it)
+* Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+* 
+* Licensed under The GPL  License
+* For full copyright and license information, please see the LICENSE.txt
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+* @link          https://www.ires.piemonte.it/ 
+* @since         1.2.0
+* @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
+*/
 ?>
 
 <div class="modal fade" id="modalStatement" role="dialog" aria-hidden="true">
@@ -42,7 +41,11 @@
                     <div class="form-group">
                         <label class="required control-label col-sm-2">Periodo</label>
                         <div class="col-sm-10">
-                            <select name="period_id" class="form-control" required disabled>
+                            <select name="period_id" class="form-control" required>
+                                <option selected disabled>-- Selezionare un periodo --</option>
+                                <?php foreach ($periods as $key => $value) : ?>
+                                    <option value="<?= $key ?>"><?= $value ?></option>
+                                <?php endforeach ?>
                             </select>
                         </div>
                     </div>
@@ -73,7 +76,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-                <button type="button" class="btn btn-primary" id="save" disabled>Salva</button>
+                <button type="button" class="btn btn-primary" id="save">Salva</button>
             </div>
 
 
@@ -149,6 +152,32 @@
                 }
             });
 
+            if($('#cig').val().length == 10) {
+                $.ajax({
+                url: pathServer + 'aziende/ws/checkCig/' + $('#cig').val(),
+                type: "GET",
+                dataType: 'json',
+                async : false
+                }).done(function(res) {
+                    if (res.response == 'OK') {
+                        $('input[name=agreement_id]').val(res.data.id);
+                    } else {
+                        $('#cig').parent().parent().addClass('has-error');
+                        message += '\n'
+                        message += res.msg;
+                        valid = false;
+                    }
+                }).fail(function(richiesta, stato, errori) {
+                    alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
+                });
+
+            } else {
+                valid = false;
+                $('#cig').parent().parent().addClass('has-error');
+                message += '\nIl CIG inserito deve contenere dieci caratteri';
+
+            }
+
             if (valid) {
                 var formData = new FormData($('#form-statement')[0]);
                 $.ajax({
@@ -173,37 +202,6 @@
             }
         });
 
-        $('#cig').on('input', (e) => {
-
-            if ($('#cig').val()?.length === 10) {
-                $.ajax({
-                    url: pathServer + 'aziende/ws/checkCig/' + $('#cig').val(),
-                    type: "GET",
-                    dataType: 'json',
-                    async: false
-                }).done(function(res) {
-                    if (res.response == 'OK') {
-                        $('input[name=agreement_id]').val(res.data.id);
-
-                        for (const [key, value] of Object.entries(res.data.periods)) {
-                            $('select[name=period_id]').append($('<option>').val(key).text(value));
-                        }
-                        $('select[name=period_id]').attr('disabled', false);
-                        $('#save').attr('disabled', false);
-
-                    } else {
-                        alert(res.msg);
-                        resetForm();
-                    }
-                }).fail(function(richiesta, stato, errori) {
-                    alert("E' evvenuto un errore. Lo stato della chiamata: " + stato);
-                    resetForm();
-                });
-            } else {
-                resetForm();
-            }
-        });
-
     });
 
     $(document).on('hide.bs.modal', '#modalStatement', function(e) {
@@ -212,16 +210,7 @@
         $('input[name=period_start_date]').attr('readonly', true);
         $('input[name=period_end_date]').attr('readonly', true);
         $('input[required], select[required]').each(function() {
-            $(this).parent().parent().removeClass('has-error');
-        });
+                $(this).parent().parent().removeClass('has-error');
+            });
     });
-
-    function resetForm() {
-        $('input[name=agreement_id]').val(null);
-        $('select[name=period_id]').empty();
-        $('input[name=period_label]').val(null);
-        $('input[name=period_start_date]').val(null);
-        $('input[name=period_end_date]').val(null);
-        $('#save').attr('disabled', true);
-    }
 </script>
