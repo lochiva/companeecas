@@ -184,10 +184,9 @@
                 }).done(function(res) {
                     if (res.response == 'OK') {
                         $('input[name=agreement_id]').val(res.data.id);
-
-                        for (const [key, value] of Object.entries(res.data.periods)) {
-                            $('select[name=period_id]').append($('<option>').val(key).text(value));
-                        }
+                        res.data.periods.forEach(element => {
+                            $('select[name=period_id]').append($('<option>').val(element.id).text(element.label));
+                        });
                         $('select[name=period_id]').attr('disabled', false);
                         $('#save').attr('disabled', false);
 
