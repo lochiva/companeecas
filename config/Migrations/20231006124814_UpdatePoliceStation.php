@@ -13,7 +13,7 @@ class UpdatePoliceStation extends AbstractMigration
     public function change()
     {
         $this->query("UPDATE `police_stations` SET `name` = REPLACE(`name`, 'Stazione', 'Stazione dei Carabinieri') WHERE `name` LIKE '%Stazione%'");
-        $this->query("UPDATE `police_stations` SET `name` = REPLACE(`name`, 'Commissariato', 'Commissariato di Polizia di ') WHERE `name` LIKE '%Commissariato%'");
+        $this->query("UPDATE `police_stations` SET `name` = REPLACE(`name`, 'Commissariato', 'Commissariato di Polizia di') WHERE `name` LIKE '%Commissariato%'");
 
     }
 }
