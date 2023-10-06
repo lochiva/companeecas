@@ -103,7 +103,7 @@ class WsController extends AppController
                 'saveGuestsPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 'getTransferAziendaDefault', 'searchTransferAziende',
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi',
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer',
-                'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles',
+                'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'saveFiles',
                 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getStatementsByAgreementId',
                 'getGuestPresenzeAfterDate'
             ],
@@ -3901,12 +3901,20 @@ class WsController extends AppController
 
     public function saveFiles()
     {
+        $user = $this->Auth->user();
+        $fileData = json_decode($this->request->data('file'), true);
+        $date = new Date($fileData['date']);
+
+        if($user['role'] == 'ente_ospiti'  && !$date->wasWithinLast('2 days')) {
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'I file devono essere caricati entro 48h.';
+            return;
+        }
+
         $table = TableRegistry::get('Aziende.PresenzeUpload');
 
         $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
         $path = date('Y') . DS . date('m') . DS . date('d');
-
-        $fileData = json_decode($this->request->data('file'), true);
 
         $data = $this->request->data;
 
