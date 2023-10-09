@@ -132,6 +132,12 @@ class GuestsTable extends AppTable
             ->allowEmptyString('vestanet_id', true);
 
         $validator
+            ->scalar('temporary_id')
+            ->minLength('temporary_id', 20)
+            ->maxLength('temporary_id', 20)
+            ->allowEmptyString('temporary_id', true);
+
+        $validator
             ->scalar('name')
             ->maxLength('name', 255)
             ->requirePresence('name', 'create')
@@ -217,7 +223,6 @@ class GuestsTable extends AppTable
             },
             ['errorField' => 'original_guest_id', 'message' => 'Questo valore non esiste']
         );
-
         return $rules;
     }
 
