@@ -4192,7 +4192,14 @@ class WsController extends AppController
                     $periods = TableRegistry::get('Aziende.Periods')->find('all');
 
                     if($lastAgreement) {
-                        $periods = $periods->where(['visible' => true, 'start_date >' =>  $lastAgreement['period_start_date']])->order(['ordering']);
+                        $periods = $periods
+                            ->where([
+                                'visible' => true,
+                                'OR' => [
+                                    'start_date >' =>  $lastAgreement['period_start_date'],
+                                    'id' => 1
+                                ]
+                            ])->order(['ordering']);
                     }
 
                     $periods = $periods->toArray();

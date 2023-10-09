@@ -184,6 +184,7 @@
                 }).done(function(res) {
                     if (res.response == 'OK') {
                         $('input[name=agreement_id]').val(res.data.id);
+                        $('select[name=period_id]').append($('<option>').val(null).text('Selezionare').attr('selected', true).attr('disabled', true));
                         res.data.periods.forEach(element => {
                             $('select[name=period_id]').append($('<option>').val(element.id).text(element.label));
                         });
@@ -206,7 +207,7 @@
     });
 
     $(document).on('hide.bs.modal', '#modalStatement', function(e) {
-        $('#form-statement')[0].reset();
+        resetForm();
         $('input[name=period_label]').attr('readonly', true);
         $('input[name=period_start_date]').attr('readonly', true);
         $('input[name=period_end_date]').attr('readonly', true);
