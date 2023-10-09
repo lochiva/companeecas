@@ -4182,6 +4182,30 @@ class WsController extends AppController
 
             if ($ret) {
                 if (count($ret->companies)) {
+
+                    $lastAgreement = TableRegistry::get('Aziende.Statements')
+                        ->find('all')
+                        ->where(['agreement_id' => $ret['id']])
+                        ->order(['period_start_date' => 'DESC'])
+                        ->first();
+
+                    $periods = TableRegistry::get('Aziende.Periods')->find('all');
+
+                    if($lastAgreement) {
+                        $periods = $periods
+                            ->where([
+                                'visible' => true,
+                                'OR' => [
+                                    'start_date >' =>  $lastAgreement['period_start_date'],
+                                    'id' => 1
+                                ]
+                            ])->order(['ordering']);
+                    }
+
+                    $periods = $periods->toArray();
+
+
+                    $ret['periods'] = $periods;
                     $this->_result['response'] = "OK";
                     $this->_result['data'] = $ret;
                     $this->_result['msg'] = '';
