@@ -102,7 +102,7 @@ class WsController extends AppController
                 'saveGuestsPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 'getTransferAziendaDefault', 'searchTransferAziende',
                 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 'searchReadmissionAziende', 'searchReadmissionSedi',
                 'requestExitProcedure', 'authorizeRequestExitProcedure', 'exitProcedure', 'confirmExit', 'transferProcedure', 'acceptTransfer',
-                'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'deleteFile', 'saveFiles',
+                'readmissionProcedure', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 'saveFiles',
                 'downloadFile', 'saveSingleCompany', 'checkRendiconti', 'loadAzienda', 'saveAziendaJson', 'getPresenzeCount', 'getStatementsByAgreementId',
                 'getGuestPresenzeAfterDate'
             ],
@@ -3975,12 +3975,22 @@ class WsController extends AppController
     }
 
     public function saveFiles() {
+    public function saveFiles()
+    {
+        $user = $this->Auth->user();
+        $fileData = json_decode($this->request->data('file'), true);
+        $date = new Date($fileData['date']);
+
+        if($user['role'] == 'ente_ospiti'  && !$date->wasWithinLast('2 days')) {
+            $this->_result['response'] = 'KO';
+            $this->_result['msg'] = 'I file devono essere caricati entro 48h.';
+            return;
+        }
+
         $table = TableRegistry::get('Aziende.PresenzeUpload');
 
         $basePath = Configure::read('dbconfig.aziende.SIGNATURE_UPLOAD_PATH');
         $path = date('Y').DS.date('m').DS.date('d');
-
-        $fileData = json_decode($this->request->data('file'), true);
 
         $data = $this->request->data;
 
@@ -4245,6 +4255,30 @@ class WsController extends AppController
 
             if($ret) {
                 if (count($ret->companies)) {
+
+                    $lastAgreement = TableRegistry::get('Aziende.Statements')
+                        ->find('all')
+                        ->where(['agreement_id' => $ret['id']])
+                        ->order(['period_start_date' => 'DESC'])
+                        ->first();
+
+                    $periods = TableRegistry::get('Aziende.Periods')->find('all');
+
+                    if($lastAgreement) {
+                        $periods = $periods
+                            ->where([
+                                'visible' => true,
+                                'OR' => [
+                                    'start_date >' =>  $lastAgreement['period_start_date'],
+                                    'id' => 1
+                                ]
+                            ])->order(['ordering']);
+                    }
+
+                    $periods = $periods->toArray();
+
+
+                    $ret['periods'] = $periods;
                     $this->_result['response'] = "OK";
                     $this->_result['data'] = $ret;
                     $this->_result['msg'] = '';
