@@ -3974,7 +3974,6 @@ class WsController extends AppController
 
     }
 
-    public function saveFiles() {
     public function saveFiles()
     {
         $user = $this->Auth->user();
