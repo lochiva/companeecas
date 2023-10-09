@@ -223,11 +223,6 @@ class GuestsTable extends AppTable
             },
             ['errorField' => 'original_guest_id', 'message' => 'Questo valore non esiste']
         );
-        $rules->add($rules->isUnique(
-            ['temporary_id'],
-            'Esiste già un individuo con questo id temporaneo.'
-        ));
-
         return $rules;
     }
 
