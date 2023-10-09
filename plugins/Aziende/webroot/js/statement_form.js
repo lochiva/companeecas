@@ -156,13 +156,9 @@ $(document).ready(function () {
             //Storico stato rendiconto
             renderHistory(res.data.history);
 
-<<<<<<< HEAD
-            if (role === "admin" || role === "ragioneria") {
-              if (!!res.data.due_date) {
-=======
+
             if(role === 'admin' || role === 'ragioneria' || role === 'ragioneria_adm') {
               if(!!res.data.due_date) {
->>>>>>> feature/ragioneria
                 var dateObj = new Date(res.data.due_date);
                 var dueDate = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`;
                 $("#due-date").html(`Da approvare entro il ${dueDate}`);
