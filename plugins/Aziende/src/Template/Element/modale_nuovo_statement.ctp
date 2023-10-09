@@ -218,6 +218,7 @@
 
     function resetForm() {
         $('input[name=agreement_id]').val(null);
+        $('#cig').val(null);
         $('select[name=period_id]').empty();
         $('input[name=period_label]').val(null);
         $('input[name=period_start_date]').val(null);
