@@ -32,6 +32,11 @@ var app = new Vue({
                 value: '',
                 required: false
             },
+            temporary_id: {
+                hasError: false,
+                value: null,
+                required: false
+            },
             name: {
                 hasError: false,
                 value: '',
@@ -382,6 +387,7 @@ var app = new Vue({
                         this.guestData.check_in_date.value = res.data.data.check_in_date;
                         this.guestData.cui.value = res.data.data.cui;
                         this.guestData.vestanet_id.value = res.data.data.vestanet_id;
+                        this.guestData.temporary_id.value = res.data.data.temporary_id;
                         this.guestData.name.value = res.data.data.name;
                         this.guestData.surname.value = res.data.data.surname;
                         this.guestData.minor.value = res.data.data.minor;
@@ -511,6 +517,15 @@ var app = new Vue({
                     if(this.guestData[prop].value != "" && (this.guestData[prop].value.length < 9 || this.guestData[prop].value.length > 10)){
                         errors = true;
                         msg += 'ID Vestanet non valida.\n';
+                        this.guestData[prop].hasError = true;
+                    }else{
+                        this.guestData[prop].hasError = false;
+                    }
+                }
+                if(prop == 'temporary_id'){
+                    if(!!this.guestData[prop].value && this.guestData[prop].value.length !== 20){
+                        errors = true;
+                        msg += "L'id temporaneo deve essere lungo 20 caratteri.\n";
                         this.guestData[prop].hasError = true;
                     }else{
                         this.guestData[prop].hasError = false;
