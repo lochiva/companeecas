@@ -102,6 +102,7 @@ class GuestsController extends AppController
     public function notifications($enteType = 1)
     {
         $this->set('enteType', $enteType);
+        $this->set('user', $this->request->session()->read('Auth.User'));
     }
 
 }
