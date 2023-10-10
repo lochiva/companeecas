@@ -106,12 +106,13 @@ class GuestComponent extends Component
         $guestsNotifications = TableRegistry::get('Aziende.GuestsNotifications');
 
 		$columns = [
-			0 => ['val' => 'a.denominazione', 'type' => 'text'],
-			1 => ['val' => 'CONCAT(s.indirizzo, " ", s.num_civico, " - ", l.des_luo)', 'type' => 'text'],
-			2 => ['val' => 'CONCAT(g.name, " ", g.surname)', 'type' => 'text'],
-			3 => ['val' => 'CONCAT(u.nome, " ", u.cognome)', 'type' => 'text'],
-			4 => ['val' => 't.msg_singular', 'type' => 'text'],
-			5 => ['val' => 'GuestsNotifications.done', 'type' => ''],
+			0 => ['val' => 'GuestsNotifications.created', 'type' => 'date'],
+			1 => ['val' => 'a.denominazione', 'type' => 'text'],
+			2 => ['val' => 'CONCAT(s.indirizzo, " ", s.num_civico, " - ", l.des_luo)', 'type' => 'text'],
+			3 => ['val' => 'CONCAT(g.name, " ", g.surname)', 'type' => 'text'],
+			4 => ['val' => 'CONCAT(u.nome, " ", u.cognome)', 'type' => 'text'],
+			5 => ['val' => 't.msg_singular', 'type' => 'text'],
+			6 => ['val' => 'GuestsNotifications.done', 'type' => ''],
 			//6 => ['val' => 'CONCAT(u2.nome, " ", u2.cognome)', 'type' => 'text'],
 			//7 => ['val' => 'GuestsNotifications.done_date', 'type' => 'date']
         ];
@@ -120,6 +121,7 @@ class GuestComponent extends Component
 			'GuestsNotifications.id',
 			'GuestsNotifications.done',
 			'GuestsNotifications.done_date',
+			'GuestsNotifications.created',
 			'a.id',
 			'a.denominazione',
 			's.id',

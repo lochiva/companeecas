@@ -2500,6 +2500,7 @@ class WsController extends AppController
                 }
 
                 $out['rows'][] = [
+                    $notification['created'] ? $notification['created']->format('d/m/Y') : '',
                     '<a href="' . Router::url('/aziende/home/info/' . $notification['a']['id']) . '">' . $notification['a']['denominazione'] . '</a>',
                     '<a href="' . Router::url('/aziende/sedi/index/' . $notification['a']['id']) . '">' . $notification['s']['indirizzo'] . ' ' . $notification['s']['num_civico'] . ' - ' . $notification['l']['des_luo'] . '</a>',
                     '<a href="' . Router::url('/aziende/guests/guest?sede=' . $notification['s']['id'] . '&guest=' . $notification['g']['id']) . '">' . $notification['g']['name'] . ' ' . $notification['g']['surname'] . '</a>',
@@ -4807,6 +4808,7 @@ class WsController extends AppController
                 ########### buttons END
 
                 $out['rows'][] = [
+                    $notification['created'] ? $notification['created']->format('d/m/Y') : '',
                     $notification->AgreementsCompanies['name'],
                     $notification->Agreements['cig'],
                     $notification->Statements['period_label'],
