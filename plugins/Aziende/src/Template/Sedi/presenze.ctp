@@ -1,22 +1,24 @@
 <?php
+
 /**
-* Aziende is a plugin for manage attachment
-*
-* Companee :    Presenze  (https://www.companee.it)
-* Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
-* 
-* Licensed under The GPL  License
-* For full copyright and license information, please see the LICENSE.txt
-* Redistributions of files must retain the above copyright notice.
-*
-* @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
-* @link          https://www.ires.piemonte.it/ 
-* @since         1.2.0
-* @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
-*/
+ * Aziende is a plugin for manage attachment
+ *
+ * Companee :    Presenze  (https://www.companee.it)
+ * Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+ * 
+ * Licensed under The GPL  License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) IRES Piemonte , (https://www.ires.piemonte.it/)
+ * @link          https://www.ires.piemonte.it/ 
+ * @since         1.2.0
+ * @license       https://www.gnu.org/licenses/gpl-3.0.html GPL 3
+ */
+
 use Cake\Routing\Router;
 
-$role = $this->request->session()->read('Auth.User.role'); 
+$role = $this->request->session()->read('Auth.User.role');
 ?>
 <script>
     var role = '<?= $role ?>';
@@ -28,15 +30,15 @@ $role = $this->request->session()->read('Auth.User.role');
 
 <section class="content-header">
     <h1>
-        <?=__c('Ente '.$azienda['denominazione'].' - '.$sede['indirizzo'].' '.$sede['num_civico'].', '.$sede['comune']['des_luo'].' ('.$sede['provincia']['s_prv'].')')?>
-        <small>Gestione <?=__c('presenze')?></small>
+        <?= __c('Ente ' . $azienda['denominazione'] . ' - ' . $sede['indirizzo'] . ' ' . $sede['num_civico'] . ', ' . $sede['comune']['des_luo'] . ' (' . $sede['provincia']['s_prv'] . ')') ?>
+        <small>Gestione <?= __c('presenze') ?></small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria' || $role == 'ragioneria_adm' || $role == 'questura') { ?>
-        <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
+        <li><a href="<?= Router::url('/'); ?>"><i class="fa fa-home"></i> Home</a></li>
+        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria' || $role == 'questura') { ?>
+            <li><a href="<?= Router::url('/aziende/home'); ?>">Enti</a></li>
         <?php } ?>
-        <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>
+        <li><a href="<?= Router::url('/aziende/sedi/index/' . $azienda['id']); ?>">Strutture</a></li>
         <li class="active">Gestione presenze</li>
     </ol>
 </section>
@@ -48,16 +50,15 @@ $role = $this->request->session()->read('Auth.User.role');
                 <div id="box-presenze" class="box box-presenze">
                     <div class="box-header with-border">
                         <i class="fa fa-calendar"></i>
-                        <h3 class="box-title"><?=__c('Presenze per la struttura')?></h3>
+                        <h3 class="box-title"><?= __c('Presenze per la struttura') ?></h3>
                         <span class="text-bold text-uppercase" style="font-size: 1.1em; margin-left: 15px;">Vanno indicati unicamente gli ospiti presenti e che hanno firmato</span>
-                        <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
+                        <a href="<?= $this->request->env('HTTP_REFERER'); ?>" class="pull-right"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
                     </div>
                     <div class="box-body">
                         <form id="formPresenze" class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-md-3">
-                                    <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" 
-                                        typeable="true" id="inputDate" ref="inputDate" v-model="date" @input="changedDate()"></datepicker>
+                                    <datepicker :language="datepickerItalian" format="dd/MM/yyyy" :clear-button="false" :monday-first="true" input-class="form-control" typeable="true" id="inputDate" ref="inputDate" v-model="date" @input="changedDate()"></datepicker>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="control-label">Totale presenze del giorno</label>
@@ -72,19 +73,26 @@ $role = $this->request->session()->read('Auth.User.role');
 
                                     <div class="panel" v-bind:class="{ 'panel-default' : file == null, 'panel-info' : file != null }">
                                         <div class="panel-heading">
-                                            <h3 class="panel-title">Upload Firme</h3><sub>Solo file .pdf</sub>
-
+                                            <h3 class="panel-title">Upload Firme</h3>
+                                            <sub>
+                                                <span v-if="role == 'ente_ospiti'">
+                                                    I file devono essere caricati <strong>entro 48h</strong>.
+                                                    <br>
+                                                    Dopo il caricamento <strong>NON</strong> sono possibili modifiche.
+                                                    <br>
+                                                </span>
+                                                Solo file .pdf
+                                            </sub>
                                         </div>
                                         <div v-if="file == null" class="panel-body">
                                             <div class="form-group col-md-12">
-                                                <input type="file"  ref="attachment" v-model="fileCheck" accept=".pdf" v-on:change="submitFile">
+                                                <input type="file" ref="attachment" v-model="fileCheck" accept=".pdf" v-on:change="submitFile" :disabled="disableUpload && role == 'ente_ospiti'">
                                             </div>
                                         </div>
                                         <div v-else class="panel-body">
-                                            {{file.file}}                                                         
-                                            
+                                            {{file.file}}
                                             <a v-bind:href=file.fullPath target="_blank"><span class="text-green"><span class="glyphicon glyphicon glyphicon-download" aria-hidden="true"></span></span></a>
-                                            <span v-if="role == 'admin' || role == 'area_iv' || role == 'ente_ospiti'" v-on:click="deleteFile(file)" class="text-red" style="cursor: pointer;"><span class="glyphicon glyphicon glyphicon-remove-sign" aria-hidden="true"></span></span>
+                                            <span v-if="role == 'admin' || role == 'area_iv'" v-on:click="deleteFile(file)" class="text-red" style="cursor: pointer;"><span class="glyphicon glyphicon glyphicon-remove-sign" aria-hidden="true"></span></span>
                                         </div>
                                     </div>
 
@@ -124,16 +132,13 @@ $role = $this->request->session()->read('Auth.User.role');
                         </form>
                     </div>
                     <div class="box-footer">
-                        <button v-if="(role == 'admin' || role == 'area_iv' || !saveDisabled) && guests.length > 0" type="button" class="btn btn-success pull-right" id="savePresenzeNext" 
-                            @click="save(true)" :disabled="!next_sede" :title="noNextSedeMessage">
+                        <button v-if="(role == 'admin' || role == 'area_iv' || !saveDisabled) && guests.length > 0" type="button" class="btn btn-success pull-right" id="savePresenzeNext" @click="save(true)" :disabled="!next_sede" :title="noNextSedeMessage">
                             Salva e prossimo
                         </button>
-                        <button v-if="saveDisabled || guests.length == 0" type="button" class="btn btn-success pull-right" id="nextSede" 
-                            @click="next()" :disabled="!next_sede" :title="noNextSedeMessage">
+                        <button v-if="saveDisabled || guests.length == 0" type="button" class="btn btn-success pull-right" id="nextSede" @click="next()" :disabled="!next_sede" :title="noNextSedeMessage">
                             Prossimo
                         </button>
-                        <button v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && guests.length > 0" type="button" class="btn btn-primary pull-right btn-save-presenze"
-                            id="savePresenze" @click="save(false)" :disabled="saveDisabled" :title="saveDisabledPastDaysMessage">
+                        <button v-if="(role == 'admin' || role == 'area_iv' || role == 'ente_ospiti') && guests.length > 0" type="button" class="btn btn-primary pull-right btn-save-presenze" id="savePresenze" @click="save(false)" :disabled="saveDisabled" :title="saveDisabledPastDaysMessage">
                             Salva
                         </button>
                     </div>

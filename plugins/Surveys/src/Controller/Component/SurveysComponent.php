@@ -454,7 +454,7 @@ class SurveysComponent extends Component
 
 		if ($guest->sedi->police_station_id > 0) {
 			$station = $guest = TableRegistry::get('Aziende.PoliceStations')->get($guest->sedi->police_station_id, ['contain' => ['PoliceStationTypes']]);
-			$values['ente_stazione'] = $station->type->label_in_letter . '<br>' . $station->name;
+			$values['ente_stazione'] = $station->name;
 		} else {
 			$values['ente_stazione'] = '';
 		}

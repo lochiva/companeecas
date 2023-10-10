@@ -27,7 +27,8 @@ var app = new Vue({
             date: null,
             sede_id: null
         },
-        fileCheck: null
+        fileCheck: null,
+        disableUpload: false
     },
 
     components: {
@@ -49,6 +50,19 @@ var app = new Vue({
         },
         saveDisabledPastDaysMessage() {
             return this.saveDisabled ? 'Le presenze vanno comunicate il giorno stesso ed al più tardi entro le ore 12 del giorno successivo. Variazioni rispetto alle presenze nei giorni passati vanno richieste.' : '';
+        },
+    },
+
+    watch: {
+        date() {
+            let dateMinusTwo = moment(this.now).subtract(2, 'days').format('YYYY-MM-DD');
+            let date = moment(this.date).format('YYYY-MM-DD');
+            if (date >= dateMinusTwo) {
+                this.disableUpload = false;
+
+            } else {
+                this.disableUpload = true;
+            }
         }
     },
       
