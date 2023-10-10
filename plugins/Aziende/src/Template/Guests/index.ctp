@@ -46,7 +46,7 @@ $role = $this->request->session()->read('Auth.User.role');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-home"></i> Home</a></li>
-        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria') { ?>
+        <?php if ($role == 'admin' || $role == 'area_iv' || $role == 'ragioneria' || $role == 'ragioneria_adm') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
         <li><a href="<?=Router::url('/aziende/sedi/index/'.$azienda['id']);?>">Strutture</a></li>

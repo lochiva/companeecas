@@ -33,14 +33,22 @@ class GuestsController extends AppController
 
     public function isAuthorized($user)
     {
+        $authorizedActions = ['questura' => ['index', 'guest',]];
         if(
             $user['role'] == 'admin' || 
             $user['role'] == 'area_iv' || 
             $user['role'] == 'ragioneria' || 
+            $user['role'] == 'ragioneria_adm' ||
             $user['role'] == 'questura' || 
             $user['role'] == 'ente_ospiti' ||
             $user['role'] == 'ente_contabile'
         ){
+            return true;
+        }else if (
+            !empty($user['role']) && 
+            !empty($authorizedActions[$user['role']]) && 
+            in_array($this->request->getParam('action'), $authorizedActions[$user['role']])
+        ) {
             return true;
         }
         
@@ -102,6 +110,7 @@ class GuestsController extends AppController
     public function notifications($enteType = 1)
     {
         $this->set('enteType', $enteType);
+        $this->set('user', $this->request->session()->read('Auth.User'));
     }
 
 }

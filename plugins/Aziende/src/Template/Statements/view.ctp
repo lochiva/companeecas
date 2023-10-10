@@ -105,7 +105,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <?php if ($lastStatus->status->id == 2) { ?>
                             <span class="statement-status-date">approvato il <?= $lastStatus->created->format('d/m/Y') ?></span>
                         <?php } ?>
-                        <?php if (($lastStatus->status->id == 4 || $lastStatus->status->id == 5) && (($user['role'] == 'admin' || $user['role'] == 'ragioneria'))) {
+                        <?php if (($lastStatus->status->id == 4 || $lastStatus->status->id == 5) && (($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm'))) {
                         ?>
                             <span class="statement-status-date" id="due-date">
                                 <?php if ($statement->companies[0]->due_date) : ?>
@@ -148,7 +148,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     <?php
                     $statusDisabled = '';
                     if (
-                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
+                        ($user['role'] == 'ente_contabile' || $user['role'] == 'ragioneria_adm' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
                         (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
                     ) {
                         $statusDisabled = 'disabled';
@@ -158,9 +158,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <div class="input-group">
                             <input id="statusNote" name="notes" class="form-control" placeholder="Inserisci un commento..." <?= $statusDisabled ?>>
                             <div class="input-group-btn statement-status-actions">
-                                <?php if ($user['role'] == 'ente_contabile') : ?>
+                                <?php if ($user['role'] == 'ente_contabile' || $user['role'] == 'ragioneria_adm') : ?>
                                     <button id="send" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="btn btn-success action-status" <?= $statusDisabled ?>>Invia per approvazione</button>
-                                <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria') : ?>
+                                <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') : ?>
                                     <button class="btn btn-success action-status" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" <?= $statusDisabled ?>>Approva</button>
                                     <button class="btn btn-success dropdown-toggle action-status-dropdown" data-toggle="dropdown" <?= $statusDisabled ?>><span class="caret"></span></button>
                                     <ul class="dropdown-menu" role="menu">
@@ -238,7 +238,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                         <?= $this->Form->end(); ?>
 
-                        <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                        <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile'|| $user['role'] == 'ragioneria_adm') : ?>
                             <?php if ($ati) {
 
                                 echo $this->Form->postButton(
@@ -299,9 +299,9 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                 </span>
                                 <span id="totPresenze"><?= $presenze ?></span>
                                 <span class="label-like">per canone</span>
-                                <span id="daily_price"><?= number_format($statement->agreement->guest_daily_price, 2, ',', '.') ?> &euro;</span>
-                                <span class="label-like">pari a</span>
-                                <span id="presenzeRent"><?= number_format($presenze * $statement->agreement->guest_daily_price, 2, ',', '.') ?> &euro;</span>
+                                <span id="daily_price">&euro;<?= number_format($statement->agreement->guest_daily_price, 2, '.', '') ?></span>
+                                <span class="label-like">pari a</span> &euro;
+                                <span id="presenzeRent"><?= number_format($presenze * $statement->agreement->guest_daily_price, 2, '.', '') ?></span>
 
 
                             </p>
@@ -310,8 +310,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                                     <span class="badge btn-info" data-toggle="tooltip" data-html=true data-placement="top" title="<div class='text-justify'> Pocket money maturato considerando le presenze per le strutture collegate alla convenzione. Il sistema calcola un massimo di tre presenze per gruppo familiare per giornata.</div>">
                                         <i class="fa fa-info"></i>
                                     </span> TOT pocket money maturati</span> <?= $pocketMoney['heads'] ?>
-                                <span class="label-like">per </span><?= $pocketMoney['factor'] ?> &euro;
-                                <span class="label-like">pari a </span><?= $pocketMoney['total'] ?> &euro;
+                                <span class="label-like">per</span> &euro;<?= $pocketMoney['factor'] ?>
+                                <span class="label-like">pari a</span> &euro;<?= $pocketMoney['total'] ?>
                             </p>
                             <p>
                                 <span class="label-like">
@@ -345,7 +345,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                     <div class="box-body">
                         <div class="container-fluid">
-                            <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                            <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile' || $user['role'] == 'ragioneria_adm') : ?>
                                 <?php if ($ati) : ?>
                                     <form id="add-cost">
                                     <?php else : ?>
@@ -446,7 +446,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
             </div>
 
             
-            <?= $user['role'] === "admin" || $user['role'] === "ragioneria" || $user['role'] === "ente_contabile" || $user['role'] === "area_iv"  ? $this->element('Aziende.payments_vue') : ''; ?>
+            <?= $user['role'] === "admin" || $user['role'] === "ragioneria" || $user['role'] === "ragioneria_adm" || $user['role'] === "ente_contabile"  ? $this->element('Aziende.payments_vue') : ''; ?>
 
         </div>
 </section>

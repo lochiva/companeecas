@@ -5,7 +5,9 @@
         <div class="box-header with-border">
             <i class="fa fa-euro"></i>
             <h3 class="box-title"><?= __c('Pagamenti') ?></h3>
+
             <a v-if="canWrite" id="box-general-action" class="btn btn-info btn-xs pull-right" style="margin-left:10px" v-on:click="loadModal(false)"><i class="fa fa-plus"></i> Nuovo</a>
+
         </div>
 
         <div class="box-body">

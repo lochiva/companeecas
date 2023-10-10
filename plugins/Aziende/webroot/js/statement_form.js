@@ -156,8 +156,9 @@ $(document).ready(function () {
             //Storico stato rendiconto
             renderHistory(res.data.history);
 
-            if (role === "admin" || role === "ragioneria") {
-              if (!!res.data.due_date) {
+
+            if(role === 'admin' || role === 'ragioneria' || role === 'ragioneria_adm') {
+              if(!!res.data.due_date) {
                 var dateObj = new Date(res.data.due_date);
                 var dueDate = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`;
                 $("#due-date").html(`Da approvare entro il ${dueDate}`);
@@ -170,7 +171,7 @@ $(document).ready(function () {
 
             // In corso
             if (lastStatus.status.id == 1) {
-              if (role === "ente_contabile") {
+              if (role === "ente_contabile"|| role === "ragioneria_adm") {
                 $(".action-status").each(function (index, element) {
                   $(element).data("id", res.data.id);
                   $(element).prop("disabled", false);
@@ -215,7 +216,7 @@ $(document).ready(function () {
 
               // Integrazione
             } else if (lastStatus.status.id == 3) {
-              if (role === "ente_contabile") {
+              if (role === "ente_contabile"|| role === "ragioneria_adm") {
                 $(".action-status").each(function (index, element) {
                   $(element).data("id", res.data.id);
                   $(element).prop("disabled", false);
@@ -254,7 +255,7 @@ $(document).ready(function () {
               $("#save-statement").prop("disabled", true);
               $("#delete-statement").prop("disabled", true);
 
-              if (role === "ente_contabile") {
+              if (role === "ente_contabile"|| $role === "ragioneria_adm") {
                 $(".action-status").each(function (index, element) {
                   $(element).data("id", res.data.id);
                   $(element).prop("disabled", true);
@@ -629,7 +630,7 @@ function displayCosts(cats, statement) {
         toAppend += `</td>`;
 
         if (
-          (role == "admin" || role == "ente_contabile") &&
+          (role == "admin" || role == "ente_contabile"|| role == "ragioneria_adm") &&
           ![2, 4].includes(status_id)
         ) {
           // Modifica la spesa

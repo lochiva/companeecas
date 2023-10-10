@@ -521,7 +521,7 @@ var app = new Vue({
       );
     },
     canWrite() {
-      return this.role === "admin" || this.role === "ragioneria";
+      return this.role === "admin" || this.role === "ragioneria_adm";
     },
   },
 });
