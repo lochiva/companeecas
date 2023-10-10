@@ -62,7 +62,9 @@ use Cake\Routing\Router;
 
                     <div class="text-right">
                         <input type="checkbox" id="showAllNotifications"> Mostra anche le notifiche gestite<br>
+                        <?php if($user['role'] !== 'ragioneria_adm' && $user['role'] !== 'ragioneria' ):?>
                         <button id="markAllNotificationsDone" type="button" class="btn btn-xs btn-primary">Segna tutte come gestite</button>
+                        <?php endif ?>
 
                     </div>
 
