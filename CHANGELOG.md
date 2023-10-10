@@ -11,11 +11,19 @@
 - notifiche a enti ospiti e contabile
 - situazione giuridica e generazione report
 - situazione giuridica in anagrafica ospite
+-  rendiconti: generare lettere di pagamento
+- nell'elenco delle notifiche mostrare la  data inserimento  (#21749)
+- nuovo ruolo ragoneria_adm (#21718)
+- tasto segna tutte le notifiche come gestire ad uso admin (#21751)
+- 
+
+## [v1.4.4] 2023-10-11
+### Features
 - nuovo campo id_provivsorio in anagrafica ospite (#21717)
-- rendiconti: generare lettere di pagamento
 - linkato changelog alla versione nel footer (#21668) 
-- riscritto algoritmo destinatario "stazioni carabinieri"  (#)
+- riscritto algoritmo destinatario "stazioni carabinieri"  (#21722)
 - nuovo ruolo ragioneria_adm abilitato ad inserimento pagamenti (#21718)
+- fogli firma si possono caricare entro 48h (#21653)
    
 ## [v1.4.3] 2023-10-05
 ### Features
