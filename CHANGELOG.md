@@ -19,10 +19,9 @@
 
 ## [v1.4.4] 2023-10-11
 ### Features
-- nuovo campo id_provivsorio in anagrafica ospite (#21717)
+- nuovo campo id_temporaneo in anagrafica ospite (#21717)
 - linkato changelog alla versione nel footer (#21668) 
 - riscritto algoritmo destinatario "stazioni carabinieri"  (#21722)
-- nuovo ruolo ragioneria_adm abilitato ad inserimento pagamenti (#21718)
 - fogli firma si possono caricare entro 48h (#21653)
    
 ## [v1.4.3] 2023-10-05
