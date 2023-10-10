@@ -42,7 +42,7 @@ echo $this->Html->script( 'Aziende.statements.js' );
                 <div class="box-header with-border">
                   <i class="fa fa-list-ul"></i>
                   <h3 class="box-title"><?=__c('Elenco dei rendiconti')?></h3>
-                  <?php if ($role == 'ente_contabile') { ?>
+                  <?php if ($role == 'ente_contabile'|| $role == 'ragioneria_adm') { ?>
                     <a id="box-general-action" class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#modalStatement" data-backdrop="false" data-keyboard="false" style="margin-left:10px"><i class="fa fa-plus"></i> Nuovo</a>
                   <?php } ?>
                   <a href="<?=$this->request->env('HTTP_REFERER');?>" class="pull-right" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i> indietro </a>
@@ -75,7 +75,7 @@ echo $this->Html->script( 'Aziende.statements.js' );
                                     <th>Periodo</th>
                                     <th>Stato</th>
                                     <th class="filter-false">Data stato corrente</th>
-                                    <?php if ($role == 'admin' || $role == 'ragioneria') :?><th>Data di scadenza</th> <?php endif?>
+                                    <?php if ($role == 'admin' || $role == 'ragioneria' || $role == 'ragioneria_adm') :?><th>Data di scadenza</th> <?php endif?>
                                     <th width="10%" class="filters-reset sorter-false"></th>
 
                                 </tr>

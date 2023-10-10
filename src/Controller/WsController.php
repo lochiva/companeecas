@@ -35,6 +35,7 @@ class WsController extends AppController
             $user['role'] == 'admin' || 
             $user['role'] == 'area_iv' || 
             $user['role'] == 'ragioneria' || 
+            $user['role'] == 'ragioneria_adm' ||
             $user['role'] == 'questura' ||
             $user['role'] == 'ente_ospiti' ||
             $user['role'] == 'ente_contabile'

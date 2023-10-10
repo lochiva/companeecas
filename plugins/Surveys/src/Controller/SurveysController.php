@@ -48,6 +48,7 @@ class SurveysController extends AppController
                 'edit'
             ],
             'ragioneria' => [],
+            'ragioneria_adm' => [],
             'ente_ospiti' => [],
             'ente_contabile' => []
         ];

@@ -37,7 +37,7 @@ $user = $this->request->session()->read('Auth.User');
     </h1>
     <ol class="breadcrumb">
         <li><a href="<?=Router::url('/');?>"><i class="fa fa-dashboard"></i> Home</a></li>
-        <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria') { ?>
+        <?php if ($user['role'] == 'admin' || $user['role'] == 'area_iv' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') { ?>
         <li><a href="<?=Router::url('/aziende/home');?>">Enti</a></li>
         <?php } ?>
         <li class="active">Gestione strutture</li>
