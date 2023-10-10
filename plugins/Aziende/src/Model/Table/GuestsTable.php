@@ -133,7 +133,7 @@ class GuestsTable extends AppTable
 
         $validator
             ->scalar('temporary_id')
-            ->minLength('temporary_id', 20)
+            ->minLength('temporary_id', 1)
             ->maxLength('temporary_id', 20)
             ->allowEmptyString('temporary_id', true);
 
