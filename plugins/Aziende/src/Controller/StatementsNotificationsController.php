@@ -43,7 +43,7 @@ class StatementsNotificationsController extends AppController
     }
 
     public function index()
-    {
+    {$this->set('user', $this->Auth->user());
     }
 
 }

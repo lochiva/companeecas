@@ -35,7 +35,7 @@ class PaymentsController extends AppController
         if (
             $user['role'] == 'admin' ||
             $user['role'] == 'ragioneria' ||
-            $user['role'] == 'ragioneria_adm'
+            $user['role'] == 'ragioneria_adm' 
         ) {
             return true;
         }
@@ -45,6 +45,9 @@ class PaymentsController extends AppController
                 'index', 'view', 'getPaymentsbyStatementCompany'
             ],
             'area_iv' => [
+                'index', 'view', 'getPaymentsbyStatementCompany'
+            ],
+            'ragioneria_adm' => [
                 'index', 'view', 'getPaymentsbyStatementCompany'
             ],
         ];

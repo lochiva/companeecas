@@ -102,7 +102,7 @@ class WsController extends AppController
                 'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault',
                 'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles',
                 'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories',
-                'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
+                'downloadFileStatements', 'downloadFileCosts', 'getCost', 'checkStatusStatementCompany','saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts',
                 'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
 

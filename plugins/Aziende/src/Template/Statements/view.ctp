@@ -32,6 +32,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
     var cig = "<?= $statement->agreement->cig ?>";
     var billing_date = "<?=$statement->companies[0]->billing_date;?>";
     var billing_reference = "<?=$statement->companies[0]->billing_reference;?>";
+    var billing_net_amount = "<?=$statement->companies[0]->billing_net_amount;?>";
+    var billing_vat_amount = "<?=$statement->companies[0]->billing_vat_amount;?>";
 
 </script>
 <section class="content-header">
@@ -146,8 +148,8 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                     <?php
                     $statusDisabled = '';
                     if (
-                        ($user['role'] == 'ente_contabile' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
-                        (($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') && in_array($lastStatus->status->id, [1, 3]))
+                        ($user['role'] == 'ente_contabile' || $user['role'] == 'ragioneria_adm' && ($ati || $lastStatus->status->id == 4 || $lastStatus->status->id == 5)) ||
+                        (($user['role'] == 'admin' || $user['role'] == 'ragioneria') && in_array($lastStatus->status->id, [1, 3]))
                     ) {
                         $statusDisabled = 'disabled';
                     }
@@ -156,7 +158,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
                         <div class="input-group">
                             <input id="statusNote" name="notes" class="form-control" placeholder="Inserisci un commento..." <?= $statusDisabled ?>>
                             <div class="input-group-btn statement-status-actions">
-                                <?php if ($user['role'] == 'ente_contabile') : ?>
+                                <?php if ($user['role'] == 'ente_contabile' || $user['role'] == 'ragioneria_adm') : ?>
                                     <button id="send" data-id="<?= $statement->companies[0]->id ?>" data-status-id="4" class="btn btn-success action-status" <?= $statusDisabled ?>>Invia per approvazione</button>
                                 <?php elseif ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') : ?>
                                     <button class="btn btn-success action-status" id="approve" data-id="<?= $statement->companies[0]->id ?>" data-status-id="2" <?= $statusDisabled ?>>Approva</button>
@@ -236,7 +238,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                         <?= $this->Form->end(); ?>
 
-                        <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                        <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile'|| $user['role'] == 'ragioneria_adm') : ?>
                             <?php if ($ati) {
 
                                 echo $this->Form->postButton(
@@ -343,7 +345,7 @@ echo $this->Html->script('AttachmentManager.modal_attachment.js');
 
                     <div class="box-body">
                         <div class="container-fluid">
-                            <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile') : ?>
+                            <?php if ($user['role'] == 'admin' || $user['role'] == 'ente_contabile' || $user['role'] == 'ragioneria_adm') : ?>
                                 <?php if ($ati) : ?>
                                     <form id="add-cost">
                                     <?php else : ?>

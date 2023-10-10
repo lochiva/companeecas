@@ -151,11 +151,11 @@ class StatementCompanyComponent extends Component
 
     public function checkStatus($userRole, $newStatus, $oldStatus) {
         $updateAllowed = false;
-        if($userRole === 'ente_contabile') {
+        if($userRole === 'ente_contabile' || $userRole === 'ragioneria_adm') {
             if(($oldStatus == 1 || $oldStatus == 3) && $newStatus == 4) {
                 $updateAllowed = true;
             }
-        } else if($userRole === 'ragioneria' || $userRole === 'ragioneria_adm') {
+        } else if($userRole === 'ragioneria' ) {
             if(($oldStatus == 4 || $oldStatus == 5) && in_array($newStatus, [2, 3, 4, 5])) {
                 $updateAllowed = true;
             }
