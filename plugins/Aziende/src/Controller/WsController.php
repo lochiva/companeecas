@@ -4192,7 +4192,6 @@ class WsController extends AppController
                     $date,
                 );
 
-                if($user['role'] == 'admin' || $user['role'] == 'ragioneria') {
                 if ($user['role'] == 'admin' || $user['role'] == 'ragioneria' || $user['role'] == 'ragioneria_adm') {
                     if ($value->due_date) {
                         $value->due_date ? $value->due_date->format('d/m/Y') : '';
