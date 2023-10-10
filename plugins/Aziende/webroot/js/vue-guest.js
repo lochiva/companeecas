@@ -523,7 +523,7 @@ var app = new Vue({
                     }
                 }
                 if(prop == 'temporary_id'){
-                    if(!!this.guestData[prop].value && this.guestData[prop].value.length !== 20){
+                    if(!!this.guestData[prop].value && this.guestData[prop].value.length > 20){
                         errors = true;
                         msg += "L'id temporaneo deve essere lungo 20 caratteri.\n";
                         this.guestData[prop].hasError = true;
