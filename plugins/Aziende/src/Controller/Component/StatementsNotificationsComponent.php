@@ -35,11 +35,12 @@ class StatementsNotificationsComponent extends Component
     public function getStatementsNotifications($pass = array()) {
         $statementsNotificationsTable = TableRegistry::get('Aziende.StatementsNotifications');
 
-        $columns[0] = ['val' => 'AgreementsCompanies.name.name', 'type' => 'text'];
-        $columns[1] = ['val' => 'Agreements.cig', 'type' => 'text'];
-        $columns[2] = ['val' => 'Statements.period_label', 'type' => 'text'];
-        $columns[3] = ['val' => 'Statements.period_start_date', 'type' => 'date'];
-        $columns[4] = ['val' => 'Statements.period_end_date', 'type' => 'date'];
+        $columns[0] = ['val' => 'StatementsNotifications.created', 'type' => 'bool'];
+        $columns[1] = ['val' => 'AgreementsCompanies.name.name', 'type' => 'text'];
+        $columns[2] = ['val' => 'Agreements.cig', 'type' => 'text'];
+        $columns[3] = ['val' => 'Statements.period_label', 'type' => 'text'];
+        $columns[4] = ['val' => 'Statements.period_start_date', 'type' => 'date'];
+        $columns[5] = ['val' => 'Statements.period_end_date', 'type' => 'date'];
         $columns[6] = ['val' => 'StatementsNotifications.done', 'type' => 'bool'];
 
         $opt['fields'] = [
@@ -51,7 +52,8 @@ class StatementsNotificationsComponent extends Component
             'Statements.id',
             'StatementCompany.id',
             'StatementsNotifications.id',
-            'StatementsNotifications.done'
+            'StatementsNotifications.done',
+            'StatementsNotifications.created',
         ];
 
         $opt['join'] = [

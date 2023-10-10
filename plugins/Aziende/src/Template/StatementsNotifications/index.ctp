@@ -72,6 +72,7 @@ use Cake\Routing\Router;
                         <table id="table-statements-notifications" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>Data di creazione</th>
                                     <th>Ente</th>
                                     <th>CIG</th>
                                     <th>Periodo</th>

@@ -73,6 +73,7 @@ use Cake\Routing\Router;
                         <table id="table-guests-notifications" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>Data di creazione</th>
                                     <th>Ente</th>
                                     <th>Struttura</th>
                                     <th>Ospite</th>
