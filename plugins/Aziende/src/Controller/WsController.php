@@ -94,6 +94,20 @@ class WsController extends AppController
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications','getStatementsByAgreementId','saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
+
+            'ragioneria_adm' => [  
+                'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva', 
+                'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry', 
+                'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone', 
+                'saveAllGuestsNotificationsDone', 'getAgreements', 'getAgreement', 'getGuestsForPresenze', 'loadGuestHistory', 'getExitTypes', 'getRequestExitTypes', 
+                'getTransferAziendaDefault', 'searchTransferAziende', 'searchTransferSedi', 'getReadmissionAziendaDefault', 'getReadmissionSedeDefault', 
+                'searchReadmissionAziende', 'searchReadmissionSedi', 'getEducationalQualifications', 'autocompleteGuests', 'downloadGuestExitFile', 'getFiles', 
+                'downloadFile', 'checkRendiconti', 'getStatementCompanies', 'getPeriod', 'checkCig', 'getCosts', 'getStatementCompany', 'autocompleteCategories', 
+                'downloadFileStatements', 'downloadFileCosts', 'getCost', 'checkStatusStatementCompany','saveCost', 'deleteCost', 'downloadFileStatements', 'downloadFileCosts', 
+                'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications', 'saveAllStatementsNotificationsDone', 'getPresenzeCount' 
+            ], 
+ 
+
             'ente_ospiti' => [
                 'getSedi', 'saveSede', 'deleteSede', 'loadSede', 'getContatti', 'saveContatto', 'deleteContatto', 'loadContatto', 'getContattiAzienda',
                 'autocompleteAziende', 'sendAnagrafica', 'sendEditAnagrafica', 'verifyDatiPiva', 'sendNoticeCompaneeAdminEdit', 'convertProvincia',
