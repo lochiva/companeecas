@@ -556,7 +556,7 @@ $(document).on('click', '.edit-agreement', function(){
                         });
             
                         // Se utente di ruolo ente o contabile e convenzione approvata, disabilito form e mostro messaggio
-                        if ((role == 'ente_ospiti' || role == 'ente_contabile'|| $role == 'ragioneria_adm') && res.data.approved) {
+                        if ((role == 'ente_ospiti' || role == 'ente_contabile'|| role == 'ragioneria_adm') && res.data.approved) {
                             $('.approved-message').show();
                             disableApprovedModal();
                         }
