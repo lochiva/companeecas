@@ -3905,9 +3905,9 @@ class WsController extends AppController
         $fileData = json_decode($this->request->data('file'), true);
         $date = new Date($fileData['date']);
 
-        if($user['role'] == 'ente_ospiti'  && !$date->wasWithinLast('2 days')) {
+        if($user['role'] == 'ente_ospiti'  && !$date->wasWithinLast('3 days')) {
             $this->_result['response'] = 'KO';
-            $this->_result['msg'] = 'I file devono essere caricati entro 48h.';
+            $this->_result['msg'] = 'I file devono essere caricati entro 72h.';
             return;
         }
 
