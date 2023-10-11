@@ -94,7 +94,7 @@ class WsController extends AppController
                 'downloadFileStatements', 'downloadFileCosts', 'checkStatusStatementCompany',
                 'downloadZipStatements', 'saveStatementsNotificationDone', 'getStatementsNotifications','getStatementsByAgreementId','saveAllStatementsNotificationsDone', 'getPresenzeCount'
             ],
-            'ragioneria_adm' => [
+            'ragioneria_adm' => [ 
                 'getAziende', 'loadAzienda', 'getSedi', 'loadSede', 'getContatti', 'loadContatto', 'getContattiAzienda', 'autocompleteAziende', 'verifyDatiPiva',
                 'sendNoticeCompaneeAdminEdit', 'convertProvincia', 'convertComune', 'getGuests', 'getSediForSearchGuest', 'getGuest', 'searchCountry',
                 'searchGuest', 'searchGuestsBySede', 'getGuestsNotificationsCount', 'getGuestsNotifications', 'saveGuestNotificationDone',
