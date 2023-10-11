@@ -144,6 +144,8 @@ class WsController extends AppController
             ]
         ];
 
+
+    
         if (
             !empty($user['role']) &&
             !empty($authorizedActions[$user['role']]) &&
