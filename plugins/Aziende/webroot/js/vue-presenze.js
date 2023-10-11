@@ -55,7 +55,7 @@ var app = new Vue({
 
     watch: {
         date() {
-            let dateMinusTwo = moment(this.now).subtract(2, 'days').format('YYYY-MM-DD');
+            let dateMinusTwo = moment(this.now).subtract(3, 'days').format('YYYY-MM-DD');
             let date = moment(this.date).format('YYYY-MM-DD');
             if (date >= dateMinusTwo) {
                 this.disableUpload = false;

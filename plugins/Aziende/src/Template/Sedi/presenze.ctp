@@ -76,7 +76,7 @@ $role = $this->request->session()->read('Auth.User.role');
                                             <h3 class="panel-title">Upload Firme</h3>
                                             <sub>
                                                 <span v-if="role == 'ente_ospiti'">
-                                                    I file devono essere caricati <strong>entro 48h</strong>.
+                                                    I file devono essere caricati <strong>entro 72h</strong>.
                                                     <br>
                                                     Dopo il caricamento <strong>NON</strong> sono possibili modifiche.
                                                     <br>
