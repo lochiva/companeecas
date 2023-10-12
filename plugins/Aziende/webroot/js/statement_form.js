@@ -216,7 +216,7 @@ $(document).ready(function () {
 
               // Integrazione
             } else if (lastStatus.status.id == 3) {
-              if (role === "ente_contabile"|| role === "ragioneria_adm") {
+              if (role === "ente_contabile") {
                 $(".action-status").each(function (index, element) {
                   $(element).data("id", res.data.id);
                   $(element).prop("disabled", false);
@@ -630,7 +630,7 @@ function displayCosts(cats, statement) {
         toAppend += `</td>`;
 
         if (
-          (role == "admin" || role == "ente_contabile"|| role == "ragioneria_adm") &&
+          (role == "admin" || role == "ente_contabile") &&
           ![2, 4].includes(status_id)
         ) {
           // Modifica la spesa
